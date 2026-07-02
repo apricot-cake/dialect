@@ -8,6 +8,8 @@ import { stripHash, words } from '../text'
 function buildUrl(state: QueryState): string | null {
   const tag = stripHash(state.hashtag)
   const textParts: string[] = [...words(state.keywords)]
+  const orWords = words(state.orAny)
+  if (orWords.length > 0) textParts.push(orWords.join(' OR '))
   if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
   const excludes = words(state.exclude).map((w) => `-${w}`)
 
@@ -20,6 +22,9 @@ function buildUrl(state: QueryState): string | null {
   }
   if (state.since) params.set('start', state.since)
   if (state.until) params.set('end', state.until)
+  // 「ふつう(4〜20分)」に相当する値はniconicoに存在しないため指定しない
+  if (state.videoLength === 'short') params.set('l_range', '1')
+  if (state.videoLength === 'long') params.set('l_range', '2')
   const query = params.toString()
 
   // タグ単独(+除外)ならタグ検索。除外はタグページでも有効(実測)
@@ -44,12 +49,14 @@ export const niconico: PlatformDef = {
   requiresLogin: false,
   support: {
     keywords: { level: 'full' },
+    orAny: { level: 'full' },
     exactPhrase: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'none' },
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
+    videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
     japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     newestFirst: { level: 'full' },
   },

@@ -13,6 +13,8 @@ function buildUrl(state: QueryState): string | null {
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
+  if (state.mentionsUser.trim()) parts.push(`mentions:${stripAt(state.mentionsUser)}`)
+  if (state.domain.trim()) parts.push(`domain:${state.domain.trim()}`)
   if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
@@ -33,6 +35,8 @@ export const bluesky: PlatformDef = {
     exactPhrase: { level: 'full' },
     exclude: { level: 'partial', noteKey: 'note.bluesky.exclude' },
     fromUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
+    mentionsUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
+    domain: { level: 'full' },
     hashtag: { level: 'full' },
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.bluesky.mediaOnly' },

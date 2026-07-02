@@ -3,25 +3,51 @@ import type { MessageKey } from '@/i18n'
 /** ビルダーで扱う検索概念。各SNSの演算子はこの概念への翻訳として定義する */
 export type ConceptId =
   | 'keywords'
+  | 'orAny'
   | 'exactPhrase'
   | 'exclude'
+  | 'titleOnly'
   | 'fromUser'
+  | 'toUser'
+  | 'mentionsUser'
+  | 'subreddit'
+  | 'domain'
   | 'hashtag'
   | 'period'
   | 'mediaOnly'
+  | 'videoLength'
+  | 'linksOnly'
+  | 'verifiedOnly'
+  | 'excludeReplies'
+  | 'minLikes'
+  | 'minReposts'
   | 'japaneseOnly'
   | 'newestFirst'
+
+export type VideoLength = '' | 'short' | 'medium' | 'long'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
   keywords: string
+  orAny: string
   exactPhrase: string
   exclude: string
+  titleOnly: boolean
   fromUser: string
+  toUser: string
+  mentionsUser: string
+  subreddit: string
+  domain: string
   hashtag: string
   since: string // YYYY-MM-DD
   until: string // YYYY-MM-DD
   mediaOnly: boolean
+  videoLength: VideoLength
+  linksOnly: boolean
+  verifiedOnly: boolean
+  excludeReplies: boolean
+  minLikes: string // 数値文字列
+  minReposts: string // 数値文字列
   japaneseOnly: boolean
   newestFirst: boolean
 }
@@ -59,9 +85,19 @@ export interface PlatformDef {
   /** ボタン等に使うブランドカラー */
   brandColor: string
   requiresLogin: boolean
-  support: Record<ConceptId, ConceptSupport>
+  /** 対応する概念のみ記載。未記載の概念は非対応(none)として扱う */
+  support: Partial<Record<ConceptId, ConceptSupport>>
   /** 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null */
   buildUrl(state: QueryState): string | null
+}
+
+export const NO_SUPPORT: ConceptSupport = { level: 'none' }
+
+export function supportOf(
+  platform: PlatformDef,
+  concept: ConceptId,
+): ConceptSupport {
+  return platform.support[concept] ?? NO_SUPPORT
 }
 
 /** ある条件セットをあるSNSへ翻訳した結果 */

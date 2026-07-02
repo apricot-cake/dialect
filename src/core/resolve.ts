@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState, Resolution } from './types'
+import { supportOf } from './types'
 import { activeConcepts } from './concepts'
 
 /** ユーザーの条件セットをプラットフォームへ翻訳し、適用/近似/非対応に仕分けする */
@@ -11,7 +12,7 @@ export function resolve(platform: PlatformDef, state: QueryState): Resolution {
   }
 
   for (const concept of activeConcepts(state)) {
-    const support = platform.support[concept]
+    const support = supportOf(platform, concept)
     if (support.level === 'full') {
       resolution.applied.push(concept)
     } else if (support.level === 'partial') {

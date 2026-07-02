@@ -22,9 +22,19 @@ function buildUrl(state: QueryState): string | null {
   }
 
   const clauses: string[] = []
-  clauses.push(...words(state.keywords))
-  if (state.exactPhrase.trim()) clauses.push(`"${state.exactPhrase.trim()}"`)
+  if (state.titleOnly) {
+    clauses.push(...words(state.keywords).map((w) => `title:${w}`))
+    if (state.exactPhrase.trim()) clauses.push(`title:"${state.exactPhrase.trim()}"`)
+  } else {
+    clauses.push(...words(state.keywords))
+    if (state.exactPhrase.trim()) clauses.push(`"${state.exactPhrase.trim()}"`)
+  }
+  const orWords = words(state.orAny)
+  if (orWords.length > 0) clauses.push(`(${orWords.join(' OR ')})`)
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
+  if (state.subreddit.trim()) {
+    clauses.push(`subreddit:${state.subreddit.trim().replace(/^\/?r\//, '')}`)
+  }
   let q = clauses.join(' AND ')
   const excludes = words(state.exclude)
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
@@ -44,9 +54,12 @@ export const reddit: PlatformDef = {
   requiresLogin: false,
   support: {
     keywords: { level: 'full' },
+    orAny: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },
     exclude: { level: 'full' },
+    titleOnly: { level: 'full' },
     fromUser: { level: 'full' },
+    subreddit: { level: 'full' },
     hashtag: { level: 'none', noteKey: 'note.reddit.hashtag' },
     period: { level: 'partial', noteKey: 'note.reddit.period' },
     mediaOnly: { level: 'none' },

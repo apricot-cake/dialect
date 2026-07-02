@@ -6,13 +6,19 @@ import { stripAt, stripHash, words } from './text'
 export function summarize(state: QueryState): string {
   const parts: string[] = []
   if (state.keywords.trim()) parts.push(words(state.keywords).join(' '))
+  if (state.orAny.trim()) parts.push(words(state.orAny).join(' または '))
   if (state.exactPhrase.trim()) parts.push(`「${state.exactPhrase.trim()}」`)
   if (state.exclude.trim()) {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)
   }
   if (state.fromUser.trim()) parts.push(`@${stripAt(state.fromUser)}`)
+  if (state.toUser.trim()) parts.push(`→@${stripAt(state.toUser)}`)
+  if (state.mentionsUser.trim()) parts.push(`@${stripAt(state.mentionsUser)}宛`)
+  if (state.subreddit.trim()) parts.push(`r/${state.subreddit.trim()}`)
+  if (state.domain.trim()) parts.push(state.domain.trim())
   if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
   if (state.since || state.until) parts.push(`${state.since}〜${state.until}`)
+  if (state.minLikes.trim()) parts.push(`♥${state.minLikes.trim()}+`)
   if (state.mediaOnly) parts.push(t('concept.mediaOnly.label'))
   if (state.japaneseOnly) parts.push(t('concept.japaneseOnly.label'))
   return parts.join(' / ')
