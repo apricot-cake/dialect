@@ -55,49 +55,44 @@ export default function App() {
           </p>
         </header>
 
-        <main className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted-foreground">
-                {t('template.heading')}
-              </span>
-              {TEMPLATES.map((template) => (
-                <Button
-                  key={template.id}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setState(applyTemplate(state, template))}
-                >
-                  {t(template.labelKey)}
-                </Button>
-              ))}
+        <main className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {t('template.heading')}
+            </span>
+            {TEMPLATES.map((template) => (
               <Button
-                variant="ghost"
+                key={template.id}
+                variant="outline"
                 size="sm"
-                className="text-muted-foreground"
-                onClick={() => setState(defaultState())}
+                onClick={() => setState(applyTemplate(state, template))}
               >
-                {t('template.clear')}
+                {t(template.labelKey)}
               </Button>
-            </div>
-            <Card>
-              <CardContent>
-                <QueryBuilder state={state} onChange={setState} />
-              </CardContent>
-            </Card>
+            ))}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground"
+              onClick={() => setState(defaultState())}
+            >
+              {t('template.clear')}
+            </Button>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <Card>
+            <CardContent>
+              <QueryBuilder state={state} onChange={setState} />
+            </CardContent>
+          </Card>
+
+          <div className="flex flex-wrap items-center gap-2">
             {!hasPositiveTerm(state) && (
               <p className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
                 {t('launch.noQuery')}
               </p>
             )}
-            <LaunchPanel
-              state={state}
-              onLaunch={() => setHistoryEntries(recordHistory(state))}
-            />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="ml-auto flex gap-2">
               <Button
                 variant="outline"
                 disabled={!hasPositiveTerm(state)}
@@ -109,13 +104,19 @@ export default function App() {
                 {copied ? t('share.copied') : t('share.copyLink')}
               </Button>
             </div>
-            <SavedSearches
-              saved={saved}
-              history={historyEntries}
-              onRestore={setState}
-              onDelete={(params) => setSaved(deleteSaved(params))}
-            />
           </div>
+
+          <LaunchPanel
+            state={state}
+            onLaunch={() => setHistoryEntries(recordHistory(state))}
+          />
+
+          <SavedSearches
+            saved={saved}
+            history={historyEntries}
+            onRestore={setState}
+            onDelete={(params) => setSaved(deleteSaved(params))}
+          />
         </main>
 
         <footer className="mt-auto flex items-center justify-between gap-4 border-t pt-4 text-xs text-muted-foreground">

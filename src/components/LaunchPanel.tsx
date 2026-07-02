@@ -49,7 +49,7 @@ export function LaunchPanel({
   onLaunch?: () => void
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-4 md:grid-cols-3">
       {GROUPS.map(({ group, labelKey }) => (
         <section key={group} className="flex flex-col gap-2">
           <h2 className="text-xs font-medium text-muted-foreground">

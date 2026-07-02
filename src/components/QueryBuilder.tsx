@@ -68,46 +68,48 @@ export function QueryBuilder({ state, onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      {TEXT_ROWS.map((row) => (
-        <div key={row.concept} className="flex flex-col gap-1.5">
-          <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
-          <Input
-            id={row.field}
-            value={state[row.field]}
-            placeholder={t(row.placeholderKey)}
-            onChange={(e) => set({ [row.field]: e.target.value })}
-          />
-          <ConceptHint concept={row.concept} />
-        </div>
-      ))}
+      <div className="grid gap-5 md:grid-cols-2">
+        {TEXT_ROWS.map((row) => (
+          <div key={row.concept} className="flex flex-col gap-1.5">
+            <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
+            <Input
+              id={row.field}
+              value={state[row.field]}
+              placeholder={t(row.placeholderKey)}
+              onChange={(e) => set({ [row.field]: e.target.value })}
+            />
+            <ConceptHint concept={row.concept} />
+          </div>
+        ))}
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="since">{t('concept.period.label')}</Label>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">
-              {t('concept.period.since')}
-            </span>
-            <Input
-              id="since"
-              type="date"
-              value={state.since}
-              onChange={(e) => set({ since: e.target.value })}
-            />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="since">{t('concept.period.label')}</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">
+                {t('concept.period.since')}
+              </span>
+              <Input
+                id="since"
+                type="date"
+                value={state.since}
+                onChange={(e) => set({ since: e.target.value })}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">
+                {t('concept.period.until')}
+              </span>
+              <Input
+                id="until"
+                type="date"
+                value={state.until}
+                onChange={(e) => set({ until: e.target.value })}
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">
-              {t('concept.period.until')}
-            </span>
-            <Input
-              id="until"
-              type="date"
-              value={state.until}
-              onChange={(e) => set({ until: e.target.value })}
-            />
-          </div>
+          <ConceptHint concept="period" />
         </div>
-        <ConceptHint concept="period" />
       </div>
 
       <Separator />
