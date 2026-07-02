@@ -106,7 +106,7 @@ export const ja = {
   // 起動パネル
   'launch.search': 'で検索',
   'launch.loginRequired': '要ログイン',
-  'launch.loginNote': 'X の検索はログインしているブラウザでのみ表示できます',
+  'launch.loginNote': 'ログインしているブラウザでのみ検索結果を表示できます',
   'launch.conditions': '条件',
   'launch.applied': 'を適用',
   'launch.approxHeading': '一部だけ効く条件',
