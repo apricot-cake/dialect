@@ -88,7 +88,7 @@ export const ja = {
   'note.youtube.mediaOnly': 'YouTube はもともと動画だけなので、この絞り込みは不要です',
   'note.youtube.japaneseOnly': 'YouTube には言語で絞る機能がありません',
   'note.youtube.sort':
-    '非公式な指定方法のため、将来使えなくなる可能性があります。人気順は視聴回数順で代用します。ユーザー指定との併用はできません',
+    '人気順は視聴回数順で代用します(非公式)。新しい順は現在YouTube側で効かなくなっています。ユーザー指定との併用はできません',
   'note.note.keywords': 'すべてのことばを含む保証はありません(近い記事も混ざります)',
   'note.note.exactPhrase': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.note.exclude': 'note には除外検索がありません',

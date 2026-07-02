@@ -7,6 +7,9 @@ import { andTermWords, hasOrTerms, hasPositiveTerm, orTermGroups, stripAt, strip
 // 合成値はktsk.xyzのフィールド定義から計算:
 //   sort: 0x08 0x02(アップロード日順) / 0x08 0x03(視聴回数順=人気の近似)
 //   filter{duration}: 0x12 0x02 0x18 0x0N (N=1:短,3:中,2:長)
+// 2026-07-03実機確認: 視聴回数順(CAM系)は単独・長さとの合成とも動作するが、
+// アップロード日順(CAI系)はソートが効かなくなっている(関連度のまま)。
+// 復活の可能性に賭けて送信は続けるが、実質なりゆき表示になる。
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
 const SP_SORT: Record<'new' | 'top', string> = {
   new: 'CAI%3D',
