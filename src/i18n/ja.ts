@@ -64,6 +64,13 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
+  // テンプレート
+  'template.heading': 'よく使う型:',
+  'template.reputation': '評判・口コミを調べる',
+  'template.live': 'いま起きていることを追う',
+  'template.media': '写真・動画を探す',
+  'template.clear': '条件をクリア',
+
   // 保存検索・履歴
   'saved.save': 'この条件を保存',
   'saved.title': '保存した検索',

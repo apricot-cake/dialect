@@ -8,6 +8,7 @@ import {
   recordHistory,
   saveSearch,
 } from '@/core/storage'
+import { applyTemplate, TEMPLATES } from '@/core/templates'
 import { hasPositiveTerm } from '@/core/text'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
@@ -55,11 +56,36 @@ export default function App() {
         </header>
 
         <main className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
-          <Card>
-            <CardContent>
-              <QueryBuilder state={state} onChange={setState} />
-            </CardContent>
-          </Card>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-muted-foreground">
+                {t('template.heading')}
+              </span>
+              {TEMPLATES.map((template) => (
+                <Button
+                  key={template.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setState(applyTemplate(state, template))}
+                >
+                  {t(template.labelKey)}
+                </Button>
+              ))}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                onClick={() => setState(defaultState())}
+              >
+                {t('template.clear')}
+              </Button>
+            </div>
+            <Card>
+              <CardContent>
+                <QueryBuilder state={state} onChange={setState} />
+              </CardContent>
+            </Card>
+          </div>
 
           <div className="flex flex-col gap-3">
             {!hasPositiveTerm(state) && (
