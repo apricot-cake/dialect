@@ -22,10 +22,9 @@ export const ja = {
   'concept.japaneseOnly.label': '日本語の投稿だけ',
   'concept.newestFirst.label': '新しい順に表示',
 
-  // 対応状況
-  'support.full': '対応',
-  'support.partial': '一部対応',
-  'support.none': '非対応',
+  // 対応状況(制限がある場合のみ、入力欄の下に表示)
+  'hint.unsupported': 'では使えません',
+  'hint.limited': 'では一部制限があります',
 
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。ことばと組み合わせてください',

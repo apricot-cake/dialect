@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
-import { SupportDots } from './SupportDots'
+import { ConceptHint } from './ConceptHint'
 
 interface Props {
   state: QueryState
@@ -70,24 +70,19 @@ export function QueryBuilder({ state, onChange }: Props) {
     <div className="flex flex-col gap-5">
       {TEXT_ROWS.map((row) => (
         <div key={row.concept} className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between">
-            <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
-            <SupportDots concept={row.concept} />
-          </div>
+          <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
           <Input
             id={row.field}
             value={state[row.field]}
             placeholder={t(row.placeholderKey)}
             onChange={(e) => set({ [row.field]: e.target.value })}
           />
+          <ConceptHint concept={row.concept} />
         </div>
       ))}
 
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="since">{t('concept.period.label')}</Label>
-          <SupportDots concept="period" />
-        </div>
+        <Label htmlFor="since">{t('concept.period.label')}</Label>
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">
@@ -112,13 +107,14 @@ export function QueryBuilder({ state, onChange }: Props) {
             />
           </div>
         </div>
+        <ConceptHint concept="period" />
       </div>
 
       <Separator />
 
       <div className="flex flex-col gap-4">
         {TOGGLE_ROWS.map((row) => (
-          <div key={row.concept} className="flex items-center justify-between">
+          <div key={row.concept} className="flex flex-col gap-1">
             <div className="flex items-center gap-3">
               <Switch
                 id={row.field}
@@ -127,7 +123,9 @@ export function QueryBuilder({ state, onChange }: Props) {
               />
               <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
             </div>
-            <SupportDots concept={row.concept} />
+            <div className="pl-11">
+              <ConceptHint concept={row.concept} />
+            </div>
           </div>
         ))}
       </div>
