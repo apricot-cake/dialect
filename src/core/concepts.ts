@@ -9,6 +9,7 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   exclude: 'concept.exclude.label',
   titleOnly: 'concept.titleOnly.label',
   fromUser: 'concept.fromUser.label',
+  excludeUser: 'concept.excludeUser.label',
   toUser: 'concept.toUser.label',
   mentionsUser: 'concept.mentionsUser.label',
   subreddit: 'concept.subreddit.label',
@@ -49,6 +50,7 @@ export const FIELDS: FieldDef[] = [
   { concept: 'japaneseOnly', field: 'japaneseOnly', widget: 'toggle', labelKey: 'concept.japaneseOnly.label' },
   { concept: 'newestFirst', field: 'newestFirst', widget: 'toggle', labelKey: 'concept.newestFirst.label' },
   { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', placeholderKey: 'concept.toUser.placeholder' },
+  { concept: 'excludeUser', field: 'excludeUser', widget: 'text', labelKey: 'concept.excludeUser.label', placeholderKey: 'concept.excludeUser.placeholder' },
   { concept: 'minLikes', field: 'minLikes', widget: 'number', labelKey: 'concept.minLikes.label', placeholderKey: 'concept.minLikes.placeholder' },
   { concept: 'minReposts', field: 'minReposts', widget: 'number', labelKey: 'concept.minReposts.label', placeholderKey: 'concept.minReposts.placeholder' },
   { concept: 'excludeReplies', field: 'excludeReplies', widget: 'toggle', labelKey: 'concept.excludeReplies.label' },
@@ -68,6 +70,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
   if (state.fromUser.trim()) active.push('fromUser')
+  if (state.excludeUser.trim()) active.push('excludeUser')
   if (state.toUser.trim()) active.push('toUser')
   if (state.mentionsUser.trim()) active.push('mentionsUser')
   if (state.subreddit.trim()) active.push('subreddit')
@@ -94,6 +97,7 @@ export function defaultState(): QueryState {
     exclude: '',
     titleOnly: false,
     fromUser: '',
+    excludeUser: '',
     toUser: '',
     mentionsUser: '',
     subreddit: '',

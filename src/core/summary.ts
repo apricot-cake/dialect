@@ -15,6 +15,9 @@ export function summarize(state: QueryState): string {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)
   }
   if (state.fromUser.trim()) parts.push(`@${stripAt(state.fromUser)}`)
+  if (state.excludeUser.trim()) {
+    parts.push(...words(state.excludeUser).map((u) => `-@${stripAt(u)}`))
+  }
   if (state.toUser.trim()) parts.push(`→@${stripAt(state.toUser)}`)
   if (state.mentionsUser.trim()) parts.push(`@${stripAt(state.mentionsUser)}宛`)
   if (state.subreddit.trim()) parts.push(`r/${state.subreddit.trim()}`)

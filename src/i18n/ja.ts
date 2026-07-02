@@ -21,6 +21,8 @@ export const ja = {
   'concept.titleOnly.label': 'タイトルだけで探す',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
   'concept.fromUser.placeholder': '例: nhk_news (@は不要)',
+  'concept.excludeUser.label': 'このユーザーの投稿を除く',
+  'concept.excludeUser.placeholder': '例: nhk_news (@は不要、スペース区切りで複数)',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
   'concept.toUser.placeholder': '例: nhk_news (@は不要)',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',

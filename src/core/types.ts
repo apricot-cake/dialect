@@ -8,6 +8,7 @@ export type ConceptId =
   | 'exclude'
   | 'titleOnly'
   | 'fromUser'
+  | 'excludeUser'
   | 'toUser'
   | 'mentionsUser'
   | 'subreddit'
@@ -43,6 +44,7 @@ export interface QueryState {
   exclude: string
   titleOnly: boolean
   fromUser: string
+  excludeUser: string
   toUser: string
   mentionsUser: string
   subreddit: string

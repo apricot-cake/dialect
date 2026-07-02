@@ -18,6 +18,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
+  parts.push(...words(state.excludeUser).map((u) => `-from:${stripAt(u)}`))
   if (state.toUser.trim()) parts.push(`to:${stripAt(state.toUser)}`)
   if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
   if (state.since) parts.push(`since:${state.since}`)
@@ -46,6 +47,7 @@ export const x: PlatformDef = {
     exactPhrase: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'full' },
+    excludeUser: { level: 'full' },
     toUser: { level: 'full' },
     hashtag: { level: 'full' },
     period: { level: 'full', noteKey: 'note.x.period' },

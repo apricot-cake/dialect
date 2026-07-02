@@ -21,6 +21,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
+  if (state.excludeUser.trim()) params.set('exfr', state.excludeUser.trim())
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
@@ -58,6 +59,7 @@ export function paramsToState(params: URLSearchParams): QueryState {
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
   state.fromUser = params.get('fr') ?? ''
+  state.excludeUser = params.get('exfr') ?? ''
   state.toUser = params.get('to') ?? ''
   state.mentionsUser = params.get('men') ?? ''
   state.subreddit = params.get('sub') ?? ''
