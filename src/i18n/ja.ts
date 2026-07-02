@@ -7,8 +7,8 @@ export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'すべて含むことば',
   'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
-  'concept.exactPhrase.label': 'この通りの語句',
-  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
+  'concept.exactPhrase.label': '完全一致で探す',
+  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま探します)',
   'concept.exclude.label': '除外することば',
   'concept.exclude.placeholder': '例: 広告 PR (スペース区切りで複数)',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
