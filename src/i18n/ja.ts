@@ -1,19 +1,19 @@
 // Dialect の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
   // 検索概念(ビルダーの各行)
-  'concept.keywords.label': 'ことば',
+  'concept.keywords.label': 'キーワード',
   'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
   'concept.orAny.label': 'どれかを含む指定',
   'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
-  'concept.terms.addRow': 'ことばの行を追加',
+  'concept.terms.addRow': 'キーワードの行を追加',
   'concept.terms.removeRow': 'この行を削除',
   'concept.terms.multiNote':
     '行が2つ以上あるときは、すべての行の条件を満たす投稿を探します',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま。スペース区切りで複数)',
-  'concept.exclude.label': '除外することば',
+  'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告 PR (スペース区切りで複数)',
   'concept.titleOnly.label': 'タイトルだけで探す',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
@@ -62,7 +62,7 @@ export const ja = {
   'builder.removeField': 'この条件を外す',
 
   // 複数プラットフォーム共通の注記
-  'note.loose.and': 'すべてのことばを含む保証はありません',
+  'note.loose.and': 'すべてのキーワードを含む保証はありません',
   'note.loose.exact': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.exact.unreliable': '完全一致は効かない場合があります',
   'note.hashtag.askeyword': 'ふつうのキーワードとして検索されます',
@@ -72,7 +72,7 @@ export const ja = {
   'note.jaOnly.service': '日本語のサービスなので、この絞り込みは不要です',
 
   // プラットフォーム別の注記
-  'note.x.period': '期間だけの検索はできません。ことばと組み合わせてください',
+  'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
   'note.x.unofficial': '非公式な機能のため、将来使えなくなる可能性があります',
   'note.unofficial': '非公式な指定方法のため、将来使えなくなる可能性があります',
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
@@ -89,7 +89,7 @@ export const ja = {
   'note.youtube.japaneseOnly': 'YouTube には言語で絞る機能がありません',
   'note.youtube.sort':
     '人気順は視聴回数順で代用します(非公式)。新しい順は現在YouTube側で効かなくなっています。ユーザー指定との併用はできません',
-  'note.note.keywords': 'すべてのことばを含む保証はありません(近い記事も混ざります)',
+  'note.note.keywords': 'すべてのキーワードを含む保証はありません(近い記事も混ざります)',
   'note.note.exactPhrase': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.note.exclude': 'note には除外検索がありません',
   'note.note.fromUser': 'ユーザー名は note ID (@のあとの部分) です',
@@ -101,7 +101,7 @@ export const ja = {
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
   'note.reddit.period': '「1日以内/1週間/1か月/1年以内」への丸めになります',
-  'note.threads.fromUser': 'ことばと組み合わせたときの動作は不安定なことがあります',
+  'note.threads.fromUser': 'キーワードと組み合わせたときの動作は不安定なことがあります',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
 
   // 起動パネルのグループ見出し
