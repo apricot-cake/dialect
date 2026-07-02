@@ -64,6 +64,13 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
+  // 保存検索・履歴
+  'saved.save': 'この条件を保存',
+  'saved.title': '保存した検索',
+  'saved.delete': '削除',
+  'history.title': '最近ひらいた検索',
+  'summary.exclude': '除外',
+
   // フッター
   'footer.disclaimer':
     '検索構文は各SNSの非公式な仕様に基づくため、予告なく動かなくなることがあります。',

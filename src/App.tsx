@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { defaultState } from '@/core/concepts'
 import { paramsToState, permalinkUrl, stateToParams } from '@/core/permalink'
+import {
+  deleteSaved,
+  loadHistory,
+  loadSaved,
+  recordHistory,
+  saveSearch,
+} from '@/core/storage'
 import { hasPositiveTerm } from '@/core/text'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
@@ -9,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { QueryBuilder } from '@/components/QueryBuilder'
 import { LaunchPanel } from '@/components/LaunchPanel'
+import { SavedSearches } from '@/components/SavedSearches'
 
 function initialState(): QueryState {
   if (location.search) {
@@ -21,6 +29,8 @@ export default function App() {
   const [state, setState] = useState<QueryState>(initialState)
   const [copied, setCopied] = useState(false)
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [saved, setSaved] = useState(loadSaved)
+  const [historyEntries, setHistoryEntries] = useState(loadHistory)
 
   // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)
   useEffect(() => {
@@ -57,10 +67,28 @@ export default function App() {
                 {t('launch.noQuery')}
               </p>
             )}
-            <LaunchPanel state={state} />
-            <Button variant="outline" onClick={copyPermalink}>
-              {copied ? t('share.copied') : t('share.copyLink')}
-            </Button>
+            <LaunchPanel
+              state={state}
+              onLaunch={() => setHistoryEntries(recordHistory(state))}
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                disabled={!hasPositiveTerm(state)}
+                onClick={() => setSaved(saveSearch(state))}
+              >
+                {t('saved.save')}
+              </Button>
+              <Button variant="outline" onClick={copyPermalink}>
+                {copied ? t('share.copied') : t('share.copyLink')}
+              </Button>
+            </div>
+            <SavedSearches
+              saved={saved}
+              history={historyEntries}
+              onRestore={setState}
+              onDelete={(params) => setSaved(deleteSaved(params))}
+            />
           </div>
         </main>
 

@@ -35,7 +35,13 @@ function ConceptNote({
   )
 }
 
-export function LaunchPanel({ state }: { state: QueryState }) {
+export function LaunchPanel({
+  state,
+  onLaunch,
+}: {
+  state: QueryState
+  onLaunch?: () => void
+}) {
   return (
     <div className="flex flex-col gap-3">
       {PLATFORMS.map((platform) => {
@@ -108,6 +114,7 @@ export function LaunchPanel({ state }: { state: QueryState }) {
                 disabled={!resolution.url}
                 onClick={() => {
                   if (resolution.url) {
+                    onLaunch?.()
                     window.open(resolution.url, '_blank', 'noopener,noreferrer')
                   }
                 }}
