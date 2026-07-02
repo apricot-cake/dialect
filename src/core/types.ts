@@ -38,6 +38,8 @@ export interface ConceptSupport {
   noteKey?: MessageKey
 }
 
+export type PlatformGroup = 'sns' | 'video' | 'text'
+
 export type PlatformId =
   | 'x'
   | 'bluesky'
@@ -53,6 +55,7 @@ export type PlatformId =
 export interface PlatformDef {
   id: PlatformId
   name: string
+  group: PlatformGroup
   /** ボタン等に使うブランドカラー */
   brandColor: string
   requiresLogin: boolean

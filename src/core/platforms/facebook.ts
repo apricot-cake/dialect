@@ -17,6 +17,7 @@ function buildUrl(state: QueryState): string | null {
 export const facebook: PlatformDef = {
   id: 'facebook',
   name: 'Facebook',
+  group: 'sns',
   brandColor: '#1877f2',
   requiresLogin: true,
   support: {

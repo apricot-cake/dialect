@@ -39,6 +39,7 @@ function buildUrl(state: QueryState): string | null {
 export const reddit: PlatformDef = {
   id: 'reddit',
   name: 'Reddit',
+  group: 'text',
   brandColor: '#ff4500',
   requiresLogin: false,
   support: {

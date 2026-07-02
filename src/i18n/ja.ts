@@ -67,6 +67,11 @@ export const ja = {
   'note.threads.fromUser': 'ことばと組み合わせたときの動作は不安定なことがあります',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
 
+  // 起動パネルのグループ見出し
+  'group.sns': 'SNS',
+  'group.video': '動画',
+  'group.text': 'ブログ・掲示板',
+
   // 起動パネル
   'launch.search': 'で検索',
   'launch.loginRequired': '要ログイン',

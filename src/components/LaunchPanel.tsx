@@ -1,8 +1,14 @@
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
-import type { ConceptId, QueryState } from '@/core/types'
+import type { ConceptId, PlatformGroup, QueryState } from '@/core/types'
 import { t, type MessageKey } from '@/i18n'
+
+const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
+  { group: 'sns', labelKey: 'group.sns' },
+  { group: 'video', labelKey: 'group.video' },
+  { group: 'text', labelKey: 'group.text' },
+]
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -43,8 +49,35 @@ export function LaunchPanel({
   onLaunch?: () => void
 }) {
   return (
+    <div className="flex flex-col gap-4">
+      {GROUPS.map(({ group, labelKey }) => (
+        <section key={group} className="flex flex-col gap-2">
+          <h2 className="text-xs font-medium text-muted-foreground">
+            {t(labelKey)}
+          </h2>
+          <PlatformCards
+            platforms={PLATFORMS.filter((p) => p.group === group)}
+            state={state}
+            onLaunch={onLaunch}
+          />
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function PlatformCards({
+  platforms,
+  state,
+  onLaunch,
+}: {
+  platforms: typeof PLATFORMS
+  state: QueryState
+  onLaunch?: () => void
+}) {
+  return (
     <div className="flex flex-col gap-3">
-      {PLATFORMS.map((platform) => {
+      {platforms.map((platform) => {
         const resolution = resolve(platform, state)
         const activeCount =
           resolution.applied.length +

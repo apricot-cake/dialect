@@ -22,6 +22,7 @@ function buildUrl(state: QueryState): string | null {
 export const instagram: PlatformDef = {
   id: 'instagram',
   name: 'Instagram',
+  group: 'sns',
   brandColor: '#833ab4',
   requiresLogin: true,
   support: {

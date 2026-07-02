@@ -25,6 +25,7 @@ function buildUrl(state: QueryState): string | null {
 export const x: PlatformDef = {
   id: 'x',
   name: 'X',
+  group: 'sns',
   brandColor: '#0f1419',
   requiresLogin: true,
   support: {

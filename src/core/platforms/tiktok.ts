@@ -23,6 +23,7 @@ function buildUrl(state: QueryState): string | null {
 export const tiktok: PlatformDef = {
   id: 'tiktok',
   name: 'TikTok',
+  group: 'video',
   brandColor: '#fe2c55',
   requiresLogin: false,
   support: {

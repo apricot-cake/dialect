@@ -39,6 +39,7 @@ function buildUrl(state: QueryState): string | null {
 export const niconico: PlatformDef = {
   id: 'niconico',
   name: 'niconico',
+  group: 'video',
   brandColor: '#252525',
   requiresLogin: false,
   support: {

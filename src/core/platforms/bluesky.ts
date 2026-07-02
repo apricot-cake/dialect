@@ -25,6 +25,7 @@ function buildUrl(state: QueryState): string | null {
 export const bluesky: PlatformDef = {
   id: 'bluesky',
   name: 'Bluesky',
+  group: 'sns',
   brandColor: '#0085ff',
   requiresLogin: false,
   support: {

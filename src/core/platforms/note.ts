@@ -26,6 +26,7 @@ function buildUrl(state: QueryState): string | null {
 export const note: PlatformDef = {
   id: 'note',
   name: 'note',
+  group: 'text',
   brandColor: '#13b5b1',
   requiresLogin: false,
   support: {

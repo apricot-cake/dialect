@@ -30,6 +30,7 @@ function buildUrl(state: QueryState): string | null {
 export const youtube: PlatformDef = {
   id: 'youtube',
   name: 'YouTube',
+  group: 'video',
   brandColor: '#ff0033',
   requiresLogin: false,
   support: {

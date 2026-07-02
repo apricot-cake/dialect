@@ -31,6 +31,7 @@ function buildUrl(state: QueryState): string | null {
 export const threads: PlatformDef = {
   id: 'threads',
   name: 'Threads',
+  group: 'sns',
   brandColor: '#101010',
   requiresLogin: true,
   support: {
