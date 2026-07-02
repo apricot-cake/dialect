@@ -38,7 +38,17 @@ export interface ConceptSupport {
   noteKey?: MessageKey
 }
 
-export type PlatformId = 'x' | 'bluesky' | 'youtube' | 'note'
+export type PlatformId =
+  | 'x'
+  | 'bluesky'
+  | 'youtube'
+  | 'note'
+  | 'niconico'
+  | 'threads'
+  | 'instagram'
+  | 'tiktok'
+  | 'facebook'
+  | 'reddit'
 
 export interface PlatformDef {
   id: PlatformId

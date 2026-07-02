@@ -237,3 +237,38 @@ https://note.com/search?context=note&q=<URLエンコード済みクエリ>&sort=
 - Bluesky: [公式検索ブログ](https://bsky.social/about/blog/05-31-2024-search)(唯一の公式演算子ドキュメント)、atproto lexicons(searchPosts/V2)、social-appソースコード、無認証API実測(2026-07-02)
 - YouTube: [公式ヘルプ(検索フィルタ)](https://support.google.com/youtube/answer/111997)、Data API公式、ktsk.xyz(spのprotobuf解析)、SerpApi、ppc.land(2026-01フィルタ再編)、control-panel-for-youtube
 - note: note.com実測フェッチ(2026-07-02)、[公式リリース(from:@)](https://note.com/info/n/n216550eab71e)、公式ヘルプ(除外非対応の明言)、karupoimou検索フォーム調査
+
+---
+
+# 追加調査: 6プラットフォーム(2026-07-02)
+
+プロダクト原則「キーワード入りの検索URLが開ければ追加する」に基づく拡張調査。6サイト全てで検索URLの存在を確認し、全て追加した。
+
+## 追加サイトの概要
+
+| | 検索URL | ログイン | 演算子の濃さ |
+|---|---|---|---|
+| niconico | `nicovideo.jp/search/{query}` | 不要 | **豊富**(AND/完全一致/除外/任意期間/ソート全てURL可・実測27パターン) |
+| Reddit | `reddit.com/search/?q=` | 不要(デスクトップ) | **豊富**(AND/NOT/author:/title:は公式仕様。期間はt=プリセットのみ) |
+| Threads | `threads.com/search?q=` | **必要** | 薄い(filter=recent と from_author= のみ。q内演算子なし) |
+| TikTok | `tiktok.com/search?q=` | 不要(モーダルは閉じられる) | 薄い(引用符が一部効く程度。ソート・期間はURL不可) |
+| Instagram | `instagram.com/explore/search/keyword/?q=` | **必要**(即ログインウォール) | ほぼゼロ(タグページは人気投稿のみ・Recent廃止) |
+| Facebook | `facebook.com/search/top/?q=` | **必要** | ほぼゼロ(引用符が中信頼で効く。filters=base64は非公開仕様で不採用) |
+
+## シリアライザの要点
+
+- **niconico**: `sort=f&order=d`(新着)/`sort=h`(人気)。デフォルトソートはABテスト依存のため常に明示。任意期間は `start=YYYY-MM-DD&end=YYYY-MM-DD`(実測済)。タグ単独→`/tag/{tag}`、併用時はキーワードに畳み込み。除外`-語`はタグページでも有効。ユーザー指定の演算子は存在しない
+- **Reddit**: スペース区切りは緩い一致のため、キーワードを ` AND ` で明示結合して厳密化。除外は公式構文 `NOT (a OR b)`。ユーザーは `author:`。ソートは `sort=new`。期間は `t=day|week|month|year|all` への丸め(sinceから自動選択)。old.reddit.comは2026年8月からログイン必須化予定のため使わない
+- **Threads**: `filter=recent`(新着)と `from_author={user}`(2026-04実URL確認)。threads.net→threads.comに301(クエリ保持)。タグ単独→`/tag/{tag}`(ログアウトでも一部表示される唯一の経路)。期間はUIフィルタのみでURL不可
+- **TikTok**: `search?q=` のみ。タグ単独→`/tag/{tag}`。除外・期間・ソートは内部APIパラメータでURL非公開。`from:`相当なし
+- **Instagram**: `explore/search/keyword/?q=`(スクレイパー各社が常用する事実上の標準)。タグ単独→`/explore/tags/{tag}/`(**人気投稿のみ**)。演算子ゼロ。未ログインは検索・タグとも即リダイレクト(実測)
+- **Facebook**: `search/top/?q=` が最安全(`search/posts` はUIから削除済みで将来リスク)。`filters=`(base64の内部仕様)による最新順・日付は キー名の変遷歴があり不採用。引用符はある程度効く(中信頼)
+
+## 参考ソース(抜粋)
+
+- niconico: [スナップショット検索v2 APIガイド](https://site.nicovideo.jp/search-api-docs/snapshot)(AND/OR/-/フレーズの公式仕様)、非ログインcurl実測27パターン(2026-07-02)、ニコニコ大百科(マイナス検索)
+- Reddit: [公式ヘルプ Available search features](https://support.reddithelp.com/hc/en-us/articles/19696541895316)(Boolean/フィールド演算子)、Slashdot/Softonic(old.reddit ログイン必須化 2026-07-01発表)
+- Threads: TechCrunch(threads.com移行 2025-04)、Raycast quicklinks・自動化プロジェクト(URL形式)、実測(301リダイレクト・ログアウト挙動)
+- TikTok: ScrapFly 2026(URL形式・anti-bot)、team5pm(演算子)、tokportal/droid4x(非ログイン閲覧の実態)
+- Instagram: axiom.ai/Apify(keyword SERPのURL形式・Cookie必須)、実測(未ログイン即リダイレクト 2026-07-02)、Later/SMT(Recentタブ廃止)
+- Facebook: PiunikaWeb(Postsフィルタ削除 2025-09)、Plessas Facebook Matrix(URLテンプレート)、nem.ec(filters= JSON仕様)

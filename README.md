@@ -12,6 +12,12 @@ https://apricot-cake.github.io/dialect/
 | Bluesky | `bsky.app/search` | 不要 |
 | YouTube | `youtube.com/results` | 不要 |
 | note | `note.com/search` | 不要 |
+| niconico | `nicovideo.jp/search` | 不要 |
+| Threads | `threads.com/search` | 必要 |
+| Instagram | `instagram.com/explore/search` | 必要 |
+| TikTok | `tiktok.com/search` | 不要 |
+| Facebook | `facebook.com/search/top` | 必要 |
+| Reddit | `reddit.com/search` | 不要 |
 
 各プラットフォームの演算子対応状況は組み立て中にリアルタイムで表示されます(緑=対応 / 黄=一部対応 / 灰=非対応)。非対応の条件は起動時に自動で外され、何が外れるかは事前に明示されます。
 

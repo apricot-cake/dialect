@@ -24,6 +24,18 @@ export const ja = {
   // 対応状況(制限がある場合のみ、入力欄の下に表示)
   'hint.unsupported': 'では使えません',
   'hint.limited': 'では一部制限があります',
+  'hint.only.suffix': 'で使えます',
+  'hint.only.partial': 'は一部制限',
+
+  // 複数プラットフォーム共通の注記
+  'note.loose.and': 'すべてのことばを含む保証はありません',
+  'note.loose.exact': '完全一致は効かず、ふつうのキーワードとして検索されます',
+  'note.exact.unreliable': '完全一致は効かない場合があります',
+  'note.hashtag.askeyword': 'ふつうのキーワードとして検索されます',
+  'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
+  'note.nosort': '新しい順はURLでは指定できません',
+  'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
+  'note.jaOnly.service': '日本語のサービスなので、この絞り込みは不要です',
 
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。ことばと組み合わせてください',
@@ -48,6 +60,12 @@ export const ja = {
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
   'note.note.japaneseOnly': 'note は日本語のサービスなので、この絞り込みは不要です',
+
+  // 追加プラットフォーム固有の注記
+  'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
+  'note.reddit.period': '「1日以内/1週間/1か月/1年以内」への丸めになります',
+  'note.threads.fromUser': 'ことばと組み合わせたときの動作は不安定なことがあります',
+  'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
 
   // 起動パネル
   'launch.search': 'で検索',
