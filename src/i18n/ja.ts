@@ -31,7 +31,7 @@ export const ja = {
   'note.bluesky.fromUser': 'ユーザー名は「user.bsky.social」の形式です',
   'note.bluesky.mediaOnly': 'Bluesky には画像・動画で絞る機能がありません',
   'note.bluesky.newestFirst': '非公式なURL指定のため、将来使えなくなる可能性があります',
-  'note.youtube.exactPhrase': '完全一致が厳密に効かない場合があります',
+  'note.youtube.exactPhrase': '完全一致は効かないことが多くあります',
   'note.youtube.exclude': '除外が効かない場合があります',
   'note.youtube.fromUser': 'チャンネル内検索ページを開きます',
   'note.youtube.hashtag': 'ふつうのキーワードとして検索されます',
