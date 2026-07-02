@@ -42,7 +42,6 @@ export default function App() {
           <h1 className="text-3xl font-bold tracking-tight">
             {t('app.title')}
           </h1>
-          <p className="text-lg font-medium">{t('app.tagline')}</p>
           <p className="text-sm text-muted-foreground">
             {t('app.description')}
           </p>
