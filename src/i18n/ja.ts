@@ -1,6 +1,5 @@
 // Dialect の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
-  'app.title': 'Dialect',
   'app.description':
     '条件を日本語で組み立てると、Dialect が各SNSの検索構文に翻訳して検索ページを開きます。',
 
