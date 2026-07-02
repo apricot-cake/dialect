@@ -135,12 +135,6 @@ function PlatformCards({
                 </ul>
               )}
 
-              {resolution.url && (
-                <code className="rounded bg-muted px-2 py-1 text-[11px] leading-relaxed break-all text-muted-foreground">
-                  {resolution.url}
-                </code>
-              )}
-
               <Button
                 className="w-full text-white"
                 style={{ backgroundColor: platform.brandColor }}
