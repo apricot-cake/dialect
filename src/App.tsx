@@ -35,6 +35,8 @@ export default function App() {
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)
   const [historyEntries, setHistoryEntries] = useState(loadHistory)
+  // 「条件をクリア」でビルダーを再マウントし、追加した条件フィールドも畳む
+  const [builderGeneration, setBuilderGeneration] = useState(0)
   const [hidden, setHidden] = useState<PlatformId[]>(loadHiddenPlatforms)
 
   // 使わないサイトのON/OFF。選択はlocalStorageに記憶する。全OFFにはさせない
@@ -72,7 +74,10 @@ export default function App() {
               variant="ghost"
               size="sm"
               className="text-muted-foreground"
-              onClick={() => setState(defaultState())}
+              onClick={() => {
+                setState(defaultState())
+                setBuilderGeneration((g) => g + 1)
+              }}
             >
               {t('builder.clear')}
             </Button>
@@ -81,6 +86,7 @@ export default function App() {
           <Card>
             <CardContent>
               <QueryBuilder
+                key={builderGeneration}
                 state={state}
                 onChange={setState}
                 platforms={enabledPlatforms}

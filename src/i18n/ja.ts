@@ -52,11 +52,14 @@ export const ja = {
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.auto': 'おまかせ',
 
-  // ビルダーのセクション・サイト絞り込み
+  // ビルダーのセクション・サイト絞り込み・条件の追加
   'builder.filter.label': 'サイトで絞る:',
   'builder.filter.all': 'すべて',
   'builder.section.common': '共通',
   'builder.section.only': '専用',
+  'builder.addField': '条件を追加',
+  'builder.addField.empty': '追加できる条件はありません',
+  'builder.removeField': 'この条件を外す',
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': 'すべてのことばを含む保証はありません',
