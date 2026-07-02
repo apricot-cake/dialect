@@ -1,12 +1,9 @@
 // Dialect の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
-  'app.description':
-    '条件を日本語で組み立てると、Dialect が各SNSの検索構文に翻訳して検索ページを開きます。',
-
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'ことば',
   'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
-  'concept.orAny.label': 'どれかを含むことば',
+  'concept.orAny.label': 'どれかを含む指定',
   'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
@@ -15,7 +12,7 @@ export const ja = {
   'concept.terms.multiNote':
     '行が2つ以上あるときは、すべての行の条件を満たす投稿を探します',
   'concept.exactPhrase.label': '完全一致で探す',
-  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま探します)',
+  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま。スペース区切りで複数)',
   'concept.exclude.label': '除外することば',
   'concept.exclude.placeholder': '例: 広告 PR (スペース区切りで複数)',
   'concept.titleOnly.label': 'タイトルだけで探す',
@@ -24,15 +21,15 @@ export const ja = {
   'concept.excludeUser.label': 'このユーザーの投稿を除く',
   'concept.excludeUser.placeholder': '例: nhk_news (@は不要、スペース区切りで複数)',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
-  'concept.toUser.placeholder': '例: nhk_news (@は不要)',
+  'concept.toUser.placeholder': '例: nhk_news (@は不要、スペース区切りで複数=どれか宛て)',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
   'concept.subreddit.label': 'このコミュニティの中だけ',
-  'concept.subreddit.placeholder': '例: japan (r/は不要)',
+  'concept.subreddit.placeholder': '例: japan (r/は不要、スペース区切りで複数=どれか)',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.hashtag.label': 'ハッシュタグ',
-  'concept.hashtag.placeholder': '例: 読書記録 (#は不要)',
+  'concept.hashtag.placeholder': '例: 読書記録 (#は不要、スペース区切りで複数)',
   'concept.period.label': '期間',
   'concept.period.since': 'この日から',
   'concept.period.until': 'この日の前まで',

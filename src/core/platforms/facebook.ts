@@ -1,14 +1,16 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, stripHash } from '../text'
+import { andTermWords, modedWords, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索はログイン必須。search/top が最も安全(search/posts はUI削除済みで将来リスク)。
 // filters=(base64)による最新順・日付指定は非公開仕様で不安定なため使わない。
 function buildUrl(state: QueryState): string | null {
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
   const parts: string[] = [...andTermWords(state)]
-  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
-  const tag = stripHash(state.hashtag)
-  if (tag) parts.push(`#${tag}`)
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  if (!phrases.or) parts.push(...phrases.words.map((p) => `"${p}"`))
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  if (!tags.or) parts.push(...tags.words.map((t) => `#${stripHash(t)}`))
   if (parts.length === 0) return null
 
   return `https://www.facebook.com/search/top/?q=${encodeURIComponent(parts.join(' '))}`

@@ -1,4 +1,4 @@
-import type { TermRow } from './types'
+import type { TermMode, TermRow } from './types'
 
 /** 入力文字列の正規化ヘルパー。シリアライザ共通で使う */
 
@@ -31,6 +31,18 @@ export function orTermGroups(state: { terms: TermRow[] }): string[][] {
 /** OR結合が必要な「どれかを含む」行があるか */
 export function hasOrTerms(state: { terms: TermRow[] }): boolean {
   return orTermGroups(state).length > 0
+}
+
+/**
+ * mode付き複数値フィールドの語配列。or=true なら「どれかを含む」(OR結合が必要)。
+ * 1語だけなら mode によらず実質ANDなので or=false
+ */
+export function modedWords(
+  text: string,
+  mode: TermMode,
+): { words: string[]; or: boolean } {
+  const ws = words(text)
+  return { words: ws, or: mode === 'any' && ws.length >= 2 }
 }
 
 /** 先頭の @ を除去したユーザー名 */

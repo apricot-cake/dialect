@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasOrTerms, hasPositiveTerm, orTermGroups, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
@@ -15,12 +15,21 @@ function buildUrl(state: QueryState): string | null {
   for (const group of orTermGroups(state)) {
     parts.push(`(${group.join(' OR ')})`)
   }
-  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const quoted = phrases.words.map((p) => `"${p}"`)
+  if (phrases.or) parts.push(`(${quoted.join(' OR ')})`)
+  else parts.push(...quoted)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
   parts.push(...words(state.excludeUser).map((u) => `-from:${stripAt(u)}`))
-  if (state.toUser.trim()) parts.push(`to:${stripAt(state.toUser)}`)
-  if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
+  // 宛先は複数指定で「どれか宛て」(OR)
+  const tos = words(state.toUser).map((u) => `to:${stripAt(u)}`)
+  if (tos.length >= 2) parts.push(`(${tos.join(' OR ')})`)
+  else parts.push(...tos)
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const hashed = tags.words.map((t) => `#${stripHash(t)}`)
+  if (tags.or) parts.push(`(${hashed.join(' OR ')})`)
+  else parts.push(...hashed)
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
   if (state.mediaOnly) parts.push('filter:media')

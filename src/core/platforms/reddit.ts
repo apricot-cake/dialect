@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasOrTerms, orTermGroups, stripAt, words } from '../text'
+import { andTermWords, hasOrTerms, modedWords, orTermGroups, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -29,21 +29,23 @@ function buildUrl(state: QueryState): string | null {
   }
 
   const clauses: string[] = []
-  if (state.titleOnly) {
-    clauses.push(...andTermWords(state).map((w) => `title:${w}`))
-    if (state.exactPhrase.trim()) clauses.push(`title:"${state.exactPhrase.trim()}"`)
-  } else {
-    clauses.push(...andTermWords(state))
-    if (state.exactPhrase.trim()) clauses.push(`"${state.exactPhrase.trim()}"`)
-  }
+  const field = state.titleOnly ? 'title:' : ''
+  clauses.push(...andTermWords(state).map((w) => `${field}${w}`))
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const quoted = phrases.words.map((p) => `${field}"${p}"`)
+  if (phrases.or) clauses.push(`(${quoted.join(' OR ')})`)
+  else clauses.push(...quoted)
   // 「どれかを含む」行は括弧つきの節にする(Boolean演算子と括弧は公式仕様)
   for (const group of orTermGroups(state)) {
     clauses.push(`(${group.join(' OR ')})`)
   }
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
-  if (state.subreddit.trim()) {
-    clauses.push(`subreddit:${state.subreddit.trim().replace(/^\/?r\//, '')}`)
-  }
+  // コミュニティは複数指定で「どれか」(OR)
+  const subs = words(state.subreddit).map(
+    (s) => `subreddit:${s.replace(/^\/?r\//, '')}`,
+  )
+  if (subs.length >= 2) clauses.push(`(${subs.join(' OR ')})`)
+  else clauses.push(...subs)
   let q = clauses.join(' AND ')
   const excludes = words(state.exclude)
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`

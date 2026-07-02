@@ -1,21 +1,26 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, stripAt, stripHash, words } from '../text'
+import { andTermWords, modedWords, stripAt, stripHash } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
 // ハッシュタグ単独ならタグページ(厳密一致)、他条件と併用時はキーワードとして検索。
 function buildUrl(state: QueryState): string | null {
-  const tag = stripHash(state.hashtag)
   const handle = stripAt(state.fromUser)
-  // 完全一致は効かないため、語句をそのままキーワードとして扱う(近似)
-  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
+  // 完全一致は効かないため、語句をそのままキーワードとして扱う(近似)。
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const textParts = [
+    ...andTermWords(state),
+    ...(phrases.or ? [] : phrases.words),
+  ]
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const tagNames = tags.or ? [] : tags.words.map(stripHash)
 
-  if (tag && !handle && textParts.length === 0) {
-    return `https://note.com/hashtag/${encodeURIComponent(tag)}`
+  if (tagNames.length === 1 && !handle && textParts.length === 0) {
+    return `https://note.com/hashtag/${encodeURIComponent(tagNames[0])}`
   }
 
-  const parts = [...textParts]
-  if (tag) parts.push(tag)
+  const parts = [...textParts, ...tagNames]
   if (handle) parts.push(`from:@${handle}`)
   if (parts.length === 0) return null
 

@@ -106,7 +106,7 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
       const setRows = (next: TermRow[]) =>
         set({ terms: next.length > 0 ? next : [{ text: '', mode: 'all' }] })
       return (
-        <div key={field.concept} className="flex flex-col gap-1.5 md:col-span-2">
+        <div key={field.concept} className="flex flex-col gap-1.5">
           <Label htmlFor="terms-0">{t(field.labelKey)}</Label>
           {rows.map((row, i) => (
             <div key={i} className="flex items-center gap-1.5">
@@ -250,14 +250,35 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
     return (
       <div key={field.concept} className="flex flex-col gap-1.5">
         <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
-        <Input
-          id={field.field}
-          type={field.widget === 'number' ? 'number' : 'text'}
-          min={field.widget === 'number' ? 0 : undefined}
-          value={state[field.field] as string}
-          placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
-          onChange={(e) => set({ [field.field]: e.target.value })}
-        />
+        <div className="flex items-center gap-1.5">
+          <Input
+            id={field.field}
+            className="flex-1"
+            type={field.widget === 'number' ? 'number' : 'text'}
+            min={field.widget === 'number' ? 0 : undefined}
+            value={state[field.field] as string}
+            placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
+            onChange={(e) => set({ [field.field]: e.target.value })}
+          />
+          {field.modeField && (
+            <div className="flex shrink-0 rounded-md border p-0.5">
+              {TERM_MODES.map((m) => (
+                <Button
+                  key={m.value}
+                  variant={
+                    state[field.modeField!] === m.value ? 'secondary' : 'ghost'
+                  }
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  aria-pressed={state[field.modeField!] === m.value}
+                  onClick={() => set({ [field.modeField!]: m.value })}
+                >
+                  {t(m.labelKey)}
+                </Button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     )
   }
@@ -313,12 +334,12 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
               {section.title}
             </h3>
             {inputs.length > 0 && (
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="flex flex-col gap-5">
                 {inputs.map(renderInput)}
               </div>
             )}
             {toggles.length > 0 && (
-              <div className="flex flex-wrap gap-x-8 gap-y-3">
+              <div className="flex flex-col gap-3">
                 {toggles.map(renderToggle)}
               </div>
             )}

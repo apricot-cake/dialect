@@ -66,12 +66,6 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-4 py-10">
-        <header>
-          <p className="text-sm text-muted-foreground">
-            {t('app.description')}
-          </p>
-        </header>
-
         <main className="flex flex-col gap-4">
           <div className="flex justify-end">
             <Button

@@ -43,16 +43,22 @@ export interface TermRow {
 export interface QueryState {
   /** ことば行。常に1行以上 */
   terms: TermRow[]
+  /** スペース区切りで複数の語句。mode に従って結合 */
   exactPhrase: string
+  exactPhraseMode: TermMode
   exclude: string
   titleOnly: boolean
   fromUser: string
   excludeUser: string
+  /** スペース区切りで複数可(どれか宛て=OR) */
   toUser: string
   mentionsUser: string
+  /** スペース区切りで複数可(どれか=OR) */
   subreddit: string
   domain: string
+  /** スペース区切りで複数のタグ。mode に従って結合 */
   hashtag: string
+  hashtagMode: TermMode
   since: string // YYYY-MM-DD
   until: string // YYYY-MM-DD
   mediaOnly: boolean

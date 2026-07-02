@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasPositiveTerm, modedWords, stripAt, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索閲覧はログイン必須(Instagramアカウント共通)。演算子は存在せず、
@@ -8,17 +8,25 @@ import { andTermWords, hasPositiveTerm, stripAt, stripHash, words } from '../tex
 function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
-  const tag = stripHash(state.hashtag)
   const handle = stripAt(state.fromUser)
-  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const textParts = [
+    ...andTermWords(state),
+    ...(phrases.or ? [] : phrases.words),
+  ]
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const tagNames = tags.or ? [] : tags.words.map(stripHash)
 
   // タグ単独ならタグページ(ログアウトでも一部表示される唯一の経路)
-  if (tag && !handle && textParts.length === 0) {
-    return `https://www.threads.com/tag/${encodeURIComponent(tag)}`
+  if (tagNames.length === 1 && !handle && textParts.length === 0) {
+    return `https://www.threads.com/tag/${encodeURIComponent(tagNames[0])}`
   }
 
-  const parts = [...textParts]
-  if (tag) parts.push(`#${tag}`)
+  const parts = [...textParts, ...tagNames.map((t) => `#${t}`)]
+
+  // 「どれか」指定を外した結果、条件が何も残らなければ検索として成立しない
+  if (parts.length === 0 && !handle) return null
 
   const params = new URLSearchParams()
   if (parts.length > 0) params.set('q', parts.join(' '))

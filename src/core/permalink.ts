@@ -17,7 +17,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
       params.append(row.mode === 'any' ? 'or' : 'kw', row.text.trim())
     }
   }
-  if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
+  if (state.exactPhrase.trim()) {
+    params.set('ph', state.exactPhrase.trim())
+    if (state.exactPhraseMode === 'any') params.set('phm', 'any')
+  }
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
@@ -26,7 +29,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
   if (state.domain.trim()) params.set('dom', state.domain.trim())
-  if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
+  if (state.hashtag.trim()) {
+    params.set('tag', state.hashtag.trim())
+    if (state.hashtagMode === 'any') params.set('tagm', 'any')
+  }
   if (state.since) params.set('since', state.since)
   if (state.until) params.set('until', state.until)
   if (state.mediaOnly) params.set('media', '1')
@@ -57,6 +63,7 @@ export function paramsToState(params: URLSearchParams): QueryState {
   ]
   if (terms.length > 0) state.terms = terms
   state.exactPhrase = params.get('ph') ?? ''
+  state.exactPhraseMode = params.get('phm') === 'any' ? 'any' : 'all'
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
   state.fromUser = params.get('fr') ?? ''
@@ -66,6 +73,7 @@ export function paramsToState(params: URLSearchParams): QueryState {
   state.subreddit = params.get('sub') ?? ''
   state.domain = params.get('dom') ?? ''
   state.hashtag = params.get('tag') ?? ''
+  state.hashtagMode = params.get('tagm') === 'any' ? 'any' : 'all'
   state.since = params.get('since') ?? ''
   state.until = params.get('until') ?? ''
   state.mediaOnly = params.get('media') === '1'

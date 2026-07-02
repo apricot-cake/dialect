@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasPositiveTerm, modedWords, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は公式ドキュメントあり(除外 - のみ未文書化・実測動作)。ログイン不要。
@@ -10,15 +10,20 @@ function buildUrl(state: QueryState): string | null {
 
   const parts: string[] = []
   parts.push(...andTermWords(state))
-  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
+  // OR構文がないため、「どれかを含む」指定のフィールドは丸ごと外す(注記はorAny側で出る)
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  if (!phrases.or) parts.push(...phrases.words.map((p) => `"${p}"`))
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
   if (state.mentionsUser.trim()) parts.push(`mentions:${stripAt(state.mentionsUser)}`)
   if (state.domain.trim()) parts.push(`domain:${state.domain.trim()}`)
-  if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  if (!tags.or) parts.push(...tags.words.map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
   if (state.japaneseOnly) parts.push('lang:ja')
+  // 「どれか」指定を外した結果、正の条件が残らなければ検索として成立しない
+  if (parts.every((p) => p.startsWith('-'))) return null
 
   // tab=latest=新しい順。人気順・おまかせは既定のTopタブのまま開く
   const tab = state.sort === 'new' ? '&tab=latest' : ''

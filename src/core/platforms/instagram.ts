@@ -1,19 +1,24 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, stripHash, words } from '../text'
+import { andTermWords, modedWords, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
 // タグ単独ならタグページ(人気投稿のみ)、それ以外はキーワードSERP。
 function buildUrl(state: QueryState): string | null {
-  const tag = stripHash(state.hashtag)
-  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const textParts = [
+    ...andTermWords(state),
+    ...(phrases.or ? [] : phrases.words),
+  ]
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const tagNames = tags.or ? [] : tags.words.map(stripHash)
 
-  if (tag && textParts.length === 0) {
-    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tag)}/`
+  if (tagNames.length === 1 && textParts.length === 0) {
+    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tagNames[0])}/`
   }
 
-  const parts = [...textParts]
-  if (tag) parts.push(`#${tag}`)
+  const parts = [...textParts, ...tagNames.map((t) => `#${t}`)]
   if (parts.length === 0) return null
 
   return `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(parts.join(' '))}`

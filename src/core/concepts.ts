@@ -1,6 +1,6 @@
 import type { MessageKey } from '@/i18n'
 import type { ConceptId, QueryState } from './types'
-import { andTermWords, orTermGroups } from './text'
+import { andTermWords, modedWords, orTermGroups } from './text'
 
 export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   keywords: 'concept.keywords.label',
@@ -34,15 +34,17 @@ export interface FieldDef {
   widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms' | 'sort'
   labelKey: MessageKey
   placeholderKey?: MessageKey
+  /** 指定すると「すべて含む/どれかを含む」の切り替えを入力欄の横に出す */
+  modeField?: 'exactPhraseMode' | 'hashtagMode'
 }
 
 export const FIELDS: FieldDef[] = [
   // ことば行は「すべて含む/どれかを含む」を行ごとに切り替えられる統合ウィジェット
   { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label' },
-  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
+  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder', modeField: 'exactPhraseMode' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', placeholderKey: 'concept.fromUser.placeholder' },
-  { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', placeholderKey: 'concept.hashtag.placeholder' },
+  { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', placeholderKey: 'concept.hashtag.placeholder', modeField: 'hashtagMode' },
   { concept: 'period', field: 'since', widget: 'period', labelKey: 'concept.period.label' },
   { concept: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label' },
   { concept: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label' },
@@ -65,7 +67,15 @@ export const FIELDS: FieldDef[] = [
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
   if (andTermWords(state).length > 0) active.push('keywords')
-  if (orTermGroups(state).length > 0) active.push('orAny')
+  // 「どれかを含む」はことば行に限らず、mode付きフィールドの複数値でも成立する。
+  // OR構文を持たないサイトでは該当フィールドごと外れるため、注記の対象にする
+  if (
+    orTermGroups(state).length > 0 ||
+    modedWords(state.exactPhrase, state.exactPhraseMode).or ||
+    modedWords(state.hashtag, state.hashtagMode).or
+  ) {
+    active.push('orAny')
+  }
   if (state.exactPhrase.trim()) active.push('exactPhrase')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
@@ -96,6 +106,7 @@ export function defaultState(): QueryState {
   return {
     terms: [{ text: '', mode: 'all' }],
     exactPhrase: '',
+    exactPhraseMode: 'all',
     exclude: '',
     titleOnly: false,
     fromUser: '',
@@ -105,6 +116,7 @@ export function defaultState(): QueryState {
     subreddit: '',
     domain: '',
     hashtag: '',
+    hashtagMode: 'all',
     since: '',
     until: '',
     mediaOnly: false,

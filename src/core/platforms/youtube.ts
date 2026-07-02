@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState, VideoLength } from '../types'
-import { andTermWords, hasOrTerms, hasPositiveTerm, orTermGroups, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -34,7 +34,10 @@ function buildUrl(state: QueryState): string | null {
   for (const group of orTermGroups(state)) {
     parts.push(`(${group.join(' | ')})`)
   }
-  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const quoted = phrases.words.map((p) => `"${p}"`)
+  if (phrases.or) parts.push(`(${quoted.join(' | ')})`)
+  else parts.push(...quoted)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.titleOnly) {
     // intitle: は語ごとに付ける(非公式)
@@ -44,7 +47,10 @@ function buildUrl(state: QueryState): string | null {
       }
     }
   }
-  if (state.hashtag.trim()) parts.push(`#${stripHash(state.hashtag)}`)
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const hashed = tags.words.map((t) => `#${stripHash(t)}`)
+  if (tags.or) parts.push(`(${hashed.join(' | ')})`)
+  else parts.push(...hashed)
   if (state.since) parts.push(`after:${state.since}`)
   if (state.until) parts.push(`before:${state.until}`)
   const query = parts.join(' ')

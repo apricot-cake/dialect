@@ -1,12 +1,11 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, orTermGroups, stripHash, words } from '../text'
+import { andTermWords, modedWords, orTermGroups, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
 // デフォルトソートはABテストで変わり得るため sort は常に明示する。
 // タグ単独なら /tag/(タグ一致検索)、ことばと併用時はキーワード検索に畳み込む。
 function buildUrl(state: QueryState): string | null {
-  const tag = stripHash(state.hashtag)
   const textParts: string[] = [...andTermWords(state)]
   // 括弧はリテラル扱いで検索が壊れるため使わない(2026-07-02実測)。
   // OR は隣接語だけを結び、スペースのANDが外側に効くため、
@@ -14,7 +13,14 @@ function buildUrl(state: QueryState): string | null {
   for (const group of orTermGroups(state)) {
     textParts.push(group.join(' OR '))
   }
-  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
+  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
+  const quoted = phrases.words.map((p) => `"${p}"`)
+  if (phrases.or) textParts.push(quoted.join(' OR '))
+  else textParts.push(...quoted)
+  // タグの「どれか」はタグページでは表現できないため、キーワード検索のOR連鎖に畳み込む
+  const tags = modedWords(state.hashtag, state.hashtagMode)
+  const tagNames = tags.words.map(stripHash)
+  if (tags.or) textParts.push(tagNames.join(' OR '))
   const excludes = words(state.exclude).map((w) => `-${w}`)
 
   const params = new URLSearchParams()
@@ -34,14 +40,14 @@ function buildUrl(state: QueryState): string | null {
   const qs = params.toString()
   const query = qs ? `?${qs}` : ''
 
-  // タグ単独(+除外)ならタグ検索。除外はタグページでも有効(実測)
-  if (tag && textParts.length === 0) {
-    const path = [tag, ...excludes].join(' ')
+  // タグ単独(+除外、すべて含む)ならタグ検索。除外はタグページでも有効(実測)
+  if (!tags.or && tagNames.length > 0 && textParts.length === 0) {
+    const path = [...tagNames, ...excludes].join(' ')
     return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}${query}`
   }
 
   const parts = [...textParts]
-  if (tag) parts.push(tag)
+  if (!tags.or) parts.push(...tagNames)
   parts.push(...excludes)
   if (parts.length === 0) return null
 
