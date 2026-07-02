@@ -29,7 +29,8 @@ export type VideoLength = '' | 'short' | 'medium' | 'long'
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
   keywords: string
-  orAny: string
+  /** 「いずれかを含む」行。行内の語は OR、行どうしは AND で結合する。常に1行以上 */
+  orGroups: string[]
   exactPhrase: string
   exclude: string
   titleOnly: boolean

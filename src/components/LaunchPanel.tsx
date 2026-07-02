@@ -1,3 +1,4 @@
+import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
@@ -11,6 +12,7 @@ const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
 ]
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PlatformIcon } from '@/components/PlatformIcon'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Tooltip,
@@ -27,10 +29,15 @@ function ConceptNote({
   noteKey?: MessageKey
   tone: 'approx' | 'dropped'
 }) {
-  const dot = tone === 'approx' ? 'bg-amber-400' : 'bg-zinc-300'
+  const Icon = tone === 'approx' ? TriangleAlert : Ban
   return (
     <li className="flex items-start gap-2 text-xs">
-      <span className={`mt-1 size-2 shrink-0 rounded-full ${dot}`} />
+      <Icon
+        aria-hidden
+        className={`mt-0.5 size-3.5 shrink-0 ${
+          tone === 'approx' ? 'text-amber-500' : 'text-zinc-400'
+        }`}
+      />
       <span>
         <span className="font-medium">{t(CONCEPT_LABEL_KEYS[concept])}</span>
         {noteKey && (
@@ -90,9 +97,10 @@ function PlatformCards({
           <Card key={platform.id} className="py-4">
             <CardContent className="flex flex-col gap-3 px-4">
               <div className="flex items-center gap-2">
-                <span
-                  className="size-3 rounded-full"
-                  style={{ backgroundColor: platform.brandColor }}
+                <PlatformIcon
+                  id={platform.id}
+                  className="size-4 shrink-0"
+                  style={{ color: platform.brandColor }}
                 />
                 <span className="font-semibold">{platform.name}</span>
                 {platform.requiresLogin && (

@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { stripAt, words } from '../text'
+import { hasOrGroup, orGroupWords, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -17,7 +17,14 @@ function tParam(since: string): string {
 }
 
 function buildUrl(state: QueryState): string | null {
-  if (!(state.keywords.trim() || state.exactPhrase.trim() || state.fromUser.trim())) {
+  if (
+    !(
+      state.keywords.trim() ||
+      state.exactPhrase.trim() ||
+      state.fromUser.trim() ||
+      hasOrGroup(state)
+    )
+  ) {
     return null
   }
 
@@ -29,8 +36,10 @@ function buildUrl(state: QueryState): string | null {
     clauses.push(...words(state.keywords))
     if (state.exactPhrase.trim()) clauses.push(`"${state.exactPhrase.trim()}"`)
   }
-  const orWords = words(state.orAny)
-  if (orWords.length > 0) clauses.push(`(${orWords.join(' OR ')})`)
+  // OR グループは括弧つきの節にする(Boolean演算子と括弧は公式仕様)
+  for (const group of orGroupWords(state.orGroups)) {
+    clauses.push(group.length === 1 ? group[0] : `(${group.join(' OR ')})`)
+  }
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
   if (state.subreddit.trim()) {
     clauses.push(`subreddit:${state.subreddit.trim().replace(/^\/?r\//, '')}`)

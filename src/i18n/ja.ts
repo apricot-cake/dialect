@@ -8,6 +8,11 @@ export const ja = {
   'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
   'concept.orAny.label': 'いずれかを含むことば',
   'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
+  'concept.orAny.placeholderMore': '例: 停電 断水 (この行からもどれか1つ)',
+  'concept.orAny.addRow': '「いずれか」の行を追加',
+  'concept.orAny.removeRow': 'この行を削除',
+  'concept.orAny.multiNote':
+    '行が2つ以上あるときは、どの行のことばも1つ以上含む投稿を探します',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま探します)',
   'concept.exclude.label': '除外することば',

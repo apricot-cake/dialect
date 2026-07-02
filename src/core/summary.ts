@@ -6,7 +6,10 @@ import { stripAt, stripHash, words } from './text'
 export function summarize(state: QueryState): string {
   const parts: string[] = []
   if (state.keywords.trim()) parts.push(words(state.keywords).join(' '))
-  if (state.orAny.trim()) parts.push(words(state.orAny).join(' または '))
+  for (const group of state.orGroups) {
+    const orWords = words(group)
+    if (orWords.length > 0) parts.push(orWords.join(' または '))
+  }
   if (state.exactPhrase.trim()) parts.push(`「${state.exactPhrase.trim()}」`)
   if (state.exclude.trim()) {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)

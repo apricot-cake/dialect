@@ -5,6 +5,16 @@ export function words(input: string): string[] {
   return input.trim().split(/[\s　]+/).filter(Boolean)
 }
 
+/** OR グループ入力(行ごとの文字列)を、空行を除いた単語配列の配列へ */
+export function orGroupWords(groups: string[]): string[][] {
+  return groups.map(words).filter((g) => g.length > 0)
+}
+
+/** 「いずれかを含む」行に1つでも語があるか */
+export function hasOrGroup(state: { orGroups: string[] }): boolean {
+  return state.orGroups.some((g) => g.trim() !== '')
+}
+
 /** 先頭の @ を除去したユーザー名 */
 export function stripAt(input: string): string {
   return input.trim().replace(/^@+/, '')

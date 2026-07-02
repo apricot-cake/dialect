@@ -9,7 +9,7 @@ import {
   saveSearch,
 } from '@/core/storage'
 import { applyTemplate, TEMPLATES } from '@/core/templates'
-import { hasPositiveTerm } from '@/core/text'
+import { hasOrGroup, hasPositiveTerm } from '@/core/text'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,7 @@ function initialState(): QueryState {
 
 export default function App() {
   const [state, setState] = useState<QueryState>(initialState)
+  const canSearch = hasPositiveTerm(state) || hasOrGroup(state)
   const [copied, setCopied] = useState(false)
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)
@@ -87,7 +88,7 @@ export default function App() {
           </Card>
 
           <div className="flex flex-wrap items-center gap-2">
-            {!hasPositiveTerm(state) && (
+            {!canSearch && (
               <p className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
                 {t('launch.noQuery')}
               </p>
@@ -95,7 +96,7 @@ export default function App() {
             <div className="ml-auto flex gap-2">
               <Button
                 variant="outline"
-                disabled={!hasPositiveTerm(state)}
+                disabled={!canSearch}
                 onClick={() => setSaved(saveSearch(state))}
               >
                 {t('saved.save')}

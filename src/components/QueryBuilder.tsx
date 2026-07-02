@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { Plus, X } from 'lucide-react'
+import { PlatformIcon } from '@/components/PlatformIcon'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { PLATFORMS } from '@/core/platforms'
 import type { PlatformId, QueryState, VideoLength } from '@/core/types'
@@ -76,6 +78,58 @@ export function QueryBuilder({ state, onChange }: Props) {
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
 
   const renderInput = (field: FieldDef) => {
+    if (field.widget === 'orGroups') {
+      const groups = state.orGroups.length > 0 ? state.orGroups : ['']
+      const setGroups = (next: string[]) =>
+        set({ orGroups: next.length > 0 ? next : [''] })
+      return (
+        <div key={field.concept} className="flex flex-col gap-1.5">
+          <Label htmlFor="orGroups-0">{t(field.labelKey)}</Label>
+          {groups.map((group, i) => (
+            <div key={i} className="flex items-center gap-1.5">
+              <Input
+                id={`orGroups-${i}`}
+                value={group}
+                placeholder={
+                  i === 0
+                    ? t('concept.orAny.placeholder')
+                    : t('concept.orAny.placeholderMore')
+                }
+                onChange={(e) =>
+                  setGroups(
+                    groups.map((g, j) => (j === i ? e.target.value : g)),
+                  )
+                }
+              />
+              {groups.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('concept.orAny.removeRow')}
+                  onClick={() => setGroups(groups.filter((_, j) => j !== i))}
+                >
+                  <X />
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="self-start text-muted-foreground"
+            onClick={() => setGroups([...groups, ''])}
+          >
+            <Plus />
+            {t('concept.orAny.addRow')}
+          </Button>
+          {groups.length > 1 && (
+            <p className="text-xs text-muted-foreground">
+              {t('concept.orAny.multiNote')}
+            </p>
+          )}
+        </div>
+      )
+    }
     if (field.widget === 'period') {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
@@ -172,6 +226,11 @@ export function QueryBuilder({ state, onChange }: Props) {
             size="sm"
             onClick={() => setFilterId(filterId === p.id ? null : p.id)}
           >
+            <PlatformIcon
+              id={p.id}
+              className="size-3.5"
+              style={{ color: p.brandColor }}
+            />
             {p.name}
           </Button>
         ))}

@@ -10,7 +10,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   const params = new URLSearchParams()
   params.set('v', VERSION)
   if (state.keywords.trim()) params.set('kw', state.keywords.trim())
-  if (state.orAny.trim()) params.set('or', state.orAny.trim())
+  // OR グループは or= の繰り返しで1行=1パラメータ(旧形式の単一 or= もそのまま読める)
+  for (const group of state.orGroups) {
+    if (group.trim()) params.append('or', group.trim())
+  }
   if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
@@ -38,7 +41,8 @@ export function paramsToState(params: URLSearchParams): QueryState {
   const state = defaultState()
   if (!params.has('v')) return state
   state.keywords = params.get('kw') ?? ''
-  state.orAny = params.get('or') ?? ''
+  const orGroups = params.getAll('or').filter((g) => g.trim())
+  if (orGroups.length > 0) state.orGroups = orGroups
   state.exactPhrase = params.get('ph') ?? ''
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'

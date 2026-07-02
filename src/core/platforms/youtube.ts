@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState, VideoLength } from '../types'
-import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { hasOrGroup, hasPositiveTerm, orGroupWords, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -20,12 +20,14 @@ const SP_SORT_AND_LENGTH: Record<Exclude<VideoLength, ''>, string> = {
 }
 
 function buildUrl(state: QueryState): string | null {
-  if (!hasPositiveTerm(state)) return null
+  if (!hasPositiveTerm(state) && !hasOrGroup(state)) return null
 
   const parts: string[] = []
   parts.push(...words(state.keywords))
-  const orWords = words(state.orAny)
-  if (orWords.length > 0) parts.push(`(${orWords.join(' | ')})`)
+  // OR グループは括弧+|で結び、グループどうしはスペース(AND)で並置する
+  for (const group of orGroupWords(state.orGroups)) {
+    parts.push(group.length === 1 ? group[0] : `(${group.join(' | ')})`)
+  }
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.titleOnly) {

@@ -29,14 +29,14 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
 export interface FieldDef {
   concept: ConceptId
   field: keyof QueryState
-  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength'
+  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'orGroups'
   labelKey: MessageKey
   placeholderKey?: MessageKey
 }
 
 export const FIELDS: FieldDef[] = [
   { concept: 'keywords', field: 'keywords', widget: 'text', labelKey: 'concept.keywords.label', placeholderKey: 'concept.keywords.placeholder' },
-  { concept: 'orAny', field: 'orAny', widget: 'text', labelKey: 'concept.orAny.label', placeholderKey: 'concept.orAny.placeholder' },
+  { concept: 'orAny', field: 'orGroups', widget: 'orGroups', labelKey: 'concept.orAny.label', placeholderKey: 'concept.orAny.placeholder' },
   { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', placeholderKey: 'concept.fromUser.placeholder' },
@@ -62,7 +62,7 @@ export const FIELDS: FieldDef[] = [
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
   if (state.keywords.trim()) active.push('keywords')
-  if (state.orAny.trim()) active.push('orAny')
+  if (state.orGroups.some((g) => g.trim())) active.push('orAny')
   if (state.exactPhrase.trim()) active.push('exactPhrase')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
@@ -81,14 +81,15 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.japaneseOnly) active.push('japaneseOnly')
-  if (state.newestFirst) active.push('newestFirst')
+  // newestFirst は初期値が ON のため、条件として数えると未入力でも注記が
+  // 出てしまう。URLへの反映は各シリアライザが行い、注記・件数の対象外とする
   return active
 }
 
 export function defaultState(): QueryState {
   return {
     keywords: '',
-    orAny: '',
+    orGroups: [''],
     exactPhrase: '',
     exclude: '',
     titleOnly: false,
