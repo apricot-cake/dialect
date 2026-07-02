@@ -3,7 +3,7 @@ import { Plus, X } from 'lucide-react'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { PLATFORMS } from '@/core/platforms'
-import type { PlatformId, QueryState, TermMode, TermRow, VideoLength } from '@/core/types'
+import type { PlatformId, QueryState, SortOrder, TermMode, TermRow, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -68,6 +68,12 @@ function buildSections(filterId: PlatformId | null): Section[] {
 const TERM_MODES: Array<{ value: TermMode; labelKey: Parameters<typeof t>[0] }> = [
   { value: 'all', labelKey: 'concept.terms.modeAll' },
   { value: 'any', labelKey: 'concept.terms.modeAny' },
+]
+
+const SORT_ORDERS: Array<{ value: SortOrder; labelKey: Parameters<typeof t>[0] }> = [
+  { value: 'new', labelKey: 'concept.sortOrder.new' },
+  { value: 'top', labelKey: 'concept.sortOrder.top' },
+  { value: 'auto', labelKey: 'concept.sortOrder.auto' },
 ]
 
 const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[0] }> = [
@@ -186,6 +192,27 @@ export function QueryBuilder({ state, onChange }: Props) {
                 onChange={(e) => set({ until: e.target.value })}
               />
             </div>
+          </div>
+        </div>
+      )
+    }
+    if (field.widget === 'sort') {
+      return (
+        <div key={field.concept} className="flex flex-col gap-1.5">
+          <Label>{t(field.labelKey)}</Label>
+          <div className="flex h-9 items-center self-start rounded-md border p-0.5">
+            {SORT_ORDERS.map((opt) => (
+              <Button
+                key={opt.value}
+                variant={state.sort === opt.value ? 'secondary' : 'ghost'}
+                size="sm"
+                className="h-7 px-3 text-xs"
+                aria-pressed={state.sort === opt.value}
+                onClick={() => set({ sort: opt.value })}
+              >
+                {t(opt.labelKey)}
+              </Button>
+            ))}
           </div>
         </div>
       )

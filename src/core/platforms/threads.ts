@@ -23,7 +23,8 @@ function buildUrl(state: QueryState): string | null {
   const params = new URLSearchParams()
   if (parts.length > 0) params.set('q', parts.join(' '))
   if (handle) params.set('from_author', handle)
-  if (state.newestFirst) params.set('filter', 'recent')
+  // filter=recent=新着のみURLで指定できる。人気順・おまかせは既定の表示のまま
+  if (state.sort === 'new') params.set('filter', 'recent')
 
   return `https://www.threads.com/search?${params.toString()}`
 }
@@ -43,7 +44,7 @@ export const threads: PlatformDef = {
     period: { level: 'none' },
     mediaOnly: { level: 'none' },
     japaneseOnly: { level: 'none' },
-    newestFirst: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildUrl,
 }

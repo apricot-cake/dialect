@@ -20,7 +20,8 @@ function buildUrl(state: QueryState): string | null {
   if (state.until) parts.push(`until:${state.until}`)
   if (state.japaneseOnly) parts.push('lang:ja')
 
-  const tab = state.newestFirst ? '&tab=latest' : ''
+  // tab=latest=新しい順。人気順・おまかせは既定のTopタブのまま開く
+  const tab = state.sort === 'new' ? '&tab=latest' : ''
   return `https://bsky.app/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
 }
 
@@ -41,7 +42,7 @@ export const bluesky: PlatformDef = {
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.bluesky.mediaOnly' },
     japaneseOnly: { level: 'full' },
-    newestFirst: { level: 'partial', noteKey: 'note.bluesky.newestFirst' },
+    sortOrder: { level: 'partial', noteKey: 'note.bluesky.sort' },
   },
   buildUrl,
 }

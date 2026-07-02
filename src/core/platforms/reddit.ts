@@ -49,7 +49,9 @@ function buildUrl(state: QueryState): string | null {
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
 
   const params = new URLSearchParams({ q })
-  params.set('sort', state.newestFirst ? 'new' : 'relevance')
+  // sort=new=新着、top=人気。おまかせは指定しない(既定は関連度順)
+  if (state.sort === 'new') params.set('sort', 'new')
+  if (state.sort === 'top') params.set('sort', 'top')
   if (state.since) params.set('t', tParam(state.since))
 
   return `https://www.reddit.com/search/?${params.toString()}`
@@ -73,7 +75,7 @@ export const reddit: PlatformDef = {
     period: { level: 'partial', noteKey: 'note.reddit.period' },
     mediaOnly: { level: 'none' },
     japaneseOnly: { level: 'none' },
-    newestFirst: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildUrl,
 }

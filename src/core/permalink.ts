@@ -37,7 +37,8 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.japaneseOnly) params.set('ja', '1')
-  if (!state.newestFirst) params.set('sort', 'top')
+  // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める
+  if (state.sort !== 'new') params.set('sort', state.sort)
   return params
 }
 
@@ -78,7 +79,8 @@ export function paramsToState(params: URLSearchParams): QueryState {
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   state.japaneseOnly = params.get('ja') === '1'
-  state.newestFirst = params.get('sort') !== 'top'
+  const sort = params.get('sort')
+  if (sort === 'top' || sort === 'auto') state.sort = sort
   return state
 }
 

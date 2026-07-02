@@ -18,10 +18,12 @@ function buildUrl(state: QueryState): string | null {
   const excludes = words(state.exclude).map((w) => `-${w}`)
 
   const params = new URLSearchParams()
-  if (state.newestFirst) {
+  // sort=f&order=d=投稿が新しい順、sort=h=人気(注目度)順。
+  // おまかせは指定しない(デフォルトソートはABテスト依存でサイト任せになる)
+  if (state.sort === 'new') {
     params.set('sort', 'f')
     params.set('order', 'd')
-  } else {
+  } else if (state.sort === 'top') {
     params.set('sort', 'h')
   }
   if (state.since) params.set('start', state.since)
@@ -29,12 +31,13 @@ function buildUrl(state: QueryState): string | null {
   // 「ふつう(4〜20分)」に相当する値はniconicoに存在しないため指定しない
   if (state.videoLength === 'short') params.set('l_range', '1')
   if (state.videoLength === 'long') params.set('l_range', '2')
-  const query = params.toString()
+  const qs = params.toString()
+  const query = qs ? `?${qs}` : ''
 
   // タグ単独(+除外)ならタグ検索。除外はタグページでも有効(実測)
   if (tag && textParts.length === 0) {
     const path = [tag, ...excludes].join(' ')
-    return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}?${query}`
+    return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}${query}`
   }
 
   const parts = [...textParts]
@@ -42,7 +45,7 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...excludes)
   if (parts.length === 0) return null
 
-  return `https://www.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}?${query}`
+  return `https://www.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}${query}`
 }
 
 export const niconico: PlatformDef = {
@@ -62,7 +65,7 @@ export const niconico: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
     japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
-    newestFirst: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildUrl,
 }

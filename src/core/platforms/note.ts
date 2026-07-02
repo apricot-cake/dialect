@@ -19,8 +19,10 @@ function buildUrl(state: QueryState): string | null {
   if (handle) parts.push(`from:@${handle}`)
   if (parts.length === 0) return null
 
-  const sort = state.newestFirst ? 'new' : 'popular'
-  return `https://note.com/search?context=note&q=${encodeURIComponent(parts.join(' '))}&sort=${sort}`
+  // sort=new=新着、popular=人気(既定)。おまかせは指定しない
+  const sort =
+    state.sort === 'new' ? '&sort=new' : state.sort === 'top' ? '&sort=popular' : ''
+  return `https://note.com/search?context=note&q=${encodeURIComponent(parts.join(' '))}${sort}`
 }
 
 export const note: PlatformDef = {
@@ -38,7 +40,7 @@ export const note: PlatformDef = {
     period: { level: 'none', noteKey: 'note.note.period' },
     mediaOnly: { level: 'none', noteKey: 'note.note.mediaOnly' },
     japaneseOnly: { level: 'none', noteKey: 'note.note.japaneseOnly' },
-    newestFirst: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildUrl,
 }

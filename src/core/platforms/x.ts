@@ -31,8 +31,10 @@ function buildUrl(state: QueryState): string | null {
   if (state.minReposts.trim()) parts.push(`min_retweets:${state.minReposts.trim()}`)
   if (state.japaneseOnly) parts.push('lang:ja')
 
-  const tab = state.newestFirst ? 'live' : 'top'
-  return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}&f=${tab}`
+  // f=live=新しい順、f=top=人気順(話題)。おまかせは指定しない(Xの既定はtop)
+  const tab =
+    state.sort === 'new' ? '&f=live' : state.sort === 'top' ? '&f=top' : ''
+  return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
 }
 
 export const x: PlatformDef = {
@@ -58,7 +60,7 @@ export const x: PlatformDef = {
     minLikes: { level: 'partial', noteKey: 'note.x.unofficial' },
     minReposts: { level: 'partial', noteKey: 'note.x.unofficial' },
     japaneseOnly: { level: 'full' },
-    newestFirst: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildUrl,
 }

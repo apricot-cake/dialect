@@ -35,7 +35,7 @@ export const tiktok: PlatformDef = {
     period: { level: 'none' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     japaneseOnly: { level: 'none' },
-    newestFirst: { level: 'none', noteKey: 'note.nosort' },
+    sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
 }

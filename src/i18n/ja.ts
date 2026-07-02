@@ -50,7 +50,10 @@ export const ja = {
   'concept.minReposts.label': '最低リポスト数',
   'concept.minReposts.placeholder': '例: 50',
   'concept.japaneseOnly.label': '日本語の投稿だけ',
-  'concept.newestFirst.label': '新しい順に表示',
+  'concept.sortOrder.label': '並び順',
+  'concept.sortOrder.new': '新しい順',
+  'concept.sortOrder.top': '人気順',
+  'concept.sortOrder.auto': 'おまかせ',
 
   // ビルダーのセクション・サイト絞り込み
   'builder.filter.label': 'サイトで絞る:',
@@ -64,7 +67,7 @@ export const ja = {
   'note.exact.unreliable': '完全一致は効かない場合があります',
   'note.hashtag.askeyword': 'ふつうのキーワードとして検索されます',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
-  'note.nosort': '新しい順はURLでは指定できません',
+  'note.nosort': '並び順はURLでは指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
   'note.jaOnly.service': '日本語のサービスなので、この絞り込みは不要です',
 
@@ -76,7 +79,7 @@ export const ja = {
   'note.bluesky.exclude': '公式には案内されていない機能のため、将来使えなくなる可能性があります',
   'note.bluesky.fromUser': 'ユーザー名は「user.bsky.social」の形式です',
   'note.bluesky.mediaOnly': 'Bluesky には画像・動画で絞る機能がありません',
-  'note.bluesky.newestFirst': '非公式なURL指定のため、将来使えなくなる可能性があります',
+  'note.bluesky.sort': '新しい順は非公式なURL指定のため、将来使えなくなる可能性があります',
   'note.youtube.exactPhrase': '完全一致は効かないことが多くあります',
   'note.youtube.exclude': '除外が効かない場合があります',
   'note.youtube.fromUser': 'チャンネル内検索ページを開きます',
@@ -84,8 +87,8 @@ export const ja = {
   'note.youtube.period': '非公式な指定方法のため、将来使えなくなる可能性があります',
   'note.youtube.mediaOnly': 'YouTube はもともと動画だけなので、この絞り込みは不要です',
   'note.youtube.japaneseOnly': 'YouTube には言語で絞る機能がありません',
-  'note.youtube.newestFirst':
-    '非公式な指定方法のため、将来使えなくなる可能性があります。ユーザー指定との併用はできません',
+  'note.youtube.sort':
+    '非公式な指定方法のため、将来使えなくなる可能性があります。人気順は視聴回数順で代用します。ユーザー指定との併用はできません',
   'note.note.keywords': 'すべてのことばを含む保証はありません(近い記事も混ざります)',
   'note.note.exactPhrase': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.note.exclude': 'note には除外検索がありません',

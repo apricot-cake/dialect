@@ -34,7 +34,7 @@ export const instagram: PlatformDef = {
     period: { level: 'none' },
     mediaOnly: { level: 'none' },
     japaneseOnly: { level: 'none' },
-    newestFirst: { level: 'none', noteKey: 'note.nosort' },
+    sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
 }

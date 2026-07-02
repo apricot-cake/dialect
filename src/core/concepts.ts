@@ -24,14 +24,14 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   minLikes: 'concept.minLikes.label',
   minReposts: 'concept.minReposts.label',
   japaneseOnly: 'concept.japaneseOnly.label',
-  newestFirst: 'concept.newestFirst.label',
+  sortOrder: 'concept.sortOrder.label',
 }
 
 /** ビルダーに並ぶフィールドの定義。表示順・セクション分けは対応サイト数から自動計算する */
 export interface FieldDef {
   concept: ConceptId
   field: keyof QueryState
-  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms'
+  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms' | 'sort'
   labelKey: MessageKey
   placeholderKey?: MessageKey
 }
@@ -48,7 +48,7 @@ export const FIELDS: FieldDef[] = [
   { concept: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label' },
   { concept: 'videoLength', field: 'videoLength', widget: 'videoLength', labelKey: 'concept.videoLength.label' },
   { concept: 'japaneseOnly', field: 'japaneseOnly', widget: 'toggle', labelKey: 'concept.japaneseOnly.label' },
-  { concept: 'newestFirst', field: 'newestFirst', widget: 'toggle', labelKey: 'concept.newestFirst.label' },
+  { concept: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label' },
   { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', placeholderKey: 'concept.toUser.placeholder' },
   { concept: 'excludeUser', field: 'excludeUser', widget: 'text', labelKey: 'concept.excludeUser.label', placeholderKey: 'concept.excludeUser.placeholder' },
   { concept: 'minLikes', field: 'minLikes', widget: 'number', labelKey: 'concept.minLikes.label', placeholderKey: 'concept.minLikes.placeholder' },
@@ -85,8 +85,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.japaneseOnly) active.push('japaneseOnly')
-  // newestFirst は初期値が ON のため、条件として数えると未入力でも注記が
-  // 出てしまう。URLへの反映は各シリアライザが行い、注記・件数の対象外とする
+  // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
+  // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えず、
+  // ユーザーが意図的に選んだ「人気順」だけを注記・件数の対象にする
+  if (state.sort === 'top') active.push('sortOrder')
   return active
 }
 
@@ -113,6 +115,6 @@ export function defaultState(): QueryState {
     minLikes: '',
     minReposts: '',
     japaneseOnly: false,
-    newestFirst: true,
+    sort: 'new',
   }
 }

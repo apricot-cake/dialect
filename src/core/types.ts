@@ -23,9 +23,12 @@ export type ConceptId =
   | 'minLikes'
   | 'minReposts'
   | 'japaneseOnly'
-  | 'newestFirst'
+  | 'sortOrder'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
+
+/** 並び順。new=新しい順、top=人気順、auto=サイトにおまかせ(URLで指定しない) */
+export type SortOrder = 'new' | 'top' | 'auto'
 
 /** ことば行の結合方法。all=全語を含む(AND)、any=どれか1語を含む(OR) */
 export type TermMode = 'all' | 'any'
@@ -60,7 +63,7 @@ export interface QueryState {
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   japaneseOnly: boolean
-  newestFirst: boolean
+  sort: SortOrder
 }
 
 /**

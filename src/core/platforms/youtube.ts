@@ -3,20 +3,23 @@ import { andTermWords, hasOrTerms, hasPositiveTerm, orTermGroups, stripAt, strip
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
-// sp= はprotobufのbase64。ソート(アップロード日順)と動画の長さは1つのspに合成する
-// (連結は不可)。合成値はktsk.xyzのフィールド定義から計算:
-//   sort=date: 0x08 0x02 / filter{duration}: 0x12 0x02 0x18 0x0N (N=1:短,3:中,2:長)
+// sp= はprotobufのbase64。ソートと動画の長さは1つのspに合成する(連結は不可)。
+// 合成値はktsk.xyzのフィールド定義から計算:
+//   sort: 0x08 0x02(アップロード日順) / 0x08 0x03(視聴回数順=人気の近似)
+//   filter{duration}: 0x12 0x02 0x18 0x0N (N=1:短,3:中,2:長)
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
-const SP_SORT_NEW = 'CAI%3D'
+const SP_SORT: Record<'new' | 'top', string> = {
+  new: 'CAI%3D',
+  top: 'CAM%3D',
+}
 const SP_LENGTH: Record<Exclude<VideoLength, ''>, string> = {
   short: 'EgIYAQ%3D%3D',
   medium: 'EgIYAw%3D%3D',
   long: 'EgIYAg%3D%3D',
 }
-const SP_SORT_AND_LENGTH: Record<Exclude<VideoLength, ''>, string> = {
-  short: 'CAISAhgB',
-  medium: 'CAISAhgD',
-  long: 'CAISAhgC',
+const SP_SORT_AND_LENGTH: Record<'new' | 'top', Record<Exclude<VideoLength, ''>, string>> = {
+  new: { short: 'CAISAhgB', medium: 'CAISAhgD', long: 'CAISAhgC' },
+  top: { short: 'CAMSAhgB', medium: 'CAMSAhgD', long: 'CAMSAhgC' },
 }
 
 function buildUrl(state: QueryState): string | null {
@@ -49,13 +52,14 @@ function buildUrl(state: QueryState): string | null {
     return `https://www.youtube.com/@${encodeURIComponent(handle)}/search?query=${encodeURIComponent(query)}`
   }
 
+  const sort = state.sort === 'auto' ? null : state.sort
   let sp = ''
-  if (state.videoLength && state.newestFirst) {
-    sp = `&sp=${SP_SORT_AND_LENGTH[state.videoLength]}`
+  if (state.videoLength && sort) {
+    sp = `&sp=${SP_SORT_AND_LENGTH[sort][state.videoLength]}`
   } else if (state.videoLength) {
     sp = `&sp=${SP_LENGTH[state.videoLength]}`
-  } else if (state.newestFirst) {
-    sp = `&sp=${SP_SORT_NEW}`
+  } else if (sort) {
+    sp = `&sp=${SP_SORT[sort]}`
   }
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${sp}`
 }
@@ -78,7 +82,7 @@ export const youtube: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial', noteKey: 'note.unofficial' },
     japaneseOnly: { level: 'none', noteKey: 'note.youtube.japaneseOnly' },
-    newestFirst: { level: 'partial', noteKey: 'note.youtube.newestFirst' },
+    sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
   buildUrl,
 }
