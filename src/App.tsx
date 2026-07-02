@@ -8,7 +8,6 @@ import {
   recordHistory,
   saveSearch,
 } from '@/core/storage'
-import { applyTemplate, TEMPLATES } from '@/core/templates'
 import { hasOrGroup, hasPositiveTerm } from '@/core/text'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
@@ -57,27 +56,14 @@ export default function App() {
         </header>
 
         <main className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground">
-              {t('template.heading')}
-            </span>
-            {TEMPLATES.map((template) => (
-              <Button
-                key={template.id}
-                variant="outline"
-                size="sm"
-                onClick={() => setState(applyTemplate(state, template))}
-              >
-                {t(template.labelKey)}
-              </Button>
-            ))}
+          <div className="flex justify-end">
             <Button
               variant="ghost"
               size="sm"
               className="text-muted-foreground"
               onClick={() => setState(defaultState())}
             >
-              {t('template.clear')}
+              {t('builder.clear')}
             </Button>
           </div>
 
@@ -88,11 +74,6 @@ export default function App() {
           </Card>
 
           <div className="flex flex-wrap items-center gap-2">
-            {!canSearch && (
-              <p className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
-                {t('launch.noQuery')}
-              </p>
-            )}
             <div className="ml-auto flex gap-2">
               <Button
                 variant="outline"

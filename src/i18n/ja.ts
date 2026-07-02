@@ -111,19 +111,14 @@ export const ja = {
   'launch.applied': 'を適用',
   'launch.approxHeading': '一部だけ効く条件',
   'launch.droppedHeading': 'このSNSでは使えない条件',
-  'launch.noQuery': 'ことば・ユーザー・ハッシュタグのどれかを入れてください',
   'launch.urlPreview': '開くURL',
 
   // 共有
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
-  // テンプレート
-  'template.heading': 'よく使う型:',
-  'template.reputation': '評判・口コミを調べる',
-  'template.live': 'いま起きていることを追う',
-  'template.media': '写真・動画を探す',
-  'template.clear': '条件をクリア',
+  // ビルダー操作
+  'builder.clear': '条件をクリア',
 
   // 保存検索・履歴
   'saved.save': 'この条件を保存',
