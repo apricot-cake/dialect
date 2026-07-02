@@ -1,12 +1,12 @@
 import type { PlatformDef, QueryState } from '../types'
-import { stripHash, words } from '../text'
+import { andTermWords, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // PCブラウザはログイン不要(サインアップモーダルは閉じられる)。
 // 除外・期間・ソートはURLで指定できない。タグ単独ならタグページが確実。
 function buildUrl(state: QueryState): string | null {
   const tag = stripHash(state.hashtag)
-  const textParts = [...words(state.keywords)]
+  const textParts = [...andTermWords(state)]
   if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
 
   if (tag && textParts.length === 0) {

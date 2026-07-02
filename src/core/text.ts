@@ -1,3 +1,5 @@
+import type { TermRow } from './types'
+
 /** 入力文字列の正規化ヘルパー。シリアライザ共通で使う */
 
 /** 空白区切りの入力を単語配列へ(全角スペース対応) */
@@ -5,14 +7,30 @@ export function words(input: string): string[] {
   return input.trim().split(/[\s　]+/).filter(Boolean)
 }
 
-/** OR グループ入力(行ごとの文字列)を、空行を除いた単語配列の配列へ */
-export function orGroupWords(groups: string[]): string[][] {
-  return groups.map(words).filter((g) => g.length > 0)
+/**
+ * 「すべて含む」扱いになる語。all 行の語に加え、
+ * 1語だけの any 行も実質ANDなのでこちらに含める
+ */
+export function andTermWords(state: { terms: TermRow[] }): string[] {
+  const out: string[] = []
+  for (const row of state.terms) {
+    const ws = words(row.text)
+    if (row.mode === 'all' || ws.length === 1) out.push(...ws)
+  }
+  return out
 }
 
-/** 「いずれかを含む」行に1つでも語があるか */
-export function hasOrGroup(state: { orGroups: string[] }): boolean {
-  return state.orGroups.some((g) => g.trim() !== '')
+/** 「どれかを含む」行(2語以上)を語配列の配列へ。行内はOR、行どうし・他の語とはAND */
+export function orTermGroups(state: { terms: TermRow[] }): string[][] {
+  return state.terms
+    .filter((row) => row.mode === 'any')
+    .map((row) => words(row.text))
+    .filter((ws) => ws.length >= 2)
+}
+
+/** OR結合が必要な「どれかを含む」行があるか */
+export function hasOrTerms(state: { terms: TermRow[] }): boolean {
+  return orTermGroups(state).length > 0
 }
 
 /** 先頭の @ を除去したユーザー名 */
@@ -27,13 +45,13 @@ export function stripHash(input: string): string {
 
 /** 検索として成立する「正の条件」があるか(除外や期間だけでは検索できない) */
 export function hasPositiveTerm(state: {
-  keywords: string
+  terms: TermRow[]
   exactPhrase: string
   fromUser: string
   hashtag: string
 }): boolean {
   return Boolean(
-    state.keywords.trim() ||
+    andTermWords(state).length > 0 ||
       state.exactPhrase.trim() ||
       state.fromUser.trim() ||
       state.hashtag.trim(),

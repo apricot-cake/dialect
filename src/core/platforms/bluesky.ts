@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasPositiveTerm, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は公式ドキュメントあり(除外 - のみ未文書化・実測動作)。ログイン不要。
@@ -9,7 +9,7 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const parts: string[] = []
-  parts.push(...words(state.keywords))
+  parts.push(...andTermWords(state))
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)

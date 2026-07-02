@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { hasOrGroup, orGroupWords, stripAt, words } from '../text'
+import { andTermWords, hasOrTerms, orTermGroups, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -19,10 +19,10 @@ function tParam(since: string): string {
 function buildUrl(state: QueryState): string | null {
   if (
     !(
-      state.keywords.trim() ||
+      andTermWords(state).length > 0 ||
       state.exactPhrase.trim() ||
       state.fromUser.trim() ||
-      hasOrGroup(state)
+      hasOrTerms(state)
     )
   ) {
     return null
@@ -30,15 +30,15 @@ function buildUrl(state: QueryState): string | null {
 
   const clauses: string[] = []
   if (state.titleOnly) {
-    clauses.push(...words(state.keywords).map((w) => `title:${w}`))
+    clauses.push(...andTermWords(state).map((w) => `title:${w}`))
     if (state.exactPhrase.trim()) clauses.push(`title:"${state.exactPhrase.trim()}"`)
   } else {
-    clauses.push(...words(state.keywords))
+    clauses.push(...andTermWords(state))
     if (state.exactPhrase.trim()) clauses.push(`"${state.exactPhrase.trim()}"`)
   }
-  // OR グループは括弧つきの節にする(Boolean演算子と括弧は公式仕様)
-  for (const group of orGroupWords(state.orGroups)) {
-    clauses.push(group.length === 1 ? group[0] : `(${group.join(' OR ')})`)
+  // 「どれかを含む」行は括弧つきの節にする(Boolean演算子と括弧は公式仕様)
+  for (const group of orTermGroups(state)) {
+    clauses.push(`(${group.join(' OR ')})`)
   }
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
   if (state.subreddit.trim()) {

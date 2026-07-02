@@ -5,10 +5,10 @@ import { stripAt, stripHash, words } from './text'
 /** 保存検索・履歴の一覧に表示する、条件の短い要約 */
 export function summarize(state: QueryState): string {
   const parts: string[] = []
-  if (state.keywords.trim()) parts.push(words(state.keywords).join(' '))
-  for (const group of state.orGroups) {
-    const orWords = words(group)
-    if (orWords.length > 0) parts.push(orWords.join(' または '))
+  for (const row of state.terms) {
+    const ws = words(row.text)
+    if (ws.length === 0) continue
+    parts.push(row.mode === 'any' ? ws.join(' または ') : ws.join(' '))
   }
   if (state.exactPhrase.trim()) parts.push(`「${state.exactPhrase.trim()}」`)
   if (state.exclude.trim()) {

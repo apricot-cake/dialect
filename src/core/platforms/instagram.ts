@@ -1,12 +1,12 @@
 import type { PlatformDef, QueryState } from '../types'
-import { stripHash, words } from '../text'
+import { andTermWords, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
 // タグ単独ならタグページ(人気投稿のみ)、それ以外はキーワードSERP。
 function buildUrl(state: QueryState): string | null {
   const tag = stripHash(state.hashtag)
-  const textParts = [...words(state.keywords), ...words(state.exactPhrase)]
+  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
 
   if (tag && textParts.length === 0) {
     return `https://www.instagram.com/explore/tags/${encodeURIComponent(tag)}/`

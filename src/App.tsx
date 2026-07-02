@@ -8,7 +8,7 @@ import {
   recordHistory,
   saveSearch,
 } from '@/core/storage'
-import { hasOrGroup, hasPositiveTerm } from '@/core/text'
+import { hasOrTerms, hasPositiveTerm } from '@/core/text'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -27,7 +27,7 @@ function initialState(): QueryState {
 
 export default function App() {
   const [state, setState] = useState<QueryState>(initialState)
-  const canSearch = hasPositiveTerm(state) || hasOrGroup(state)
+  const canSearch = hasPositiveTerm(state) || hasOrTerms(state)
   const [copied, setCopied] = useState(false)
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)

@@ -1,5 +1,6 @@
 import type { MessageKey } from '@/i18n'
 import type { ConceptId, QueryState } from './types'
+import { andTermWords, orTermGroups } from './text'
 
 export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   keywords: 'concept.keywords.label',
@@ -29,14 +30,14 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
 export interface FieldDef {
   concept: ConceptId
   field: keyof QueryState
-  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'orGroups'
+  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms'
   labelKey: MessageKey
   placeholderKey?: MessageKey
 }
 
 export const FIELDS: FieldDef[] = [
-  { concept: 'keywords', field: 'keywords', widget: 'text', labelKey: 'concept.keywords.label', placeholderKey: 'concept.keywords.placeholder' },
-  { concept: 'orAny', field: 'orGroups', widget: 'orGroups', labelKey: 'concept.orAny.label', placeholderKey: 'concept.orAny.placeholder' },
+  // ことば行は「すべて含む/どれかを含む」を行ごとに切り替えられる統合ウィジェット
+  { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label' },
   { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', placeholderKey: 'concept.fromUser.placeholder' },
@@ -61,8 +62,8 @@ export const FIELDS: FieldDef[] = [
 /** state の中で実際に指定されている概念 */
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
-  if (state.keywords.trim()) active.push('keywords')
-  if (state.orGroups.some((g) => g.trim())) active.push('orAny')
+  if (andTermWords(state).length > 0) active.push('keywords')
+  if (orTermGroups(state).length > 0) active.push('orAny')
   if (state.exactPhrase.trim()) active.push('exactPhrase')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
@@ -88,8 +89,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
 
 export function defaultState(): QueryState {
   return {
-    keywords: '',
-    orGroups: [''],
+    terms: [{ text: '', mode: 'all' }],
     exactPhrase: '',
     exclude: '',
     titleOnly: false,

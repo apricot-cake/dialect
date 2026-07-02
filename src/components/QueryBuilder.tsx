@@ -3,7 +3,7 @@ import { Plus, X } from 'lucide-react'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { PLATFORMS } from '@/core/platforms'
-import type { PlatformId, QueryState, VideoLength } from '@/core/types'
+import type { PlatformId, QueryState, TermMode, TermRow, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -65,6 +65,11 @@ function buildSections(filterId: PlatformId | null): Section[] {
   return sections
 }
 
+const TERM_MODES: Array<{ value: TermMode; labelKey: Parameters<typeof t>[0] }> = [
+  { value: 'all', labelKey: 'concept.terms.modeAll' },
+  { value: 'any', labelKey: 'concept.terms.modeAny' },
+]
+
 const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[0] }> = [
   { value: '', labelKey: 'concept.videoLength.none' },
   { value: 'short', labelKey: 'concept.videoLength.short' },
@@ -78,35 +83,59 @@ export function QueryBuilder({ state, onChange }: Props) {
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
 
   const renderInput = (field: FieldDef) => {
-    if (field.widget === 'orGroups') {
-      const groups = state.orGroups.length > 0 ? state.orGroups : ['']
-      const setGroups = (next: string[]) =>
-        set({ orGroups: next.length > 0 ? next : [''] })
+    if (field.widget === 'terms') {
+      const rows: TermRow[] =
+        state.terms.length > 0 ? state.terms : [{ text: '', mode: 'all' }]
+      const setRows = (next: TermRow[]) =>
+        set({ terms: next.length > 0 ? next : [{ text: '', mode: 'all' }] })
       return (
-        <div key={field.concept} className="flex flex-col gap-1.5">
-          <Label htmlFor="orGroups-0">{t(field.labelKey)}</Label>
-          {groups.map((group, i) => (
+        <div key={field.concept} className="flex flex-col gap-1.5 md:col-span-2">
+          <Label htmlFor="terms-0">{t(field.labelKey)}</Label>
+          {rows.map((row, i) => (
             <div key={i} className="flex items-center gap-1.5">
               <Input
-                id={`orGroups-${i}`}
-                value={group}
+                id={`terms-${i}`}
+                className="flex-1"
+                value={row.text}
                 placeholder={
-                  i === 0
-                    ? t('concept.orAny.placeholder')
-                    : t('concept.orAny.placeholderMore')
+                  row.mode === 'all'
+                    ? t('concept.keywords.placeholder')
+                    : t('concept.orAny.placeholder')
                 }
                 onChange={(e) =>
-                  setGroups(
-                    groups.map((g, j) => (j === i ? e.target.value : g)),
+                  setRows(
+                    rows.map((r, j) =>
+                      j === i ? { ...r, text: e.target.value } : r,
+                    ),
                   )
                 }
               />
-              {groups.length > 1 && (
+              <div className="flex shrink-0 rounded-md border p-0.5">
+                {TERM_MODES.map((m) => (
+                  <Button
+                    key={m.value}
+                    variant={row.mode === m.value ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    aria-pressed={row.mode === m.value}
+                    onClick={() =>
+                      setRows(
+                        rows.map((r, j) =>
+                          j === i ? { ...r, mode: m.value } : r,
+                        ),
+                      )
+                    }
+                  >
+                    {t(m.labelKey)}
+                  </Button>
+                ))}
+              </div>
+              {rows.length > 1 && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label={t('concept.orAny.removeRow')}
-                  onClick={() => setGroups(groups.filter((_, j) => j !== i))}
+                  aria-label={t('concept.terms.removeRow')}
+                  onClick={() => setRows(rows.filter((_, j) => j !== i))}
                 >
                   <X />
                 </Button>
@@ -117,14 +146,14 @@ export function QueryBuilder({ state, onChange }: Props) {
             variant="ghost"
             size="sm"
             className="self-start text-muted-foreground"
-            onClick={() => setGroups([...groups, ''])}
+            onClick={() => setRows([...rows, { text: '', mode: 'all' }])}
           >
             <Plus />
-            {t('concept.orAny.addRow')}
+            {t('concept.terms.addRow')}
           </Button>
-          {groups.length > 1 && (
+          {rows.length > 1 && (
             <p className="text-xs text-muted-foreground">
-              {t('concept.orAny.multiNote')}
+              {t('concept.terms.multiNote')}
             </p>
           )}
         </div>

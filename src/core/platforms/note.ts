@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { stripAt, stripHash, words } from '../text'
+import { andTermWords, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
@@ -8,7 +8,7 @@ function buildUrl(state: QueryState): string | null {
   const tag = stripHash(state.hashtag)
   const handle = stripAt(state.fromUser)
   // 完全一致は効かないため、語句をそのままキーワードとして扱う(近似)
-  const textParts = [...words(state.keywords), ...words(state.exactPhrase)]
+  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
 
   if (tag && !handle && textParts.length === 0) {
     return `https://note.com/hashtag/${encodeURIComponent(tag)}`

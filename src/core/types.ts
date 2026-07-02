@@ -26,11 +26,19 @@ export type ConceptId =
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
+/** ことば行の結合方法。all=全語を含む(AND)、any=どれか1語を含む(OR) */
+export type TermMode = 'all' | 'any'
+
+/** ことば行。行内の語はスペース区切りで mode に従って結合し、行どうしは AND */
+export interface TermRow {
+  text: string
+  mode: TermMode
+}
+
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
-  keywords: string
-  /** 「いずれかを含む」行。行内の語は OR、行どうしは AND で結合する。常に1行以上 */
-  orGroups: string[]
+  /** ことば行。常に1行以上 */
+  terms: TermRow[]
   exactPhrase: string
   exclude: string
   titleOnly: boolean

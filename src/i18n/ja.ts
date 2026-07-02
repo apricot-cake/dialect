@@ -4,15 +4,16 @@ export const ja = {
     '条件を日本語で組み立てると、Dialect が各SNSの検索構文に翻訳して検索ページを開きます。',
 
   // 検索概念(ビルダーの各行)
-  'concept.keywords.label': 'すべて含むことば',
+  'concept.keywords.label': 'ことば',
   'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
-  'concept.orAny.label': 'いずれかを含むことば',
+  'concept.orAny.label': 'どれかを含むことば',
   'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
-  'concept.orAny.placeholderMore': '例: 停電 断水 (この行からもどれか1つ)',
-  'concept.orAny.addRow': '「いずれか」の行を追加',
-  'concept.orAny.removeRow': 'この行を削除',
-  'concept.orAny.multiNote':
-    '行が2つ以上あるときは、どの行のことばも1つ以上含む投稿を探します',
+  'concept.terms.modeAll': 'すべて含む',
+  'concept.terms.modeAny': 'どれかを含む',
+  'concept.terms.addRow': 'ことばの行を追加',
+  'concept.terms.removeRow': 'この行を削除',
+  'concept.terms.multiNote':
+    '行が2つ以上あるときは、すべての行の条件を満たす投稿を探します',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま探します)',
   'concept.exclude.label': '除外することば',

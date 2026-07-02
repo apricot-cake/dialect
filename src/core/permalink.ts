@@ -1,4 +1,4 @@
-import type { QueryState } from './types'
+import type { QueryState, TermRow } from './types'
 import { defaultState } from './concepts'
 
 // 検索条件をURLクエリパラメータへ埋め込む(パーマリンク)。
@@ -9,10 +9,13 @@ const VERSION = '1'
 export function stateToParams(state: QueryState): URLSearchParams {
   const params = new URLSearchParams()
   params.set('v', VERSION)
-  if (state.keywords.trim()) params.set('kw', state.keywords.trim())
-  // OR グループは or= の繰り返しで1行=1パラメータ(旧形式の単一 or= もそのまま読める)
-  for (const group of state.orGroups) {
-    if (group.trim()) params.append('or', group.trim())
+  // ことば行は1行=1パラメータの繰り返し。「すべて含む」行は kw=、「どれかを含む」行は or=。
+  // 旧形式(kw= 単一 + or= 繰り返し)もこの読み書きにそのまま収まる。
+  // 復元時は kw 行が先にまとまるが、行どうしはANDなので意味は変わらない
+  for (const row of state.terms) {
+    if (row.text.trim()) {
+      params.append(row.mode === 'any' ? 'or' : 'kw', row.text.trim())
+    }
   }
   if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
@@ -40,9 +43,17 @@ export function stateToParams(state: QueryState): URLSearchParams {
 export function paramsToState(params: URLSearchParams): QueryState {
   const state = defaultState()
   if (!params.has('v')) return state
-  state.keywords = params.get('kw') ?? ''
-  const orGroups = params.getAll('or').filter((g) => g.trim())
-  if (orGroups.length > 0) state.orGroups = orGroups
+  const terms: TermRow[] = [
+    ...params
+      .getAll('kw')
+      .filter((s) => s.trim())
+      .map((text): TermRow => ({ text, mode: 'all' })),
+    ...params
+      .getAll('or')
+      .filter((s) => s.trim())
+      .map((text): TermRow => ({ text, mode: 'any' })),
+  ]
+  if (terms.length > 0) state.terms = terms
   state.exactPhrase = params.get('ph') ?? ''
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'

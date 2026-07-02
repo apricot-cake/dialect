@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { andTermWords, hasPositiveTerm, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索閲覧はログイン必須(Instagramアカウント共通)。演算子は存在せず、
@@ -10,7 +10,7 @@ function buildUrl(state: QueryState): string | null {
 
   const tag = stripHash(state.hashtag)
   const handle = stripAt(state.fromUser)
-  const textParts = [...words(state.keywords), ...words(state.exactPhrase)]
+  const textParts = [...andTermWords(state), ...words(state.exactPhrase)]
 
   // タグ単独ならタグページ(ログアウトでも一部表示される唯一の経路)
   if (tag && !handle && textParts.length === 0) {
