@@ -2,7 +2,7 @@ import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
-import type { ConceptId, PlatformGroup, QueryState } from '@/core/types'
+import type { ConceptId, PlatformGroup, PlatformId, QueryState } from '@/core/types'
 import { t, type MessageKey } from '@/i18n'
 
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
@@ -50,25 +50,62 @@ function ConceptNote({
 
 export function LaunchPanel({
   state,
+  hidden,
+  onToggleHidden,
   onLaunch,
 }: {
   state: QueryState
+  /** OFFにしたサイトのID(localStorageに記憶される) */
+  hidden: PlatformId[]
+  onToggleHidden: (id: PlatformId) => void
   onLaunch?: () => void
 }) {
+  const enabled = PLATFORMS.filter((p) => !hidden.includes(p.id))
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {GROUPS.map(({ group, labelKey }) => (
-        <section key={group} className="flex flex-col gap-2">
-          <h2 className="text-xs font-medium text-muted-foreground">
-            {t(labelKey)}
-          </h2>
-          <PlatformCards
-            platforms={PLATFORMS.filter((p) => p.group === group)}
-            state={state}
-            onLaunch={onLaunch}
-          />
-        </section>
-      ))}
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-xs text-muted-foreground">
+          {t('launch.sites.label')}
+        </span>
+        {PLATFORMS.map((p) => {
+          const on = !hidden.includes(p.id)
+          return (
+            <Button
+              key={p.id}
+              variant={on ? 'secondary' : 'ghost'}
+              size="sm"
+              aria-pressed={on}
+              className={on ? undefined : 'text-muted-foreground opacity-60'}
+              onClick={() => onToggleHidden(p.id)}
+            >
+              <PlatformIcon
+                id={p.id}
+                className="size-3.5"
+                style={on ? { color: p.brandColor } : undefined}
+              />
+              {p.name}
+            </Button>
+          )
+        })}
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {GROUPS.map(({ group, labelKey }) => {
+          const platforms = enabled.filter((p) => p.group === group)
+          if (platforms.length === 0) return null
+          return (
+            <section key={group} className="flex flex-col gap-2">
+              <h2 className="text-xs font-medium text-muted-foreground">
+                {t(labelKey)}
+              </h2>
+              <PlatformCards
+                platforms={platforms}
+                state={state}
+                onLaunch={onLaunch}
+              />
+            </section>
+          )
+        })}
+      </div>
     </div>
   )
 }

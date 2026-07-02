@@ -1,9 +1,11 @@
-import type { QueryState } from './types'
+import type { PlatformId, QueryState } from './types'
 import { paramsToState, stateToParams } from './permalink'
+import { PLATFORMS } from './platforms'
 
 // 保存形式はパーマリンクと同じクエリ文字列。バージョン管理も permalink.ts に相乗りする。
 const SAVED_KEY = 'dialect.saved.v1'
 const HISTORY_KEY = 'dialect.history.v1'
+const HIDDEN_PLATFORMS_KEY = 'dialect.hiddenPlatforms.v1'
 const HISTORY_MAX = 10
 
 export interface StoredQuery {
@@ -68,4 +70,24 @@ export function recordHistory(state: QueryState): StoredQuery[] {
 
 export function toState(entry: StoredQuery): QueryState {
   return paramsToState(new URLSearchParams(entry.params))
+}
+
+/**
+ * 非表示にしたサイトのID。「表示」でなく「非表示」を持つことで、
+ * 将来サイトが増えたときに新サイトが自動で表示側に入る
+ */
+export function loadHiddenPlatforms(): PlatformId[] {
+  try {
+    const raw = localStorage.getItem(HIDDEN_PLATFORMS_KEY)
+    if (!raw) return []
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return PLATFORMS.filter((p) => parsed.includes(p.id)).map((p) => p.id)
+  } catch {
+    return []
+  }
+}
+
+export function storeHiddenPlatforms(ids: PlatformId[]) {
+  localStorage.setItem(HIDDEN_PLATFORMS_KEY, JSON.stringify(ids))
 }

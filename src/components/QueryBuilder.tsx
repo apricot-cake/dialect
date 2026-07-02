@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react'
 import { Plus, X } from 'lucide-react'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { FIELDS, type FieldDef } from '@/core/concepts'
-import { PLATFORMS } from '@/core/platforms'
-import type { PlatformId, QueryState, SortOrder, TermMode, TermRow, VideoLength } from '@/core/types'
+import type { PlatformDef, PlatformId, QueryState, SortOrder, TermMode, TermRow, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -15,6 +14,8 @@ import { Separator } from '@/components/ui/separator'
 interface Props {
   state: QueryState
   onChange: (state: QueryState) => void
+  /** ON になっているサイトのみ。セクション生成・絞り込みチップの対象 */
+  platforms: PlatformDef[]
 }
 
 interface Section {
@@ -24,17 +25,20 @@ interface Section {
 }
 
 /** 対応サイト数からセクションを自動生成する。2サイト以上=共通、1サイト=そのサイト専用 */
-function buildSections(filterId: PlatformId | null): Section[] {
+function buildSections(
+  filterId: PlatformId | null,
+  platforms: PlatformDef[],
+): Section[] {
   const supporters = (field: FieldDef) =>
-    PLATFORMS.filter((p) => supportOf(p, field.concept).level !== 'none')
+    platforms.filter((p) => supportOf(p, field.concept).level !== 'none')
 
   const visible = filterId
     ? FIELDS.filter((f) =>
-        PLATFORMS.some(
+        platforms.some(
           (p) => p.id === filterId && supportOf(p, f.concept).level !== 'none',
         ),
       )
-    : FIELDS
+    : FIELDS.filter((f) => supporters(f).length > 0)
 
   const common = visible
     .filter((f) => supporters(f).length >= 2)
@@ -48,7 +52,7 @@ function buildSections(filterId: PlatformId | null): Section[] {
       fields: common,
     })
   }
-  for (const platform of PLATFORMS) {
+  for (const platform of platforms) {
     if (filterId && platform.id !== filterId) continue
     const own = visible.filter((f) => {
       const s = supporters(f)
@@ -83,9 +87,16 @@ const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[
   { value: 'long', labelKey: 'concept.videoLength.long' },
 ]
 
-export function QueryBuilder({ state, onChange }: Props) {
+export function QueryBuilder({ state, onChange, platforms }: Props) {
   const [filterId, setFilterId] = useState<PlatformId | null>(null)
-  const sections = useMemo(() => buildSections(filterId), [filterId])
+  // 絞り込み中のサイトがOFFにされたら絞り込みを解除して全体表示に戻す
+  const activeFilter = platforms.some((p) => p.id === filterId)
+    ? filterId
+    : null
+  const sections = useMemo(
+    () => buildSections(activeFilter, platforms),
+    [activeFilter, platforms],
+  )
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
 
   const renderInput = (field: FieldDef) => {
@@ -269,18 +280,18 @@ export function QueryBuilder({ state, onChange }: Props) {
           {t('builder.filter.label')}
         </span>
         <Button
-          variant={filterId === null ? 'secondary' : 'ghost'}
+          variant={activeFilter === null ? 'secondary' : 'ghost'}
           size="sm"
           onClick={() => setFilterId(null)}
         >
           {t('builder.filter.all')}
         </Button>
-        {PLATFORMS.map((p) => (
+        {platforms.map((p) => (
           <Button
             key={p.id}
-            variant={filterId === p.id ? 'secondary' : 'ghost'}
+            variant={activeFilter === p.id ? 'secondary' : 'ghost'}
             size="sm"
-            onClick={() => setFilterId(filterId === p.id ? null : p.id)}
+            onClick={() => setFilterId(activeFilter === p.id ? null : p.id)}
           >
             <PlatformIcon
               id={p.id}

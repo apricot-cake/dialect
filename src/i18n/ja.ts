@@ -110,6 +110,7 @@ export const ja = {
   'group.text': 'ブログ・掲示板',
 
   // 起動パネル
+  'launch.sites.label': '使うサイト:',
   'launch.search': 'で検索',
   'launch.loginRequired': '要ログイン',
   'launch.loginNote': 'ログインしているブラウザでのみ検索結果を表示できます',

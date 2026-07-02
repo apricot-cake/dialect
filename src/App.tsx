@@ -3,13 +3,16 @@ import { defaultState } from '@/core/concepts'
 import { paramsToState, permalinkUrl, stateToParams } from '@/core/permalink'
 import {
   deleteSaved,
+  loadHiddenPlatforms,
   loadHistory,
   loadSaved,
   recordHistory,
   saveSearch,
+  storeHiddenPlatforms,
 } from '@/core/storage'
+import { PLATFORMS } from '@/core/platforms'
 import { hasOrTerms, hasPositiveTerm } from '@/core/text'
-import type { QueryState } from '@/core/types'
+import type { PlatformId, QueryState } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -32,6 +35,20 @@ export default function App() {
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)
   const [historyEntries, setHistoryEntries] = useState(loadHistory)
+  const [hidden, setHidden] = useState<PlatformId[]>(loadHiddenPlatforms)
+
+  // 使わないサイトのON/OFF。選択はlocalStorageに記憶する。全OFFにはさせない
+  const toggleHidden = (id: PlatformId) => {
+    setHidden((prev) => {
+      const next = prev.includes(id)
+        ? prev.filter((h) => h !== id)
+        : [...prev, id]
+      if (next.length >= PLATFORMS.length) return prev
+      storeHiddenPlatforms(next)
+      return next
+    })
+  }
+  const enabledPlatforms = PLATFORMS.filter((p) => !hidden.includes(p.id))
 
   // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)
   useEffect(() => {
@@ -69,7 +86,11 @@ export default function App() {
 
           <Card>
             <CardContent>
-              <QueryBuilder state={state} onChange={setState} />
+              <QueryBuilder
+                state={state}
+                onChange={setState}
+                platforms={enabledPlatforms}
+              />
             </CardContent>
           </Card>
 
@@ -90,6 +111,8 @@ export default function App() {
 
           <LaunchPanel
             state={state}
+            hidden={hidden}
+            onToggleHidden={toggleHidden}
             onLaunch={() => setHistoryEntries(recordHistory(state))}
           />
 
