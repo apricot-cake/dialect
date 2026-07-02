@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
-import { ConceptHint } from './ConceptHint'
 
 interface Props {
   state: QueryState
@@ -78,7 +77,6 @@ export function QueryBuilder({ state, onChange }: Props) {
               placeholder={t(row.placeholderKey)}
               onChange={(e) => set({ [row.field]: e.target.value })}
             />
-            <ConceptHint concept={row.concept} />
           </div>
         ))}
 
@@ -108,7 +106,6 @@ export function QueryBuilder({ state, onChange }: Props) {
               />
             </div>
           </div>
-          <ConceptHint concept="period" />
         </div>
       </div>
 
@@ -116,18 +113,13 @@ export function QueryBuilder({ state, onChange }: Props) {
 
       <div className="flex flex-col gap-4">
         {TOGGLE_ROWS.map((row) => (
-          <div key={row.concept} className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <Switch
-                id={row.field}
-                checked={state[row.field]}
-                onCheckedChange={(checked) => set({ [row.field]: checked })}
-              />
-              <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
-            </div>
-            <div className="pl-11">
-              <ConceptHint concept={row.concept} />
-            </div>
+          <div key={row.concept} className="flex items-center gap-3">
+            <Switch
+              id={row.field}
+              checked={state[row.field]}
+              onCheckedChange={(checked) => set({ [row.field]: checked })}
+            />
+            <Label htmlFor={row.field}>{t(row.labelKey)}</Label>
           </div>
         ))}
       </div>
