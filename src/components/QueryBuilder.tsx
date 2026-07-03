@@ -179,8 +179,12 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     return (
       <Tooltip>
-        <TooltipTrigger className="cursor-default p-0">
-          <span className="flex flex-wrap items-center gap-1">
+        {/* ラベルと見分けやすいよう右端に寄せ、「対応」つきのピルで囲む */}
+        <TooltipTrigger className="ml-auto cursor-default p-0">
+          <span className="flex flex-wrap items-center gap-1 rounded-full border bg-muted/40 py-0.5 pl-2 pr-1.5">
+            <span className="text-[11px] leading-none text-muted-foreground">
+              {t('builder.support.label')}
+            </span>
             {supporters.map((p) => (
               <PlatformIcon
                 key={p.id}
@@ -273,10 +277,8 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
             checked={state[field.field] as boolean}
             onCheckedChange={(checked) => set({ [field.field]: checked })}
           />
-          <div className="flex items-center gap-2">
-            <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
-            {supportBadge(field, supporters)}
-          </div>
+          <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
+          {supportBadge(field, supporters)}
         </div>
       )
     }
