@@ -84,7 +84,7 @@ export interface ConceptSupport {
   noteKey?: MessageKey
 }
 
-export type PlatformGroup = 'sns' | 'video' | 'text'
+export type PlatformGroup = 'sns' | 'video' | 'image' | 'text'
 
 export type PlatformId =
   | 'x'
@@ -97,6 +97,8 @@ export type PlatformId =
   | 'tiktok'
   | 'facebook'
   | 'reddit'
+  | 'pixiv'
+  | 'misskey'
 
 export interface PlatformDef {
   id: PlatformId

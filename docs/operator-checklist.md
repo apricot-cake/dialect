@@ -97,6 +97,24 @@ Boolean演算子は公式仕様のため壊れにくい。old.reddit.com は2026
 | 中 | Instagram 検索URL | [instagram.com/explore/search/keyword/?q=台風](https://www.instagram.com/explore/search/keyword/?q=%E5%8F%B0%E9%A2%A8) | ログイン済みなら検索結果へ(未ログインはログイン画面=仕様) | 2026-07-02(調査) | ✅ |
 | 中 | Facebook 検索URL | [facebook.com/search/top/?q=台風](https://www.facebook.com/search/top/?q=%E5%8F%B0%E9%A2%A8) | ログイン済みなら検索結果へ | 2026-07-02(調査) | ✅ |
 
+## pixiv(ログイン不要)
+
+OR・除外は公式ヘルプ記載のため壊れにくい。期間(scd=/ecd=)だけが非公式で未実測。
+
+| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
+|---|---|---|---|---|---|---|
+| 高 | `scd=`/`ecd=`(任意期間) | 期間 | [pixiv.net/tags/猫/artworks?scd=2026-06-01&ecd=2026-06-30&order=date_d](https://www.pixiv.net/tags/%E7%8C%AB/artworks?scd=2026-06-01&ecd=2026-06-30&order=date_d) | 全結果が6月の投稿 | 未検証 | — |
+| 中 | `order=popular_d`(人気順) | 並び順=人気順 | [pixiv.net/tags/猫/artworks?order=popular_d](https://www.pixiv.net/tags/%E7%8C%AB/artworks?order=popular_d) | プレミアム会員なら人気順(非会員は新着のまま=注記済み) | 2026-07-03(調査) | ✅ |
+| 低 | `OR` / `-語`(公式) | どれかを含む・除外 | [pixiv.net/tags/(猫 OR 犬) -腐向け/artworks](https://www.pixiv.net/tags/(%E7%8C%AB%20OR%20%E7%8A%AC)%20-%E8%85%90%E5%90%91%E3%81%91/artworks) | 猫か犬のタグを含み「腐向け」を除外 | 2026-07-03(調査) | ✅ |
+
+## Misskey.io(要ログイン)
+
+| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
+|---|---|---|---|---|---|---|
+| 高 | `username=`(非公式) | このユーザーの投稿だけ | [misskey.io/search?q=天気&type=note&username=syuilo](https://misskey.io/search?q=%E5%A4%A9%E6%B0%97&type=note&username=syuilo) | ユーザー入力欄が埋まった状態で該当ユーザーのノートのみ | 未検証 | — |
+| 中 | 検索URL | キーワード | [misskey.io/search?q=台風&type=note](https://misskey.io/search?q=%E5%8F%B0%E9%A2%A8&type=note) | ログイン済みならノート検索結果が表示される | 2026-07-03(調査) | ✅ |
+| 低 | タグページ | ハッシュタグ | [misskey.io/tags/天気](https://misskey.io/tags/%E5%A4%A9%E6%B0%97) | タグのノート一覧が開く | 2026-07-03(調査) | ✅ |
+
 ## Googleフォールバック(site:検索)
 
 すべてGoogleの公式構文のため壊れにくい。低頻度でよい。
@@ -113,3 +131,4 @@ Boolean演算子は公式仕様のため壊れにくい。old.reddit.com は2026
 | 2026-07-02 | 初回調査+信頼度中以下の項目をブラウザ実測(operator-research.md参照) |
 | 2026-07-03 | YouTube ソートsp値を実測。CAI系(アップロード日順)の無効化を発見しUI注記を追加 |
 | 2026-07-03 | Googleフォールバックの site:/OR/除外/期間を実測 |
+| 2026-07-03 | pixiv・Misskey.io を追加(Web調査ベース)。pixiv期間指定とMisskey username= が未実測 |

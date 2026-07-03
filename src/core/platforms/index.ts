@@ -9,6 +9,8 @@ import { instagram } from './instagram'
 import { tiktok } from './tiktok'
 import { facebook } from './facebook'
 import { reddit } from './reddit'
+import { pixiv } from './pixiv'
+import { misskey } from './misskey'
 
 export const PLATFORMS: PlatformDef[] = [
   x,
@@ -21,4 +23,6 @@ export const PLATFORMS: PlatformDef[] = [
   tiktok,
   facebook,
   reddit,
+  pixiv,
+  misskey,
 ]

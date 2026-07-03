@@ -17,6 +17,7 @@ import { t, type MessageKey } from '@/i18n'
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'sns', labelKey: 'group.sns' },
   { group: 'video', labelKey: 'group.video' },
+  { group: 'image', labelKey: 'group.image' },
   { group: 'text', labelKey: 'group.text' },
 ]
 import { Badge } from '@/components/ui/badge'

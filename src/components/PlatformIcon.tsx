@@ -3,8 +3,10 @@ import {
   siFacebook,
   siGoogle,
   siInstagram,
+  siMisskey,
   siNiconico,
   siNote,
+  siPixiv,
   siReddit,
   siThreads,
   siTiktok,
@@ -25,6 +27,8 @@ const ICONS: Record<PlatformId, { path: string }> = {
   tiktok: siTiktok,
   facebook: siFacebook,
   reddit: siReddit,
+  pixiv: siPixiv,
+  misskey: siMisskey,
 }
 
 export function PlatformIcon({

@@ -297,6 +297,73 @@ https://note.com/search?context=note&q=<URLエンコード済みクエリ>&sort=
 - Instagram: axiom.ai/Apify(keyword SERPのURL形式・Cookie必須)、実測(未ログイン即リダイレクト 2026-07-02)、Later/SMT(Recentタブ廃止)
 - Facebook: PiunikaWeb(Postsフィルタ削除 2025-09)、Plessas Facebook Matrix(URLテンプレート)、nem.ec(filters= JSON仕様)
 
+# 追加調査: pixiv / Misskey.io(2026-07-03)
+
+## pixiv
+
+### URLテンプレート
+
+```
+https://www.pixiv.net/tags/<URLエンコード済みクエリ>/artworks[?order=...&scd=...&ecd=...]
+```
+
+| パラメータ | 意味 | 信頼度 |
+|---|---|---|
+| パス `/tags/{query}/artworks` | イラスト・マンガの検索。クエリに演算子を埋め込む | 高(サイト標準) |
+| `s_mode` | 省略=`s_tag`(タグ部分一致)。`s_tag_full`=タグ完全一致、`s_tc`=タイトル・キャプション | 高 |
+| `order` | `date_d`=新着(既定)/`date`=古い順/`popular_d`=人気(**プレミアム会員限定**) | 高 |
+| `scd` / `ecd` | 期間の開始日/終了日(YYYY-MM-DD) | 中(非公式・未実測) |
+
+- 小説は `/tags/{query}/novels` だが Dialect は artworks(イラスト・マンガ)のみ対象
+- ユーザー検索は別URL(`/search_user?nick=`)で、作品検索とキーワード併用できないため非対応
+
+### ログイン要件
+
+**不要**。ただし「ログインユーザーに公開」設定の作品とR-18は未ログインでは結果に出ない。原寸表示など閲覧側の機能制限もあるが検索結果一覧は閲覧可能。
+
+### 演算子([公式ヘルプ](https://www.pixiv.help/hc/en-us/articles/235646387)に記載あり)
+
+| 概念 | 構文 | 信頼度 | 備考 |
+|---|---|---|---|
+| AND | スペース区切り | 高 | タグの部分一致で照合(既定の s_mode=s_tag) |
+| OR | `A OR B` / `A (B OR C)` | 高 | **公式ヘルプ記載**。括弧グループ可 |
+| 除外 | `-語` | 高 | **公式ヘルプ記載** |
+| 完全一致 | ✕ 引用符なし | 高(不在) | タグ完全一致(s_tag_full)はあるが語句の完全一致とは別物 → キーワード近似 |
+| ハッシュタグ | タグ語として畳み込み | 高 | pixivのタグ=ハッシュタグそのもの。#を外してクエリへ |
+| 期間 | `scd=`/`ecd=` | 中 | 非公式URLパラメータ。**未実測**(チェックリストで要確認) |
+| 並び順 | `order=date_d`/`popular_d` | 高/高 | popular_d はプレミアム限定(非会員は新着のまま) |
+
+## Misskey.io
+
+### URLテンプレート
+
+```
+https://misskey.io/search?q=<URLエンコード済みクエリ>&type=note[&username=ユーザー名]
+```
+
+| パラメータ | 意味 | 信頼度 |
+|---|---|---|
+| `q` | 検索語。演算子はなく本文の部分一致 | 高(ルーター定義で確認) |
+| `type` | `note`(ノート検索)/`user` | 高(同上) |
+| `username` / `host` | ユーザーで絞り込み(フロントエンドが users/show で解決) | 中(非公式・ルーター定義とsearch.note.vueの実装で確認) |
+
+- タグページ: `misskey.io/tags/{タグ}`(#不要・要エンコード)
+- ルート定義の出典: misskey-dev/misskey `packages/frontend/src/router.definition.ts`(q/userId/username/host/channel/type/origin を search ページの props にマッピング)
+
+### ログイン要件
+
+**必要**。misskey.io のノート検索はログインユーザー向け機能(Misskey本体がロールで検索可否を制御する設計)。タグページは未ログインでも一部閲覧可。
+
+### 演算子
+
+| 概念 | 対応 | 備考 |
+|---|---|---|
+| AND | △ スペース区切り | 本文の部分一致の組み合わせ。misskey.io公式サポートが「まれな語は結果が出ないことがある」と案内しており安定性は中 |
+| OR / 除外 / 完全一致 / 期間 | ✕ | q内の演算子は存在しない → Googleフォールバック対象 |
+| ユーザー指定 | ○ `&username=` | URLパラメータ(非公式)。**検索語との併用が必須**(qが空だと検索が実行されない) |
+| ハッシュタグ | ◎ `/tags/`ページ | 単独時。併用時は本文に「#タグ」が含まれる部分一致検索へ畳み込み(ノート本文にタグ文字列が残るため成立) |
+| 並び順 | ✕ | 検索結果は新着順固定。URL指定不可 |
+
 # Googleフォールバック(site:検索、2026-07-03実装)
 
 本体サイトの検索で外れる条件を、Googleの `site:` 検索(サイト内検索)で補う機能。note公式ヘルプ自身が除外検索の代替として `site:note.com kw -除外` のGoogle検索を案内していることが着想の根拠(上記noteの節を参照)。
@@ -318,7 +385,7 @@ https://note.com/search?context=note&q=<URLエンコード済みクエリ>&sort=
 
 - トリガー: ネイティブ検索で**外れた(dropped)**条件のうち、どれかを含む/完全一致/除外/期間 のいずれかがあるときだけGoogleボタンを出す(近似=partialは本体側で一応動くため対象外。ノイズ回避)
 - Googleへ渡せる正の条件(キーワード・OR・完全一致)がなければ出さない(site:単独ではサイト全ページが対象になるため)
-- 各サイトのドメインは PlatformDef.googleSite(x.com / bsky.app / youtube.com / note.com / nicovideo.jp / threads.com / instagram.com / tiktok.com / facebook.com / reddit.com)
+- 各サイトのドメインは PlatformDef.googleSite(x.com / bsky.app / youtube.com / note.com / nicovideo.jp / threads.com / instagram.com / tiktok.com / facebook.com / reddit.com / pixiv.net / misskey.io)
 
 ## 実機確認(2026-07-03、ブラウザで検証)
 

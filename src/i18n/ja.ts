@@ -69,6 +69,7 @@ export const ja = {
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.nosort': '並び順はURLでは指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
+  'note.imageOnly': 'もともと画像・イラストだけのサイトなので、この絞り込みは不要です',
   'note.jaOnly.service': '日本語のサービスなので、この絞り込みは不要です',
 
   // プラットフォーム別の注記
@@ -103,10 +104,17 @@ export const ja = {
   'note.reddit.period': '「1日以内/1週間/1か月/1年以内」への丸めになります',
   'note.threads.fromUser': 'キーワードと組み合わせたときの動作は不安定なことがあります',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
+  'note.pixiv.keywords': 'タグの部分一致で検索されます(タグにない語は本文にあってもヒットしません)',
+  'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
+  'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
+  'note.misskey.keywords': '本文の部分一致で検索されます。まれな語は結果が出ないことがあります',
+  'note.misskey.exclude': 'Misskeyには除外検索がありません',
+  'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',
 
   // 起動パネルのグループ見出し
   'group.sns': 'SNS',
   'group.video': '動画',
+  'group.image': 'イラスト・画像',
   'group.text': 'ブログ・掲示板',
 
   // 起動パネル

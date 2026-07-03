@@ -34,6 +34,8 @@ https://apricot-cake.github.io/dialect/
 | note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
 | TikTok | `tiktok.com/search` | 不要 | キーワードのみ |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
+| pixiv | `pixiv.net/tags` | 不要 | OR・除外・期間・並び順(タグ検索) |
+| Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 
