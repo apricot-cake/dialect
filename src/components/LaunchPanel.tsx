@@ -13,12 +13,8 @@ import type {
 } from '@/core/types'
 import { getLang, t, tf, type MessageKey } from '@/i18n'
 
-const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
-  { group: 'sns', labelKey: 'group.sns' },
-  { group: 'video', labelKey: 'group.video' },
-  { group: 'image', labelKey: 'group.image' },
-  { group: 'text', labelKey: 'group.text' },
-]
+// グループ見出しは出さず、並び順と余白の差だけで見分ける(グループ間は広く、グループ内は詰める)
+const GROUP_ORDER: PlatformGroup[] = ['sns', 'video', 'image', 'text']
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { GoogleIcon, PlatformIcon } from '@/components/PlatformIcon'
@@ -108,23 +104,20 @@ export function LaunchPanel({
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs text-muted-foreground">{t('launch.bgHint')}</p>
-      {/* 1グループ=1行。カラム分けだとグループ数が列数を超えたとき別グループの下に
-          折り返して紛らわしいため、行にしてグループ数の増加に耐えられるようにする */}
-      <div className="flex flex-col gap-5">
-        {GROUPS.map(({ group, labelKey }) => {
+      {/* グループ見出しは置かず、グループ間の広めの余白だけで区切りを表す。
+          グループ内カード(gap-3)より明確に広い gap-8 で、見出しなしでも塊が読み取れる */}
+      <div className="flex flex-col gap-8">
+        {GROUP_ORDER.map((group) => {
           const platforms = PLATFORMS.filter((p) => p.group === group)
           if (platforms.length === 0) return null
           return (
-            <section key={group} className="@container flex flex-col gap-2">
-              <h2 className="text-xs font-medium text-muted-foreground">
-                {t(labelKey)}
-              </h2>
+            <div key={group} className="@container">
               <PlatformCards
                 platforms={platforms}
                 state={state}
                 onLaunch={onLaunch}
               />
-            </section>
+            </div>
           )
         })}
       </div>

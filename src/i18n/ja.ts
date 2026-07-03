@@ -167,12 +167,6 @@ export const ja = {
   'note.animanch.keywords': 'レスの本文を検索します(β機能のため、取りこぼしがあることがあります)',
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
 
-  // 起動パネルのグループ見出し
-  'group.sns': 'SNS',
-  'group.video': '動画',
-  'group.image': 'イラスト・画像',
-  'group.text': 'ブログ・掲示板',
-
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
   'launch.bgHint': '中クリック、または Ctrl / ⌘ + クリックで、後ろのタブ(背面)で開けます',

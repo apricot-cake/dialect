@@ -194,12 +194,6 @@ export const en = {
   'note.animanch.titleOnly':
     'Searches only thread titles across the full archive.',
 
-  // Launch panel group headings
-  'group.sns': 'SNS',
-  'group.video': 'Video',
-  'group.image': 'Illustration & Images',
-  'group.text': 'Blogs & Forums',
-
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
   'launch.bgHint': 'Middle-click, or Ctrl/⌘-click, to open in a background tab',
