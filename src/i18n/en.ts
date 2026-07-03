@@ -166,8 +166,6 @@ export const en = {
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
   'note.reddit.period': 'Rounded to “past day / week / month / year”.',
-  'note.threads.fromUser':
-    'Behavior can be unstable when combined with a keyword.',
   'note.instagram.hashtag':
     'Tag pages show only top posts (no latest order).',
   'note.pixiv.keywords':
@@ -185,10 +183,6 @@ export const en = {
     'Filters by bookmark count. Numbers not among Hatena’s options (1/3/50/100/500) may not work.',
   'note.hatebu.fromUser':
     'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
-  'note.mastodon.keywords':
-    'mstdn.jp does not support URLs with a search term (only hashtag tag pages can be opened).',
-  'note.mastodon.hashtag':
-    'Only one tag can be set. It cannot be combined with keywords or other tags.',
   'note.twitch.japaneseOnly':
     'Filtering by language cannot be set via URL.',
   'note.fivech.keywords':
@@ -199,8 +193,6 @@ export const en = {
     'Searches post bodies (a beta feature, so some may be missed).',
   'note.animanch.titleOnly':
     'Searches only thread titles across the full archive.',
-  'note.seiga.sort':
-    'Popular is approximated by most views. Sort order cannot be set for manga.',
 
   // Launch panel group headings
   'group.sns': 'SNS',

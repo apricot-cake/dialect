@@ -28,7 +28,7 @@ export type ConceptId =
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
-/** 作品の種類。イラスト/マンガの投稿サイト(pixiv・ニコニコ静画)向け */
+/** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
 export type WorkType = '' | 'illust' | 'manga'
 
 /** 探すものの種類。動画=投稿された動画、チャンネル=投稿者・配信者 */
@@ -93,18 +93,14 @@ export type PlatformId =
   | 'youtube'
   | 'note'
   | 'niconico'
-  | 'threads'
   | 'instagram'
-  | 'tiktok'
   | 'reddit'
   | 'pixiv'
   | 'misskey'
   | 'hatebu'
-  | 'mastodon'
   | 'twitch'
   | 'fivech'
   | 'animanch'
-  | 'seiga'
 
 export interface PlatformDef {
   id: PlatformId

@@ -151,7 +151,6 @@ export const ja = {
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
   'note.reddit.period': '「1日以内/1週間/1か月/1年以内」への丸めになります',
-  'note.threads.fromUser': 'キーワードと組み合わせたときの動作は不安定なことがあります',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
   'note.pixiv.keywords': 'タグの部分一致で検索されます(タグにない語は本文にあってもヒットしません)',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
@@ -162,14 +161,11 @@ export const ja = {
   'note.youtube.resultType': '非公式な指定方法です。ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ブックマーク数で絞り込みます。はてブ側の選択肢(1/3/50/100/500)にない数は効かない可能性があります',
   'note.hatebu.fromUser': 'ユーザーのブックマークの中のキーワード検索は、はてなへのログインが必要なため対応していません',
-  'note.mastodon.keywords': 'mstdn.jpは検索語入りのURLに対応していません(ハッシュタグのタグページだけ開けます)',
-  'note.mastodon.hashtag': 'タグは1つだけ指定できます。キーワードや他のタグとの組み合わせはできません',
   'note.twitch.japaneseOnly': '言語での絞り込みはURLでは指定できません',
   'note.fivech.keywords': 'スレッドのタイトルだけが検索対象です。スレタイ検索サービス(ff5ch.syoboi.jp)を開きます',
   'note.fivech.subreddit': '板のID(例: sony)を1つだけ指定できます。2つ目以降は無視されます',
   'note.animanch.keywords': 'レスの本文を検索します(β機能のため、取りこぼしがあることがあります)',
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
-  'note.seiga.sort': '人気順は閲覧数の多い順で代用します。マンガでは並び順を指定できません',
 
   // 起動パネルのグループ見出し
   'group.sns': 'SNS',
