@@ -4,7 +4,10 @@ import { defaultState } from './concepts'
 // 検索条件をURLクエリパラメータへ埋め込む(パーマリンク)。
 // GitHub Pages でパスルーティングが使えないため、クエリパラメータ方式に固定。
 // v= はフォーマットのバージョン。概念が増えたら後方互換のまま読めるようにする。
+// 条件セットが1つのときは v=1 (フラットなパラメータ)、2つ以上のときは v=2 で
+// セットごとの v=1 相当のクエリ文字列を q= に入れ子にして繰り返す
 const VERSION = '1'
+const VERSION_SETS = '2'
 
 export function stateToParams(state: QueryState): URLSearchParams {
   const params = new URLSearchParams()
@@ -92,7 +95,36 @@ export function paramsToState(params: URLSearchParams): QueryState {
   return state
 }
 
-export function permalinkUrl(state: QueryState): string {
+/**
+ * 条件セット(セット内AND・セット間OR)をパラメータへ。
+ * 1セットのときは従来の v=1 形式そのまま(リンクが短く、旧リンクと同形)
+ */
+export function setsToParams(sets: QueryState[]): URLSearchParams {
+  if (sets.length === 1) return stateToParams(sets[0])
+  const params = new URLSearchParams()
+  params.set('v', VERSION_SETS)
+  for (const state of sets) {
+    const inner = stateToParams(state)
+    inner.delete('v')
+    params.append('q', inner.toString())
+  }
+  return params
+}
+
+export function paramsToSets(params: URLSearchParams): QueryState[] {
+  const nested = params.getAll('q')
+  if (nested.length > 0) {
+    return nested.map((q) => {
+      const inner = new URLSearchParams(q)
+      inner.set('v', VERSION)
+      return paramsToState(inner)
+    })
+  }
+  // v=1 (旧形式・単一セット) はそのまま1セットとして読む
+  return [paramsToState(params)]
+}
+
+export function permalinkUrl(sets: QueryState[]): string {
   const base = `${location.origin}${location.pathname}`
-  return `${base}?${stateToParams(state).toString()}`
+  return `${base}?${setsToParams(sets).toString()}`
 }

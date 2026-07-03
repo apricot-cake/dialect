@@ -2,7 +2,15 @@ import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
-import type { ConceptId, PlatformGroup, PlatformId, QueryState } from '@/core/types'
+import { setMark } from '@/core/summary'
+import type {
+  ConceptId,
+  PlatformDef,
+  PlatformGroup,
+  PlatformId,
+  QueryState,
+  Resolution,
+} from '@/core/types'
 import { t, type MessageKey } from '@/i18n'
 
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
@@ -48,13 +56,55 @@ function ConceptNote({
   )
 }
 
+function ResolutionNotes({ resolution }: { resolution: Resolution }) {
+  if (
+    resolution.approximated.length === 0 &&
+    resolution.dropped.length === 0
+  ) {
+    return null
+  }
+  return (
+    <ul className="flex flex-col gap-1.5">
+      {resolution.approximated.map(({ concept, noteKey }) => (
+        <ConceptNote
+          key={concept}
+          concept={concept}
+          noteKey={noteKey}
+          tone="approx"
+        />
+      ))}
+      {resolution.dropped.map(({ concept, noteKey }) => (
+        <ConceptNote
+          key={concept}
+          concept={concept}
+          noteKey={noteKey}
+          tone="dropped"
+        />
+      ))}
+    </ul>
+  )
+}
+
+/** 「2/3 条件を適用」のテキスト。条件が1つもなければ null */
+function appliedCountText(resolution: Resolution): string | null {
+  const activeCount =
+    resolution.applied.length +
+    resolution.approximated.length +
+    resolution.dropped.length
+  if (activeCount === 0) return null
+  const appliedCount =
+    resolution.applied.length + resolution.approximated.length
+  return `${appliedCount}/${activeCount} ${t('launch.conditions')}${t('launch.applied')}`
+}
+
 export function LaunchPanel({
-  state,
+  sets,
   hidden,
   onToggleHidden,
   onLaunch,
 }: {
-  state: QueryState
+  /** 条件セット(セット間OR)。1セット=1タブとして訳す */
+  sets: QueryState[]
   /** OFFにしたサイトのID(localStorageに記憶される) */
   hidden: PlatformId[]
   onToggleHidden: (id: PlatformId) => void
@@ -99,7 +149,7 @@ export function LaunchPanel({
               </h2>
               <PlatformCards
                 platforms={platforms}
-                state={state}
+                sets={sets}
                 onLaunch={onLaunch}
               />
             </section>
@@ -110,25 +160,26 @@ export function LaunchPanel({
   )
 }
 
+function launch(url: string | null, onLaunch?: () => void) {
+  if (!url) return
+  onLaunch?.()
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
 function PlatformCards({
   platforms,
-  state,
+  sets,
   onLaunch,
 }: {
-  platforms: typeof PLATFORMS
-  state: QueryState
+  platforms: PlatformDef[]
+  sets: QueryState[]
   onLaunch?: () => void
 }) {
   return (
     <div className="flex flex-col gap-3">
       {platforms.map((platform) => {
-        const resolution = resolve(platform, state)
-        const activeCount =
-          resolution.applied.length +
-          resolution.approximated.length +
-          resolution.dropped.length
-        const appliedCount =
-          resolution.applied.length + resolution.approximated.length
+        const resolutions = sets.map((state) => resolve(platform, state))
+        const single = resolutions.length === 1 ? resolutions[0] : null
 
         return (
           <Card key={platform.id} className="py-4">
@@ -150,50 +201,59 @@ function PlatformCards({
                     <TooltipContent>{t('launch.loginNote')}</TooltipContent>
                   </Tooltip>
                 )}
-                {activeCount > 0 && (
+                {single && appliedCountText(single) && (
                   <span className="ml-auto text-xs text-muted-foreground">
-                    {appliedCount}/{activeCount} {t('launch.conditions')}
-                    {t('launch.applied')}
+                    {appliedCountText(single)}
                   </span>
                 )}
               </div>
 
-              {(resolution.approximated.length > 0 ||
-                resolution.dropped.length > 0) && (
-                <ul className="flex flex-col gap-1.5">
-                  {resolution.approximated.map(({ concept, noteKey }) => (
-                    <ConceptNote
-                      key={concept}
-                      concept={concept}
-                      noteKey={noteKey}
-                      tone="approx"
-                    />
-                  ))}
-                  {resolution.dropped.map(({ concept, noteKey }) => (
-                    <ConceptNote
-                      key={concept}
-                      concept={concept}
-                      noteKey={noteKey}
-                      tone="dropped"
-                    />
-                  ))}
-                </ul>
+              {single ? (
+                <>
+                  <ResolutionNotes resolution={single} />
+                  <Button
+                    className="w-full text-white"
+                    style={{ backgroundColor: platform.brandColor }}
+                    disabled={!single.url}
+                    onClick={() => launch(single.url, onLaunch)}
+                  >
+                    {platform.name}
+                    {t('launch.search')}
+                  </Button>
+                </>
+              ) : (
+                // 複数セット: セット間ORはタブに訳せないので、1セット=1ボタン(=1タブ)
+                resolutions.map((resolution, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-2 rounded-md border p-2.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium">
+                        {t('sets.label')}
+                        {setMark(i)}
+                      </span>
+                      {appliedCountText(resolution) && (
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          {appliedCountText(resolution)}
+                        </span>
+                      )}
+                    </div>
+                    <ResolutionNotes resolution={resolution} />
+                    <Button
+                      size="sm"
+                      className="w-full text-white"
+                      style={{ backgroundColor: platform.brandColor }}
+                      disabled={!resolution.url}
+                      onClick={() => launch(resolution.url, onLaunch)}
+                    >
+                      {t('sets.label')}
+                      {setMark(i)}
+                      {t('launch.search')}
+                    </Button>
+                  </div>
+                ))
               )}
-
-              <Button
-                className="w-full text-white"
-                style={{ backgroundColor: platform.brandColor }}
-                disabled={!resolution.url}
-                onClick={() => {
-                  if (resolution.url) {
-                    onLaunch?.()
-                    window.open(resolution.url, '_blank', 'noopener,noreferrer')
-                  }
-                }}
-              >
-                {platform.name}
-                {t('launch.search')}
-              </Button>
             </CardContent>
           </Card>
         )
