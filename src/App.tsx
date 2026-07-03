@@ -96,10 +96,16 @@ export default function App() {
     setBuilderKey((k) => k + 1)
   }
 
-  // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)
+  // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)。
+  // ただし条件が1つも無いとき(v= だけ)はクエリを付けず、初期表示のURLを汚さない
   useEffect(() => {
-    const params = stateToParams(query).toString()
-    history.replaceState(null, '', `${location.pathname}?${params}`)
+    const params = stateToParams(query)
+    const hasConditions = [...params.keys()].some((k) => k !== 'v')
+    history.replaceState(
+      null,
+      '',
+      hasConditions ? `${location.pathname}?${params}` : location.pathname,
+    )
   }, [query])
 
   const copyPermalink = async () => {
