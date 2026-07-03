@@ -34,6 +34,11 @@ import { QueryBuilder } from '@/components/QueryBuilder'
 import { LaunchPanel } from '@/components/LaunchPanel'
 import { SavedSearches } from '@/components/SavedSearches'
 
+// サイト絞り込みの選択中スタイル。薄グレーの枠背景(bg-muted/30)と secondary が
+// ほぼ同色で埋もれるため、淡い塗り+輪郭でコントラストを付ける
+// (塗りは淡めにしてブランド色アイコンを潰さない)
+const FILTER_ACTIVE = 'bg-primary/15 ring-1 ring-primary/40 hover:bg-primary/20'
+
 function initialQuery(): QueryState {
   if (location.search) {
     return paramsToQuery(new URLSearchParams(location.search))
@@ -149,7 +154,7 @@ export default function App() {
               {t('column.build')}
             </h2>
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-2">
                   {/* 条件への操作(保存・共有・クリア)。下のサイト絞り込み枠や
                       右カラムの説明文と左端の軸をそろえるため左寄せにする */}
@@ -211,49 +216,54 @@ export default function App() {
                     </Tooltip>
                   </div>
                 </div>
-                {/* サイトで絞る: ラベル+常時表示のアイコン行を1つの枠にまとめる。各サイトは
-                    アイコンのみ(ホバーで名前)。選択中はハイライト、もう一度押すと解除=すべて */}
-                <div className="flex flex-wrap items-center gap-1 rounded-md border bg-muted/30 px-2 py-1.5">
+                {/* サイトで絞る: ラベルを1行目に独立させ、2行目以降にサイトの絞り込みを折り返す。
+                    各サイトはアイコンのみ(ホバーで名前)。選択中はハイライト、もう一度押すと解除=すべて */}
+                <div className="flex flex-col gap-1.5 rounded-md border bg-muted/30 px-2 py-1.5">
                   <Tooltip>
-                    <TooltipTrigger className="mr-1 cursor-default text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
+                    <TooltipTrigger className="cursor-default self-start text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
                       {t('builder.filter.label')}
                     </TooltipTrigger>
                     <TooltipContent className="max-w-64">
                       {t('builder.filter.help')}
                     </TooltipContent>
                   </Tooltip>
-                  <Button
-                    variant={filterId === null ? 'secondary' : 'ghost'}
-                    size="sm"
-                    className="h-7"
-                    onClick={() => setFilterId(null)}
-                  >
-                    {t('builder.filter.all')}
-                  </Button>
-                  {PLATFORMS.map((p) => (
-                    <Tooltip key={p.id}>
-                      <TooltipTrigger
-                        render={
-                          <Button
-                            variant={filterId === p.id ? 'secondary' : 'ghost'}
-                            size="icon-sm"
-                            aria-label={p.name}
-                            aria-pressed={filterId === p.id}
-                            onClick={() =>
-                              setFilterId(filterId === p.id ? null : p.id)
-                            }
+                  <div className="flex flex-wrap items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`h-7 ${filterId === null ? FILTER_ACTIVE : ''}`}
+                      onClick={() => setFilterId(null)}
+                    >
+                      {t('builder.filter.all')}
+                    </Button>
+                    {PLATFORMS.map((p) => (
+                      <Tooltip key={p.id}>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className={
+                                filterId === p.id ? FILTER_ACTIVE : undefined
+                              }
+                              aria-label={p.name}
+                              aria-pressed={filterId === p.id}
+                              onClick={() =>
+                                setFilterId(filterId === p.id ? null : p.id)
+                              }
+                            />
+                          }
+                        >
+                          <PlatformIcon
+                            id={p.id}
+                            className="size-4"
+                            style={{ color: p.brandColor }}
                           />
-                        }
-                      >
-                        <PlatformIcon
-                          id={p.id}
-                          className="size-4"
-                          style={{ color: p.brandColor }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>{p.name}</TooltipContent>
-                    </Tooltip>
-                  ))}
+                        </TooltipTrigger>
+                        <TooltipContent>{p.name}</TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
                 </div>
               </div>
 

@@ -103,7 +103,10 @@ export function LaunchPanel({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-muted-foreground">{t('launch.bgHint')}</p>
+      {/* 左カラムの操作ボタン帯(h-7)と高さをそろえ、下のカードが箱の上端と同じ軸に並ぶようにする */}
+      <p className="flex min-h-7 items-center text-xs text-muted-foreground">
+        {t('launch.bgHint')}
+      </p>
       {/* グループ見出しは置かず、グループ間の広めの余白だけで区切りを表す。
           グループ内カード(gap-3)より明確に広い gap-8 で、見出しなしでも塊が読み取れる */}
       <div className="flex flex-col gap-8">
