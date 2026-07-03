@@ -273,7 +273,7 @@ export default function App() {
                 </div>
               </div>
 
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="flex flex-col gap-4">
                   <QueryBuilder
                     key={builderKey}

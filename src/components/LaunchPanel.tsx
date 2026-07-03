@@ -31,6 +31,19 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+/**
+ * ブランド色の上に置く文字色を輝度から決める。Misskey(#A1CA03 黄緑)のような
+ * 明るい色は白だと沈むので濃色にする。YIQ近似の知覚輝度が 0.6 超なら濃色。
+ */
+function readableInk(hex: string): string {
+  const m = hex.replace('#', '')
+  const r = parseInt(m.slice(0, 2), 16)
+  const g = parseInt(m.slice(2, 4), 16)
+  const b = parseInt(m.slice(4, 6), 16)
+  const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255
+  return brightness > 0.6 ? '#1a1a1a' : '#ffffff'
+}
+
 /** 概念名だけを1行に並べた注記。理由の説明文はホバーのツールチップに畳む */
 function NoteLine({
   tone,
@@ -142,7 +155,7 @@ export function LaunchPanel({
         if (platforms.length === 0) return null
         return (
           <section key={group} className="@container flex flex-col gap-3">
-            <h3 className="text-xs font-semibold tracking-wide text-foreground">
+            <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               {t(labelKey)}
             </h3>
             <PlatformCards
@@ -190,11 +203,11 @@ const SearchLink = forwardRef<HTMLAnchorElement, SearchLinkProps>(
         tabIndex={enabled ? undefined : -1}
         className={cn(
           buttonVariants(),
-          'w-full text-white',
+          'w-full shadow-sm hover:brightness-95',
           !enabled && 'pointer-events-none opacity-50',
           className,
         )}
-        style={{ backgroundColor: brandColor }}
+        style={{ backgroundColor: brandColor, color: readableInk(brandColor) }}
         onClick={() => {
           if (enabled) onLaunch?.()
         }}
@@ -269,7 +282,7 @@ function PlatformCards({
         const fallback = googleFallback(platform, state, resolution)
 
         return (
-          <Card key={platform.id} className="py-4">
+          <Card key={platform.id} className="gap-3 py-4 shadow-sm">
             <CardContent className="flex flex-col gap-3 px-4">
               <div className="flex items-center gap-2">
                 <PlatformIcon
