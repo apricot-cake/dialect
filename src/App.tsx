@@ -149,6 +149,9 @@ export default function App() {
               isMobile && tab !== 'build' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
+            <h2 className="text-sm font-semibold tracking-tight">
+              {t('column.build')}
+            </h2>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -306,6 +309,9 @@ export default function App() {
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
             } flex-col gap-4`}
           >
+            <h2 className="text-sm font-semibold tracking-tight">
+              {t('column.launch')}
+            </h2>
             <LaunchPanel
               state={query}
               onLaunch={() => setHistoryEntries(recordHistory(query))}

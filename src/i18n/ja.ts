@@ -200,6 +200,9 @@ export const ja = {
   // スマホの画面切り替えボタン(右下)。移動先の画面名として使う
   'tab.build': '条件を入力',
   'tab.launch': '検索する',
+  // PC2カラムの見出し(左=条件の組み立て、右=各サイトで開く)
+  'column.build': '検索条件',
+  'column.launch': '各サイトで開く',
 
   // ビルダー操作
   'builder.clear': 'クリア',

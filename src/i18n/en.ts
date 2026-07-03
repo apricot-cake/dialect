@@ -233,6 +233,8 @@ export const en = {
   // Mobile screen-switch button (bottom right). Names the destination screen
   'tab.build': 'Enter conditions',
   'tab.launch': 'Search',
+  'column.build': 'Search conditions',
+  'column.launch': 'Open on each site',
 
   // Builder actions
   'builder.clear': 'Clear',
