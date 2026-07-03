@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { X } from 'lucide-react'
 import { FIELDS, type FieldDef } from '@/core/concepts'
-import { andTerms, formatTerms, parseTerms } from '@/core/text'
+import { andTerms, parseTerms } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
@@ -56,10 +57,33 @@ const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[
 ]
 
 export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
-  // キーワード欄は引用符つきの生テキストを保持し、パース結果だけを state に流す。
-  // state から毎回復元すると入力途中の引用符やスペースが正規化されて消えてしまう
-  const [rawTerms, setRawTerms] = useState(() => formatTerms(state.terms))
+  // キーワードは「確定済みチップ + 入力中テキスト」で持つ。
+  // Enterで入力中の語句(スペース入りも)を1語のチップにまとめる。
+  // 入力中テキストもスペース区切りのANDとしてそのまま検索に効く
+  const [chips, setChips] = useState<string[]>(() => andTerms(state))
+  const [rawInput, setRawInput] = useState('')
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
+
+  const syncTerms = (nextChips: string[], raw: string) => {
+    const terms = [...nextChips, ...parseTerms(raw)]
+    onChange({ ...state, terms: terms.length > 0 ? terms : [''] })
+  }
+
+  /** 入力中の語句を1語のチップに確定する(連続スペースは1つに正規化) */
+  const commitChip = () => {
+    const text = rawInput.trim().replace(/[\s　]+/g, ' ')
+    if (!text) return
+    const next = [...chips, text]
+    setChips(next)
+    setRawInput('')
+    syncTerms(next, '')
+  }
+
+  const removeChip = (index: number) => {
+    const next = chips.filter((_, i) => i !== index)
+    setChips(next)
+    syncTerms(next, rawInput)
+  }
 
   const supportersOf = (field: FieldDef) =>
     platforms.filter((p) => supportOf(p, field.concept).level !== 'none')
@@ -133,20 +157,52 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     supporters: PlatformDef[]
   }) => {
     if (field.widget === 'terms') {
-      const showHint = /[\s　]/.test(rawTerms.trim())
+      const showHint = chips.length > 0 || /[\s　]/.test(rawInput.trim())
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
           {labelRow(field, supporters)}
-          <Input
-            id={field.field}
-            value={rawTerms}
-            placeholder={t('concept.keywords.placeholder')}
-            onChange={(e) => {
-              setRawTerms(e.target.value)
-              const parsed = parseTerms(e.target.value)
-              set({ terms: parsed.length > 0 ? parsed : [''] })
-            }}
-          />
+          {/* Inputと同等の見た目のチップ入力。クリックで内側のinputへフォーカス */}
+          <div className="flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/30">
+            {chips.map((chip, i) => (
+              <span
+                key={`${chip}-${i}`}
+                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-secondary-foreground"
+              >
+                {chip}
+                <button
+                  type="button"
+                  aria-label={t('concept.terms.removeTerm')}
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => removeChip(i)}
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            ))}
+            <input
+              id={field.field}
+              className="min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/60"
+              value={rawInput}
+              placeholder={chips.length === 0 ? t('concept.keywords.placeholder') : undefined}
+              onChange={(e) => {
+                setRawInput(e.target.value)
+                syncTerms(chips, e.target.value)
+              }}
+              onKeyDown={(e) => {
+                // 日本語IMEの変換確定のEnterはチップ化しない
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                  e.preventDefault()
+                  commitChip()
+                } else if (
+                  e.key === 'Backspace' &&
+                  rawInput === '' &&
+                  chips.length > 0
+                ) {
+                  removeChip(chips.length - 1)
+                }
+              }}
+            />
+          </div>
           {showHint && (
             <p className="text-xs text-muted-foreground">
               {t('concept.keywords.hint')}

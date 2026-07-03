@@ -59,15 +59,6 @@ export function parseTerms(input: string): string[] {
   return terms
 }
 
-/** 語の配列をキーワード入力欄の文字列へ(parseTerms の逆)。フレーズは "" で括る */
-export function formatTerms(terms: string[]): string {
-  return terms
-    .map((t) => t.trim())
-    .filter(Boolean)
-    .map(quoteIfPhrase)
-    .join(' ')
-}
-
 /** 先頭の @ を除去したユーザー名 */
 export function stripAt(input: string): string {
   return input.trim().replace(/^@+/, '')

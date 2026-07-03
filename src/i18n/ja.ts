@@ -4,7 +4,8 @@ export const ja = {
   'concept.keywords.label': 'キーワード',
   'concept.keywords.placeholder': '例: 台風 進路',
   'concept.keywords.hint':
-    'スペースで区切った語をすべて含む投稿を探します。スペースごとひとまとまりで探したい語句は "計画 運休" のように "" で囲んでください',
+    'スペースで区切った語をすべて含む投稿を探します。Enterを押すと、入力中の語句をスペースごとひとまとまりの1語にできます',
+  'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ ← 一字一句このままの文を探す',
   'concept.exclude.label': '除外するキーワード',
