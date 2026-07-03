@@ -179,17 +179,18 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     return (
       <Tooltip>
-        {/* ラベルと見分けやすいよう右端に寄せ、「対応」つきのピルで囲む */}
-        <TooltipTrigger className="ml-auto cursor-default p-0">
-          <span className="flex flex-wrap items-center gap-1 rounded-full border bg-muted/40 py-0.5 pl-2 pr-1.5">
-            <span className="text-[11px] leading-none text-muted-foreground">
+        {/* ラベルと見分けやすいよう右端に寄せ、「対応」つきのピルで囲む。
+            画面がうるさくならないよう普段は淡色にして、ホバーでブランド色に戻す */}
+        <TooltipTrigger className="group ml-auto cursor-default p-0">
+          <span className="flex flex-wrap items-center gap-1 rounded-full border border-transparent bg-muted/40 py-0.5 pl-2 pr-1.5">
+            <span className="text-[11px] leading-none text-muted-foreground/70">
               {t('builder.support.label')}
             </span>
             {supporters.map((p) => (
               <PlatformIcon
                 key={p.id}
                 id={p.id}
-                className="size-3.5"
+                className="size-3.5 opacity-40 grayscale transition-[filter,opacity] group-hover:opacity-100 group-hover:grayscale-0"
                 style={{ color: p.brandColor }}
               />
             ))}
