@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Plus, X } from 'lucide-react'
+import { CalendarDays, List, Plus, ToggleLeft, Type, X } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import type { ConceptId, PlatformDef, PlatformId, QueryState, SortOrder, TermMode, TermRow, VideoLength } from '@/core/types'
@@ -19,6 +20,37 @@ interface Props {
 
 /** 最初から表示しておく基本フィールド。それ以外は「条件を追加」から選んで足す */
 const ALWAYS_VISIBLE: ReadonlySet<ConceptId> = new Set(['keywords', 'sortOrder'])
+
+/** 追加パネルで「この条件はどう入力するか」を追加前に示すための分類 */
+type WidgetKind = 'input' | 'toggle' | 'date' | 'select'
+
+function widgetKind(field: FieldDef): WidgetKind {
+  switch (field.widget) {
+    case 'toggle':
+      return 'toggle'
+    case 'period':
+      return 'date'
+    case 'videoLength':
+    case 'sort':
+      return 'select'
+    default:
+      return 'input'
+  }
+}
+
+const KIND_ICONS: Record<WidgetKind, LucideIcon> = {
+  input: Type,
+  toggle: ToggleLeft,
+  date: CalendarDays,
+  select: List,
+}
+
+const KIND_LABEL_KEYS: Record<WidgetKind, Parameters<typeof t>[0]> = {
+  input: 'builder.kind.input',
+  toggle: 'builder.kind.toggle',
+  date: 'builder.kind.date',
+  select: 'builder.kind.select',
+}
 
 interface Section {
   key: string
@@ -137,7 +169,19 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
   const activeFilter = platforms.some((p) => p.id === filterId)
     ? filterId
     : null
-  const pickerSections = buildPickerSections(activeFilter, platforms, visibleSet)
+  // キーワードは常時表示だが、追加パネルには「行を足す」項目として何度でも出す
+  const pickerExclude = new Set(
+    [...visibleSet].filter((c) => c !== 'keywords'),
+  )
+  const pickerSections = buildPickerSections(activeFilter, platforms, pickerExclude)
+
+  const addTermRow = () =>
+    set({
+      terms: [
+        ...(state.terms.length > 0 ? state.terms : [{ text: '', mode: 'all' as TermMode }]),
+        { text: '', mode: 'all' },
+      ],
+    })
 
   const addField = (field: FieldDef) => {
     setAdded((a) => [...a, field.concept])
@@ -239,15 +283,6 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
               )}
             </div>
           ))}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="self-start text-muted-foreground"
-            onClick={() => setRows([...rows, { text: '', mode: 'all' }])}
-          >
-            <Plus />
-            {t('concept.terms.addRow')}
-          </Button>
           {rows.length > 1 && (
             <p className="text-xs text-muted-foreground">
               {t('concept.terms.multiNote')}
@@ -378,7 +413,7 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      {visibleFields.map(renderField)}
+      {visibleFields.filter((f) => f.concept === 'keywords').map(renderField)}
 
       <div className="flex flex-col gap-2">
         <Button
@@ -394,6 +429,17 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
 
         {pickerOpen && (
           <div className="flex flex-col gap-3 rounded-md border bg-muted/30 p-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {(Object.keys(KIND_ICONS) as WidgetKind[]).map((kind) => {
+                const Icon = KIND_ICONS[kind]
+                return (
+                  <span key={kind} className="flex items-center gap-1">
+                    <Icon aria-hidden className="size-3.5" />
+                    {t(KIND_LABEL_KEYS[kind])}
+                  </span>
+                )
+              })}
+            </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-muted-foreground">
                 {t('builder.filter.label')}
@@ -433,23 +479,31 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
                   {section.title}
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {section.fields.map((f) => (
-                    <Button
-                      key={f.concept}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addField(f)}
-                    >
-                      <Plus className="size-3.5" />
-                      {t(f.labelKey)}
-                    </Button>
-                  ))}
+                  {section.fields.map((f) => {
+                    const Icon = KIND_ICONS[widgetKind(f)]
+                    const isTermRow = f.concept === 'keywords'
+                    return (
+                      <Button
+                        key={f.concept}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => (isTermRow ? addTermRow() : addField(f))}
+                      >
+                        <Icon aria-hidden className="size-3.5 text-muted-foreground" />
+                        {isTermRow
+                          ? t('builder.addField.termRow')
+                          : t(f.labelKey)}
+                      </Button>
+                    )
+                  })}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {visibleFields.filter((f) => f.concept !== 'keywords').map(renderField)}
     </div>
   )
 }

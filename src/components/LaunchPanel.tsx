@@ -137,7 +137,9 @@ export function LaunchPanel({
           )
         })}
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* 1グループ=1行。カラム分けだとグループ数が列数を超えたとき別グループの下に
+          折り返して紛らわしいため、行にしてグループ数の増加に耐えられるようにする */}
+      <div className="flex flex-col gap-5">
         {GROUPS.map(({ group, labelKey }) => {
           const platforms = enabled.filter((p) => p.group === group)
           if (platforms.length === 0) return null
@@ -218,7 +220,7 @@ function PlatformCards({
   onLaunch?: () => void
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {platforms.map((platform) => {
         const entries = sets.map((state) => {
           const resolution = resolve(platform, state)

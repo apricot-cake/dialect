@@ -7,7 +7,6 @@ export const ja = {
   'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
-  'concept.terms.addRow': 'キーワードの行を追加',
   'concept.terms.removeRow': 'この行を削除',
   'concept.terms.multiNote':
     '行が2つ以上あるときは、すべての行の条件を満たす投稿を探します',
@@ -59,7 +58,14 @@ export const ja = {
   'builder.section.only': '専用',
   'builder.addField': '条件を追加',
   'builder.addField.empty': '追加できる条件はありません',
+  'builder.addField.termRow': 'キーワードの行',
   'builder.removeField': 'この条件を外す',
+
+  // 追加パネルの入力タイプ凡例
+  'builder.kind.input': '文字を入力',
+  'builder.kind.toggle': 'オン/オフ',
+  'builder.kind.date': '日付',
+  'builder.kind.select': '選択式',
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': 'すべてのキーワードを含む保証はありません',
