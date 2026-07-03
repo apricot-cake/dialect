@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, ChevronUp, Info } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Search,
+  SlidersHorizontal,
+} from 'lucide-react'
 import { defaultState } from '@/core/concepts'
 import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import {
@@ -12,7 +18,7 @@ import {
 import { PLATFORMS } from '@/core/platforms'
 import { hasPositiveTerm } from '@/core/text'
 import type { PlatformId, QueryState } from '@/core/types'
-import { t, type MessageKey } from '@/i18n'
+import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -35,16 +41,11 @@ function initialQuery(): QueryState {
 
 type TabId = 'build' | 'launch'
 
-const TABS: Array<{ id: TabId; labelKey: MessageKey }> = [
-  { id: 'build', labelKey: 'tab.build' },
-  { id: 'launch', labelKey: 'tab.launch' },
-]
-
 /**
- * タブ表示にするか。タッチ端末(主ポインタがcoarse) かつ 横幅が狭いときだけタブにする。
+ * 1画面表示にするか。タッチ端末(主ポインタがcoarse) かつ 横幅が狭いときだけ切り替え式にする。
  * - PC: ウィンドウを狭くスナップしていても2カラムを維持
  * - iPad横向きなど広いタッチ端末: 2カラム
- * - スマホ・iPad縦向き: タブ。回転で幅が変わったら追従する
+ * - スマホ・iPad縦向き: 右下のボタンで2画面を行き来。回転で幅が変わったら追従する
  */
 const MOBILE_QUERY = '(pointer: coarse) and (max-width: 1023px)'
 
@@ -102,35 +103,11 @@ export default function App() {
           isMobile ? 'max-w-4xl' : 'max-w-7xl'
         }`}
       >
-        {/* スマホはタブ切り替え。タブはスクロールしても隠れないよう画面上部に固定する */}
-        {isMobile && (
-          <nav
-            role="tablist"
-            className="sticky top-0 z-10 -mx-4 flex gap-1 border-b bg-background px-4"
-          >
-            {TABS.map(({ id, labelKey }) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={tab === id}
-                className={`border-b-2 px-3 py-2.5 text-sm font-semibold transition-colors ${
-                  tab === id
-                    ? 'border-primary text-foreground'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-                onClick={() => setTab(id)}
-              >
-                {t(labelKey)}
-              </button>
-            ))}
-          </nav>
-        )}
-
         <main
           className={
             isMobile
-              ? 'flex flex-col gap-8 py-6'
+              ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
+                'flex flex-col gap-8 py-6 pb-24'
               : 'grid grid-cols-2 items-start gap-10 py-6'
           }
         >
@@ -271,6 +248,22 @@ export default function App() {
             />
           </section>
         </main>
+
+        {/* スマホは右下の浮きボタン1つで「条件を入力」と「検索する」を行き来する。
+            ラベルは移動先の画面を示す */}
+        {isMobile && (
+          <Button
+            size="lg"
+            className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 h-12 rounded-full px-5 shadow-lg"
+            onClick={() => {
+              setTab(tab === 'build' ? 'launch' : 'build')
+              window.scrollTo({ top: 0 })
+            }}
+          >
+            {tab === 'build' ? <Search /> : <SlidersHorizontal />}
+            {t(tab === 'build' ? 'tab.launch' : 'tab.build')}
+          </Button>
+        )}
 
         <footer className="mt-auto flex items-center justify-between gap-4 border-t py-4 text-xs text-muted-foreground">
           <span>{t('footer.disclaimer')}</span>

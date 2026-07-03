@@ -168,7 +168,7 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
-  // 画面上部のタブ(スマホ)
+  // スマホの画面切り替えボタン(右下)。移動先の画面名として使う
   'tab.build': '条件を入力',
   'tab.launch': '検索する',
 
