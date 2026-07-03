@@ -33,23 +33,25 @@ export interface FieldDef {
   widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms' | 'sort'
   labelKey: MessageKey
   placeholderKey?: MessageKey
+  /** trueならEnter区切りで複数の語を指定できる(値はスペース結合の文字列) */
+  multi?: boolean
 }
 
 export const FIELDS: FieldDef[] = [
   // キーワードは1枠=1語。枠を足すと絞り込み(AND)。「または」は条件セットで表現する
   { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label' },
   { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
-  { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
+  { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder', multi: true },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', placeholderKey: 'concept.fromUser.placeholder' },
-  { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', placeholderKey: 'concept.hashtag.placeholder' },
+  { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', placeholderKey: 'concept.hashtag.placeholder', multi: true },
   { concept: 'period', field: 'since', widget: 'period', labelKey: 'concept.period.label' },
   { concept: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label' },
   { concept: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label' },
   { concept: 'videoLength', field: 'videoLength', widget: 'videoLength', labelKey: 'concept.videoLength.label' },
   { concept: 'japaneseOnly', field: 'japaneseOnly', widget: 'toggle', labelKey: 'concept.japaneseOnly.label' },
   { concept: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label' },
-  { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', placeholderKey: 'concept.toUser.placeholder' },
-  { concept: 'excludeUser', field: 'excludeUser', widget: 'text', labelKey: 'concept.excludeUser.label', placeholderKey: 'concept.excludeUser.placeholder' },
+  { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', placeholderKey: 'concept.toUser.placeholder', multi: true },
+  { concept: 'excludeUser', field: 'excludeUser', widget: 'text', labelKey: 'concept.excludeUser.label', placeholderKey: 'concept.excludeUser.placeholder', multi: true },
   { concept: 'minLikes', field: 'minLikes', widget: 'number', labelKey: 'concept.minLikes.label', placeholderKey: 'concept.minLikes.placeholder' },
   { concept: 'minReposts', field: 'minReposts', widget: 'number', labelKey: 'concept.minReposts.label', placeholderKey: 'concept.minReposts.placeholder' },
   { concept: 'excludeReplies', field: 'excludeReplies', widget: 'toggle', labelKey: 'concept.excludeReplies.label' },
@@ -57,7 +59,7 @@ export const FIELDS: FieldDef[] = [
   { concept: 'verifiedOnly', field: 'verifiedOnly', widget: 'toggle', labelKey: 'concept.verifiedOnly.label' },
   { concept: 'mentionsUser', field: 'mentionsUser', widget: 'text', labelKey: 'concept.mentionsUser.label', placeholderKey: 'concept.mentionsUser.placeholder' },
   { concept: 'domain', field: 'domain', widget: 'text', labelKey: 'concept.domain.label', placeholderKey: 'concept.domain.placeholder' },
-  { concept: 'subreddit', field: 'subreddit', widget: 'text', labelKey: 'concept.subreddit.label', placeholderKey: 'concept.subreddit.placeholder' },
+  { concept: 'subreddit', field: 'subreddit', widget: 'text', labelKey: 'concept.subreddit.label', placeholderKey: 'concept.subreddit.placeholder', multi: true },
 ]
 
 /** state の中で実際に指定されている概念 */

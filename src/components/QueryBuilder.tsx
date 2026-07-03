@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { FIELDS, type FieldDef } from '@/core/concepts'
-import { andTerms } from '@/core/text'
+import { andTerms, words } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
@@ -43,6 +43,98 @@ function hasValue(state: QueryState, field: FieldDef): boolean {
   }
 }
 
+interface ChipInputProps {
+  id: string
+  /** 確定済みの語。マウント時に読み込む(外からの変更は再マウントで反映する) */
+  initialTokens: string[]
+  placeholder?: string
+  /** trueならEnterで入力中テキスト全体を1語に(スペースを保つ)。falseなら語ごとに分ける */
+  phrase?: boolean
+  /** 確定チップ+入力中の語を合わせた現在の語リストを通知する */
+  onTokensChange: (tokens: string[]) => void
+}
+
+/** Enterで語を区切るチップ入力。入力中のテキストも確定を待たず語として効く */
+function ChipInput({
+  id,
+  initialTokens,
+  placeholder,
+  phrase,
+  onTokensChange,
+}: ChipInputProps) {
+  const [chips, setChips] = useState<string[]>(initialTokens)
+  const [rawInput, setRawInput] = useState('')
+
+  const liveTokens = (raw: string): string[] => {
+    const text = raw.trim().replace(/[\s　]+/g, ' ')
+    if (!text) return []
+    return phrase ? [text] : words(text)
+  }
+
+  const emit = (nextChips: string[], raw: string) =>
+    onTokensChange([...nextChips, ...liveTokens(raw)])
+
+  const commitChip = () => {
+    const added = liveTokens(rawInput)
+    if (added.length === 0) return
+    const next = [...chips, ...added]
+    setChips(next)
+    setRawInput('')
+    emit(next, '')
+  }
+
+  const removeChip = (index: number) => {
+    const next = chips.filter((_, i) => i !== index)
+    setChips(next)
+    emit(next, rawInput)
+  }
+
+  return (
+    // Inputと同等の見た目のチップ入力。クリックで内側のinputへフォーカス
+    <div className="flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/30">
+      {chips.map((chip, i) => (
+        <span
+          key={`${chip}-${i}`}
+          className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-secondary-foreground"
+        >
+          {chip}
+          <button
+            type="button"
+            aria-label={t('concept.terms.removeTerm')}
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => removeChip(i)}
+          >
+            <X className="size-3" />
+          </button>
+        </span>
+      ))}
+      <input
+        id={id}
+        className="min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/60"
+        value={rawInput}
+        placeholder={chips.length === 0 ? placeholder : undefined}
+        onChange={(e) => {
+          setRawInput(e.target.value)
+          emit(chips, e.target.value)
+        }}
+        onKeyDown={(e) => {
+          // 日本語IMEの変換確定のEnterはチップ化しない
+          if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+            e.preventDefault()
+            commitChip()
+          } else if (
+            e.key === 'Backspace' &&
+            rawInput === '' &&
+            chips.length > 0
+          ) {
+            removeChip(chips.length - 1)
+          }
+        }}
+      />
+    </div>
+  )
+}
+
 const SORT_ORDERS: Array<{ value: SortOrder; labelKey: Parameters<typeof t>[0] }> = [
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
@@ -57,33 +149,7 @@ const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[
 ]
 
 export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
-  // キーワードは「確定済みチップ + 入力中テキスト」で持つ。区切りはEnterだけで、
-  // 入力中テキストはスペースを含んでもそのまま1語。チップどうしはAND
-  const [chips, setChips] = useState<string[]>(() => andTerms(state))
-  const [rawInput, setRawInput] = useState('')
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
-
-  const syncTerms = (nextChips: string[], raw: string) => {
-    const text = raw.trim().replace(/[\s　]+/g, ' ')
-    const terms = text ? [...nextChips, text] : [...nextChips]
-    onChange({ ...state, terms: terms.length > 0 ? terms : [''] })
-  }
-
-  /** 入力中の語句を1語のチップに確定する(連続スペースは1つに正規化) */
-  const commitChip = () => {
-    const text = rawInput.trim().replace(/[\s　]+/g, ' ')
-    if (!text) return
-    const next = [...chips, text]
-    setChips(next)
-    setRawInput('')
-    syncTerms(next, '')
-  }
-
-  const removeChip = (index: number) => {
-    const next = chips.filter((_, i) => i !== index)
-    setChips(next)
-    syncTerms(next, rawInput)
-  }
 
   const supportersOf = (field: FieldDef) =>
     platforms.filter((p) => supportOf(p, field.concept).level !== 'none')
@@ -160,51 +226,15 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
           {labelRow(field, supporters)}
-          {/* Inputと同等の見た目のチップ入力。クリックで内側のinputへフォーカス */}
-          <div className="flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/30">
-            {chips.map((chip, i) => (
-              <span
-                key={`${chip}-${i}`}
-                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-secondary-foreground"
-              >
-                {chip}
-                <button
-                  type="button"
-                  aria-label={t('concept.terms.removeTerm')}
-                  className="text-muted-foreground hover:text-foreground"
-                  onClick={() => removeChip(i)}
-                >
-                  <X className="size-3" />
-                </button>
-              </span>
-            ))}
-            <input
-              id={field.field}
-              className="min-w-24 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/60"
-              value={rawInput}
-              placeholder={chips.length === 0 ? t('concept.keywords.placeholder') : undefined}
-              onChange={(e) => {
-                setRawInput(e.target.value)
-                syncTerms(chips, e.target.value)
-              }}
-              onKeyDown={(e) => {
-                // 日本語IMEの変換確定のEnterはチップ化しない
-                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
-                  e.preventDefault()
-                  commitChip()
-                } else if (
-                  e.key === 'Backspace' &&
-                  rawInput === '' &&
-                  chips.length > 0
-                ) {
-                  removeChip(chips.length - 1)
-                }
-              }}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t('concept.keywords.hint')}
-          </p>
+          <ChipInput
+            id={field.field}
+            initialTokens={andTerms(state)}
+            placeholder={t('concept.keywords.placeholder')}
+            phrase
+            onTokensChange={(tokens) =>
+              set({ terms: tokens.length > 0 ? tokens : [''] })
+            }
+          />
         </div>
       )
     }
@@ -297,6 +327,20 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
         </div>
       )
     }
+    if (field.multi) {
+      // 複数指定できる項目もEnter区切りのチップ入力。値はスペース結合の文字列のまま
+      return (
+        <div key={field.concept} className="flex flex-col gap-1.5">
+          {labelRow(field, supporters)}
+          <ChipInput
+            id={field.field}
+            initialTokens={words(state[field.field] as string)}
+            placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
+            onTokensChange={(tokens) => set({ [field.field]: tokens.join(' ') })}
+          />
+        </div>
+      )
+    }
     return (
       <div key={field.concept} className="flex flex-col gap-1.5">
         {labelRow(field, supporters)}
@@ -312,5 +356,10 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
   }
 
-  return <div className="flex flex-col gap-5">{visibleFields.map(renderField)}</div>
+  return (
+    <div className="flex flex-col gap-5">
+      <p className="text-xs text-muted-foreground">{t('builder.hint.enter')}</p>
+      {visibleFields.map(renderField)}
+    </div>
+  )
 }

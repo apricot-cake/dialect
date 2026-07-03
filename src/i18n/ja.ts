@@ -2,19 +2,17 @@
 export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風',
-  'concept.keywords.hint':
-    'Enterで語を区切ります(スペースを含む語句も1語のまま)。複数の語を入れると、すべてを含む投稿を探します',
+  'concept.keywords.placeholder': '例: 台風 ← 複数の語はすべてを含む',
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ ← 一字一句このままの文を探す',
   'concept.exclude.label': '除外するキーワード',
-  'concept.exclude.placeholder': '例: 広告 PR ← この語を含む投稿を出さない。スペース区切りで複数',
+  'concept.exclude.placeholder': '例: 広告 ← この語を含む投稿を出さない',
   'concept.titleOnly.label': 'タイトルだけで探す',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
   'concept.fromUser.placeholder': '例: nhk_news ← @はつけない',
   'concept.excludeUser.label': 'このユーザーの投稿を除く',
-  'concept.excludeUser.placeholder': '例: nhk_news ← @はつけない。スペース区切りで複数',
+  'concept.excludeUser.placeholder': '例: nhk_news ← @はつけない',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
   'concept.toUser.placeholder': '例: nhk_news ← @はつけない。複数書くとどれかに宛てた返信',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
@@ -46,6 +44,9 @@ export const ja = {
   'concept.sortOrder.new': '新しい順',
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.auto': 'おまかせ',
+
+  // ビルダー上部の共通ヒント
+  'builder.hint.enter': 'Enterで語を区切って、1つの項目に複数の語を指定できます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
   'builder.filter.label': '条件を使えるサイトで絞る',
