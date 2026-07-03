@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Info, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FIELDS, type FieldDef } from '@/core/concepts'
@@ -163,11 +163,9 @@ function SupportIcons({ supporters }: { supporters: PlatformDef[] }) {
 }
 
 /**
- * ラベル+ⓘ+対応バッジの行。1行に収まらないときはバッジを「対応 N」の
- * 件数表記に畳み、アイコンの一覧はホバーのツールチップで見せる
- * (ラベルやバッジが2行に折り返すのを防ぐ)。
- * 収まるかどうかは、常にフル表示で描画する不可視クローンの自然幅と
- * 行の実幅の比較で判定する(畳んだ後も広がったら戻せるように)
+ * ラベル+ⓘ+対応バッジの行。対応バッジは常に「対応 N」の件数表記にし、
+ * どのサイトが対応しているかのアイコン一覧はホバーのツールチップで見せる。
+ * (アイコンを常時並べると条件によって幅がバラつき、行が折り返すため)
  */
 function LabelRow({
   field,
@@ -181,44 +179,8 @@ function LabelRow({
   leading?: React.ReactNode
   className?: string
 }) {
-  const rowRef = useRef<HTMLDivElement>(null)
-  const measureRef = useRef<HTMLSpanElement>(null)
-  const [collapsed, setCollapsed] = useState(false)
-
-  useLayoutEffect(() => {
-    const row = rowRef.current
-    const measure = measureRef.current
-    if (!row || !measure) return
-    const update = () => setCollapsed(measure.scrollWidth > row.clientWidth)
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(row)
-    return () => observer.disconnect()
-  }, [supporters.length])
-
-  const pillLabel = (
-    <span className="text-[11px] leading-none text-muted-foreground/70">
-      {t('builder.support.label')}
-    </span>
-  )
-
   return (
-    <div ref={rowRef} className={cn('relative flex items-center gap-2', className)}>
-      {/* 折り返し判定用の不可視クローン。leadingはSwitch幅(w-8)のスペーサで代用 */}
-      <span
-        ref={measureRef}
-        aria-hidden
-        className="pointer-events-none invisible absolute left-0 top-0 flex items-center gap-2 whitespace-nowrap"
-      >
-        {leading != null && <span className="w-8 shrink-0" />}
-        <span className="text-sm font-medium">{t(field.labelKey)}</span>
-        <Info className="size-3.5 shrink-0" />
-        <span className={SUPPORT_PILL}>
-          {pillLabel}
-          <SupportIcons supporters={supporters} />
-        </span>
-      </span>
-
+    <div className={cn('flex items-center gap-2', className)}>
       {leading}
       <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
       <Tooltip>
@@ -230,26 +192,21 @@ function LabelRow({
         </TooltipTrigger>
         <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
       </Tooltip>
-      {collapsed ? (
-        <Tooltip>
-          <TooltipTrigger className={cn(SUPPORT_PILL, 'ml-auto cursor-default')}>
-            {pillLabel}
-            <span className="text-[11px] font-medium leading-none">
-              {supporters.length}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent className="max-w-56">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <SupportIcons supporters={supporters} />
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        <span className={cn(SUPPORT_PILL, 'ml-auto flex-wrap')}>
-          {pillLabel}
-          <SupportIcons supporters={supporters} />
-        </span>
-      )}
+      <Tooltip>
+        <TooltipTrigger className={cn(SUPPORT_PILL, 'ml-auto cursor-default')}>
+          <span className="text-[11px] leading-none text-muted-foreground/70">
+            {t('builder.support.label')}
+          </span>
+          <span className="text-[11px] font-medium leading-none">
+            {supporters.length}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-56">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SupportIcons supporters={supporters} />
+          </div>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
