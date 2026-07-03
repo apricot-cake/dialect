@@ -130,9 +130,11 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
-  // 画面上部のタブ
+  // 画面上部のタブ(スマホ)と2カラムの見出し(PC)
   'tab.build': '条件を入力',
   'tab.launch': '検索する',
+  'section.builder': '検索条件',
+  'section.launch': '検索する',
 
   // ビルダー操作
   'builder.clear': '条件をクリア',

@@ -36,6 +36,12 @@ const TABS: Array<{ id: TabId; labelKey: MessageKey }> = [
   { id: 'launch', labelKey: 'tab.launch' },
 ]
 
+/**
+ * スマホ判定。ウィンドウ幅ではなく端末(主ポインタがタッチか)で決める。
+ * PCはウィンドウを狭くスナップしていても2カラムを維持する
+ */
+const isMobile = window.matchMedia('(pointer: coarse)').matches
+
 export default function App() {
   const [query, setQuery] = useState<QueryState>(initialQuery)
   // クリア・復元のたびに増やしてビルダーを再マウントし、
@@ -87,35 +93,54 @@ export default function App() {
 
   return (
     <TooltipProvider>
-      <div className="mx-auto flex min-h-dvh max-w-4xl flex-col px-4">
-        {/* タブはスクロールしても隠れないよう画面上部に固定する */}
-        <nav
-          role="tablist"
-          className="sticky top-0 z-10 -mx-4 flex gap-1 border-b bg-background px-4"
-        >
-          {TABS.map(({ id, labelKey }) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={tab === id}
-              className={`border-b-2 px-3 py-2.5 text-sm font-semibold transition-colors ${
-                tab === id
-                  ? 'border-primary text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-              onClick={() => setTab(id)}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </nav>
-
-        <main className="flex flex-col gap-8 py-6">
-          {/* 条件タブ: 検索条件の組み立て */}
-          <section
-            className={tab === 'build' ? 'flex flex-col gap-8' : 'hidden'}
+      <div
+        className={`mx-auto flex min-h-dvh flex-col px-4 ${
+          isMobile ? 'max-w-4xl' : 'max-w-7xl'
+        }`}
+      >
+        {/* スマホはタブ切り替え。タブはスクロールしても隠れないよう画面上部に固定する */}
+        {isMobile && (
+          <nav
+            role="tablist"
+            className="sticky top-0 z-10 -mx-4 flex gap-1 border-b bg-background px-4"
           >
+            {TABS.map(({ id, labelKey }) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={tab === id}
+                className={`border-b-2 px-3 py-2.5 text-sm font-semibold transition-colors ${
+                  tab === id
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => setTab(id)}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
+          </nav>
+        )}
+
+        <main
+          className={
+            isMobile
+              ? 'flex flex-col gap-8 py-6'
+              : 'grid grid-cols-2 items-start gap-10 py-6'
+          }
+        >
+          {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
+          <section
+            className={`${
+              isMobile && tab !== 'build' ? 'hidden' : 'flex'
+            } flex-col gap-8`}
+          >
+            {!isMobile && (
+              <h2 className="text-base font-semibold">
+                {t('section.builder')}
+              </h2>
+            )}
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 {/* 条件の一覧をサイトで絞る(値の入った条件は絞っても隠れない) */}
@@ -149,7 +174,7 @@ export default function App() {
                   ))}
                 </div>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   className="shrink-0 text-muted-foreground"
                   onClick={() => replaceQuery(defaultState())}
@@ -194,8 +219,17 @@ export default function App() {
             />
           </section>
 
-          {/* 検索タブ: 各サイトで開く */}
-          <section className={tab === 'launch' ? 'flex flex-col gap-4' : 'hidden'}>
+          {/* 検索タブ / PCでは右カラム: 各サイトで開く */}
+          <section
+            className={`${
+              isMobile && tab !== 'launch' ? 'hidden' : 'flex'
+            } flex-col gap-4`}
+          >
+            {!isMobile && (
+              <h2 className="text-base font-semibold">
+                {t('section.launch')}
+              </h2>
+            )}
             <LaunchPanel
               state={query}
               hidden={hidden}

@@ -142,7 +142,7 @@ export function LaunchPanel({
           const platforms = enabled.filter((p) => p.group === group)
           if (platforms.length === 0) return null
           return (
-            <section key={group} className="flex flex-col gap-2">
+            <section key={group} className="@container flex flex-col gap-2">
               <h2 className="text-xs font-medium text-muted-foreground">
                 {t(labelKey)}
               </h2>
@@ -217,8 +217,10 @@ function PlatformCards({
   state: QueryState
   onLaunch?: () => void
 }) {
+  // カードの列数はウィンドウ幅でなく置かれたカラムの実幅で決める
+  // (PCの2カラムやスナップした狭いウィンドウでも適切な列数になる)
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 @[30rem]:grid-cols-2">
       {platforms.map((platform) => {
         const resolution = resolve(platform, state)
         const fallback = googleFallback(platform, state, resolution)
