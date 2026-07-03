@@ -133,32 +133,26 @@ export function LaunchPanel({
   onLaunch?: () => void
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      {/* 左カラムの操作ボタン帯(h-7)と高さをそろえ、下のカードが箱の上端と同じ軸に並ぶようにする */}
-      <p className="flex min-h-7 items-center text-xs text-muted-foreground">
-        {t('launch.bgHint')}
-      </p>
-      {/* 罫線は引かず、見出しの字面(小さめの太字)とグループ間の広めの余白だけで
-          塊を見分ける。グループ間 gap-9 > 見出し→カード gap-3 の非対称で、
-          見出しが上のグループから離れて下のカード群に属して見えるようにする */}
-      <div className="flex flex-col gap-9">
-        {GROUPS.map(({ group, labelKey }) => {
-          const platforms = PLATFORMS.filter((p) => p.group === group)
-          if (platforms.length === 0) return null
-          return (
-            <section key={group} className="@container flex flex-col gap-3">
-              <h3 className="text-xs font-semibold tracking-wide text-foreground">
-                {t(labelKey)}
-              </h3>
-              <PlatformCards
-                platforms={platforms}
-                state={state}
-                onLaunch={onLaunch}
-              />
-            </section>
-          )
-        })}
-      </div>
+    // 罫線は引かず、見出しの字面(小さめの太字)とグループ間の広めの余白だけで
+    // 塊を見分ける。グループ間 gap-9 > 見出し→カード gap-3 の非対称で、
+    // 見出しが上のグループから離れて下のカード群に属して見えるようにする
+    <div className="flex flex-col gap-9">
+      {GROUPS.map(({ group, labelKey }) => {
+        const platforms = PLATFORMS.filter((p) => p.group === group)
+        if (platforms.length === 0) return null
+        return (
+          <section key={group} className="@container flex flex-col gap-3">
+            <h3 className="text-xs font-semibold tracking-wide text-foreground">
+              {t(labelKey)}
+            </h3>
+            <PlatformCards
+              platforms={platforms}
+              state={state}
+              onLaunch={onLaunch}
+            />
+          </section>
+        )
+      })}
     </div>
   )
 }
@@ -289,31 +283,26 @@ function PlatformCards({
 
               <ResolutionNotes resolution={resolution} />
               {/* 検索ボタンは本物のリンク。左クリック=前面、中クリック/Ctrl・⌘+クリック=背面。
-                  要ログインのサイトは検索ボタンのホバーで注意を出す */}
-              {platform.requiresLogin ? (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <SearchLink
-                        url={resolution.url}
-                        label={tf('launch.search', { name: platform.name })}
-                        brandColor={platform.brandColor}
-                        onLaunch={onLaunch}
-                      />
-                    }
-                  />
-                  <TooltipContent>
-                    {tf('launch.loginNote', { name: platform.name })}
-                  </TooltipContent>
-                </Tooltip>
-              ) : (
-                <SearchLink
-                  url={resolution.url}
-                  label={tf('launch.search', { name: platform.name })}
-                  brandColor={platform.brandColor}
-                  onLaunch={onLaunch}
+                  背面で開く操作のヒントは常時表示をやめ、リンクのホバーに畳む。
+                  要ログインのサイトは、その注意も同じホバーに併せて出す */}
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <SearchLink
+                      url={resolution.url}
+                      label={tf('launch.search', { name: platform.name })}
+                      brandColor={platform.brandColor}
+                      onLaunch={onLaunch}
+                    />
+                  }
                 />
-              )}
+                <TooltipContent className="flex max-w-64 flex-col gap-1">
+                  {platform.requiresLogin && (
+                    <span>{tf('launch.loginNote', { name: platform.name })}</span>
+                  )}
+                  <span>{t('launch.bgHint')}</span>
+                </TooltipContent>
+              </Tooltip>
               {fallback && (
                 <GoogleFallbackBlock
                   platform={platform}
