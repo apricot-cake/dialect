@@ -106,11 +106,14 @@ export default function App() {
           isMobile ? 'max-w-4xl' : 'max-w-7xl'
         }`}
       >
-        {/* ページ左上のツール名。ロゴやタグラインは置かず名前だけ */}
-        <header className="pt-6">
+        {/* ページ左上のツール名+機能説明。ロゴやキャッチコピーは置かない */}
+        <header className="flex flex-col gap-1 pt-6">
           <h1 className="text-lg font-semibold tracking-tight">
             {t('app.title')}
           </h1>
+          <p className="text-sm text-muted-foreground">
+            {t('app.description')}
+          </p>
         </header>
         <main
           className={
