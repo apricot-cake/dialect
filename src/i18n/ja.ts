@@ -2,14 +2,12 @@
 export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風',
+  'concept.keywords.placeholder': '例: 台風 "計画運休のお知らせ"',
+  'concept.keywords.hint':
+    'スペースで区切ると、すべての語を含む投稿を探します。スペースを含むひとまとまりの語句は "" で囲んでください',
   'concept.orAny.label': 'どれかを含む指定',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
-  'concept.terms.add': '語を追加',
-  'concept.terms.removeTerm': 'この枠を削除',
-  'concept.terms.phraseNote':
-    'スペースを含む語は、その語順のひとまとまりとして探します。別々の語で探すには枠を分けてください',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま)',
   'concept.exclude.label': '除外するキーワード',
@@ -51,21 +49,12 @@ export const ja = {
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.auto': 'おまかせ',
 
-  // ビルダーのセクション・サイト絞り込み・条件の追加
-  'builder.filter.label': 'サイトで絞る:',
+  // ビルダーのサイト絞り込み・対応サイト数バッジ
+  'builder.filter.label': '条件を使えるサイトで絞る:',
   'builder.filter.all': 'すべて',
-  'builder.section.common': '共通',
-  'builder.section.only': '専用',
-  'builder.addField': '条件を追加',
-  'builder.addField.empty': '追加できる条件はありません',
-  'builder.addField.termRow': 'キーワードの枠',
-  'builder.removeField': 'この条件を外す',
-
-  // 追加パネルの入力タイプ凡例
-  'builder.kind.input': '文字を入力',
-  'builder.kind.toggle': 'オン/オフ',
-  'builder.kind.date': '日付',
-  'builder.kind.select': '選択式',
+  'builder.support.sites': 'サイト',
+  'builder.support.full': '対応',
+  'builder.support.partial': '一部対応',
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': 'すべてのキーワードを含む保証はありません',
@@ -144,9 +133,9 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
-  // セクション見出し
-  'section.builder': '検索条件',
-  'section.launch': '検索する',
+  // 画面上部のタブ
+  'tab.build': '条件を入力',
+  'tab.launch': '検索する',
 
   // ビルダー操作
   'builder.clear': '条件をクリア',
