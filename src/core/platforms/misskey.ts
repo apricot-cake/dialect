@@ -1,17 +1,15 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, modedWords, stripAt, stripHash } from '../text'
+import { andTerms, modedWords, stripAt, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /search?q=&type=note(要ログイン)。q内の演算子はなく、本文の部分一致検索。
 // ユーザー指定は &username=(フロントエンドのルーター定義で確認した非公式パラメータ)。
 // タグ単独なら /tags/(タグページ)、併用時は本文に「#タグ」を含む検索として畳み込む。
 function buildUrl(state: QueryState): string | null {
-  // 完全一致・OR構文がないため、語句はキーワード扱い、「どれかを含む」指定は丸ごと外す
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const textParts = [
-    ...andTermWords(state),
-    ...(phrases.or ? [] : phrases.words),
-  ]
+  // 完全一致・OR構文がないため、語句はキーワード扱い、「どれかを含む」の行・指定は丸ごと外す。
+  // 本文の部分一致検索なので、スペースを含む語はそのままフレーズとして効く
+  const textParts = [...andTerms(state)]
+  if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)
   const tagNames = tags.or ? [] : tags.words.map(stripHash)
   const handle = stripAt(state.fromUser)

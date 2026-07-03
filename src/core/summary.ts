@@ -1,21 +1,22 @@
 import type { QueryState } from './types'
 import { t } from '@/i18n'
-import { stripAt, stripHash, words } from './text'
+import { stripAt, stripHash, termValues, words } from './text'
+
+/** スペースを含む語は「」で括り、ひとまとまりであることを示す */
+function markPhrase(term: string): string {
+  return /[\s　]/.test(term) ? `「${term}」` : term
+}
 
 /** 保存検索・履歴の一覧に表示する、条件の短い要約 */
 export function summarize(state: QueryState): string {
   const parts: string[] = []
   for (const row of state.terms) {
-    const ws = words(row.text)
-    if (ws.length === 0) continue
-    parts.push(row.mode === 'any' ? ws.join(' または ') : ws.join(' '))
+    const values = termValues(row)
+    if (values.length === 0) continue
+    parts.push(values.map(markPhrase).join(' または '))
   }
   if (state.exactPhrase.trim()) {
-    parts.push(
-      words(state.exactPhrase)
-        .map((p) => `「${p}」`)
-        .join(state.exactPhraseMode === 'any' ? ' または ' : ' '),
-    )
+    parts.push(`「${state.exactPhrase.trim()}」`)
   }
   if (state.exclude.trim()) {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)

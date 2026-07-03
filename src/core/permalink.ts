@@ -1,29 +1,28 @@
 import type { QueryState, TermRow } from './types'
 import { defaultState } from './concepts'
+import { termValues, words } from './text'
 
 // 検索条件をURLクエリパラメータへ埋め込む(パーマリンク)。
 // GitHub Pages でパスルーティングが使えないため、クエリパラメータ方式に固定。
 // v= はフォーマットのバージョン。概念が増えたら後方互換のまま読めるようにする。
-// 条件セットが1つのときは v=1 (フラットなパラメータ)、2つ以上のときは v=2 で
-// セットごとの v=1 相当のクエリ文字列を q= に入れ子にして繰り返す
-const VERSION = '1'
+// v=3: 1枠=1語。kw= が「かつ」の枠1つ、or= が「または」行(枠をタブ区切りで連結)。
+//      語は分割しないため、スペースを含むフレーズもそのまま保持される。
+// v=1(旧): kw=/or= の語はスペース区切り、ph はスペース区切り+phm。読み込み時に変換する。
+// 条件セットが2つ以上のときは v=2 で、セットごとのクエリ文字列を q= に入れ子にして繰り返す
+const VERSION = '3'
+const VERSION_LEGACY = '1'
 const VERSION_SETS = '2'
+const OR_SEPARATOR = '\t'
 
 export function stateToParams(state: QueryState): URLSearchParams {
   const params = new URLSearchParams()
   params.set('v', VERSION)
-  // ことば行は1行=1パラメータの繰り返し。「すべて含む」行は kw=、「どれかを含む」行は or=。
-  // 旧形式(kw= 単一 + or= 繰り返し)もこの読み書きにそのまま収まる。
-  // 復元時は kw 行が先にまとまるが、行どうしはANDなので意味は変わらない
   for (const row of state.terms) {
-    if (row.text.trim()) {
-      params.append(row.mode === 'any' ? 'or' : 'kw', row.text.trim())
-    }
+    const values = termValues(row)
+    if (values.length === 1) params.append('kw', values[0])
+    else if (values.length >= 2) params.append('or', values.join(OR_SEPARATOR))
   }
-  if (state.exactPhrase.trim()) {
-    params.set('ph', state.exactPhrase.trim())
-    if (state.exactPhraseMode === 'any') params.set('phm', 'any')
-  }
+  if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
@@ -54,19 +53,27 @@ export function stateToParams(state: QueryState): URLSearchParams {
 export function paramsToState(params: URLSearchParams): QueryState {
   const state = defaultState()
   if (!params.has('v')) return state
-  const terms: TermRow[] = [
-    ...params
-      .getAll('kw')
-      .filter((s) => s.trim())
-      .map((text): TermRow => ({ text, mode: 'all' })),
-    ...params
-      .getAll('or')
-      .filter((s) => s.trim())
-      .map((text): TermRow => ({ text, mode: 'any' })),
-  ]
+  const legacy = params.get('v') !== VERSION
+  const terms: TermRow[] = []
+  for (const s of params.getAll('kw')) {
+    // 旧形式の kw はスペース区切りのAND。1語=1枠に分けると意味が保たれる
+    if (legacy) terms.push(...words(s).map((w): TermRow => ({ texts: [w] })))
+    else if (s.trim()) terms.push({ texts: [s.trim()] })
+  }
+  for (const s of params.getAll('or')) {
+    const texts = legacy
+      ? words(s)
+      : s.split(OR_SEPARATOR).map((t) => t.trim()).filter(Boolean)
+    if (texts.length > 0) terms.push({ texts })
+  }
+  const ph = (params.get('ph') ?? '').trim()
+  if (legacy && params.get('phm') === 'any' && words(ph).length >= 2) {
+    // 旧形式の「どれかを含む」複数語句は、ことば行の「または」へ引き継ぐ
+    terms.push({ texts: words(ph) })
+  } else {
+    state.exactPhrase = ph
+  }
   if (terms.length > 0) state.terms = terms
-  state.exactPhrase = params.get('ph') ?? ''
-  state.exactPhraseMode = params.get('phm') === 'any' ? 'any' : 'all'
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
   state.fromUser = params.get('fr') ?? ''
@@ -97,16 +104,15 @@ export function paramsToState(params: URLSearchParams): QueryState {
 
 /**
  * 条件セット(セット内AND・セット間OR)をパラメータへ。
- * 1セットのときは従来の v=1 形式そのまま(リンクが短く、旧リンクと同形)
+ * 1セットのときはフラットな形式そのまま(リンクが短い)
  */
 export function setsToParams(sets: QueryState[]): URLSearchParams {
   if (sets.length === 1) return stateToParams(sets[0])
   const params = new URLSearchParams()
   params.set('v', VERSION_SETS)
   for (const state of sets) {
-    const inner = stateToParams(state)
-    inner.delete('v')
-    params.append('q', inner.toString())
+    // 各セットは自分のバージョンを持って入れ子になる(旧v2のvなし入れ子はv1形式)
+    params.append('q', stateToParams(state).toString())
   }
   return params
 }
@@ -116,7 +122,7 @@ export function paramsToSets(params: URLSearchParams): QueryState[] {
   if (nested.length > 0) {
     return nested.map((q) => {
       const inner = new URLSearchParams(q)
-      inner.set('v', VERSION)
+      if (!inner.has('v')) inner.set('v', VERSION_LEGACY)
       return paramsToState(inner)
     })
   }

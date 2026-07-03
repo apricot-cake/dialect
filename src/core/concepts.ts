@@ -1,6 +1,6 @@
 import type { MessageKey } from '@/i18n'
 import type { ConceptId, QueryState } from './types'
-import { andTermWords, modedWords, orTermGroups } from './text'
+import { andTerms, modedWords, orTermGroups } from './text'
 
 export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   keywords: 'concept.keywords.label',
@@ -35,13 +35,13 @@ export interface FieldDef {
   labelKey: MessageKey
   placeholderKey?: MessageKey
   /** 指定すると「すべて含む/どれかを含む」の切り替えを入力欄の横に出す */
-  modeField?: 'exactPhraseMode' | 'hashtagMode'
+  modeField?: 'hashtagMode'
 }
 
 export const FIELDS: FieldDef[] = [
-  // ことば行は「すべて含む/どれかを含む」を行ごとに切り替えられる統合ウィジェット
+  // ことば行は1枠=1語。枠を縦に足すと「かつ」、行内に足すと「または」になる統合ウィジェット
   { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label' },
-  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder', modeField: 'exactPhraseMode' },
+  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', placeholderKey: 'concept.fromUser.placeholder' },
   { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', placeholderKey: 'concept.hashtag.placeholder', modeField: 'hashtagMode' },
@@ -66,12 +66,11 @@ export const FIELDS: FieldDef[] = [
 /** state の中で実際に指定されている概念 */
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
-  if (andTermWords(state).length > 0) active.push('keywords')
+  if (andTerms(state).length > 0) active.push('keywords')
   // 「どれかを含む」はことば行に限らず、mode付きフィールドの複数値でも成立する。
   // OR構文を持たないサイトでは該当フィールドごと外れるため、注記の対象にする
   if (
     orTermGroups(state).length > 0 ||
-    modedWords(state.exactPhrase, state.exactPhraseMode).or ||
     modedWords(state.hashtag, state.hashtagMode).or
   ) {
     active.push('orAny')
@@ -104,9 +103,8 @@ export function activeConcepts(state: QueryState): ConceptId[] {
 
 export function defaultState(): QueryState {
   return {
-    terms: [{ text: '', mode: 'all' }],
+    terms: [{ texts: [''] }],
     exactPhrase: '',
-    exactPhraseMode: 'all',
     exclude: '',
     titleOnly: false,
     fromUser: '',

@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasOrTerms, modedWords, orTermGroups, stripAt, words } from '../text'
+import { andTerms, hasOrTerms, orTermGroups, quoteIfPhrase, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -19,7 +19,7 @@ function tParam(since: string): string {
 function buildUrl(state: QueryState): string | null {
   if (
     !(
-      andTermWords(state).length > 0 ||
+      andTerms(state).length > 0 ||
       state.exactPhrase.trim() ||
       state.fromUser.trim() ||
       hasOrTerms(state)
@@ -30,14 +30,11 @@ function buildUrl(state: QueryState): string | null {
 
   const clauses: string[] = []
   const field = state.titleOnly ? 'title:' : ''
-  clauses.push(...andTermWords(state).map((w) => `${field}${w}`))
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const quoted = phrases.words.map((p) => `${field}"${p}"`)
-  if (phrases.or) clauses.push(`(${quoted.join(' OR ')})`)
-  else clauses.push(...quoted)
+  clauses.push(...andTerms(state).map((w) => `${field}${quoteIfPhrase(w)}`))
+  if (state.exactPhrase.trim()) clauses.push(`${field}"${state.exactPhrase.trim()}"`)
   // 「どれかを含む」行は括弧つきの節にする(Boolean演算子と括弧は公式仕様)
   for (const group of orTermGroups(state)) {
-    clauses.push(`(${group.join(' OR ')})`)
+    clauses.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
   }
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
   // コミュニティは複数指定で「どれか」(OR)

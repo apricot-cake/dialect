@@ -30,22 +30,23 @@ export type VideoLength = '' | 'short' | 'medium' | 'long'
 /** 並び順。new=新しい順、top=人気順、auto=サイトにおまかせ(URLで指定しない) */
 export type SortOrder = 'new' | 'top' | 'auto'
 
-/** ことば行の結合方法。all=全語を含む(AND)、any=どれか1語を含む(OR) */
+/** mode付きフィールドの結合方法。all=全部を含む(かつ)、any=どれかを含む(または) */
 export type TermMode = 'all' | 'any'
 
-/** ことば行。行内の語はスペース区切りで mode に従って結合し、行どうしは AND */
+/**
+ * ことば行。1枠=1語で、枠の中身は分割しない(スペースを含む語はフレーズ)。
+ * 枠が2つ以上ある行は「どれかを含む」(OR)、行どうしは AND
+ */
 export interface TermRow {
-  text: string
-  mode: TermMode
+  texts: string[]
 }
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
   /** ことば行。常に1行以上 */
   terms: TermRow[]
-  /** スペース区切りで複数の語句。mode に従って結合 */
+  /** 1つの語句をこの語順のまま探す。分割しない */
   exactPhrase: string
-  exactPhraseMode: TermMode
   exclude: string
   titleOnly: boolean
   fromUser: string

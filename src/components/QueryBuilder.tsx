@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { CalendarDays, List, Plus, ToggleLeft, Type, X } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PlatformIcon } from '@/components/PlatformIcon'
@@ -178,8 +178,8 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
   const addTermRow = () =>
     set({
       terms: [
-        ...(state.terms.length > 0 ? state.terms : [{ text: '', mode: 'all' as TermMode }]),
-        { text: '', mode: 'all' },
+        ...(state.terms.length > 0 ? state.terms : [{ texts: [''] }]),
+        { texts: [''] },
       ],
     })
 
@@ -226,68 +226,94 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
   const renderField = (field: FieldDef) => {
     if (field.widget === 'terms') {
       const rows: TermRow[] =
-        state.terms.length > 0 ? state.terms : [{ text: '', mode: 'all' }]
+        state.terms.length > 0 ? state.terms : [{ texts: [''] }]
       const setRows = (next: TermRow[]) =>
-        set({ terms: next.length > 0 ? next : [{ text: '', mode: 'all' }] })
+        set({ terms: next.length > 0 ? next : [{ texts: [''] }] })
+      const setText = (ri: number, ti: number, value: string) =>
+        setRows(
+          rows.map((r, i) =>
+            i === ri
+              ? { texts: r.texts.map((t, j) => (j === ti ? value : t)) }
+              : r,
+          ),
+        )
+      const addOr = (ri: number) =>
+        setRows(rows.map((r, i) => (i === ri ? { texts: [...r.texts, ''] } : r)))
+      // 枠を消す。行の最後の枠を消したときは行ごと消す
+      const removeText = (ri: number, ti: number) =>
+        setRows(
+          rows
+            .map((r, i) =>
+              i === ri ? { texts: r.texts.filter((_, j) => j !== ti) } : r,
+            )
+            .filter((r) => r.texts.length > 0),
+        )
+      const hasPhrase = rows.some((r) =>
+        r.texts.some((text) => /[\s　]/.test(text.trim())),
+      )
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          <Label htmlFor="terms-0">{t(field.labelKey)}</Label>
-          {rows.map((row, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <Input
-                id={`terms-${i}`}
-                className="flex-1"
-                value={row.text}
-                placeholder={
-                  row.mode === 'all'
-                    ? t('concept.keywords.placeholder')
-                    : t('concept.orAny.placeholder')
-                }
-                onChange={(e) =>
-                  setRows(
-                    rows.map((r, j) =>
-                      j === i ? { ...r, text: e.target.value } : r,
-                    ),
-                  )
-                }
-              />
-              <div className="flex shrink-0 rounded-md border p-0.5">
-                {TERM_MODES.map((m) => (
-                  <Button
-                    key={m.value}
-                    variant={row.mode === m.value ? 'secondary' : 'ghost'}
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    aria-pressed={row.mode === m.value}
-                    onClick={() =>
-                      setRows(
-                        rows.map((r, j) =>
-                          j === i ? { ...r, mode: m.value } : r,
-                        ),
-                      )
-                    }
-                  >
-                    {t(m.labelKey)}
-                  </Button>
-                ))}
-              </div>
-              {rows.length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t('concept.terms.removeRow')}
-                  onClick={() => setRows(rows.filter((_, j) => j !== i))}
-                >
-                  <X />
-                </Button>
-              )}
+          <Label htmlFor="terms-0-0">{t(field.labelKey)}</Label>
+          {rows.map((row, ri) => (
+            <div key={ri} className="flex flex-wrap items-center gap-1.5">
+              {row.texts.map((text, ti) => (
+                <Fragment key={ti}>
+                  {ti > 0 && (
+                    <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                      {t('concept.terms.or')}
+                    </span>
+                  )}
+                  <div className="flex min-w-36 flex-1 items-center gap-0.5">
+                    <Input
+                      id={`terms-${ri}-${ti}`}
+                      value={text}
+                      placeholder={t('concept.keywords.placeholder')}
+                      onChange={(e) => setText(ri, ti, e.target.value)}
+                    />
+                    {(rows.length > 1 || row.texts.length > 1) && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-5 shrink-0 text-muted-foreground"
+                        aria-label={t('concept.terms.removeTerm')}
+                        onClick={() => removeText(ri, ti)}
+                      >
+                        <X className="size-3.5" />
+                      </Button>
+                    )}
+                  </div>
+                </Fragment>
+              ))}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 shrink-0 px-2 text-xs text-muted-foreground"
+                onClick={() => addOr(ri)}
+              >
+                <Plus className="size-3.5" />
+                {t('concept.terms.or')}
+              </Button>
             </div>
           ))}
+          {hasPhrase && (
+            <p className="text-xs text-muted-foreground">
+              {t('concept.terms.phraseNote')}
+            </p>
+          )}
           {rows.length > 1 && (
             <p className="text-xs text-muted-foreground">
               {t('concept.terms.multiNote')}
             </p>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="self-start border-dashed text-muted-foreground"
+            onClick={() => setRows([...rows, { texts: [''] }])}
+          >
+            <Plus className="size-3.5" />
+            {t('concept.terms.addAnd')}
+          </Button>
         </div>
       )
     }

@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasPositiveTerm, modedWords, stripAt, stripHash } from '../text'
+import { andTerms, hasPositiveTerm, modedWords, stripAt, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索閲覧はログイン必須(Instagramアカウント共通)。演算子は存在せず、
@@ -9,12 +9,9 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const handle = stripAt(state.fromUser)
-  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const textParts = [
-    ...andTermWords(state),
-    ...(phrases.or ? [] : phrases.words),
-  ]
+  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す。完全一致は近似のキーワード扱い
+  const textParts = [...andTerms(state)]
+  if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)
   const tagNames = tags.or ? [] : tags.words.map(stripHash)
 

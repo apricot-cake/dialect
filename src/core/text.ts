@@ -7,25 +7,30 @@ export function words(input: string): string[] {
   return input.trim().split(/[\s　]+/).filter(Boolean)
 }
 
-/**
- * 「すべて含む」扱いになる語。all 行の語に加え、
- * 1語だけの any 行も実質ANDなのでこちらに含める
- */
-export function andTermWords(state: { terms: TermRow[] }): string[] {
-  const out: string[] = []
-  for (const row of state.terms) {
-    const ws = words(row.text)
-    if (row.mode === 'all' || ws.length === 1) out.push(...ws)
-  }
-  return out
+/** ことば行の空でない語。1枠=1語で、枠の中身は分割しない */
+export function termValues(row: TermRow): string[] {
+  return row.texts.map((t) => t.trim()).filter(Boolean)
 }
 
-/** 「どれかを含む」行(2語以上)を語配列の配列へ。行内はOR、行どうし・他の語とはAND */
-export function orTermGroups(state: { terms: TermRow[] }): string[][] {
+/**
+ * スペースを含む語(フレーズ)を引用符で括る。
+ * 引用符構文のあるサイトのシリアライザで語を埋め込むときに通す
+ */
+export function quoteIfPhrase(term: string): string {
+  return /[\s　]/.test(term) ? `"${term}"` : term
+}
+
+/** 「すべて含む」扱いになる語。枠が1つだけの行の語 */
+export function andTerms(state: { terms: TermRow[] }): string[] {
   return state.terms
-    .filter((row) => row.mode === 'any')
-    .map((row) => words(row.text))
-    .filter((ws) => ws.length >= 2)
+    .map(termValues)
+    .filter((vs) => vs.length === 1)
+    .map((vs) => vs[0])
+}
+
+/** 「どれかを含む」行(枠2つ以上)を語配列の配列へ。行内はOR、行どうし・他の語とはAND */
+export function orTermGroups(state: { terms: TermRow[] }): string[][] {
+  return state.terms.map(termValues).filter((vs) => vs.length >= 2)
 }
 
 /** OR結合が必要な「どれかを含む」行があるか */
@@ -34,8 +39,8 @@ export function hasOrTerms(state: { terms: TermRow[] }): boolean {
 }
 
 /**
- * mode付き複数値フィールドの語配列。or=true なら「どれかを含む」(OR結合が必要)。
- * 1語だけなら mode によらず実質ANDなので or=false
+ * mode付き複数値フィールド(ハッシュタグ等)の語配列。
+ * or=true なら「どれかを含む」(OR結合が必要)。1語だけなら mode によらず実質ANDなので or=false
  */
 export function modedWords(
   text: string,
@@ -63,7 +68,7 @@ export function hasPositiveTerm(state: {
   hashtag: string
 }): boolean {
   return Boolean(
-    andTermWords(state).length > 0 ||
+    andTerms(state).length > 0 ||
       state.exactPhrase.trim() ||
       state.fromUser.trim() ||
       state.hashtag.trim(),

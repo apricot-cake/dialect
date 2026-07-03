@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, stripAt, stripHash, words } from '../text'
+import { andTerms, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
@@ -10,15 +10,12 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state) && !hasOrTerms(state)) return null
 
   const parts: string[] = []
-  parts.push(...andTermWords(state))
+  parts.push(...andTerms(state).map(quoteIfPhrase))
   // 「どれかを含む」行は括弧で結び、他の語とはスペース(AND)で並置する
   for (const group of orTermGroups(state)) {
-    parts.push(`(${group.join(' OR ')})`)
+    parts.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
   }
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const quoted = phrases.words.map((p) => `"${p}"`)
-  if (phrases.or) parts.push(`(${quoted.join(' OR ')})`)
-  else parts.push(...quoted)
+  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
   parts.push(...words(state.excludeUser).map((u) => `-from:${stripAt(u)}`))

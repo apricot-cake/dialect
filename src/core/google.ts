@@ -1,6 +1,6 @@
 import type { ConceptId, PlatformDef, QueryState, Resolution } from './types'
 import { activeConcepts } from './concepts'
-import { andTermWords, modedWords, orTermGroups, words } from './text'
+import { andTerms, orTermGroups, quoteIfPhrase, words } from './text'
 
 // Googleフォールバック: 本体サイトの検索で外れる条件を、Googleの site: 検索
 // (サイト内検索)で補う。note公式ヘルプ自身が除外検索の代替として
@@ -39,14 +39,11 @@ export interface GoogleFallback {
 /** site:ドメイン のGoogle検索URL。Googleへ渡せる正の条件がなければ null */
 function buildGoogleUrl(site: string, state: QueryState): string | null {
   const parts: string[] = []
-  parts.push(...andTermWords(state))
+  parts.push(...andTerms(state).map(quoteIfPhrase))
   for (const group of orTermGroups(state)) {
-    parts.push(`(${group.join(' OR ')})`)
+    parts.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
   }
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const quoted = phrases.words.map((p) => `"${p}"`)
-  if (phrases.or) parts.push(`(${quoted.join(' OR ')})`)
-  else parts.push(...quoted)
+  if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   // 除外や期間だけではサイト全ページが対象になってしまうため検索として成立しない
   if (parts.length === 0) return null
 

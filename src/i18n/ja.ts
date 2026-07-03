@@ -2,16 +2,19 @@
 export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風 休校 (スペース区切りで複数)',
+  'concept.keywords.placeholder': '例: 台風',
   'concept.orAny.label': 'どれかを含む指定',
-  'concept.orAny.placeholder': '例: 台風 大雨 (どれか1つ含めばOK)',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
-  'concept.terms.removeRow': 'この行を削除',
+  'concept.terms.or': 'または',
+  'concept.terms.addAnd': '語を追加(かつ)',
+  'concept.terms.removeTerm': 'この枠を削除',
+  'concept.terms.phraseNote':
+    'スペースを含む語は、その語順のひとまとまりとして探します。別々の語で探すには枠を分けてください',
   'concept.terms.multiNote':
-    '行が2つ以上あるときは、すべての行の条件を満たす投稿を探します',
+    '枠が複数あるときは、すべての枠の条件を満たす投稿を探します(かつ)',
   'concept.exactPhrase.label': '完全一致で探す',
-  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま。スペース区切りで複数)',
+  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま)',
   'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告 PR (スペース区切りで複数)',
   'concept.titleOnly.label': 'タイトルだけで探す',

@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, modedWords, orTermGroups, stripHash, words } from '../text'
+import { andTerms, modedWords, orTermGroups, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。デフォルトはタグの部分一致(s_mode=s_tag)。
@@ -7,14 +7,13 @@ import { andTermWords, modedWords, orTermGroups, stripHash, words } from '../tex
 // ハッシュタグ=pixivのタグそのものなので、#を外してタグ語として畳み込む。
 // 期間(scd=/ecd=)は非公式なURLパラメータ。人気順(order=popular_d)はプレミアム会員のみ有効。
 function buildUrl(state: QueryState): string | null {
-  const parts: string[] = [...andTermWords(state)]
+  // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
+  const parts: string[] = [...andTerms(state)]
   for (const group of orTermGroups(state)) {
     parts.push(`(${group.join(' OR ')})`)
   }
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  if (phrases.or) parts.push(`(${phrases.words.join(' OR ')})`)
-  else parts.push(...phrases.words)
+  if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)
   const tagNames = tags.words.map(stripHash)
   if (tags.or) parts.push(`(${tagNames.join(' OR ')})`)

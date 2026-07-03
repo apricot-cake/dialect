@@ -1,14 +1,13 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, modedWords, stripHash } from '../text'
+import { andTerms, modedWords, quoteIfPhrase, stripHash } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // PCブラウザはログイン不要(サインアップモーダルは閉じられる)。
 // 除外・期間・ソートはURLで指定できない。タグ単独ならタグページが確実。
 function buildUrl(state: QueryState): string | null {
-  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
-  const textParts = [...andTermWords(state)]
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  if (!phrases.or) textParts.push(...phrases.words.map((p) => `"${p}"`))
+  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す
+  const textParts = [...andTerms(state).map(quoteIfPhrase)]
+  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
   const tags = modedWords(state.hashtag, state.hashtagMode)
   const tagNames = tags.or ? [] : tags.words.map(stripHash)
 

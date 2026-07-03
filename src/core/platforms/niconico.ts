@@ -1,22 +1,19 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTermWords, modedWords, orTermGroups, stripHash, words } from '../text'
+import { andTerms, modedWords, orTermGroups, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
 // デフォルトソートはABテストで変わり得るため sort は常に明示する。
 // タグ単独なら /tag/(タグ一致検索)、ことばと併用時はキーワード検索に畳み込む。
 function buildUrl(state: QueryState): string | null {
-  const textParts: string[] = [...andTermWords(state)]
+  const textParts: string[] = [...andTerms(state).map(quoteIfPhrase)]
   // 括弧はリテラル扱いで検索が壊れるため使わない(2026-07-02実測)。
   // OR は隣接語だけを結び、スペースのANDが外側に効くため、
   // 「a OR b c OR d」の並置で (a OR b) AND (c OR d) になる(件数比較で確認)
   for (const group of orTermGroups(state)) {
-    textParts.push(group.join(' OR '))
+    textParts.push(group.map(quoteIfPhrase).join(' OR '))
   }
-  const phrases = modedWords(state.exactPhrase, state.exactPhraseMode)
-  const quoted = phrases.words.map((p) => `"${p}"`)
-  if (phrases.or) textParts.push(quoted.join(' OR '))
-  else textParts.push(...quoted)
+  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
   // タグの「どれか」はタグページでは表現できないため、キーワード検索のOR連鎖に畳み込む
   const tags = modedWords(state.hashtag, state.hashtagMode)
   const tagNames = tags.words.map(stripHash)
