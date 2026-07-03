@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Info, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { andTerms, words } from '@/core/text'
@@ -9,7 +9,6 @@ import { t } from '@/i18n'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import {
   Tooltip,
@@ -182,13 +181,17 @@ function LabelRow({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {leading}
-      <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
+      {/* フィールドタイトル自体がヒントのホバー対象(ⓘは廃止)。htmlForで見出しクリックは入力欄へ */}
       <Tooltip>
         <TooltipTrigger
-          aria-label={t('builder.help.iconLabel')}
-          className="text-muted-foreground/60 hover:text-foreground"
+          render={
+            <label
+              htmlFor={field.field}
+              className="cursor-help text-sm leading-none font-medium select-none"
+            />
+          }
         >
-          <Info className="size-3.5" />
+          {t(field.labelKey)}
         </TooltipTrigger>
         <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
       </Tooltip>

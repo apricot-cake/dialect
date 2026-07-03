@@ -150,20 +150,9 @@ export default function App() {
             </h2>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  {/* 条件の一覧をサイトで絞るラベル(絞り込み自体は下のアイコン行で常時表示)。
-                      値の入った条件は絞っても隠れない。説明はラベルのホバーで出す */}
-                  <Tooltip>
-                    <TooltipTrigger className="cursor-default text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
-                      {t('builder.filter.label')}
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-64">
-                      {t('builder.filter.help')}
-                    </TooltipContent>
-                  </Tooltip>
-                  {/* 条件への操作。表示の絞り込み(左)と区別して右に寄せ、
-                      ラベルは短く、説明はホバーのツールチップに持たせる */}
-                  <div className="ml-auto flex shrink-0 items-center gap-1">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  {/* 条件への操作(保存・共有・クリア)を右に寄せる */}
+                  <div className="flex shrink-0 items-center gap-1">
                     <Tooltip>
                       <TooltipTrigger
                         render={
@@ -221,9 +210,17 @@ export default function App() {
                     </Tooltip>
                   </div>
                 </div>
-                {/* サイトで絞る: 常時表示。各サイトはアイコンのみ(ホバーで名前)。
-                    選択中はハイライト、もう一度押すと解除=すべて */}
-                <div className="flex flex-wrap items-center gap-1 rounded-md border bg-muted/30 p-2">
+                {/* サイトで絞る: ラベル+常時表示のアイコン行を1つの枠にまとめる。各サイトは
+                    アイコンのみ(ホバーで名前)。選択中はハイライト、もう一度押すと解除=すべて */}
+                <div className="flex flex-wrap items-center gap-1 rounded-md border bg-muted/30 px-2 py-1.5">
+                  <Tooltip>
+                    <TooltipTrigger className="mr-1 cursor-default text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
+                      {t('builder.filter.label')}
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-64">
+                      {t('builder.filter.help')}
+                    </TooltipContent>
+                  </Tooltip>
                   <Button
                     variant={filterId === null ? 'secondary' : 'ghost'}
                     size="sm"
