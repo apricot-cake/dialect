@@ -222,6 +222,12 @@ export const en = {
   'column.build': 'Search conditions',
   'column.launch': 'Open on each site',
 
+  // Site group headings inside the right column
+  'group.sns': 'SNS',
+  'group.video': 'Video',
+  'group.image': 'Illustration & Images',
+  'group.text': 'Blogs & Forums',
+
   // Builder actions
   'builder.clear': 'Clear',
   'builder.clear.tip': 'Resets all conditions to empty.',

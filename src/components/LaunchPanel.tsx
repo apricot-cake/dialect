@@ -13,8 +13,14 @@ import type {
 } from '@/core/types'
 import { getLang, t, tf, type MessageKey } from '@/i18n'
 
-// グループ見出しは出さず、並び順と余白の差だけで見分ける(グループ間は広く、グループ内は詰める)
-const GROUP_ORDER: PlatformGroup[] = ['sns', 'video', 'image', 'text']
+// グループごとに見出しを出して区切る。淡色の細字だと埋もれるので、foreground の
+// 太字ラベル＋右へ伸びる横罫線にして、列見出しより一段弱いまま塊をはっきり見せる
+const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
+  { group: 'sns', labelKey: 'group.sns' },
+  { group: 'video', labelKey: 'group.video' },
+  { group: 'image', labelKey: 'group.image' },
+  { group: 'text', labelKey: 'group.text' },
+]
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { GoogleIcon, PlatformIcon } from '@/components/PlatformIcon'
@@ -132,20 +138,26 @@ export function LaunchPanel({
       <p className="flex min-h-7 items-center text-xs text-muted-foreground">
         {t('launch.bgHint')}
       </p>
-      {/* グループ見出しは置かず、グループ間の広めの余白だけで区切りを表す。
-          グループ内カード(gap-3)より明確に広い gap-8 で、見出しなしでも塊が読み取れる */}
-      <div className="flex flex-col gap-8">
-        {GROUP_ORDER.map((group) => {
+      {/* グループごとに見出し＋横罫線で区切る。見出し内はカード(gap-3)、
+          グループ間は gap-7 で、見出しと余白の両方で塊を読み取れるようにする */}
+      <div className="flex flex-col gap-7">
+        {GROUPS.map(({ group, labelKey }) => {
           const platforms = PLATFORMS.filter((p) => p.group === group)
           if (platforms.length === 0) return null
           return (
-            <div key={group} className="@container">
+            <section key={group} className="@container flex flex-col gap-3">
+              <div className="flex items-center gap-2.5">
+                <h3 className="text-xs font-semibold text-foreground">
+                  {t(labelKey)}
+                </h3>
+                <span aria-hidden className="h-px flex-1 bg-border" />
+              </div>
               <PlatformCards
                 platforms={platforms}
                 state={state}
                 onLaunch={onLaunch}
               />
-            </div>
+            </section>
           )
         })}
       </div>

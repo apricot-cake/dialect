@@ -194,6 +194,12 @@ export const ja = {
   'column.build': '検索条件',
   'column.launch': '各サイトで開く',
 
+  // 右カラム内のサイトのグループ見出し
+  'group.sns': 'SNS',
+  'group.video': '動画',
+  'group.image': 'イラスト・画像',
+  'group.text': 'ブログ・掲示板',
+
   // ビルダー操作
   'builder.clear': 'クリア',
   'builder.clear.tip': 'すべての条件を空に戻します',
