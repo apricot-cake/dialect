@@ -114,10 +114,11 @@ export const ja = {
 
   // 起動パネル
   'launch.search': 'で検索',
-  // サイト名を前につけて使う(「Xにログインが必要」など)
-  'launch.loginRequired': 'にログインが必要',
+  // サイト名を挟んで使う(バッジ「要Xログイン」、ツールチップ「Xにログインした〜」)
+  'launch.loginRequired.pre': '要',
+  'launch.loginRequired.post': 'ログイン',
   'launch.loginNote':
-    'のアカウントにログインしているブラウザでのみ、検索結果を表示できます。Dialect自体のログインや連携は不要です',
+    'にログインしたブラウザでないと検索結果を見られません。Dialectへのログインは不要です',
   'launch.conditions': '条件',
   'launch.applied': 'を適用',
   'launch.approxHeading': '一部だけ効く',

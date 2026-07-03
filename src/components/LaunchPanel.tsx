@@ -207,8 +207,9 @@ function PlatformCards({
                   <Tooltip>
                     <TooltipTrigger className="cursor-default p-0">
                       <Badge variant="outline" className="text-amber-600">
+                        {t('launch.loginRequired.pre')}
                         {platform.name}
-                        {t('launch.loginRequired')}
+                        {t('launch.loginRequired.post')}
                       </Badge>
                     </TooltipTrigger>
                     <TooltipContent>
