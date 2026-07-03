@@ -37,12 +37,28 @@ const TABS: Array<{ id: TabId; labelKey: MessageKey }> = [
 ]
 
 /**
- * スマホ判定。ウィンドウ幅ではなく端末(主ポインタがタッチか)で決める。
- * PCはウィンドウを狭くスナップしていても2カラムを維持する
+ * タブ表示にするか。タッチ端末(主ポインタがcoarse) かつ 横幅が狭いときだけタブにする。
+ * - PC: ウィンドウを狭くスナップしていても2カラムを維持
+ * - iPad横向きなど広いタッチ端末: 2カラム
+ * - スマホ・iPad縦向き: タブ。回転で幅が変わったら追従する
  */
-const isMobile = window.matchMedia('(pointer: coarse)').matches
+const MOBILE_QUERY = '(pointer: coarse) and (max-width: 1023px)'
+
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia(MOBILE_QUERY).matches,
+  )
+  useEffect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY)
+    const onChange = () => setIsMobile(mql.matches)
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
+  return isMobile
+}
 
 export default function App() {
+  const isMobile = useIsMobile()
   const [query, setQuery] = useState<QueryState>(initialQuery)
   // クリア・復元のたびに増やしてビルダーを再マウントし、
   // キーワード欄が保持している生テキストを state から引き直させる
