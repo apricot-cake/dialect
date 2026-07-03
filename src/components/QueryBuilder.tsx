@@ -238,18 +238,9 @@ function LabelRow({
               {supporters.length}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-72">
-            <div className="flex flex-wrap gap-x-2.5 gap-y-1.5">
-              {supporters.map((p) => (
-                <span key={p.id} className="inline-flex items-center gap-1">
-                  <PlatformIcon
-                    id={p.id}
-                    className="size-3.5 shrink-0"
-                    style={{ color: p.brandColor }}
-                  />
-                  {p.name}
-                </span>
-              ))}
+          <TooltipContent className="max-w-56">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <SupportIcons supporters={supporters} />
             </div>
           </TooltipContent>
         </Tooltip>

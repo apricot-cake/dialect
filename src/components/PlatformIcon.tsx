@@ -39,7 +39,10 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   twitch: siTwitch,
 }
 
-/** ニコニコ静画: テレビちゃん(本体)+頭の双葉。faviconのシンボルを単色に簡略化 */
+/**
+ * ニコニコ静画: 公式favicon(白いテレビちゃん+頭の双葉)を忠実にベクター化。
+ * 白い本体+緑の葉の固定配色のため、他と違い currentColor を使わない
+ */
 function SeigaIcon({
   className,
   style,
@@ -52,18 +55,19 @@ function SeigaIcon({
       viewBox="0 0 24 24"
       className={className}
       style={style}
-      fill="currentColor"
       aria-hidden="true"
     >
-      {/* 双葉(茎+左右の葉) */}
-      <path d="M11.4 9V6.2h1.2V9h-1.2z" />
-      <path d="M12 6.6C10 7 8.2 5.9 7.6 3.9c2-.5 3.9.7 4.4 2.7z" />
-      <path d="M12 6.6c2 .4 3.8-.7 4.4-2.7-2-.5-3.9.7-4.4 2.7z" />
-      {/* テレビ本体(白抜きの目と口) */}
-      <path
-        d="M5 9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2H5zM7.9 14.3a1.1 1.1 0 1 0 2.2 0 1.1 1.1 0 1 0-2.2 0zm6 0a1.1 1.1 0 1 0 2.2 0 1.1 1.1 0 1 0-2.2 0zM9.1 17.3h5.8v1.2H9.1z"
-        fillRule="evenodd"
-      />
+      {/* 茎 */}
+      <path d="M11.2 4.6h1.6v5h-1.6z" fill="#333" />
+      {/* 双葉(緑+輪郭) */}
+      <rect x="3.5" y="4" width="7.4" height="3.3" rx="1" fill="#2FBF00" stroke="#333" strokeWidth="1.4" transform="rotate(-7 7.2 5.65)" />
+      <rect x="13.1" y="4" width="7.4" height="3.3" rx="1" fill="#2FBF00" stroke="#333" strokeWidth="1.4" transform="rotate(7 16.8 5.65)" />
+      {/* 足 */}
+      <path d="M6.5 19h3v2.4h-3zM14.5 19h3v2.4h-3z" fill="#333" />
+      {/* テレビ本体(白+輪郭) */}
+      <rect x="4" y="9.5" width="16" height="10" rx="1.6" fill="#fff" stroke="#333" strokeWidth="1.8" />
+      {/* 目と口(凸) */}
+      <path d="M8.1 12.2h1.6v3.4H8.1zM14.3 12.2h1.6v3.4h-1.6zM11.3 15.5h1.4v1.1h1.3v1.4H10v-1.4h1.3z" fill="#333" />
     </svg>
   )
 }
