@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronUp,
   Eraser,
+  Languages,
   Link as LinkIcon,
   Search,
   SlidersHorizontal,
@@ -21,7 +22,7 @@ import {
 import { PLATFORMS } from '@/core/platforms'
 import { hasPositiveTerm } from '@/core/text'
 import type { PlatformId, QueryState } from '@/core/types'
-import { t } from '@/i18n'
+import { getLang, setLang, t, type Lang } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -80,6 +81,14 @@ export default function App() {
   const [filterId, setFilterId] = useState<PlatformId | null>(null)
   const [filterOpen, setFilterOpen] = useState(false)
   const activeFilterDef = PLATFORMS.find((p) => p.id === filterId) ?? null
+  // t() はモジュールの現在言語を読むだけなので、切替時はこの state 更新で
+  // ツリー全体を再描画して新しい言語の文言を引き直させる
+  const [lang, setLangState] = useState<Lang>(getLang)
+  const toggleLang = () => {
+    const next: Lang = lang === 'ja' ? 'en' : 'ja'
+    setLang(next)
+    setLangState(next)
+  }
 
   const replaceQuery = (state: QueryState) => {
     setQuery(state)
@@ -106,14 +115,25 @@ export default function App() {
           isMobile ? 'max-w-4xl' : 'max-w-7xl'
         }`}
       >
-        {/* ページ左上のツール名+機能説明。ロゴやキャッチコピーは置かない */}
-        <header className="flex flex-col gap-1 pt-6">
-          <h1 className="text-lg font-semibold tracking-tight">
-            {t('app.title')}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('app.description')}
-          </p>
+        {/* ページ左上のツール名+機能説明。右端に言語切替。ロゴやキャッチコピーは置かない */}
+        <header className="flex items-start justify-between gap-4 pt-6">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-lg font-semibold tracking-tight">
+              {t('app.title')}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {t('app.description')}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="shrink-0 text-muted-foreground"
+            onClick={toggleLang}
+          >
+            <Languages className="size-3.5" />
+            {t('app.langSwitch')}
+          </Button>
         </header>
         <main
           className={

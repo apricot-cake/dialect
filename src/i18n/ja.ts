@@ -3,7 +3,9 @@ export const ja = {
   // ページ左上のツール名と、その下の機能説明(キャッチコピーではなく何をするかの説明)
   'app.title': 'SNSまとめて検索',
   'app.description':
-    '検索条件を日本語で組み立てると、各SNS・掲示板の検索構文に翻訳して検索ページを開きます',
+    '検索条件を組み立てると、各SNS・掲示板の検索構文に翻訳して検索ページを開きます',
+  // 言語切替ボタンのラベルは切替先の言語名(英語表示なら「日本語」)
+  'app.langSwitch': 'English',
 
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
@@ -175,21 +177,18 @@ export const ja = {
   'group.image': 'イラスト・画像',
   'group.text': 'ブログ・掲示板',
 
-  // 起動パネル
-  'launch.search': 'で検索',
-  // 検索ボタンのホバー説明。サイト名を前につけて使う(「Xにログインした〜」)
-  'launch.loginNote': 'にログインしたブラウザでないと検索結果を見られません',
-  'launch.conditions': '条件',
-  'launch.applied': 'を適用',
+  // 起動パネル。{name} にサイト名が入る
+  'launch.search': '{name}で検索',
+  'launch.loginNote': '{name}にログインしたブラウザでないと検索結果を見られません',
+  'launch.appliedCount': '{applied}/{total} 条件を適用',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
   'launch.urlPreview': '開くURL',
 
-  // Googleフォールバック(site:検索)
+  // Googleフォールバック(site:検索)。suffix は条件名の一覧の後ろに続ける
   'google.recovered.suffix': 'は、Googleでこのサイトの中だけを探せば使えます',
   'google.lost.suffix': 'はGoogleには引き継げません',
-  'google.launch.prefix': 'Googleで',
-  'google.launch.suffix': 'の中を検索',
+  'google.launch': 'Googleで{name}の中を検索',
 
   // 共有
   'share.copyLink': 'リンクをコピー',

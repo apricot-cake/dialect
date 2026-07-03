@@ -1,10 +1,15 @@
 import type { QueryState } from './types'
-import { t } from '@/i18n'
+import { getLang, t } from '@/i18n'
 import { andTerms, stripAt, stripHash, words } from './text'
 
-/** スペースを含む語は「」で括り、ひとまとまりであることを示す */
+/** ひとまとまりの語句を括る引用符。日本語は「」、英語は"" */
+function quote(s: string): string {
+  return getLang() === 'ja' ? `「${s}」` : `“${s}”`
+}
+
+/** スペースを含む語は引用符で括り、ひとまとまりであることを示す */
 function markPhrase(term: string): string {
-  return /[\s　]/.test(term) ? `「${term}」` : term
+  return /[\s　]/.test(term) ? quote(term) : term
 }
 
 /** 保存検索・履歴の一覧に表示する、条件の短い要約 */
@@ -13,7 +18,7 @@ export function summarize(state: QueryState): string {
   const kw = andTerms(state).map(markPhrase)
   if (kw.length > 0) parts.push(kw.join(' '))
   if (state.exactPhrase.trim()) {
-    parts.push(`「${state.exactPhrase.trim()}」`)
+    parts.push(quote(state.exactPhrase.trim()))
   }
   if (state.exclude.trim()) {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)

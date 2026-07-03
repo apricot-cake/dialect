@@ -10,7 +10,7 @@ import type {
   QueryState,
   Resolution,
 } from '@/core/types'
-import { t, type MessageKey } from '@/i18n'
+import { getLang, t, tf, type MessageKey } from '@/i18n'
 
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'sns', labelKey: 'group.sns' },
@@ -90,7 +90,10 @@ function appliedCountText(resolution: Resolution): string | null {
   if (activeCount === 0) return null
   const appliedCount =
     resolution.applied.length + resolution.approximated.length
-  return `${appliedCount}/${activeCount} ${t('launch.conditions')}${t('launch.applied')}`
+  return tf('launch.appliedCount', {
+    applied: String(appliedCount),
+    total: String(activeCount),
+  })
 }
 
 export function LaunchPanel({
@@ -132,9 +135,11 @@ function launch(url: string | null, onLaunch?: () => void) {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
 
-/** 条件名を「◯◯」「△△」の形で連ねる */
+/** 条件名を並べる。日本語は「◯◯」を詰めて、英語は"◯◯"をカンマで区切る */
 function conceptList(concepts: ConceptId[]): string {
-  return concepts.map((c) => `「${t(CONCEPT_LABEL_KEYS[c])}」`).join('')
+  const labels = concepts.map((c) => t(CONCEPT_LABEL_KEYS[c]))
+  if (getLang() === 'ja') return labels.map((l) => `「${l}」`).join('')
+  return labels.map((l) => `“${l}”`).join(', ')
 }
 
 /** 外れた条件をGoogleのサイト内検索で補う代替ボタン。詳細はツールチップに畳む */
@@ -166,9 +171,7 @@ function GoogleFallbackBlock({
         }
       >
         <GoogleIcon className="size-3.5" style={{ color: '#4285f4' }} />
-        {t('google.launch.prefix')}
-        {platform.name}
-        {t('google.launch.suffix')}
+        {tf('google.launch', { name: platform.name })}
       </TooltipTrigger>
       <TooltipContent>{tip}</TooltipContent>
     </Tooltip>
@@ -223,12 +226,10 @@ function PlatformCards({
                       />
                     }
                   >
-                    {platform.name}
-                    {t('launch.search')}
+                    {tf('launch.search', { name: platform.name })}
                   </TooltipTrigger>
                   <TooltipContent>
-                    {platform.name}
-                    {t('launch.loginNote')}
+                    {tf('launch.loginNote', { name: platform.name })}
                   </TooltipContent>
                 </Tooltip>
               ) : (
@@ -238,8 +239,7 @@ function PlatformCards({
                   disabled={!resolution.url}
                   onClick={() => launch(resolution.url, onLaunch)}
                 >
-                  {platform.name}
-                  {t('launch.search')}
+                  {tf('launch.search', { name: platform.name })}
                 </Button>
               )}
               {fallback && (

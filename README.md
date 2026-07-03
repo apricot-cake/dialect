@@ -1,6 +1,8 @@
 # SNSまとめて検索
 
-検索条件を日本語のフォームで組み立てると、各SNSの検索構文(方言)に翻訳して、演算子付きの検索URLをタブで開くツールです。検索演算子を覚えていない人でも、SNSの検索を使いこなせるようにします。
+**日本語** ・ [English](README.en.md)
+
+検索条件をフォームで組み立てると、各SNSの検索構文(方言)に翻訳して、演算子付きの検索URLをタブで開くツールです。検索演算子を覚えていない人でも、SNSの検索を使いこなせるようにします。UIは日本語・英語に対応(右上のボタンで切替)。
 
 https://apricot-cake.github.io/dialect/
 
@@ -70,7 +72,7 @@ npm run lint     # oxlint
 - `src/core/resolve.ts` — 検索条件を適用/近似/非対応に仕分け
 - `src/core/google.ts` — Googleフォールバック(site:検索)の生成規則
 - `src/core/permalink.ts` — 検索条件とURLパラメータの相互変換(共有・保存の形式)
-- `src/i18n/ja.ts` — 全UI文言(表示は日本語のみ、文言はここに集約)
+- `src/i18n/` — 全UI文言(日本語 `ja.ts` / 英語 `en.ts`。右上のボタンで切替、選択は localStorage に保存)
 
 ## 注意
 
