@@ -46,7 +46,7 @@ export const ja = {
   'concept.sortOrder.auto': 'おまかせ',
 
   // ビルダー上部の共通ヒント
-  'builder.hint.enter': 'Enterで語を区切って、1つの項目に複数の語を指定できます',
+  'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
   'builder.filter.label': '条件を使えるサイトで絞る',
