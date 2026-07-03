@@ -101,7 +101,7 @@ export const en = {
     'Press Enter to separate words and set multiple words in one field.',
 
   // Site filter and supported-site badge
-  'builder.filter.label': 'Filter by site',
+  'builder.filter.label': 'Filter conditions by site',
   'builder.filter.help':
     'Narrows the list below to the conditions the chosen site supports. It does not change which sites you search. Conditions you have already filled in stay visible while filtering.',
   'builder.help.iconLabel': 'About this condition',
@@ -229,11 +229,11 @@ export const en = {
   'group.text': 'Blogs & Forums',
 
   // Builder actions
-  'builder.clear': 'Clear',
+  'builder.clear': 'Clear conditions',
   'builder.clear.tip': 'Resets all conditions to empty.',
 
   // Saved searches and history
-  'saved.save': 'Save',
+  'saved.save': 'Save conditions',
   'saved.save.tip':
     'Saves the current conditions in this browser. Recall them from “Saved searches” below.',
   'saved.title': 'Saved searches',

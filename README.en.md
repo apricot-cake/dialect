@@ -17,7 +17,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 
 - **Condition builder** — Specify around 20 conditions (exact phrase, exclusion, user, hashtag, date range, media filter, minimum likes, and more) from a form, without knowing any operator syntax.
 - **Enter-separated multiple words** — Keywords can be split with Enter to set several, finding posts that contain all of them (AND). A phrase with spaces (e.g. "React Aria") is kept as one unit and translated into each site's syntax (quotes, etc.). Fields that allow multiple values (exclusion, hashtags, etc.) work the same way.
-- **Filter by site** — "Filter by site" narrows the list to just the conditions a given site supports.
+- **Filter conditions by site** — Narrows the list to just the conditions a given site supports.
 - **Clear support status** — Conditions a site can't handle are automatically dropped on launch, and what is "not available / partially works" is always shown above the button. Buttons never become unclickable.
 - **Google fallback** — For sites where exclusion, date range, etc. don't work, a launch button offers Google's `site:` search (in-site search) as an alternative.
 - **Share & save** — Assembled conditions can be shared as a URL (permalink) and saved with history in the browser (localStorage).

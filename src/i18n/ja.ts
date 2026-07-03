@@ -102,7 +102,7 @@ export const ja = {
   'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
-  'builder.filter.label': 'サイトで絞る',
+  'builder.filter.label': 'サイトで条件を絞る',
   'builder.filter.help':
     '選んだサイトで使える条件だけに、下の一覧の表示を絞ります。検索先のサイトが変わるわけではありません。すでに値を入れた条件は絞り込み中も隠れません',
   'builder.help.iconLabel': 'この条件の説明',
@@ -201,11 +201,11 @@ export const ja = {
   'group.text': 'ブログ・掲示板',
 
   // ビルダー操作
-  'builder.clear': 'クリア',
+  'builder.clear': '条件をクリア',
   'builder.clear.tip': 'すべての条件を空に戻します',
 
   // 保存検索・履歴
-  'saved.save': '保存',
+  'saved.save': '条件を保存',
   'saved.save.tip':
     '今の条件をこのブラウザに保存します。下の「保存した検索」から呼び出せます',
   'saved.title': '保存した検索',
