@@ -1,5 +1,8 @@
 // SNSまとめて検索の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
+  // ページ左上のツール名
+  'app.title': 'SNSまとめて検索',
+
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
   'concept.keywords.placeholder': '例: 台風',

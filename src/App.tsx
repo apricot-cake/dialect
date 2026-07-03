@@ -106,12 +106,18 @@ export default function App() {
           isMobile ? 'max-w-4xl' : 'max-w-7xl'
         }`}
       >
+        {/* ページ左上のツール名。ロゴやタグラインは置かず名前だけ */}
+        <header className="pt-6">
+          <h1 className="text-lg font-semibold tracking-tight">
+            {t('app.title')}
+          </h1>
+        </header>
         <main
           className={
             isMobile
               ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
-                'flex flex-col gap-8 py-6 pb-24'
-              : 'grid grid-cols-2 items-start gap-10 py-6'
+                'flex flex-col gap-8 pt-4 pb-24'
+              : 'grid grid-cols-2 items-start gap-10 pt-4 pb-6'
           }
         >
           {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
