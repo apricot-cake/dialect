@@ -19,9 +19,10 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.exclude).map((w) => `-${w}`))
 
   const params = new URLSearchParams()
-  // order=date_d=新着(既定と同じだが明示)、popular_d=人気(プレミアム限定)。おまかせは指定しない
-  if (state.sort === 'new') params.set('order', 'date_d')
-  else if (state.sort === 'top') params.set('order', 'popular_d')
+  // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
+  // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
+  // popular_d=人気(プレミアム限定)のときだけ order を指定する。おまかせも指定しない
+  if (state.sort === 'top') params.set('order', 'popular_d')
   if (state.since) params.set('scd', state.since)
   if (state.until) params.set('ecd', state.until)
   const qs = params.toString()
