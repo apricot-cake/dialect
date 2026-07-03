@@ -116,8 +116,8 @@ export const ja = {
   'launch.loginNote': 'ログインしているブラウザでのみ検索結果を表示できます',
   'launch.conditions': '条件',
   'launch.applied': 'を適用',
-  'launch.approxHeading': '一部だけ効く条件',
-  'launch.droppedHeading': 'このSNSでは使えない条件',
+  'launch.approxHeading': '一部だけ効く',
+  'launch.droppedHeading': '使えない',
   'launch.urlPreview': '開くURL',
 
   // Googleフォールバック(site:検索)

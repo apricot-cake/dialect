@@ -29,31 +29,42 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-function ConceptNote({
-  concept,
-  noteKey,
+/** 概念名だけを1行に並べた注記。理由の説明文はホバーのツールチップに畳む */
+function NoteLine({
   tone,
+  items,
 }: {
-  concept: ConceptId
-  noteKey?: MessageKey
   tone: 'approx' | 'dropped'
+  items: Array<{ concept: ConceptId; noteKey?: MessageKey }>
 }) {
+  if (items.length === 0) return null
   const Icon = tone === 'approx' ? TriangleAlert : Ban
   return (
-    <li className="flex items-start gap-2 text-xs">
+    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs">
       <Icon
         aria-hidden
-        className={`mt-0.5 size-3.5 shrink-0 ${
+        className={`size-3.5 shrink-0 ${
           tone === 'approx' ? 'text-amber-500' : 'text-zinc-400'
         }`}
       />
-      <span>
-        <span className="font-medium">{t(CONCEPT_LABEL_KEYS[concept])}</span>
-        {noteKey && (
-          <span className="text-muted-foreground"> — {t(noteKey)}</span>
-        )}
+      <span className="text-muted-foreground">
+        {t(tone === 'approx' ? 'launch.approxHeading' : 'launch.droppedHeading')}:
       </span>
-    </li>
+      {items.map(({ concept, noteKey }) =>
+        noteKey ? (
+          <Tooltip key={concept}>
+            <TooltipTrigger className="cursor-default p-0 font-medium underline decoration-dotted underline-offset-2">
+              {t(CONCEPT_LABEL_KEYS[concept])}
+            </TooltipTrigger>
+            <TooltipContent>{t(noteKey)}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <span key={concept} className="font-medium">
+            {t(CONCEPT_LABEL_KEYS[concept])}
+          </span>
+        ),
+      )}
+    </div>
   )
 }
 
@@ -65,24 +76,10 @@ function ResolutionNotes({ resolution }: { resolution: Resolution }) {
     return null
   }
   return (
-    <ul className="flex flex-col gap-1.5">
-      {resolution.approximated.map(({ concept, noteKey }) => (
-        <ConceptNote
-          key={concept}
-          concept={concept}
-          noteKey={noteKey}
-          tone="approx"
-        />
-      ))}
-      {resolution.dropped.map(({ concept, noteKey }) => (
-        <ConceptNote
-          key={concept}
-          concept={concept}
-          noteKey={noteKey}
-          tone="dropped"
-        />
-      ))}
-    </ul>
+    <div className="flex flex-col gap-1">
+      <NoteLine tone="dropped" items={resolution.dropped} />
+      <NoteLine tone="approx" items={resolution.approximated} />
+    </div>
   )
 }
 
@@ -172,7 +169,7 @@ function conceptList(concepts: ConceptId[]): string {
   return concepts.map((c) => `「${t(CONCEPT_LABEL_KEYS[c])}」`).join('')
 }
 
-/** 外れた条件をGoogleのサイト内検索で補う代替ボタン */
+/** 外れた条件をGoogleのサイト内検索で補う代替ボタン。詳細はツールチップに畳む */
 function GoogleFallbackBlock({
   platform,
   fallback,
@@ -182,30 +179,31 @@ function GoogleFallbackBlock({
   fallback: GoogleFallback
   onLaunch?: () => void
 }) {
+  const tip =
+    conceptList(fallback.recovered) +
+    t('google.recovered.suffix') +
+    (fallback.lost.length > 0
+      ? `(${conceptList(fallback.lost)}${t('google.lost.suffix')})`
+      : '')
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-dashed p-2.5">
-      <p className="text-xs text-muted-foreground">
-        {conceptList(fallback.recovered)}
-        {t('google.recovered.suffix')}
-        {fallback.lost.length > 0 && (
-          <>
-            <br />({conceptList(fallback.lost)}
-            {t('google.lost.suffix')})
-          </>
-        )}
-      </p>
-      <Button
-        variant="outline"
-        size="sm"
-        className="w-full"
-        onClick={() => launch(fallback.url, onLaunch)}
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => launch(fallback.url, onLaunch)}
+          />
+        }
       >
         <GoogleIcon className="size-3.5" style={{ color: '#4285f4' }} />
         {t('google.launch.prefix')}
         {platform.name}
         {t('google.launch.suffix')}
-      </Button>
-    </div>
+      </TooltipTrigger>
+      <TooltipContent>{tip}</TooltipContent>
+    </Tooltip>
   )
 }
 
