@@ -5,7 +5,7 @@ import { andTerms, words } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
-import { Badge } from '@/components/ui/badge'
+import { PlatformIcon } from '@/components/PlatformIcon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -169,7 +169,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     .sort((a, b) => b.supporters.length - a.supporters.length)
 
-  /** 「8サイト」バッジ。ホバーで対応サイト名の一覧(一部対応は分けて表示) */
+  /** 対応サイトのアイコンの並び。一部対応は薄く表示し、ホバーで名前の一覧 */
   const supportBadge = (field: FieldDef, supporters: PlatformDef[]) => {
     const full = supporters.filter(
       (p) => supportOf(p, field.concept).level === 'full',
@@ -180,13 +180,20 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     return (
       <Tooltip>
         <TooltipTrigger className="cursor-default p-0">
-          <Badge
-            variant="outline"
-            className="font-normal text-muted-foreground"
-          >
-            {supporters.length}
-            {t('builder.support.sites')}
-          </Badge>
+          <span className="flex flex-wrap items-center gap-1">
+            {supporters.map((p) => (
+              <PlatformIcon
+                key={p.id}
+                id={p.id}
+                className={`size-3.5 ${
+                  supportOf(p, field.concept).level === 'partial'
+                    ? 'opacity-35'
+                    : ''
+                }`}
+                style={{ color: p.brandColor }}
+              />
+            ))}
+          </span>
         </TooltipTrigger>
         <TooltipContent>
           <div className="flex flex-col gap-0.5">

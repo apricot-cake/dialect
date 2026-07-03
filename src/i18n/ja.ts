@@ -52,7 +52,6 @@ export const ja = {
   'builder.filter.label': '条件を使えるサイトで絞る',
   'builder.filter.active': 'で絞り込み中',
   'builder.filter.all': 'すべて',
-  'builder.support.sites': 'サイト',
   'builder.support.full': '対応',
   'builder.support.partial': '一部対応',
 
