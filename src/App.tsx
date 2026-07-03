@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Info } from 'lucide-react'
 import { defaultState } from '@/core/concepts'
 import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import {
@@ -15,7 +15,12 @@ import type { PlatformId, QueryState } from '@/core/types'
 import { t, type MessageKey } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { TooltipProvider } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { QueryBuilder } from '@/components/QueryBuilder'
 import { LaunchPanel } from '@/components/LaunchPanel'
@@ -140,28 +145,41 @@ export default function App() {
                 <div className="flex items-center justify-between gap-2">
                   {/* 条件の一覧をサイトで絞る。リストはクリックで展開する
                       (値の入った条件は絞っても隠れない) */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-muted-foreground"
-                    aria-expanded={filterOpen}
-                    onClick={() => setFilterOpen(!filterOpen)}
-                  >
-                    {activeFilterDef ? (
-                      <>
-                        <PlatformIcon
-                          id={activeFilterDef.id}
-                          className="size-3.5"
-                          style={{ color: activeFilterDef.brandColor }}
-                        />
-                        {activeFilterDef.name}
-                        {t('builder.filter.active')}
-                      </>
-                    ) : (
-                      t('builder.filter.label')
-                    )}
-                    {filterOpen ? <ChevronUp /> : <ChevronDown />}
-                  </Button>
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-muted-foreground"
+                      aria-expanded={filterOpen}
+                      onClick={() => setFilterOpen(!filterOpen)}
+                    >
+                      {activeFilterDef ? (
+                        <>
+                          <PlatformIcon
+                            id={activeFilterDef.id}
+                            className="size-3.5"
+                            style={{ color: activeFilterDef.brandColor }}
+                          />
+                          {activeFilterDef.name}
+                          {t('builder.filter.active')}
+                        </>
+                      ) : (
+                        t('builder.filter.label')
+                      )}
+                      {filterOpen ? <ChevronUp /> : <ChevronDown />}
+                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger
+                        aria-label={t('builder.help.iconLabel')}
+                        className="text-muted-foreground/60 hover:text-foreground"
+                      >
+                        <Info className="size-3.5" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-64">
+                        {t('builder.filter.help')}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <Button
                     variant="outline"
                     size="sm"

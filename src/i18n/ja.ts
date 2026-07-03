@@ -1,55 +1,93 @@
 // SNSまとめて検索の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
-  // 検索概念(ビルダーの各行)
+  // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風 ← 複数の語はすべてを含む',
+  'concept.keywords.placeholder': '例: 台風',
+  'concept.keywords.help':
+    '入力した語を含む投稿を探します。複数の語を指定すると、すべての語を含む投稿だけに絞り込みます',
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
-  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ ← 一字一句このままの文を探す',
+  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
+  'concept.exactPhrase.help':
+    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
   'concept.exclude.label': '除外するキーワード',
-  'concept.exclude.placeholder': '例: 広告 ← この語を含む投稿を出さない',
+  'concept.exclude.placeholder': '例: 広告',
+  'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',
   'concept.titleOnly.label': 'タイトルだけで探す',
+  'concept.titleOnly.help':
+    '本文ではなく、タイトルにキーワードを含む投稿だけを探します',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
-  'concept.fromUser.placeholder': '例: nhk_news ← @はつけない',
+  'concept.fromUser.placeholder': '例: nhk_news',
+  'concept.fromUser.help':
+    '指定したユーザーが投稿したものだけを探します。ユーザー名に@はつけません',
   'concept.excludeUser.label': 'このユーザーの投稿を除く',
-  'concept.excludeUser.placeholder': '例: nhk_news ← @はつけない',
+  'concept.excludeUser.placeholder': '例: nhk_news',
+  'concept.excludeUser.help':
+    '指定したユーザーの投稿を検索結果から除きます。ユーザー名に@はつけません',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
-  'concept.toUser.placeholder': '例: nhk_news ← @はつけない。複数書くとどれかに宛てた返信',
+  'concept.toUser.placeholder': '例: nhk_news',
+  'concept.toUser.help':
+    '指定したユーザーに宛てた返信だけを探します。ユーザー名に@はつけません。複数指定すると、どれかのユーザーに宛てた返信を探します',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
+  'concept.mentionsUser.help':
+    '指定したユーザーへのメンションを含む投稿だけを探します',
   'concept.subreddit.label': 'このコミュニティの中だけ',
-  'concept.subreddit.placeholder': '例: japan ← r/はつけない。複数書くとどれかの中',
+  'concept.subreddit.placeholder': '例: japan',
+  'concept.subreddit.help':
+    '指定したコミュニティの中の投稿だけを探します。名前にr/はつけません。複数指定すると、どれかのコミュニティの中を探します',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
+  'concept.domain.help':
+    '指定したサイトへのリンクを含む投稿だけを探します',
   'concept.hashtag.label': 'ハッシュタグ',
-  'concept.hashtag.placeholder': '例: 読書記録 ← #はつけない。複数書くとすべてを含む',
+  'concept.hashtag.placeholder': '例: 読書記録',
+  'concept.hashtag.help':
+    '指定したハッシュタグがついた投稿を探します。#はつけません。複数指定すると、すべてのタグがついた投稿だけに絞り込みます',
   'concept.period.label': '期間',
   'concept.period.since': 'この日から',
   'concept.period.until': 'この日の前まで',
+  'concept.period.help':
+    '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
   'concept.mediaOnly.label': '画像・動画つきの投稿だけ',
+  'concept.mediaOnly.help': '画像または動画がついた投稿だけに絞り込みます',
   'concept.videoLength.label': '動画の長さ',
   'concept.videoLength.none': '指定なし',
   'concept.videoLength.short': '短い (〜4分)',
   'concept.videoLength.medium': 'ふつう (4〜20分)',
   'concept.videoLength.long': '長い (20分〜)',
+  'concept.videoLength.help': '動画の再生時間で絞り込みます',
   'concept.linksOnly.label': 'リンクを含む投稿だけ',
+  'concept.linksOnly.help': 'リンク(URL)を含む投稿だけに絞り込みます',
   'concept.verifiedOnly.label': '認証済みアカウントだけ',
+  'concept.verifiedOnly.help': '認証済みアカウントの投稿だけに絞り込みます',
   'concept.excludeReplies.label': 'リプライを除く',
+  'concept.excludeReplies.help': '返信(リプライ)を検索結果から除きます',
   'concept.minLikes.label': '最低いいね数',
   'concept.minLikes.placeholder': '例: 100',
+  'concept.minLikes.help':
+    'いいね数が指定した数以上の投稿だけに絞り込みます',
   'concept.minReposts.label': '最低リポスト数',
   'concept.minReposts.placeholder': '例: 50',
+  'concept.minReposts.help':
+    'リポスト数が指定した数以上の投稿だけに絞り込みます',
   'concept.japaneseOnly.label': '日本語の投稿だけ',
+  'concept.japaneseOnly.help': '日本語で書かれた投稿だけに絞り込みます',
   'concept.sortOrder.label': '並び順',
   'concept.sortOrder.new': '新しい順',
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.auto': 'おまかせ',
+  'concept.sortOrder.help':
+    '検索結果の並び順を指定します。「おまかせ」は各サイトの標準の並び順で表示します',
 
   // ビルダー上部の共通ヒント
   'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
   'builder.filter.label': '条件を使えるサイトで絞る',
+  'builder.filter.help':
+    '選んだサイトで使える条件だけに、下の一覧の表示を絞ります。検索先のサイトが変わるわけではありません。すでに値を入れた条件は絞り込み中も隠れません',
+  'builder.help.iconLabel': 'この条件の説明',
   'builder.filter.active': 'で絞り込み中',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',

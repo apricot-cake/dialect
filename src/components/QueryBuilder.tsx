@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { Info, X } from 'lucide-react'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { andTerms, words } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
@@ -10,6 +10,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface Props {
   state: QueryState
@@ -185,9 +190,23 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     </span>
   )
 
+  /** ラベル横のⓘ。ホバーでその条件の機能説明を出す */
+  const helpTip = (field: FieldDef) => (
+    <Tooltip>
+      <TooltipTrigger
+        aria-label={t('builder.help.iconLabel')}
+        className="text-muted-foreground/60 hover:text-foreground"
+      >
+        <Info className="size-3.5" />
+      </TooltipTrigger>
+      <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
+    </Tooltip>
+  )
+
   const labelRow = (field: FieldDef, supporters: PlatformDef[]) => (
     <div className="flex items-center gap-2">
       <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
+      {helpTip(field)}
       {supportBadge(field, supporters)}
     </div>
   )
@@ -220,6 +239,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
         <div key={field.concept} className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Label>{t(field.labelKey)}</Label>
+            {helpTip(field)}
             {supportBadge(field, supporters)}
           </div>
           <div className="flex h-9 items-center self-start rounded-md border p-0.5">
@@ -248,6 +268,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
             onCheckedChange={(checked) => set({ [field.field]: checked })}
           />
           <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
+          {helpTip(field)}
           {supportBadge(field, supporters)}
         </div>
       )
