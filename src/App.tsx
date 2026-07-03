@@ -137,9 +137,13 @@ export default function App() {
             }`}
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                <Search className="size-[1.1rem]" />
-              </div>
+              {/* ロゴはファビコンと同じ絵文字(🧐)。OS依存でブレないよう画像として読む */}
+              <img
+                src={`${import.meta.env.BASE_URL}favicon.svg`}
+                alt=""
+                aria-hidden
+                className="size-7 shrink-0"
+              />
               <div className="flex min-w-0 flex-col">
                 <h1 className="truncate text-[0.95rem] leading-tight font-semibold tracking-tight">
                   {t('app.title')}
