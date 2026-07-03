@@ -210,6 +210,7 @@ export const en = {
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
+  'launch.bgHint': 'Middle-click, or Ctrl/⌘-click, to open in a background tab',
   'launch.loginNote':
     'You must be signed in to {name} in this browser to see results.',
   'launch.appliedCount': '{applied}/{total} conditions applied',

@@ -1,3 +1,4 @@
+import { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
@@ -18,7 +19,8 @@ const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'image', labelKey: 'group.image' },
   { group: 'text', labelKey: 'group.text' },
 ]
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { GoogleIcon, PlatformIcon } from '@/components/PlatformIcon'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -105,6 +107,7 @@ export function LaunchPanel({
 }) {
   return (
     <div className="flex flex-col gap-3">
+      <p className="text-xs text-muted-foreground">{t('launch.bgHint')}</p>
       {/* 1グループ=1行。カラム分けだとグループ数が列数を超えたとき別グループの下に
           折り返して紛らわしいため、行にしてグループ数の増加に耐えられるようにする */}
       <div className="flex flex-col gap-5">
@@ -134,6 +137,51 @@ function launch(url: string | null, onLaunch?: () => void) {
   onLaunch?.()
   window.open(url, '_blank', 'noopener,noreferrer')
 }
+
+type SearchLinkProps = {
+  url: string | null
+  label: string
+  brandColor: string
+  onLaunch?: () => void
+} & ComponentPropsWithoutRef<'a'>
+
+/**
+ * 検索ボタンを本物のリンク(<a target="_blank">)として描画する。
+ * 左クリック=前面タブ、中クリック/Ctrl・⌘+クリック=背面タブ、はブラウザ標準の挙動。
+ * JSからは背面タブを強制できないため、確実な背面オープンはこのネイティブ操作に委ねる。
+ * onLaunch(履歴記録)は左クリック(onClick)と中クリック(onAuxClick)の両方で拾う。
+ */
+const SearchLink = forwardRef<HTMLAnchorElement, SearchLinkProps>(
+  function SearchLink({ url, label, brandColor, onLaunch, className, ...props }, ref) {
+    const enabled = Boolean(url)
+    return (
+      <a
+        ref={ref}
+        {...props}
+        href={url ?? undefined}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-disabled={enabled ? undefined : true}
+        tabIndex={enabled ? undefined : -1}
+        className={cn(
+          buttonVariants(),
+          'w-full text-white',
+          !enabled && 'pointer-events-none opacity-50',
+          className,
+        )}
+        style={{ backgroundColor: brandColor }}
+        onClick={() => {
+          if (enabled) onLaunch?.()
+        }}
+        onAuxClick={(e) => {
+          if (enabled && e.button === 1) onLaunch?.()
+        }}
+      >
+        {label}
+      </a>
+    )
+  },
+)
 
 /** 条件名を並べる。日本語は「◯◯」を詰めて、英語は"◯◯"をカンマで区切る */
 function conceptList(concepts: ConceptId[]): string {
@@ -213,34 +261,31 @@ function PlatformCards({
               </div>
 
               <ResolutionNotes resolution={resolution} />
-              {/* 要ログインのサイトは、検索ボタンのホバーで注意を出す */}
+              {/* 検索ボタンは本物のリンク。左クリック=前面、中クリック/Ctrl・⌘+クリック=背面。
+                  要ログインのサイトは検索ボタンのホバーで注意を出す */}
               {platform.requiresLogin ? (
                 <Tooltip>
                   <TooltipTrigger
                     render={
-                      <Button
-                        className="w-full text-white"
-                        style={{ backgroundColor: platform.brandColor }}
-                        disabled={!resolution.url}
-                        onClick={() => launch(resolution.url, onLaunch)}
+                      <SearchLink
+                        url={resolution.url}
+                        label={tf('launch.search', { name: platform.name })}
+                        brandColor={platform.brandColor}
+                        onLaunch={onLaunch}
                       />
                     }
-                  >
-                    {tf('launch.search', { name: platform.name })}
-                  </TooltipTrigger>
+                  />
                   <TooltipContent>
                     {tf('launch.loginNote', { name: platform.name })}
                   </TooltipContent>
                 </Tooltip>
               ) : (
-                <Button
-                  className="w-full text-white"
-                  style={{ backgroundColor: platform.brandColor }}
-                  disabled={!resolution.url}
-                  onClick={() => launch(resolution.url, onLaunch)}
-                >
-                  {tf('launch.search', { name: platform.name })}
-                </Button>
+                <SearchLink
+                  url={resolution.url}
+                  label={tf('launch.search', { name: platform.name })}
+                  brandColor={platform.brandColor}
+                  onLaunch={onLaunch}
+                />
               )}
               {fallback && (
                 <GoogleFallbackBlock

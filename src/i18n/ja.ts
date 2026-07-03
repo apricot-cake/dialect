@@ -179,6 +179,7 @@ export const ja = {
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
+  'launch.bgHint': '中クリック、または Ctrl / ⌘ + クリックで、後ろのタブ(背面)で開けます',
   'launch.loginNote': '{name}にログインしたブラウザでないと検索結果を見られません',
   'launch.appliedCount': '{applied}/{total} 条件を適用',
   'launch.approxHeading': '一部だけ効く',
