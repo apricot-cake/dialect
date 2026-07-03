@@ -87,7 +87,7 @@ Boolean演算子は公式仕様のため壊れにくい。old.reddit.com は2026
 | 高 | `from_author=` | このユーザーの投稿だけ | [threads.com/search?q=news&from_author=zuck](https://www.threads.com/search?q=news&from_author=zuck) | 指定ユーザーの投稿のみ(キーワード併用時は不安定なことあり=注記済み) | 2026-07-02(調査) | ✅ |
 | 低 | タグページ | ハッシュタグ | [threads.com/tag/読書記録](https://www.threads.com/tag/%E8%AA%AD%E6%9B%B8%E8%A8%98%E9%8C%B2) | タグの投稿一覧(ログアウトでも一部表示) | 2026-07-02(調査) | ✅ |
 
-## TikTok / Instagram / Facebook(URL存続チェックのみ)
+## TikTok / Instagram(URL存続チェックのみ)
 
 演算子がほぼないため、検索URL自体が生きているかだけ確認する。
 
@@ -95,7 +95,6 @@ Boolean演算子は公式仕様のため壊れにくい。old.reddit.com は2026
 |---|---|---|---|---|---|
 | 中 | TikTok 検索URL | [tiktok.com/search?q=台風](https://www.tiktok.com/search?q=%E5%8F%B0%E9%A2%A8) | 検索結果が表示される(ログインモーダルは閉じられる) | 2026-07-02(調査) | ✅ |
 | 中 | Instagram 検索URL | [instagram.com/explore/search/keyword/?q=台風](https://www.instagram.com/explore/search/keyword/?q=%E5%8F%B0%E9%A2%A8) | ログイン済みなら検索結果へ(未ログインはログイン画面=仕様) | 2026-07-02(調査) | ✅ |
-| 中 | Facebook 検索URL | [facebook.com/search/top/?q=台風](https://www.facebook.com/search/top/?q=%E5%8F%B0%E9%A2%A8) | ログイン済みなら検索結果へ | 2026-07-02(調査) | ✅ |
 
 ## pixiv(ログイン不要)
 

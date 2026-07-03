@@ -1,6 +1,5 @@
 import {
   siBluesky,
-  siFacebook,
   siGoogle,
   siHatenabookmark,
   siInstagram,
@@ -31,7 +30,6 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   threads: siThreads,
   instagram: siInstagram,
   tiktok: siTiktok,
-  facebook: siFacebook,
   reddit: siReddit,
   pixiv: siPixiv,
   misskey: siMisskey,

@@ -96,7 +96,6 @@ export type PlatformId =
   | 'threads'
   | 'instagram'
   | 'tiktok'
-  | 'facebook'
   | 'reddit'
   | 'pixiv'
   | 'misskey'

@@ -30,7 +30,6 @@ It never fetches or displays results itself. It only opens each site's own real 
 | Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
 | Threads | `threads.com/search` | Required | Newest / user only |
 | Instagram | `instagram.com/explore/search` | Required | Keywords only |
-| Facebook | `facebook.com/search/top` | Required | Keywords only |
 | YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, etc. |
 | niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort) |
 | note | `note.com/search` | Not required | User / sort only |
