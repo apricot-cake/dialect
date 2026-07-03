@@ -150,8 +150,9 @@ export default function App() {
             </h2>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  {/* 条件への操作(保存・共有・クリア)を右に寄せる */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* 条件への操作(保存・共有・クリア)。下のサイト絞り込み枠や
+                      右カラムの説明文と左端の軸をそろえるため左寄せにする */}
                   <div className="flex shrink-0 items-center gap-1">
                     <Tooltip>
                       <TooltipTrigger
@@ -282,7 +283,7 @@ export default function App() {
           <section
             className={`${
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
-            } flex-col gap-4`}
+            } flex-col gap-8`}
           >
             <h2 className="text-sm font-semibold tracking-tight">
               {t('column.launch')}
