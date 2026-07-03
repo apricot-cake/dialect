@@ -7,7 +7,6 @@ import type {
   ConceptId,
   PlatformDef,
   PlatformGroup,
-  PlatformId,
   QueryState,
   Resolution,
 } from '@/core/types'
@@ -97,49 +96,18 @@ function appliedCountText(resolution: Resolution): string | null {
 
 export function LaunchPanel({
   state,
-  hidden,
-  onToggleHidden,
   onLaunch,
 }: {
   state: QueryState
-  /** OFFにしたサイトのID(localStorageに記憶される) */
-  hidden: PlatformId[]
-  onToggleHidden: (id: PlatformId) => void
   onLaunch?: () => void
 }) {
-  const enabled = PLATFORMS.filter((p) => !hidden.includes(p.id))
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-xs text-muted-foreground">
-          {t('launch.sites.label')}
-        </span>
-        {PLATFORMS.map((p) => {
-          const on = !hidden.includes(p.id)
-          return (
-            <Button
-              key={p.id}
-              variant={on ? 'secondary' : 'ghost'}
-              size="sm"
-              aria-pressed={on}
-              className={on ? undefined : 'text-muted-foreground opacity-60'}
-              onClick={() => onToggleHidden(p.id)}
-            >
-              <PlatformIcon
-                id={p.id}
-                className="size-3.5"
-                style={on ? { color: p.brandColor } : undefined}
-              />
-              {p.name}
-            </Button>
-          )
-        })}
-      </div>
       {/* 1グループ=1行。カラム分けだとグループ数が列数を超えたとき別グループの下に
           折り返して紛らわしいため、行にしてグループ数の増加に耐えられるようにする */}
       <div className="flex flex-col gap-5">
         {GROUPS.map(({ group, labelKey }) => {
-          const platforms = enabled.filter((p) => p.group === group)
+          const platforms = PLATFORMS.filter((p) => p.group === group)
           if (platforms.length === 0) return null
           return (
             <section key={group} className="@container flex flex-col gap-2">

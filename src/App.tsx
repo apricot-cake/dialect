@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { defaultState } from '@/core/concepts'
 import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import {
   deleteSaved,
-  loadHiddenPlatforms,
   loadHistory,
   loadSaved,
   recordHistory,
   saveSearch,
-  storeHiddenPlatforms,
 } from '@/core/storage'
 import { PLATFORMS } from '@/core/platforms'
 import { hasPositiveTerm } from '@/core/text'
@@ -69,25 +68,9 @@ export default function App() {
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)
   const [historyEntries, setHistoryEntries] = useState(loadHistory)
-  const [hidden, setHidden] = useState<PlatformId[]>(loadHiddenPlatforms)
   const [filterId, setFilterId] = useState<PlatformId | null>(null)
-
-  // 使わないサイトのON/OFF。選択はlocalStorageに記憶する。全OFFにはさせない
-  const toggleHidden = (id: PlatformId) => {
-    setHidden((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((h) => h !== id)
-        : [...prev, id]
-      if (next.length >= PLATFORMS.length) return prev
-      storeHiddenPlatforms(next)
-      return next
-    })
-  }
-  const enabledPlatforms = PLATFORMS.filter((p) => !hidden.includes(p.id))
-  // 絞り込み中のサイトがOFFにされたら絞り込みを解除する
-  const activeFilter = enabledPlatforms.some((p) => p.id === filterId)
-    ? filterId
-    : null
+  const [filterOpen, setFilterOpen] = useState(false)
+  const activeFilterDef = PLATFORMS.find((p) => p.id === filterId) ?? null
 
   const replaceQuery = (state: QueryState) => {
     setQuery(state)
@@ -152,51 +135,70 @@ export default function App() {
               isMobile && tab !== 'build' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
-            {!isMobile && (
-              <h2 className="text-base font-semibold">
-                {t('section.builder')}
-              </h2>
-            )}
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                {/* 条件の一覧をサイトで絞る(値の入った条件は絞っても隠れない) */}
-                <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">
-                    {t('builder.filter.label')}
-                  </span>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  {/* 条件の一覧をサイトで絞る。リストはクリックで展開する
+                      (値の入った条件は絞っても隠れない) */}
                   <Button
-                    variant={activeFilter === null ? 'secondary' : 'ghost'}
+                    variant="outline"
                     size="sm"
-                    onClick={() => setFilterId(null)}
+                    className="text-muted-foreground"
+                    aria-expanded={filterOpen}
+                    onClick={() => setFilterOpen(!filterOpen)}
                   >
-                    {t('builder.filter.all')}
+                    {activeFilterDef ? (
+                      <>
+                        <PlatformIcon
+                          id={activeFilterDef.id}
+                          className="size-3.5"
+                          style={{ color: activeFilterDef.brandColor }}
+                        />
+                        {activeFilterDef.name}
+                        {t('builder.filter.active')}
+                      </>
+                    ) : (
+                      t('builder.filter.label')
+                    )}
+                    {filterOpen ? <ChevronUp /> : <ChevronDown />}
                   </Button>
-                  {enabledPlatforms.map((p) => (
-                    <Button
-                      key={p.id}
-                      variant={activeFilter === p.id ? 'secondary' : 'ghost'}
-                      size="sm"
-                      onClick={() =>
-                        setFilterId(activeFilter === p.id ? null : p.id)
-                      }
-                    >
-                      <PlatformIcon
-                        id={p.id}
-                        className="size-3.5"
-                        style={{ color: p.brandColor }}
-                      />
-                      {p.name}
-                    </Button>
-                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 text-muted-foreground"
+                    onClick={() => replaceQuery(defaultState())}
+                  >
+                    {t('builder.clear')}
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 text-muted-foreground"
-                  onClick={() => replaceQuery(defaultState())}
-                >
-                  {t('builder.clear')}
-                </Button>
+                {filterOpen && (
+                  <div className="flex flex-wrap items-center gap-1.5 rounded-md border bg-muted/30 p-2">
+                    <Button
+                      variant={filterId === null ? 'secondary' : 'ghost'}
+                      size="sm"
+                      onClick={() => setFilterId(null)}
+                    >
+                      {t('builder.filter.all')}
+                    </Button>
+                    {PLATFORMS.map((p) => (
+                      <Button
+                        key={p.id}
+                        variant={filterId === p.id ? 'secondary' : 'ghost'}
+                        size="sm"
+                        onClick={() =>
+                          setFilterId(filterId === p.id ? null : p.id)
+                        }
+                      >
+                        <PlatformIcon
+                          id={p.id}
+                          className="size-3.5"
+                          style={{ color: p.brandColor }}
+                        />
+                        {p.name}
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <Card>
@@ -205,8 +207,8 @@ export default function App() {
                     key={builderKey}
                     state={query}
                     onChange={setQuery}
-                    platforms={enabledPlatforms}
-                    filterId={activeFilter}
+                    platforms={PLATFORMS}
+                    filterId={filterId}
                   />
                 </CardContent>
               </Card>
@@ -241,15 +243,8 @@ export default function App() {
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
             } flex-col gap-4`}
           >
-            {!isMobile && (
-              <h2 className="text-base font-semibold">
-                {t('section.launch')}
-              </h2>
-            )}
             <LaunchPanel
               state={query}
-              hidden={hidden}
-              onToggleHidden={toggleHidden}
               onLaunch={() => setHistoryEntries(recordHistory(query))}
             />
           </section>

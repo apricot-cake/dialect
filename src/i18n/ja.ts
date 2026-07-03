@@ -47,7 +47,8 @@ export const ja = {
   'concept.sortOrder.auto': 'おまかせ',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
-  'builder.filter.label': '条件を使えるサイトで絞る:',
+  'builder.filter.label': '条件を使えるサイトで絞る',
+  'builder.filter.active': 'で絞り込み中',
   'builder.filter.all': 'すべて',
   'builder.support.sites': 'サイト',
   'builder.support.full': '対応',
@@ -110,7 +111,6 @@ export const ja = {
   'group.text': 'ブログ・掲示板',
 
   // 起動パネル
-  'launch.sites.label': '使うサイト:',
   'launch.search': 'で検索',
   'launch.loginRequired': '要ログイン',
   'launch.loginNote': 'ログインしているブラウザでのみ検索結果を表示できます',
@@ -130,11 +130,9 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
-  // 画面上部のタブ(スマホ)と2カラムの見出し(PC)
+  // 画面上部のタブ(スマホ)
   'tab.build': '条件を入力',
   'tab.launch': '検索する',
-  'section.builder': '検索条件',
-  'section.launch': '検索する',
 
   // ビルダー操作
   'builder.clear': '条件をクリア',
