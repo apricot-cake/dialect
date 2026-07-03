@@ -413,7 +413,7 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      {visibleFields.filter((f) => f.concept === 'keywords').map(renderField)}
+      {visibleFields.map(renderField)}
 
       <div className="flex flex-col gap-2">
         <Button
@@ -502,8 +502,6 @@ export function QueryBuilder({ state, onChange, platforms }: Props) {
           </div>
         )}
       </div>
-
-      {visibleFields.filter((f) => f.concept !== 'keywords').map(renderField)}
     </div>
   )
 }
