@@ -13,8 +13,8 @@ import type {
 } from '@/core/types'
 import { getLang, t, tf, type MessageKey } from '@/i18n'
 
-// グループごとに見出しを出して区切る。淡色の細字だと埋もれるので、foreground の
-// 太字ラベル＋右へ伸びる横罫線にして、列見出しより一段弱いまま塊をはっきり見せる
+// グループごとに見出しを出して区切る。罫線は引かず、foreground の小さめ太字ラベルと
+// グループ間の広めの余白だけで、列見出しより一段弱いまま塊を見分けられるようにする
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'sns', labelKey: 'group.sns' },
   { group: 'video', labelKey: 'group.video' },
@@ -138,20 +138,18 @@ export function LaunchPanel({
       <p className="flex min-h-7 items-center text-xs text-muted-foreground">
         {t('launch.bgHint')}
       </p>
-      {/* グループごとに見出し＋横罫線で区切る。見出し内はカード(gap-3)、
-          グループ間は gap-7 で、見出しと余白の両方で塊を読み取れるようにする */}
-      <div className="flex flex-col gap-7">
+      {/* 罫線は引かず、見出しの字面(小さめの太字)とグループ間の広めの余白だけで
+          塊を見分ける。グループ間 gap-9 > 見出し→カード gap-3 の非対称で、
+          見出しが上のグループから離れて下のカード群に属して見えるようにする */}
+      <div className="flex flex-col gap-9">
         {GROUPS.map(({ group, labelKey }) => {
           const platforms = PLATFORMS.filter((p) => p.group === group)
           if (platforms.length === 0) return null
           return (
             <section key={group} className="@container flex flex-col gap-3">
-              <div className="flex items-center gap-2.5">
-                <h3 className="text-xs font-semibold text-foreground">
-                  {t(labelKey)}
-                </h3>
-                <span aria-hidden className="h-px flex-1 bg-border" />
-              </div>
+              <h3 className="text-xs font-semibold tracking-wide text-foreground">
+                {t(labelKey)}
+              </h3>
               <PlatformCards
                 platforms={platforms}
                 state={state}
