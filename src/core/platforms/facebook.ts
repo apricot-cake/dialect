@@ -22,6 +22,7 @@ export const facebook: PlatformDef = {
   group: 'sns',
   brandColor: '#1877f2',
   requiresLogin: true,
+  googleSite: 'facebook.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },

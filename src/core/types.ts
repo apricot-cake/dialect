@@ -105,6 +105,8 @@ export interface PlatformDef {
   /** ボタン等に使うブランドカラー */
   brandColor: string
   requiresLogin: boolean
+  /** Googleフォールバック(site:検索)で使うドメイン */
+  googleSite: string
   /** 対応する概念のみ記載。未記載の概念は非対応(none)として扱う */
   support: Partial<Record<ConceptId, ConceptSupport>>
   /** 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null */

@@ -43,6 +43,7 @@ export const threads: PlatformDef = {
   group: 'sns',
   brandColor: '#101010',
   requiresLogin: true,
+  googleSite: 'threads.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },

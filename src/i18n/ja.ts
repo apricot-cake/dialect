@@ -120,6 +120,12 @@ export const ja = {
   'launch.droppedHeading': 'このSNSでは使えない条件',
   'launch.urlPreview': '開くURL',
 
+  // Googleフォールバック(site:検索)
+  'google.recovered.suffix': 'は、Googleでこのサイトの中だけを探せば使えます',
+  'google.lost.suffix': 'はGoogleには引き継げません',
+  'google.launch.prefix': 'Googleで',
+  'google.launch.suffix': 'の中を検索',
+
   // 共有
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',

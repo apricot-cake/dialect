@@ -36,6 +36,7 @@ export const note: PlatformDef = {
   group: 'text',
   brandColor: '#13b5b1',
   requiresLogin: false,
+  googleSite: 'note.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.note.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.note.exactPhrase' },

@@ -1,6 +1,7 @@
 import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
+import { googleFallback, type GoogleFallback } from '@/core/google'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
 import { setMark } from '@/core/summary'
 import type {
@@ -20,7 +21,7 @@ const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
 ]
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { PlatformIcon } from '@/components/PlatformIcon'
+import { GoogleIcon, PlatformIcon } from '@/components/PlatformIcon'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Tooltip,
@@ -166,6 +167,48 @@ function launch(url: string | null, onLaunch?: () => void) {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
 
+/** 条件名を「◯◯」「△△」の形で連ねる */
+function conceptList(concepts: ConceptId[]): string {
+  return concepts.map((c) => `「${t(CONCEPT_LABEL_KEYS[c])}」`).join('')
+}
+
+/** 外れた条件をGoogleのサイト内検索で補う代替ボタン */
+function GoogleFallbackBlock({
+  platform,
+  fallback,
+  onLaunch,
+}: {
+  platform: PlatformDef
+  fallback: GoogleFallback
+  onLaunch?: () => void
+}) {
+  return (
+    <div className="flex flex-col gap-2 rounded-md border border-dashed p-2.5">
+      <p className="text-xs text-muted-foreground">
+        {conceptList(fallback.recovered)}
+        {t('google.recovered.suffix')}
+        {fallback.lost.length > 0 && (
+          <>
+            <br />({conceptList(fallback.lost)}
+            {t('google.lost.suffix')})
+          </>
+        )}
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full"
+        onClick={() => launch(fallback.url, onLaunch)}
+      >
+        <GoogleIcon className="size-3.5" style={{ color: '#4285f4' }} />
+        {t('google.launch.prefix')}
+        {platform.name}
+        {t('google.launch.suffix')}
+      </Button>
+    </div>
+  )
+}
+
 function PlatformCards({
   platforms,
   sets,
@@ -178,8 +221,14 @@ function PlatformCards({
   return (
     <div className="flex flex-col gap-3">
       {platforms.map((platform) => {
-        const resolutions = sets.map((state) => resolve(platform, state))
-        const single = resolutions.length === 1 ? resolutions[0] : null
+        const entries = sets.map((state) => {
+          const resolution = resolve(platform, state)
+          return {
+            resolution,
+            fallback: googleFallback(platform, state, resolution),
+          }
+        })
+        const single = entries.length === 1 ? entries[0] : null
 
         return (
           <Card key={platform.id} className="py-4">
@@ -201,29 +250,36 @@ function PlatformCards({
                     <TooltipContent>{t('launch.loginNote')}</TooltipContent>
                   </Tooltip>
                 )}
-                {single && appliedCountText(single) && (
+                {single && appliedCountText(single.resolution) && (
                   <span className="ml-auto text-xs text-muted-foreground">
-                    {appliedCountText(single)}
+                    {appliedCountText(single.resolution)}
                   </span>
                 )}
               </div>
 
               {single ? (
                 <>
-                  <ResolutionNotes resolution={single} />
+                  <ResolutionNotes resolution={single.resolution} />
                   <Button
                     className="w-full text-white"
                     style={{ backgroundColor: platform.brandColor }}
-                    disabled={!single.url}
-                    onClick={() => launch(single.url, onLaunch)}
+                    disabled={!single.resolution.url}
+                    onClick={() => launch(single.resolution.url, onLaunch)}
                   >
                     {platform.name}
                     {t('launch.search')}
                   </Button>
+                  {single.fallback && (
+                    <GoogleFallbackBlock
+                      platform={platform}
+                      fallback={single.fallback}
+                      onLaunch={onLaunch}
+                    />
+                  )}
                 </>
               ) : (
                 // 複数セット: セット間ORはタブに訳せないので、1セット=1ボタン(=1タブ)
-                resolutions.map((resolution, i) => (
+                entries.map(({ resolution, fallback }, i) => (
                   <div
                     key={i}
                     className="flex flex-col gap-2 rounded-md border p-2.5"
@@ -251,6 +307,13 @@ function PlatformCards({
                       {setMark(i)}
                       {t('launch.search')}
                     </Button>
+                    {fallback && (
+                      <GoogleFallbackBlock
+                        platform={platform}
+                        fallback={fallback}
+                        onLaunch={onLaunch}
+                      />
+                    )}
                   </div>
                 ))
               )}

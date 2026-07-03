@@ -294,3 +294,37 @@ https://note.com/search?context=note&q=<URLエンコード済みクエリ>&sort=
 - TikTok: ScrapFly 2026(URL形式・anti-bot)、team5pm(演算子)、tokportal/droid4x(非ログイン閲覧の実態)
 - Instagram: axiom.ai/Apify(keyword SERPのURL形式・Cookie必須)、実測(未ログイン即リダイレクト 2026-07-02)、Later/SMT(Recentタブ廃止)
 - Facebook: PiunikaWeb(Postsフィルタ削除 2025-09)、Plessas Facebook Matrix(URLテンプレート)、nem.ec(filters= JSON仕様)
+
+# Googleフォールバック(site:検索、2026-07-03実装)
+
+本体サイトの検索で外れる条件を、Googleの `site:` 検索(サイト内検索)で補う機能。note公式ヘルプ自身が除外検索の代替として `site:note.com kw -除外` のGoogle検索を案内していることが着想の根拠(上記noteの節を参照)。
+
+## 使う演算子(すべてGoogleの公式・文書化済み構文のみ)
+
+| 概念 | Google構文 | 備考 |
+| --- | --- | --- |
+| キーワード | スペース並置(AND) | |
+| どれかを含む | `(a OR b)` | 括弧+大文字OR |
+| 完全一致 | `"..."` | |
+| 除外 | `-語` | |
+| 期間 | `after:YYYY-MM-DD` / `before:YYYY-MM-DD` | 2019年に公式化(Danny Sullivan発表) |
+| 日本語のみ | URLパラメータ `lr=lang_ja` | |
+
+上記以外の概念(ユーザー指定・ハッシュタグ・メディア等)はGoogleへ翻訳できないため引き継がない。UI上は「◯◯はGoogleには引き継げません」と注記する。
+
+## 提示ルール(src/core/google.ts)
+
+- トリガー: ネイティブ検索で**外れた(dropped)**条件のうち、どれかを含む/完全一致/除外/期間 のいずれかがあるときだけGoogleボタンを出す(近似=partialは本体側で一応動くため対象外。ノイズ回避)
+- Googleへ渡せる正の条件(キーワード・OR・完全一致)がなければ出さない(site:単独ではサイト全ページが対象になるため)
+- 各サイトのドメインは PlatformDef.googleSite(x.com / bsky.app / youtube.com / note.com / nicovideo.jp / threads.com / instagram.com / tiktok.com / facebook.com / reddit.com)
+
+## 実機確認(2026-07-03、ブラウザで検証)
+
+- `site:note.com 台風 -広告` → note.comの記事のみが並び、除外が有効
+- `site:note.com 台風 -広告 after:2026-06-01` → 期間指定つきで動作
+- `site:note.com (台風 OR 大雨)` → OR指定で動作(ネイティブ側が起動不能なOR専用ケースの救済)
+
+## 限界(注記済み・許容)
+
+- Googleのインデックス反映には時間差があり、直近の投稿はヒットしない(リアルタイム性はネイティブ検索が上)
+- ログインウォールのあるサイト(Instagram・Facebook等)はインデックス範囲が部分的

@@ -65,6 +65,7 @@ export const reddit: PlatformDef = {
   group: 'text',
   brandColor: '#ff4500',
   requiresLogin: false,
+  googleSite: 'reddit.com',
   support: {
     keywords: { level: 'full' },
     orAny: { level: 'full' },

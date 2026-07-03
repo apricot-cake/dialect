@@ -28,6 +28,7 @@ export const tiktok: PlatformDef = {
   group: 'video',
   brandColor: '#fe2c55',
   requiresLogin: false,
+  googleSite: 'tiktok.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },

@@ -30,6 +30,7 @@ export const instagram: PlatformDef = {
   group: 'sns',
   brandColor: '#833ab4',
   requiresLogin: true,
+  googleSite: 'instagram.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },

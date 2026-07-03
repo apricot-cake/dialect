@@ -1,6 +1,7 @@
 import {
   siBluesky,
   siFacebook,
+  siGoogle,
   siInstagram,
   siNiconico,
   siNote,
@@ -44,6 +45,27 @@ export function PlatformIcon({
       aria-hidden="true"
     >
       <path d={ICONS[id].path} />
+    </svg>
+  )
+}
+
+/** Googleフォールバックのボタン用(PlatformIdにはGoogleは含まれない) */
+export function GoogleIcon({
+  className,
+  style,
+}: {
+  className?: string
+  style?: React.CSSProperties
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      style={style}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d={siGoogle.path} />
     </svg>
   )
 }
