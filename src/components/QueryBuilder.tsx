@@ -169,7 +169,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     .sort((a, b) => b.supporters.length - a.supporters.length)
 
-  /** 対応サイトのアイコンの並び。一部対応は薄く表示し、ホバーで名前の一覧 */
+  /** 対応サイトのアイコンの並び。ホバーで名前の一覧(一部対応は分けて表示) */
   const supportBadge = (field: FieldDef, supporters: PlatformDef[]) => {
     const full = supporters.filter(
       (p) => supportOf(p, field.concept).level === 'full',
@@ -185,11 +185,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
               <PlatformIcon
                 key={p.id}
                 id={p.id}
-                className={`size-3.5 ${
-                  supportOf(p, field.concept).level === 'partial'
-                    ? 'opacity-35'
-                    : ''
-                }`}
+                className="size-3.5"
                 style={{ color: p.brandColor }}
               />
             ))}

@@ -1,4 +1,4 @@
-import { Ban, TriangleAlert } from 'lucide-react'
+import { Ban, Lock, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { googleFallback, type GoogleFallback } from '@/core/google'
@@ -18,7 +18,6 @@ const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'image', labelKey: 'group.image' },
   { group: 'text', labelKey: 'group.text' },
 ]
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { GoogleIcon, PlatformIcon } from '@/components/PlatformIcon'
 import { Card, CardContent } from '@/components/ui/card'
@@ -205,12 +204,11 @@ function PlatformCards({
                 <span className="font-semibold">{platform.name}</span>
                 {platform.requiresLogin && (
                   <Tooltip>
-                    <TooltipTrigger className="cursor-default p-0">
-                      <Badge variant="outline" className="text-amber-600">
-                        {t('launch.loginRequired.pre')}
-                        {platform.name}
-                        {t('launch.loginRequired.post')}
-                      </Badge>
+                    <TooltipTrigger
+                      className="cursor-default p-0"
+                      aria-label={`${platform.name}${t('launch.loginNote')}`}
+                    >
+                      <Lock aria-hidden className="size-3.5 text-amber-500" />
                     </TooltipTrigger>
                     <TooltipContent>
                       {platform.name}

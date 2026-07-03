@@ -113,9 +113,7 @@ export const ja = {
 
   // 起動パネル
   'launch.search': 'で検索',
-  // サイト名を挟んで使う(バッジ「要Xログイン」、ツールチップ「Xにログインした〜」)
-  'launch.loginRequired.pre': '要',
-  'launch.loginRequired.post': 'ログイン',
+  // 鍵アイコンのホバー説明。サイト名を前につけて使う(「Xにログインした〜」)
   'launch.loginNote':
     'にログインしたブラウザでないと検索結果を見られません。Dialectへのログインは不要です',
   'launch.conditions': '条件',
