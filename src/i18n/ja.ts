@@ -188,7 +188,9 @@ export const ja = {
   'google.launch.suffix': 'の中を検索',
 
   // 共有
-  'share.copyLink': 'この検索条件のリンクをコピー',
+  'share.copyLink': 'リンクをコピー',
+  'share.copyLink.tip':
+    '今の条件をそのまま開けるURLをコピーします。ブックマークや共有に使えます',
   'share.copied': 'コピーしました',
 
   // スマホの画面切り替えボタン(右下)。移動先の画面名として使う
@@ -196,10 +198,13 @@ export const ja = {
   'tab.launch': '検索する',
 
   // ビルダー操作
-  'builder.clear': '条件をクリア',
+  'builder.clear': 'クリア',
+  'builder.clear.tip': 'すべての条件を空に戻します',
 
   // 保存検索・履歴
-  'saved.save': 'この条件を保存',
+  'saved.save': '保存',
+  'saved.save.tip':
+    '今の条件をこのブラウザに保存します。下の「保存した検索」から呼び出せます',
   'saved.title': '保存した検索',
   'saved.delete': '削除',
   'history.title': '最近ひらいた検索',

@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  Bookmark,
+  Check,
   ChevronDown,
   ChevronUp,
+  Eraser,
   Info,
+  Link as LinkIcon,
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
@@ -119,7 +123,7 @@ export default function App() {
           >
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   {/* 条件の一覧をサイトで絞る。リストはクリックで展開する
                       (値の入った条件は絞っても隠れない) */}
                   <div className="flex items-center gap-1.5">
@@ -157,14 +161,65 @@ export default function App() {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 text-muted-foreground"
-                    onClick={() => replaceQuery(defaultState())}
-                  >
-                    {t('builder.clear')}
-                  </Button>
+                  {/* 条件への操作。表示の絞り込み(左)と区別して右に寄せ、
+                      ラベルは短く、説明はホバーのツールチップに持たせる */}
+                  <div className="ml-auto flex shrink-0 items-center gap-1.5">
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-muted-foreground"
+                            disabled={!canSearch}
+                            onClick={() => setSaved(saveSearch(query))}
+                          />
+                        }
+                      >
+                        <Bookmark />
+                        {t('saved.save')}
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-64">
+                        {t('saved.save.tip')}
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-muted-foreground"
+                            onClick={copyPermalink}
+                          />
+                        }
+                      >
+                        {copied ? <Check /> : <LinkIcon />}
+                        {copied ? t('share.copied') : t('share.copyLink')}
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-64">
+                        {t('share.copyLink.tip')}
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-muted-foreground"
+                            onClick={() => replaceQuery(defaultState())}
+                          />
+                        }
+                      >
+                        <Eraser />
+                        {t('builder.clear')}
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-64">
+                        {t('builder.clear.tip')}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
                 {filterOpen && (
                   <div className="flex flex-wrap items-center gap-1.5 rounded-md border bg-muted/30 p-2">
@@ -212,20 +267,6 @@ export default function App() {
                 </CardContent>
               </Card>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="ml-auto flex gap-2">
-                  <Button
-                    variant="outline"
-                    disabled={!canSearch}
-                    onClick={() => setSaved(saveSearch(query))}
-                  >
-                    {t('saved.save')}
-                  </Button>
-                  <Button variant="outline" onClick={copyPermalink}>
-                    {copied ? t('share.copied') : t('share.copyLink')}
-                  </Button>
-                </div>
-              </div>
             </div>
 
             <SavedSearches
