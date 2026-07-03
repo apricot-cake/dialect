@@ -119,8 +119,8 @@ export default function App() {
           className={
             isMobile
               ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
-                'flex flex-col gap-8 pt-4 pb-24'
-              : 'grid grid-cols-2 items-start gap-10 pt-4 pb-6'
+                'flex flex-col gap-8 pt-8 pb-24'
+              : 'grid grid-cols-2 items-start gap-10 pt-8 pb-6'
           }
         >
           {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
