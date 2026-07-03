@@ -3,8 +3,7 @@ export const ja = {
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
   'concept.keywords.placeholder': '例: 台風',
-  'concept.keywords.help':
-    '入力した語を含む投稿を探します。複数の語を指定すると、すべての語を含む投稿だけに絞り込みます',
+  'concept.keywords.help': '入力した語を含む投稿を探します',
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
@@ -27,7 +26,7 @@ export const ja = {
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
   'concept.toUser.placeholder': '例: nhk_news',
   'concept.toUser.help':
-    '指定したユーザーに宛てた返信だけを探します。ユーザー名に@はつけません。複数指定すると、どれかのユーザーに宛てた返信を探します',
+    '指定したユーザーに宛てた返信だけを探します。ユーザー名に@はつけません',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
   'concept.mentionsUser.help':
@@ -35,7 +34,7 @@ export const ja = {
   'concept.subreddit.label': 'このコミュニティの中だけ',
   'concept.subreddit.placeholder': '例: japan',
   'concept.subreddit.help':
-    '指定したコミュニティ(Redditのsubreddit、5ちゃんねるの板)の中の投稿だけを探します。名前にr/はつけません。複数指定すると、どれかのコミュニティの中を探します',
+    '指定したコミュニティ(Redditのsubreddit、5ちゃんねるの板)の中の投稿だけを探します。名前にr/はつけません',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.domain.help':
@@ -43,7 +42,7 @@ export const ja = {
   'concept.hashtag.label': 'ハッシュタグ',
   'concept.hashtag.placeholder': '例: 読書記録',
   'concept.hashtag.help':
-    '指定したハッシュタグがついた投稿を探します。#はつけません。複数指定すると、すべてのタグがついた投稿だけに絞り込みます',
+    '指定したハッシュタグがついた投稿を探します。#はつけません',
   'concept.period.label': '期間',
   'concept.period.since': 'この日から',
   'concept.period.until': 'この日の前まで',
