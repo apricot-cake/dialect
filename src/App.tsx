@@ -132,6 +132,8 @@ export default function App() {
                       size="sm"
                       className="text-muted-foreground"
                       aria-expanded={filterOpen}
+                      // 長いサイト名で1行から溢れないよう、絞り込み中はアイコンだけで示す
+                      title={activeFilterDef?.name}
                       onClick={() => setFilterOpen(!filterOpen)}
                     >
                       {activeFilterDef ? (
@@ -141,7 +143,6 @@ export default function App() {
                             className="size-3.5"
                             style={{ color: activeFilterDef.brandColor }}
                           />
-                          {activeFilterDef.name}
                           {t('builder.filter.active')}
                         </>
                       ) : (
@@ -163,14 +164,14 @@ export default function App() {
                   </div>
                   {/* 条件への操作。表示の絞り込み(左)と区別して右に寄せ、
                       ラベルは短く、説明はホバーのツールチップに持たせる */}
-                  <div className="ml-auto flex shrink-0 items-center gap-1.5">
+                  <div className="ml-auto flex shrink-0 items-center gap-1">
                     <Tooltip>
                       <TooltipTrigger
                         render={
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-muted-foreground"
+                            className="px-2.5 text-muted-foreground"
                             disabled={!canSearch}
                             onClick={() => setSaved(saveSearch(query))}
                           />
@@ -189,7 +190,7 @@ export default function App() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-muted-foreground"
+                            className="px-2.5 text-muted-foreground"
                             onClick={copyPermalink}
                           />
                         }
@@ -207,7 +208,7 @@ export default function App() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-muted-foreground"
+                            className="px-2.5 text-muted-foreground"
                             onClick={() => replaceQuery(defaultState())}
                           />
                         }

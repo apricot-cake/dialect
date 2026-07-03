@@ -96,11 +96,11 @@ export const ja = {
   'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
-  'builder.filter.label': '条件を使えるサイトで絞る',
+  'builder.filter.label': 'サイトで絞る',
   'builder.filter.help':
     '選んだサイトで使える条件だけに、下の一覧の表示を絞ります。検索先のサイトが変わるわけではありません。すでに値を入れた条件は絞り込み中も隠れません',
   'builder.help.iconLabel': 'この条件の説明',
-  'builder.filter.active': 'で絞り込み中',
+  'builder.filter.active': '絞り込み中',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',
 
