@@ -166,11 +166,11 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
 
   /**
    * 対応サイトのアイコンの並び。ラベルと見分けやすいよう右端に寄せて
-   * 「対応」つきのピルで囲む。うるさくならないよう彩度と濃さを少し抑え、
-   * ホバーでフルカラーに戻す
+   * 「対応」つきのピルで囲む。薄い色は非対応・無効のシグナルに見えるため、
+   * ブランド色のまま表示する
    */
   const supportBadge = (_field: FieldDef, supporters: PlatformDef[]) => (
-    <span className="group ml-auto flex flex-wrap items-center gap-1 rounded-full bg-muted/40 py-0.5 pl-2 pr-1.5">
+    <span className="ml-auto flex flex-wrap items-center gap-1 rounded-full bg-muted/40 py-0.5 pl-2 pr-1.5">
       <span className="text-[11px] leading-none text-muted-foreground/70">
         {t('builder.support.label')}
       </span>
@@ -178,7 +178,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
         <PlatformIcon
           key={p.id}
           id={p.id}
-          className="size-3.5 opacity-70 saturate-50 transition-[filter,opacity] group-hover:opacity-100 group-hover:saturate-100"
+          className="size-3.5"
           style={{ color: p.brandColor }}
         />
       ))}

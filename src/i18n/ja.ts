@@ -112,9 +112,8 @@ export const ja = {
 
   // 起動パネル
   'launch.search': 'で検索',
-  // 鍵アイコンのホバー説明。サイト名を前につけて使う(「Xにログインした〜」)
-  'launch.loginNote':
-    'にログインしたブラウザでないと検索結果を見られません。Dialectへのログインは不要です',
+  // 検索ボタンのホバー説明。サイト名を前につけて使う(「Xにログインした〜」)
+  'launch.loginNote': 'にログインしたブラウザでないと検索結果を見られません',
   'launch.conditions': '条件',
   'launch.applied': 'を適用',
   'launch.approxHeading': '一部だけ効く',
