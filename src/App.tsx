@@ -95,96 +95,106 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-4 py-10">
-        <main className="flex flex-col gap-4">
-          <div className="flex justify-end">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground"
-              onClick={() => setSets(toEntries([defaultState()]))}
-            >
-              {t('builder.clear')}
-            </Button>
-          </div>
-
-          {sets.map((entry, i) => (
-            <Fragment key={entry.id}>
-              {i > 0 && (
-                <div className="flex items-center gap-3">
-                  <Separator className="flex-1" />
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {t('sets.or')}
-                  </span>
-                  <Separator className="flex-1" />
-                </div>
-              )}
-              <Card>
-                <CardContent className="flex flex-col gap-4">
-                  {sets.length > 1 && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold">
-                        {t('sets.label')}
-                        {setMark(i)}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-6 text-muted-foreground"
-                        aria-label={t('sets.remove')}
-                        onClick={() => removeSet(entry.id)}
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    </div>
-                  )}
-                  <QueryBuilder
-                    state={entry.state}
-                    onChange={(state) => updateSet(entry.id, state)}
-                    platforms={enabledPlatforms}
-                  />
-                </CardContent>
-              </Card>
-            </Fragment>
-          ))}
-
-          <div className="flex flex-col gap-1.5">
-            <Button
-              variant="outline"
-              size="sm"
-              className="self-start text-muted-foreground"
-              onClick={addSet}
-            >
-              <Plus />
-              {t('sets.add')}
-            </Button>
-            {sets.length > 1 && (
-              <p className="text-xs text-muted-foreground">
-                {t('sets.addNote')}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="ml-auto flex gap-2">
+        <main className="flex flex-col gap-8">
+          {/* 入力エリア: 検索条件の組み立て */}
+          <section className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h1 className="text-base font-semibold">
+                {t('section.builder')}
+              </h1>
               <Button
-                variant="outline"
-                disabled={!canSearch}
-                onClick={() => setSaved(saveSearch(states))}
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                onClick={() => setSets(toEntries([defaultState()]))}
               >
-                {t('saved.save')}
-              </Button>
-              <Button variant="outline" onClick={copyPermalink}>
-                {copied ? t('share.copied') : t('share.copyLink')}
+                {t('builder.clear')}
               </Button>
             </div>
-          </div>
 
-          <LaunchPanel
-            sets={states}
-            hidden={hidden}
-            onToggleHidden={toggleHidden}
-            onLaunch={() => setHistoryEntries(recordHistory(states))}
-          />
+            {sets.map((entry, i) => (
+              <Fragment key={entry.id}>
+                {i > 0 && (
+                  <div className="flex items-center gap-3">
+                    <Separator className="flex-1" />
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {t('sets.or')}
+                    </span>
+                    <Separator className="flex-1" />
+                  </div>
+                )}
+                <Card>
+                  <CardContent className="flex flex-col gap-4">
+                    {sets.length > 1 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold">
+                          {t('sets.label')}
+                          {setMark(i)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-6 text-muted-foreground"
+                          aria-label={t('sets.remove')}
+                          onClick={() => removeSet(entry.id)}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </div>
+                    )}
+                    <QueryBuilder
+                      state={entry.state}
+                      onChange={(state) => updateSet(entry.id, state)}
+                      platforms={enabledPlatforms}
+                    />
+                  </CardContent>
+                </Card>
+              </Fragment>
+            ))}
+
+            <div className="flex flex-col gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="self-start text-muted-foreground"
+                onClick={addSet}
+              >
+                <Plus />
+                {t('sets.add')}
+              </Button>
+              {sets.length > 1 && (
+                <p className="text-xs text-muted-foreground">
+                  {t('sets.addNote')}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="ml-auto flex gap-2">
+                <Button
+                  variant="outline"
+                  disabled={!canSearch}
+                  onClick={() => setSaved(saveSearch(states))}
+                >
+                  {t('saved.save')}
+                </Button>
+                <Button variant="outline" onClick={copyPermalink}>
+                  {copied ? t('share.copied') : t('share.copyLink')}
+                </Button>
+              </div>
+            </div>
+          </section>
+
+          {/* リンクエリア: 背景色を変えて入力エリアと見分けやすくする */}
+          <section className="flex flex-col gap-4 rounded-xl bg-muted/50 p-4">
+            <h2 className="text-base font-semibold">{t('section.launch')}</h2>
+            <LaunchPanel
+              sets={states}
+              hidden={hidden}
+              onToggleHidden={toggleHidden}
+              onLaunch={() => setHistoryEntries(recordHistory(states))}
+            />
+          </section>
 
           <SavedSearches
             saved={saved}

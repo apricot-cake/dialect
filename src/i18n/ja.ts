@@ -130,6 +130,10 @@ export const ja = {
   'share.copyLink': 'この検索条件のリンクをコピー',
   'share.copied': 'コピーしました',
 
+  // セクション見出し
+  'section.builder': '検索条件',
+  'section.launch': '検索する',
+
   // ビルダー操作
   'builder.clear': '条件をクリア',
 
