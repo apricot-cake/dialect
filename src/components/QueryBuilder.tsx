@@ -332,7 +332,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-7">
       <p className="text-xs text-muted-foreground">{t('builder.hint.enter')}</p>
       {visibleFields.map(renderField)}
     </div>
