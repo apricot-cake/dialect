@@ -94,6 +94,31 @@ function appliedCountText(resolution: Resolution): string | null {
   })
 }
 
+/**
+ * 「N/N 条件を適用」バッジ。ホバーで、適用した(=分子に数えた)フィールド名の
+ * 内訳を出す。近似適用も分子に含まれるので内訳にも並べる。値ではなく名前だけ見せる
+ */
+function AppliedCountBadge({ resolution }: { resolution: Resolution }) {
+  const text = appliedCountText(resolution)
+  if (!text) return null
+  const applied: ConceptId[] = [
+    ...resolution.applied,
+    ...resolution.approximated.map((a) => a.concept),
+  ]
+  // 適用フィールドが1つもなければ(全滅=0/N)内訳は空なのでホバーを出さない
+  if (applied.length === 0) {
+    return <span className="ml-auto text-xs text-muted-foreground">{text}</span>
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger className="ml-auto cursor-default p-0 text-xs text-muted-foreground underline decoration-dotted underline-offset-2">
+        {text}
+      </TooltipTrigger>
+      <TooltipContent>{conceptList(applied)}</TooltipContent>
+    </Tooltip>
+  )
+}
+
 export function LaunchPanel({
   state,
   onLaunch,
@@ -249,11 +274,7 @@ function PlatformCards({
                   style={{ color: platform.brandColor }}
                 />
                 <span className="font-semibold">{platform.name}</span>
-                {appliedCountText(resolution) && (
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    {appliedCountText(resolution)}
-                  </span>
-                )}
+                <AppliedCountBadge resolution={resolution} />
               </div>
 
               <ResolutionNotes resolution={resolution} />
