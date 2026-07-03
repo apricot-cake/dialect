@@ -224,9 +224,9 @@ export default function App() {
                 </div>
                 {/* サイトで絞る: ラベルを1行目に独立させ、2行目以降にサイトの絞り込みを折り返す。
                     各サイトはアイコンのみ(ホバーで名前)。選択中はハイライト、もう一度押すと解除=すべて */}
-                <div className="flex flex-col gap-1.5 rounded-md border bg-muted/30 px-2 py-1.5">
+                <div className="flex flex-col gap-2 rounded-xl bg-card p-3 shadow-sm ring-1 ring-foreground/10">
                   <Tooltip>
-                    <TooltipTrigger className="cursor-default self-start text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
+                    <TooltipTrigger className="cursor-help self-start text-xs font-medium text-muted-foreground">
                       {t('builder.filter.label')}
                     </TooltipTrigger>
                     <TooltipContent className="max-w-64">
