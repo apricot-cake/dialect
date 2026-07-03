@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { FIELDS, type FieldDef } from '@/core/concepts'
-import { andTerms, parseTerms } from '@/core/text'
+import { andTerms } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
@@ -57,15 +57,15 @@ const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[
 ]
 
 export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
-  // キーワードは「確定済みチップ + 入力中テキスト」で持つ。
-  // Enterで入力中の語句(スペース入りも)を1語のチップにまとめる。
-  // 入力中テキストもスペース区切りのANDとしてそのまま検索に効く
+  // キーワードは「確定済みチップ + 入力中テキスト」で持つ。区切りはEnterだけで、
+  // 入力中テキストはスペースを含んでもそのまま1語。チップどうしはAND
   const [chips, setChips] = useState<string[]>(() => andTerms(state))
   const [rawInput, setRawInput] = useState('')
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
 
   const syncTerms = (nextChips: string[], raw: string) => {
-    const terms = [...nextChips, ...parseTerms(raw)]
+    const text = raw.trim().replace(/[\s　]+/g, ' ')
+    const terms = text ? [...nextChips, text] : [...nextChips]
     onChange({ ...state, terms: terms.length > 0 ? terms : [''] })
   }
 
@@ -157,7 +157,6 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     supporters: PlatformDef[]
   }) => {
     if (field.widget === 'terms') {
-      const showHint = chips.length > 0 || /[\s　]/.test(rawInput.trim())
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
           {labelRow(field, supporters)}
@@ -203,11 +202,9 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
               }}
             />
           </div>
-          {showHint && (
-            <p className="text-xs text-muted-foreground">
-              {t('concept.keywords.hint')}
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground">
+            {t('concept.keywords.hint')}
+          </p>
         </div>
       )
     }

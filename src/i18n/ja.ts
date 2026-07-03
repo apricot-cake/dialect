@@ -2,9 +2,9 @@
 export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風 進路',
+  'concept.keywords.placeholder': '例: 台風',
   'concept.keywords.hint':
-    'スペースで区切った語をすべて含む投稿を探します。Enterを押すと、入力中の語句をスペースごとひとまとまりの1語にできます',
+    'Enterで語を区切ります(スペースを含む語句も1語のまま)。複数の語を入れると、すべてを含む投稿を探します',
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ ← 一字一句このままの文を探す',
