@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Bookmark,
   Check,
-  ChevronDown,
-  ChevronUp,
   Eraser,
   Languages,
   Link as LinkIcon,
@@ -79,8 +77,6 @@ export default function App() {
   const [saved, setSaved] = useState(loadSaved)
   const [historyEntries, setHistoryEntries] = useState(loadHistory)
   const [filterId, setFilterId] = useState<PlatformId | null>(null)
-  const [filterOpen, setFilterOpen] = useState(false)
-  const activeFilterDef = PLATFORMS.find((p) => p.id === filterId) ?? null
   // t() はモジュールの現在言語を読むだけなので、切替時はこの state 更新で
   // ツリー全体を再描画して新しい言語の文言を引き直させる
   const [lang, setLangState] = useState<Lang>(getLang)
@@ -155,33 +151,11 @@ export default function App() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  {/* 条件の一覧をサイトで絞る。リストはクリックで展開する
-                      (値の入った条件は絞っても隠れない)。説明はボタン自体のホバーで出す */}
+                  {/* 条件の一覧をサイトで絞るラベル(絞り込み自体は下のアイコン行で常時表示)。
+                      値の入った条件は絞っても隠れない。説明はラベルのホバーで出す */}
                   <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-muted-foreground"
-                          aria-expanded={filterOpen}
-                          onClick={() => setFilterOpen(!filterOpen)}
-                        />
-                      }
-                    >
-                      {activeFilterDef ? (
-                        <>
-                          <PlatformIcon
-                            id={activeFilterDef.id}
-                            className="size-3.5"
-                            style={{ color: activeFilterDef.brandColor }}
-                          />
-                          {t('builder.filter.active')}
-                        </>
-                      ) : (
-                        t('builder.filter.label')
-                      )}
-                      {filterOpen ? <ChevronUp /> : <ChevronDown />}
+                    <TooltipTrigger className="cursor-default text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2">
+                      {t('builder.filter.label')}
                     </TooltipTrigger>
                     <TooltipContent className="max-w-64">
                       {t('builder.filter.help')}
@@ -247,38 +221,42 @@ export default function App() {
                     </Tooltip>
                   </div>
                 </div>
-                {filterOpen && (
-                  <div className="flex flex-wrap items-center gap-1.5 rounded-md border bg-muted/30 p-2">
-                    <Button
-                      variant={filterId === null ? 'secondary' : 'ghost'}
-                      size="sm"
-                      onClick={() => {
-                        setFilterId(null)
-                        setFilterOpen(false)
-                      }}
-                    >
-                      {t('builder.filter.all')}
-                    </Button>
-                    {PLATFORMS.map((p) => (
-                      <Button
-                        key={p.id}
-                        variant={filterId === p.id ? 'secondary' : 'ghost'}
-                        size="sm"
-                        onClick={() => {
-                          setFilterId(filterId === p.id ? null : p.id)
-                          setFilterOpen(false)
-                        }}
+                {/* サイトで絞る: 常時表示。各サイトはアイコンのみ(ホバーで名前)。
+                    選択中はハイライト、もう一度押すと解除=すべて */}
+                <div className="flex flex-wrap items-center gap-1 rounded-md border bg-muted/30 p-2">
+                  <Button
+                    variant={filterId === null ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="h-7"
+                    onClick={() => setFilterId(null)}
+                  >
+                    {t('builder.filter.all')}
+                  </Button>
+                  {PLATFORMS.map((p) => (
+                    <Tooltip key={p.id}>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            variant={filterId === p.id ? 'secondary' : 'ghost'}
+                            size="icon-sm"
+                            aria-label={p.name}
+                            aria-pressed={filterId === p.id}
+                            onClick={() =>
+                              setFilterId(filterId === p.id ? null : p.id)
+                            }
+                          />
+                        }
                       >
                         <PlatformIcon
                           id={p.id}
-                          className="size-3.5"
+                          className="size-4"
                           style={{ color: p.brandColor }}
                         />
-                        {p.name}
-                      </Button>
-                    ))}
-                  </div>
-                )}
+                      </TooltipTrigger>
+                      <TooltipContent>{p.name}</TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
               </div>
 
               <Card>
