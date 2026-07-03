@@ -1,4 +1,4 @@
-import { Ban, Lock, TriangleAlert } from 'lucide-react'
+import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { googleFallback, type GoogleFallback } from '@/core/google'
@@ -202,20 +202,6 @@ function PlatformCards({
                   style={{ color: platform.brandColor }}
                 />
                 <span className="font-semibold">{platform.name}</span>
-                {platform.requiresLogin && (
-                  <Tooltip>
-                    <TooltipTrigger
-                      className="cursor-default p-0"
-                      aria-label={`${platform.name}${t('launch.loginNote')}`}
-                    >
-                      <Lock aria-hidden className="size-3.5 text-amber-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {platform.name}
-                      {t('launch.loginNote')}
-                    </TooltipContent>
-                  </Tooltip>
-                )}
                 {appliedCountText(resolution) && (
                   <span className="ml-auto text-xs text-muted-foreground">
                     {appliedCountText(resolution)}
@@ -224,15 +210,38 @@ function PlatformCards({
               </div>
 
               <ResolutionNotes resolution={resolution} />
-              <Button
-                className="w-full text-white"
-                style={{ backgroundColor: platform.brandColor }}
-                disabled={!resolution.url}
-                onClick={() => launch(resolution.url, onLaunch)}
-              >
-                {platform.name}
-                {t('launch.search')}
-              </Button>
+              {/* 要ログインのサイトは、検索ボタンのホバーで注意を出す */}
+              {platform.requiresLogin ? (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        className="w-full text-white"
+                        style={{ backgroundColor: platform.brandColor }}
+                        disabled={!resolution.url}
+                        onClick={() => launch(resolution.url, onLaunch)}
+                      />
+                    }
+                  >
+                    {platform.name}
+                    {t('launch.search')}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {platform.name}
+                    {t('launch.loginNote')}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  className="w-full text-white"
+                  style={{ backgroundColor: platform.brandColor }}
+                  disabled={!resolution.url}
+                  onClick={() => launch(resolution.url, onLaunch)}
+                >
+                  {platform.name}
+                  {t('launch.search')}
+                </Button>
+              )}
               {fallback && (
                 <GoogleFallbackBlock
                   platform={platform}
