@@ -176,7 +176,10 @@ export default function App() {
                     <Button
                       variant={filterId === null ? 'secondary' : 'ghost'}
                       size="sm"
-                      onClick={() => setFilterId(null)}
+                      onClick={() => {
+                        setFilterId(null)
+                        setFilterOpen(false)
+                      }}
                     >
                       {t('builder.filter.all')}
                     </Button>
@@ -185,9 +188,10 @@ export default function App() {
                         key={p.id}
                         variant={filterId === p.id ? 'secondary' : 'ghost'}
                         size="sm"
-                        onClick={() =>
+                        onClick={() => {
                           setFilterId(filterId === p.id ? null : p.id)
-                        }
+                          setFilterOpen(false)
+                        }}
                       >
                         <PlatformIcon
                           id={p.id}
