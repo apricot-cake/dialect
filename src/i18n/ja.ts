@@ -2,31 +2,28 @@
 export const ja = {
   // 検索概念(ビルダーの各行)
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風 "計画運休のお知らせ"',
+  'concept.keywords.placeholder': '例: 台風 進路',
   'concept.keywords.hint':
-    'スペースで区切ると、すべての語を含む投稿を探します。スペースを含むひとまとまりの語句は "" で囲んでください',
-  'concept.orAny.label': 'どれかを含む指定',
-  'concept.terms.modeAll': 'すべて含む',
-  'concept.terms.modeAny': 'どれかを含む',
+    'スペースで区切った語をすべて含む投稿を探します。スペースごとひとまとまりで探したい語句は "計画 運休" のように "" で囲んでください',
   'concept.exactPhrase.label': '完全一致で探す',
-  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま)',
+  'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ ← 一字一句このままの文を探す',
   'concept.exclude.label': '除外するキーワード',
-  'concept.exclude.placeholder': '例: 広告 PR (スペース区切りで複数)',
+  'concept.exclude.placeholder': '例: 広告 PR ← この語を含む投稿を出さない。スペース区切りで複数',
   'concept.titleOnly.label': 'タイトルだけで探す',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
-  'concept.fromUser.placeholder': '例: nhk_news (@は不要)',
+  'concept.fromUser.placeholder': '例: nhk_news ← @はつけない',
   'concept.excludeUser.label': 'このユーザーの投稿を除く',
-  'concept.excludeUser.placeholder': '例: nhk_news (@は不要、スペース区切りで複数)',
+  'concept.excludeUser.placeholder': '例: nhk_news ← @はつけない。スペース区切りで複数',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
-  'concept.toUser.placeholder': '例: nhk_news (@は不要、スペース区切りで複数=どれか宛て)',
+  'concept.toUser.placeholder': '例: nhk_news ← @はつけない。複数書くとどれかに宛てた返信',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
   'concept.subreddit.label': 'このコミュニティの中だけ',
-  'concept.subreddit.placeholder': '例: japan (r/は不要、スペース区切りで複数=どれか)',
+  'concept.subreddit.placeholder': '例: japan ← r/はつけない。複数書くとどれかの中',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.hashtag.label': 'ハッシュタグ',
-  'concept.hashtag.placeholder': '例: 読書記録 (#は不要、スペース区切りで複数)',
+  'concept.hashtag.placeholder': '例: 読書記録 ← #はつけない。複数書くとすべてを含む',
   'concept.period.label': '期間',
   'concept.period.since': 'この日から',
   'concept.period.until': 'この日の前まで',
@@ -139,14 +136,6 @@ export const ja = {
 
   // ビルダー操作
   'builder.clear': '条件をクリア',
-
-  // 条件セット(セット内はAND、セット間は「または」)
-  'sets.or': 'または',
-  'sets.label': '条件セット',
-  'sets.add': '「または」の条件を追加',
-  'sets.remove': 'この条件セットを削除',
-  'sets.addNote':
-    'どれかの条件セットに当てはまる投稿を探します。セットごとに別のタブで開きます',
 
   // 保存検索・履歴
   'saved.save': 'この条件を保存',

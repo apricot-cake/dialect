@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, hasPositiveTerm, modedWords, stripAt, stripHash } from '../text'
+import { andTerms, hasPositiveTerm, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索閲覧はログイン必須(Instagramアカウント共通)。演算子は存在せず、
@@ -9,11 +9,10 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const handle = stripAt(state.fromUser)
-  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す。完全一致は近似のキーワード扱い
+  // 完全一致は近似のキーワード扱い
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const tagNames = tags.or ? [] : tags.words.map(stripHash)
+  const tagNames = words(state.hashtag).map(stripHash)
 
   // タグ単独ならタグページ(ログアウトでも一部表示される唯一の経路)
   if (tagNames.length === 1 && !handle && textParts.length === 0) {
@@ -21,8 +20,6 @@ function buildUrl(state: QueryState): string | null {
   }
 
   const parts = [...textParts, ...tagNames.map((t) => `#${t}`)]
-
-  // 「どれか」指定を外した結果、条件が何も残らなければ検索として成立しない
   if (parts.length === 0 && !handle) return null
 
   const params = new URLSearchParams()

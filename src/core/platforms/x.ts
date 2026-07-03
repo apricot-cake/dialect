@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, hasPositiveTerm, modedWords, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
@@ -19,10 +19,7 @@ function buildUrl(state: QueryState): string | null {
   const tos = words(state.toUser).map((u) => `to:${stripAt(u)}`)
   if (tos.length >= 2) parts.push(`(${tos.join(' OR ')})`)
   else parts.push(...tos)
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const hashed = tags.words.map((t) => `#${stripHash(t)}`)
-  if (tags.or) parts.push(`(${hashed.join(' OR ')})`)
-  else parts.push(...hashed)
+  parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
   if (state.mediaOnly) parts.push('filter:media')
@@ -48,7 +45,6 @@ export const x: PlatformDef = {
   googleSite: 'x.com',
   support: {
     keywords: { level: 'full' },
-    orAny: { level: 'full' },
     exactPhrase: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'full' },

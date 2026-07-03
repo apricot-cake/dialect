@@ -1,15 +1,13 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, modedWords, quoteIfPhrase, stripHash } from '../text'
+import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // PCブラウザはログイン不要(サインアップモーダルは閉じられる)。
 // 除外・期間・ソートはURLで指定できない。タグ単独ならタグページが確実。
 function buildUrl(state: QueryState): string | null {
-  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
   const textParts = [...andTerms(state).map(quoteIfPhrase)]
   if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const tagNames = tags.or ? [] : tags.words.map(stripHash)
+  const tagNames = words(state.hashtag).map(stripHash)
 
   if (tagNames.length === 1 && textParts.length === 0) {
     return `https://www.tiktok.com/tag/${encodeURIComponent(tagNames[0])}`

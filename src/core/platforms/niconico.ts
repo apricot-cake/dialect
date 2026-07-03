@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, modedWords, quoteIfPhrase, stripHash, words } from '../text'
+import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
@@ -8,10 +8,7 @@ import { andTerms, modedWords, quoteIfPhrase, stripHash, words } from '../text'
 function buildUrl(state: QueryState): string | null {
   const textParts: string[] = [...andTerms(state).map(quoteIfPhrase)]
   if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
-  // タグの「どれか」はタグページでは表現できないため、キーワード検索のOR連鎖に畳み込む
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const tagNames = tags.words.map(stripHash)
-  if (tags.or) textParts.push(tagNames.join(' OR '))
+  const tagNames = words(state.hashtag).map(stripHash)
   const excludes = words(state.exclude).map((w) => `-${w}`)
 
   const params = new URLSearchParams()
@@ -31,15 +28,13 @@ function buildUrl(state: QueryState): string | null {
   const qs = params.toString()
   const query = qs ? `?${qs}` : ''
 
-  // タグ単独(+除外、すべて含む)ならタグ検索。除外はタグページでも有効(実測)
-  if (!tags.or && tagNames.length > 0 && textParts.length === 0) {
+  // タグ単独(+除外)ならタグ検索。除外はタグページでも有効(実測)
+  if (tagNames.length > 0 && textParts.length === 0) {
     const path = [...tagNames, ...excludes].join(' ')
     return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}${query}`
   }
 
-  const parts = [...textParts]
-  if (!tags.or) parts.push(...tagNames)
-  parts.push(...excludes)
+  const parts = [...textParts, ...tagNames, ...excludes]
   if (parts.length === 0) return null
 
   return `https://www.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}${query}`
@@ -54,7 +49,6 @@ export const niconico: PlatformDef = {
   googleSite: 'nicovideo.jp',
   support: {
     keywords: { level: 'full' },
-    orAny: { level: 'full' },
     exactPhrase: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'none' },

@@ -1,7 +1,6 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
-import { Plus, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { defaultState } from '@/core/concepts'
-import { paramsToSets, permalinkUrl, setsToParams } from '@/core/permalink'
+import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import {
   deleteSaved,
   loadHiddenPlatforms,
@@ -12,38 +11,22 @@ import {
   storeHiddenPlatforms,
 } from '@/core/storage'
 import { PLATFORMS } from '@/core/platforms'
-import { setMark } from '@/core/summary'
 import { hasPositiveTerm } from '@/core/text'
 import type { PlatformId, QueryState } from '@/core/types'
 import { t, type MessageKey } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { QueryBuilder } from '@/components/QueryBuilder'
 import { LaunchPanel } from '@/components/LaunchPanel'
 import { SavedSearches } from '@/components/SavedSearches'
 
-/**
- * セットにReactキー用の連番を振る。クリア・復元・セット削除のたびに新しいidに
- * なるので、ビルダーが再マウントされてキーワード欄の生テキストも引き直される
- */
-let nextSetId = 1
-interface SetEntry {
-  id: number
-  state: QueryState
-}
-
-function toEntries(states: QueryState[]): SetEntry[] {
-  return states.map((state) => ({ id: nextSetId++, state }))
-}
-
-function initialSets(): SetEntry[] {
+function initialQuery(): QueryState {
   if (location.search) {
-    return toEntries(paramsToSets(new URLSearchParams(location.search)))
+    return paramsToQuery(new URLSearchParams(location.search))
   }
-  return toEntries([defaultState()])
+  return defaultState()
 }
 
 type TabId = 'build' | 'launch'
@@ -54,9 +37,11 @@ const TABS: Array<{ id: TabId; labelKey: MessageKey }> = [
 ]
 
 export default function App() {
-  const [sets, setSets] = useState<SetEntry[]>(initialSets)
-  const states = sets.map((entry) => entry.state)
-  const canSearch = states.some((s) => hasPositiveTerm(s))
+  const [query, setQuery] = useState<QueryState>(initialQuery)
+  // クリア・復元のたびに増やしてビルダーを再マウントし、
+  // キーワード欄が保持している生テキストを state から引き直させる
+  const [builderKey, setBuilderKey] = useState(0)
+  const canSearch = hasPositiveTerm(query)
   const [tab, setTab] = useState<TabId>('build')
   const [copied, setCopied] = useState(false)
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -82,25 +67,19 @@ export default function App() {
     ? filterId
     : null
 
-  const updateSet = (id: number, state: QueryState) =>
-    setSets((prev) => prev.map((e) => (e.id === id ? { ...e, state } : e)))
-
-  const addSet = () =>
-    setSets((prev) => [...prev, ...toEntries([defaultState()])])
-
-  const removeSet = (id: number) =>
-    setSets((prev) =>
-      prev.length > 1 ? prev.filter((e) => e.id !== id) : prev,
-    )
+  const replaceQuery = (state: QueryState) => {
+    setQuery(state)
+    setBuilderKey((k) => k + 1)
+  }
 
   // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)
   useEffect(() => {
-    const params = setsToParams(sets.map((e) => e.state)).toString()
+    const params = stateToParams(query).toString()
     history.replaceState(null, '', `${location.pathname}?${params}`)
-  }, [sets])
+  }, [query])
 
   const copyPermalink = async () => {
-    await navigator.clipboard.writeText(permalinkUrl(states))
+    await navigator.clipboard.writeText(permalinkUrl(query))
     setCopied(true)
     clearTimeout(copyTimer.current)
     copyTimer.current = setTimeout(() => setCopied(false), 2000)
@@ -173,76 +152,30 @@ export default function App() {
                   variant="ghost"
                   size="sm"
                   className="shrink-0 text-muted-foreground"
-                  onClick={() => setSets(toEntries([defaultState()]))}
+                  onClick={() => replaceQuery(defaultState())}
                 >
                   {t('builder.clear')}
                 </Button>
               </div>
 
-              {sets.map((entry, i) => (
-                <Fragment key={entry.id}>
-                  {i > 0 && (
-                    <div className="flex items-center gap-3">
-                      <Separator className="flex-1" />
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {t('sets.or')}
-                      </span>
-                      <Separator className="flex-1" />
-                    </div>
-                  )}
-                  <Card>
-                    <CardContent className="flex flex-col gap-4">
-                      {sets.length > 1 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold">
-                            {t('sets.label')}
-                            {setMark(i)}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6 text-muted-foreground"
-                            aria-label={t('sets.remove')}
-                            onClick={() => removeSet(entry.id)}
-                          >
-                            <X className="size-4" />
-                          </Button>
-                        </div>
-                      )}
-                      <QueryBuilder
-                        state={entry.state}
-                        onChange={(state) => updateSet(entry.id, state)}
-                        platforms={enabledPlatforms}
-                        filterId={activeFilter}
-                      />
-                    </CardContent>
-                  </Card>
-                </Fragment>
-              ))}
-
-              <div className="flex flex-col gap-1.5">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="self-start text-muted-foreground"
-                  onClick={addSet}
-                >
-                  <Plus />
-                  {t('sets.add')}
-                </Button>
-                {sets.length > 1 && (
-                  <p className="text-xs text-muted-foreground">
-                    {t('sets.addNote')}
-                  </p>
-                )}
-              </div>
+              <Card>
+                <CardContent className="flex flex-col gap-4">
+                  <QueryBuilder
+                    key={builderKey}
+                    state={query}
+                    onChange={setQuery}
+                    platforms={enabledPlatforms}
+                    filterId={activeFilter}
+                  />
+                </CardContent>
+              </Card>
 
               <div className="flex flex-wrap items-center gap-2">
                 <div className="ml-auto flex gap-2">
                   <Button
                     variant="outline"
                     disabled={!canSearch}
-                    onClick={() => setSaved(saveSearch(states))}
+                    onClick={() => setSaved(saveSearch(query))}
                   >
                     {t('saved.save')}
                   </Button>
@@ -256,7 +189,7 @@ export default function App() {
             <SavedSearches
               saved={saved}
               history={historyEntries}
-              onRestore={(restored) => setSets(toEntries(restored))}
+              onRestore={replaceQuery}
               onDelete={(params) => setSaved(deleteSaved(params))}
             />
           </section>
@@ -264,10 +197,10 @@ export default function App() {
           {/* 検索タブ: 各サイトで開く */}
           <section className={tab === 'launch' ? 'flex flex-col gap-4' : 'hidden'}>
             <LaunchPanel
-              sets={states}
+              state={query}
               hidden={hidden}
               onToggleHidden={toggleHidden}
-              onLaunch={() => setHistoryEntries(recordHistory(states))}
+              onLaunch={() => setHistoryEntries(recordHistory(query))}
             />
           </section>
         </main>

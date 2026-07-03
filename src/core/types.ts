@@ -3,7 +3,6 @@ import type { MessageKey } from '@/i18n'
 /** ビルダーで扱う検索概念。各SNSの演算子はこの概念への翻訳として定義する */
 export type ConceptId =
   | 'keywords'
-  | 'orAny'
   | 'exactPhrase'
   | 'exclude'
   | 'titleOnly'
@@ -30,14 +29,11 @@ export type VideoLength = '' | 'short' | 'medium' | 'long'
 /** 並び順。new=新しい順、top=人気順、auto=サイトにおまかせ(URLで指定しない) */
 export type SortOrder = 'new' | 'top' | 'auto'
 
-/** mode付きフィールドの結合方法。all=全部を含む(かつ)、any=どれかを含む(または) */
-export type TermMode = 'all' | 'any'
-
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
   /**
-   * キーワードの枠。1枠=1語で、枠の中身は分割しない(スペースを含む語はフレーズ)。
-   * 枠どうしは常にAND。「または」は条件セット(セット間OR)で表現する。常に1枠以上
+   * キーワードの語の並び。1要素=1語で、語の中身は分割しない(スペースを含む語はフレーズ)。
+   * 語どうしは常にAND。常に1要素以上
    */
   terms: string[]
   /** 1つの語句をこの語順のまま探す。分割しない */
@@ -52,9 +48,8 @@ export interface QueryState {
   /** スペース区切りで複数可(どれか=OR) */
   subreddit: string
   domain: string
-  /** スペース区切りで複数のタグ。mode に従って結合 */
+  /** スペース区切りで複数のタグ(すべて含む=AND) */
   hashtag: string
-  hashtagMode: TermMode
   since: string // YYYY-MM-DD
   until: string // YYYY-MM-DD
   mediaOnly: boolean

@@ -1,14 +1,14 @@
 import { X } from 'lucide-react'
 import type { StoredQuery } from '@/core/storage'
-import { toSets } from '@/core/storage'
-import { summarizeSets } from '@/core/summary'
+import { toQuery } from '@/core/storage'
+import { summarize } from '@/core/summary'
 import type { QueryState } from '@/core/types'
 import { t } from '@/i18n'
 
 interface Props {
   saved: StoredQuery[]
   history: StoredQuery[]
-  onRestore: (sets: QueryState[]) => void
+  onRestore: (state: QueryState) => void
   onDelete: (params: string) => void
 }
 
@@ -18,7 +18,7 @@ function QueryList({
   onDelete,
 }: {
   entries: StoredQuery[]
-  onRestore: (sets: QueryState[]) => void
+  onRestore: (state: QueryState) => void
   onDelete?: (params: string) => void
 }) {
   return (
@@ -28,9 +28,9 @@ function QueryList({
           <button
             type="button"
             className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted"
-            onClick={() => onRestore(toSets(entry))}
+            onClick={() => onRestore(toQuery(entry))}
           >
-            {summarizeSets(toSets(entry))}
+            {summarize(toQuery(entry))}
           </button>
           {onDelete && (
             <button

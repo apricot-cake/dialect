@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { andTerms, formatTerms, parseTerms } from '@/core/text'
-import type { PlatformDef, PlatformId, QueryState, SortOrder, TermMode, VideoLength } from '@/core/types'
+import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
 import { Badge } from '@/components/ui/badge'
@@ -41,11 +41,6 @@ function hasValue(state: QueryState, field: FieldDef): boolean {
       return Boolean((state[field.field] as string).trim())
   }
 }
-
-const TERM_MODES: Array<{ value: TermMode; labelKey: Parameters<typeof t>[0] }> = [
-  { value: 'all', labelKey: 'concept.terms.modeAll' },
-  { value: 'any', labelKey: 'concept.terms.modeAny' },
-]
 
 const SORT_ORDERS: Array<{ value: SortOrder; labelKey: Parameters<typeof t>[0] }> = [
   { value: 'new', labelKey: 'concept.sortOrder.new' },
@@ -252,35 +247,14 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     return (
       <div key={field.concept} className="flex flex-col gap-1.5">
         {labelRow(field, supporters)}
-        <div className="flex items-center gap-1.5">
-          <Input
-            id={field.field}
-            className="flex-1"
-            type={field.widget === 'number' ? 'number' : 'text'}
-            min={field.widget === 'number' ? 0 : undefined}
-            value={state[field.field] as string}
-            placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
-            onChange={(e) => set({ [field.field]: e.target.value })}
-          />
-          {field.modeField && (
-            <div className="flex shrink-0 rounded-md border p-0.5">
-              {TERM_MODES.map((m) => (
-                <Button
-                  key={m.value}
-                  variant={
-                    state[field.modeField!] === m.value ? 'secondary' : 'ghost'
-                  }
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  aria-pressed={state[field.modeField!] === m.value}
-                  onClick={() => set({ [field.modeField!]: m.value })}
-                >
-                  {t(m.labelKey)}
-                </Button>
-              ))}
-            </div>
-          )}
-        </div>
+        <Input
+          id={field.field}
+          type={field.widget === 'number' ? 'number' : 'text'}
+          min={field.widget === 'number' ? 0 : undefined}
+          value={state[field.field] as string}
+          placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
+          onChange={(e) => set({ [field.field]: e.target.value })}
+        />
       </div>
     )
   }

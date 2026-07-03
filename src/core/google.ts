@@ -10,8 +10,6 @@ import { andTerms, quoteIfPhrase, words } from './text'
  * フォールバックの提示トリガーになる概念。ネイティブ検索で外れた(dropped)
  * これらの条件は、Googleの公式演算子でそのまま表現できる
  */
-// orAny は含めない: キーワードのOR廃止後はハッシュタグの「どれか」だけが該当し、
-// Googleのsite:検索にはタグを引き継がないため回復できない
 const RECOVERABLE: ReadonlySet<ConceptId> = new Set([
   'exactPhrase', // "..."
   'exclude', // -word

@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState, VideoLength } from '../types'
-import { andTerms, hasPositiveTerm, modedWords, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -40,10 +40,7 @@ function buildUrl(state: QueryState): string | null {
       }
     }
   }
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const hashed = tags.words.map((t) => `#${stripHash(t)}`)
-  if (tags.or) parts.push(`(${hashed.join(' | ')})`)
-  else parts.push(...hashed)
+  parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`after:${state.since}`)
   if (state.until) parts.push(`before:${state.until}`)
   const query = parts.join(' ')
@@ -75,7 +72,6 @@ export const youtube: PlatformDef = {
   googleSite: 'youtube.com',
   support: {
     keywords: { level: 'full' },
-    orAny: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.youtube.exactPhrase' },
     exclude: { level: 'partial', noteKey: 'note.youtube.exclude' },
     titleOnly: { level: 'partial', noteKey: 'note.unofficial' },

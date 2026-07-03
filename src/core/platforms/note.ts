@@ -1,17 +1,15 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, modedWords, stripAt, stripHash } from '../text'
+import { andTerms, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
 // ハッシュタグ単独ならタグページ(厳密一致)、他条件と併用時はキーワードとして検索。
 function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
-  // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)。
-  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
+  // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const tagNames = tags.or ? [] : tags.words.map(stripHash)
+  const tagNames = words(state.hashtag).map(stripHash)
 
   if (tagNames.length === 1 && !handle && textParts.length === 0) {
     return `https://note.com/hashtag/${encodeURIComponent(tagNames[0])}`

@@ -1,5 +1,5 @@
 import type { PlatformId, QueryState } from './types'
-import { paramsToSets, setsToParams } from './permalink'
+import { paramsToQuery, stateToParams } from './permalink'
 import { PLATFORMS } from './platforms'
 
 // 保存形式はパーマリンクと同じクエリ文字列。バージョン管理も permalink.ts に相乗りする。
@@ -42,8 +42,8 @@ export function loadHistory(): StoredQuery[] {
   return load(HISTORY_KEY)
 }
 
-export function saveSearch(sets: QueryState[]): StoredQuery[] {
-  const params = setsToParams(sets).toString()
+export function saveSearch(state: QueryState): StoredQuery[] {
+  const params = stateToParams(state).toString()
   const entries = loadSaved().filter((e) => e.params !== params)
   entries.unshift({ params, savedAt: Date.now() })
   store(SAVED_KEY, entries)
@@ -57,8 +57,8 @@ export function deleteSaved(params: string): StoredQuery[] {
 }
 
 /** 検索ボタンを押したときに履歴へ積む。直前と同じ条件なら何もしない */
-export function recordHistory(sets: QueryState[]): StoredQuery[] {
-  const params = setsToParams(sets).toString()
+export function recordHistory(state: QueryState): StoredQuery[] {
+  const params = stateToParams(state).toString()
   let entries = loadHistory()
   if (entries[0]?.params === params) return entries
   entries = entries.filter((e) => e.params !== params)
@@ -68,8 +68,8 @@ export function recordHistory(sets: QueryState[]): StoredQuery[] {
   return entries
 }
 
-export function toSets(entry: StoredQuery): QueryState[] {
-  return paramsToSets(new URLSearchParams(entry.params))
+export function toQuery(entry: StoredQuery): QueryState {
+  return paramsToQuery(new URLSearchParams(entry.params))
 }
 
 /**

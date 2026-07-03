@@ -1,5 +1,3 @@
-import type { TermMode } from './types'
-
 /** 入力文字列の正規化ヘルパー。シリアライザ共通で使う */
 
 /** 空白区切りの入力を単語配列へ(全角スペース対応) */
@@ -18,18 +16,6 @@ export function andTerms(state: { terms: string[] }): string[] {
  */
 export function quoteIfPhrase(term: string): string {
   return /[\s　]/.test(term) ? `"${term}"` : term
-}
-
-/**
- * mode付き複数値フィールド(ハッシュタグ等)の語配列。
- * or=true なら「どれかを含む」(OR結合が必要)。1語だけなら mode によらず実質ANDなので or=false
- */
-export function modedWords(
-  text: string,
-  mode: TermMode,
-): { words: string[]; or: boolean } {
-  const ws = words(text)
-  return { words: ws, or: mode === 'any' && ws.length >= 2 }
 }
 
 /** 引用符の開きと対応する閉じ。全角・曲線引用符も受け付ける */

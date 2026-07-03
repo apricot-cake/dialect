@@ -3,7 +3,6 @@ import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { googleFallback, type GoogleFallback } from '@/core/google'
 import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
-import { setMark } from '@/core/summary'
 import type {
   ConceptId,
   PlatformDef,
@@ -97,13 +96,12 @@ function appliedCountText(resolution: Resolution): string | null {
 }
 
 export function LaunchPanel({
-  sets,
+  state,
   hidden,
   onToggleHidden,
   onLaunch,
 }: {
-  /** 条件セット(セット間OR)。1セット=1タブとして訳す */
-  sets: QueryState[]
+  state: QueryState
   /** OFFにしたサイトのID(localStorageに記憶される) */
   hidden: PlatformId[]
   onToggleHidden: (id: PlatformId) => void
@@ -150,7 +148,7 @@ export function LaunchPanel({
               </h2>
               <PlatformCards
                 platforms={platforms}
-                sets={sets}
+                state={state}
                 onLaunch={onLaunch}
               />
             </section>
@@ -212,24 +210,18 @@ function GoogleFallbackBlock({
 
 function PlatformCards({
   platforms,
-  sets,
+  state,
   onLaunch,
 }: {
   platforms: PlatformDef[]
-  sets: QueryState[]
+  state: QueryState
   onLaunch?: () => void
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {platforms.map((platform) => {
-        const entries = sets.map((state) => {
-          const resolution = resolve(platform, state)
-          return {
-            resolution,
-            fallback: googleFallback(platform, state, resolution),
-          }
-        })
-        const single = entries.length === 1 ? entries[0] : null
+        const resolution = resolve(platform, state)
+        const fallback = googleFallback(platform, state, resolution)
 
         return (
           <Card key={platform.id} className="py-4">
@@ -251,72 +243,29 @@ function PlatformCards({
                     <TooltipContent>{t('launch.loginNote')}</TooltipContent>
                   </Tooltip>
                 )}
-                {single && appliedCountText(single.resolution) && (
+                {appliedCountText(resolution) && (
                   <span className="ml-auto text-xs text-muted-foreground">
-                    {appliedCountText(single.resolution)}
+                    {appliedCountText(resolution)}
                   </span>
                 )}
               </div>
 
-              {single ? (
-                <>
-                  <ResolutionNotes resolution={single.resolution} />
-                  <Button
-                    className="w-full text-white"
-                    style={{ backgroundColor: platform.brandColor }}
-                    disabled={!single.resolution.url}
-                    onClick={() => launch(single.resolution.url, onLaunch)}
-                  >
-                    {platform.name}
-                    {t('launch.search')}
-                  </Button>
-                  {single.fallback && (
-                    <GoogleFallbackBlock
-                      platform={platform}
-                      fallback={single.fallback}
-                      onLaunch={onLaunch}
-                    />
-                  )}
-                </>
-              ) : (
-                // 複数セット: セット間ORはタブに訳せないので、1セット=1ボタン(=1タブ)
-                entries.map(({ resolution, fallback }, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-2 rounded-md border p-2.5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium">
-                        {t('sets.label')}
-                        {setMark(i)}
-                      </span>
-                      {appliedCountText(resolution) && (
-                        <span className="ml-auto text-xs text-muted-foreground">
-                          {appliedCountText(resolution)}
-                        </span>
-                      )}
-                    </div>
-                    <ResolutionNotes resolution={resolution} />
-                    <Button
-                      size="sm"
-                      className="w-full text-white"
-                      style={{ backgroundColor: platform.brandColor }}
-                      disabled={!resolution.url}
-                      onClick={() => launch(resolution.url, onLaunch)}
-                    >
-                      {t('sets.label')}
-                      {setMark(i)}
-                      {t('launch.search')}
-                    </Button>
-                    {fallback && (
-                      <GoogleFallbackBlock
-                        platform={platform}
-                        fallback={fallback}
-                        onLaunch={onLaunch}
-                      />
-                    )}
-                  </div>
-                ))
+              <ResolutionNotes resolution={resolution} />
+              <Button
+                className="w-full text-white"
+                style={{ backgroundColor: platform.brandColor }}
+                disabled={!resolution.url}
+                onClick={() => launch(resolution.url, onLaunch)}
+              >
+                {platform.name}
+                {t('launch.search')}
+              </Button>
+              {fallback && (
+                <GoogleFallbackBlock
+                  platform={platform}
+                  fallback={fallback}
+                  onLaunch={onLaunch}
+                />
               )}
             </CardContent>
           </Card>

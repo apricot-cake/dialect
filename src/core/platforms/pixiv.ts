@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, modedWords, stripHash, words } from '../text'
+import { andTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。デフォルトはタグの部分一致(s_mode=s_tag)。
@@ -11,10 +11,7 @@ function buildUrl(state: QueryState): string | null {
   const parts: string[] = [...andTerms(state)]
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
   if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
-  const tags = modedWords(state.hashtag, state.hashtagMode)
-  const tagNames = tags.words.map(stripHash)
-  if (tags.or) parts.push(`(${tagNames.join(' OR ')})`)
-  else parts.push(...tagNames)
+  parts.push(...words(state.hashtag).map(stripHash))
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
   parts.push(...words(state.exclude).map((w) => `-${w}`))
@@ -39,7 +36,6 @@ export const pixiv: PlatformDef = {
   googleSite: 'pixiv.net',
   support: {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
-    orAny: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     exclude: { level: 'full' },
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
