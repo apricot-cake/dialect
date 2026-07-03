@@ -10,11 +10,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 
 interface Props {
   state: QueryState
@@ -169,52 +164,26 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     .sort((a, b) => b.supporters.length - a.supporters.length)
 
-  /** 対応サイトのアイコンの並び。ホバーで名前の一覧(一部対応は分けて表示) */
-  const supportBadge = (field: FieldDef, supporters: PlatformDef[]) => {
-    const full = supporters.filter(
-      (p) => supportOf(p, field.concept).level === 'full',
-    )
-    const partial = supporters.filter(
-      (p) => supportOf(p, field.concept).level === 'partial',
-    )
-    return (
-      <Tooltip>
-        {/* ラベルと見分けやすいよう右端に寄せ、「対応」つきのピルで囲む。
-            画面がうるさくならないよう普段は淡色にして、ホバーでブランド色に戻す */}
-        <TooltipTrigger className="group ml-auto cursor-default p-0">
-          <span className="flex flex-wrap items-center gap-1 rounded-full border border-transparent bg-muted/40 py-0.5 pl-2 pr-1.5">
-            <span className="text-[11px] leading-none text-muted-foreground/70">
-              {t('builder.support.label')}
-            </span>
-            {supporters.map((p) => (
-              <PlatformIcon
-                key={p.id}
-                id={p.id}
-                className="size-3.5 opacity-40 grayscale transition-[filter,opacity] group-hover:opacity-100 group-hover:grayscale-0"
-                style={{ color: p.brandColor }}
-              />
-            ))}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <div className="flex flex-col gap-0.5">
-            {full.length > 0 && (
-              <span>
-                {t('builder.support.full')}:{' '}
-                {full.map((p) => p.name).join('、')}
-              </span>
-            )}
-            {partial.length > 0 && (
-              <span>
-                {t('builder.support.partial')}:{' '}
-                {partial.map((p) => p.name).join('、')}
-              </span>
-            )}
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    )
-  }
+  /**
+   * 対応サイトのアイコンの並び。ラベルと見分けやすいよう右端に寄せて
+   * 「対応」つきのピルで囲む。うるさくならないよう彩度と濃さを少し抑え、
+   * ホバーでフルカラーに戻す
+   */
+  const supportBadge = (_field: FieldDef, supporters: PlatformDef[]) => (
+    <span className="group ml-auto flex flex-wrap items-center gap-1 rounded-full bg-muted/40 py-0.5 pl-2 pr-1.5">
+      <span className="text-[11px] leading-none text-muted-foreground/70">
+        {t('builder.support.label')}
+      </span>
+      {supporters.map((p) => (
+        <PlatformIcon
+          key={p.id}
+          id={p.id}
+          className="size-3.5 opacity-70 saturate-50 transition-[filter,opacity] group-hover:opacity-100 group-hover:saturate-100"
+          style={{ color: p.brandColor }}
+        />
+      ))}
+    </span>
+  )
 
   const labelRow = (field: FieldDef, supporters: PlatformDef[]) => (
     <div className="flex items-center gap-2">

@@ -53,8 +53,6 @@ export const ja = {
   'builder.filter.active': 'で絞り込み中',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',
-  'builder.support.full': '対応',
-  'builder.support.partial': '一部対応',
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': 'すべてのキーワードを含む保証はありません',
