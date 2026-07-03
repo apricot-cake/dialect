@@ -19,8 +19,8 @@ import {
 import type { PlatformId } from '@/core/types'
 
 // simple-icons(CC0)のブランドロゴ。色は currentColor を継承する。
-// ブランドロゴがないサイト(5ちゃんねる・あにまん)は吹き出し+文字の自作アイコン、
-// ニコニコ静画はniconicoのロゴを静画のブランド色で使い分ける
+// simple-iconsにないサイトは自作アイコン: 5ちゃんねる・あにまんは吹き出し+文字、
+// ニコニコ静画は公式シンボル(テレビちゃん+双葉)を単色に簡略化したもの
 const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   x: siX,
   bluesky: siBluesky,
@@ -37,7 +37,35 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   misskey: siMisskey,
   hatebu: siHatenabookmark,
   twitch: siTwitch,
-  seiga: siNiconico,
+}
+
+/** ニコニコ静画: テレビちゃん(本体)+頭の双葉。faviconのシンボルを単色に簡略化 */
+function SeigaIcon({
+  className,
+  style,
+}: {
+  className?: string
+  style?: React.CSSProperties
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      style={style}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      {/* 双葉(茎+左右の葉) */}
+      <path d="M11.4 9V6.2h1.2V9h-1.2z" />
+      <path d="M12 6.6C10 7 8.2 5.9 7.6 3.9c2-.5 3.9.7 4.4 2.7z" />
+      <path d="M12 6.6c2 .4 3.8-.7 4.4-2.7-2-.5-3.9.7-4.4 2.7z" />
+      {/* テレビ本体(白抜きの目と口) */}
+      <path
+        d="M5 9a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2H5zM7.9 14.3a1.1 1.1 0 1 0 2.2 0 1.1 1.1 0 1 0-2.2 0zm6 0a1.1 1.1 0 1 0 2.2 0 1.1 1.1 0 1 0-2.2 0zM9.1 17.3h5.8v1.2H9.1z"
+        fillRule="evenodd"
+      />
+    </svg>
+  )
 }
 
 /** 吹き出しの輪郭(lucideのmessage-square相当)。掲示板サイトの自作アイコン用 */
@@ -94,6 +122,9 @@ export function PlatformIcon({
   }
   if (id === 'animanch') {
     return <BubbleIcon label="あ" fontSize={11} className={className} style={style} />
+  }
+  if (id === 'seiga') {
+    return <SeigaIcon className={className} style={style} />
   }
   return (
     <svg

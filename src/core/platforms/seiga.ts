@@ -41,8 +41,9 @@ export const seiga: PlatformDef = {
   id: 'seiga',
   name: 'ニコニコ静画',
   group: 'image',
-  // 静画トップの共通CSSのアクセント色(ピンク)。niconico本体(#252525)とアイコンを見分けるため
-  brandColor: '#E22F68',
+  // 静画のシンボル(テレビちゃんの頭の双葉)の緑。favicon実測は#33FF00だが、
+  // ボタン背景に使うためやや暗めて可読性を確保する
+  brandColor: '#2FBF00',
   requiresLogin: false,
   googleSite: 'seiga.nicovideo.jp',
   support: {

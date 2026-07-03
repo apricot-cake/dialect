@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Info, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { FIELDS, type FieldDef } from '@/core/concepts'
 import { andTerms, words } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
@@ -139,6 +140,129 @@ function ChipInput({
   )
 }
 
+const SUPPORT_PILL =
+  'flex items-center gap-1 rounded-full bg-muted/40 py-0.5 pl-2 pr-1.5'
+
+/**
+ * 対応サイトのアイコンの並び。ラベルと見分けやすいよう「対応」つきのピルで囲む。
+ * 薄い色は非対応・無効のシグナルに見えるため、ブランド色のまま表示する
+ */
+function SupportIcons({ supporters }: { supporters: PlatformDef[] }) {
+  return (
+    <>
+      {supporters.map((p) => (
+        <PlatformIcon
+          key={p.id}
+          id={p.id}
+          className="size-3.5 shrink-0"
+          style={{ color: p.brandColor }}
+        />
+      ))}
+    </>
+  )
+}
+
+/**
+ * ラベル+ⓘ+対応バッジの行。1行に収まらないときはバッジを「対応 N」の
+ * 件数表記に畳み、アイコンの一覧はホバーのツールチップで見せる
+ * (ラベルやバッジが2行に折り返すのを防ぐ)。
+ * 収まるかどうかは、常にフル表示で描画する不可視クローンの自然幅と
+ * 行の実幅の比較で判定する(畳んだ後も広がったら戻せるように)
+ */
+function LabelRow({
+  field,
+  supporters,
+  leading,
+  className,
+}: {
+  field: FieldDef
+  supporters: PlatformDef[]
+  /** Switchなど、ラベルの前に置く要素 */
+  leading?: React.ReactNode
+  className?: string
+}) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<HTMLSpanElement>(null)
+  const [collapsed, setCollapsed] = useState(false)
+
+  useLayoutEffect(() => {
+    const row = rowRef.current
+    const measure = measureRef.current
+    if (!row || !measure) return
+    const update = () => setCollapsed(measure.scrollWidth > row.clientWidth)
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(row)
+    return () => observer.disconnect()
+  }, [supporters.length])
+
+  const pillLabel = (
+    <span className="text-[11px] leading-none text-muted-foreground/70">
+      {t('builder.support.label')}
+    </span>
+  )
+
+  return (
+    <div ref={rowRef} className={cn('relative flex items-center gap-2', className)}>
+      {/* 折り返し判定用の不可視クローン。leadingはSwitch幅(w-8)のスペーサで代用 */}
+      <span
+        ref={measureRef}
+        aria-hidden
+        className="pointer-events-none invisible absolute left-0 top-0 flex items-center gap-2 whitespace-nowrap"
+      >
+        {leading != null && <span className="w-8 shrink-0" />}
+        <span className="text-sm font-medium">{t(field.labelKey)}</span>
+        <Info className="size-3.5 shrink-0" />
+        <span className={SUPPORT_PILL}>
+          {pillLabel}
+          <SupportIcons supporters={supporters} />
+        </span>
+      </span>
+
+      {leading}
+      <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
+      <Tooltip>
+        <TooltipTrigger
+          aria-label={t('builder.help.iconLabel')}
+          className="text-muted-foreground/60 hover:text-foreground"
+        >
+          <Info className="size-3.5" />
+        </TooltipTrigger>
+        <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
+      </Tooltip>
+      {collapsed ? (
+        <Tooltip>
+          <TooltipTrigger className={cn(SUPPORT_PILL, 'ml-auto cursor-default')}>
+            {pillLabel}
+            <span className="text-[11px] font-medium leading-none">
+              {supporters.length}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-72">
+            <div className="flex flex-wrap gap-x-2.5 gap-y-1.5">
+              {supporters.map((p) => (
+                <span key={p.id} className="inline-flex items-center gap-1">
+                  <PlatformIcon
+                    id={p.id}
+                    className="size-3.5 shrink-0"
+                    style={{ color: p.brandColor }}
+                  />
+                  {p.name}
+                </span>
+              ))}
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        <span className={cn(SUPPORT_PILL, 'ml-auto flex-wrap')}>
+          {pillLabel}
+          <SupportIcons supporters={supporters} />
+        </span>
+      )}
+    </div>
+  )
+}
+
 const SORT_ORDERS: Array<{ value: SortOrder; labelKey: Parameters<typeof t>[0] }> = [
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
@@ -190,48 +314,6 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     )
     .sort((a, b) => b.supporters.length - a.supporters.length)
 
-  /**
-   * 対応サイトのアイコンの並び。ラベルと見分けやすいよう右端に寄せて
-   * 「対応」つきのピルで囲む。薄い色は非対応・無効のシグナルに見えるため、
-   * ブランド色のまま表示する
-   */
-  const supportBadge = (_field: FieldDef, supporters: PlatformDef[]) => (
-    <span className="ml-auto flex flex-wrap items-center gap-1 rounded-full bg-muted/40 py-0.5 pl-2 pr-1.5">
-      <span className="text-[11px] leading-none text-muted-foreground/70">
-        {t('builder.support.label')}
-      </span>
-      {supporters.map((p) => (
-        <PlatformIcon
-          key={p.id}
-          id={p.id}
-          className="size-3.5"
-          style={{ color: p.brandColor }}
-        />
-      ))}
-    </span>
-  )
-
-  /** ラベル横のⓘ。ホバーでその条件の機能説明を出す */
-  const helpTip = (field: FieldDef) => (
-    <Tooltip>
-      <TooltipTrigger
-        aria-label={t('builder.help.iconLabel')}
-        className="text-muted-foreground/60 hover:text-foreground"
-      >
-        <Info className="size-3.5" />
-      </TooltipTrigger>
-      <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
-    </Tooltip>
-  )
-
-  const labelRow = (field: FieldDef, supporters: PlatformDef[]) => (
-    <div className="flex items-center gap-2">
-      <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
-      {helpTip(field)}
-      {supportBadge(field, supporters)}
-    </div>
-  )
-
   const renderField = ({
     field,
     supporters,
@@ -242,7 +324,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     if (field.widget === 'terms') {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          {labelRow(field, supporters)}
+          <LabelRow field={field} supporters={supporters} />
           <ChipInput
             id={field.field}
             initialTokens={andTerms(state)}
@@ -258,11 +340,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     if (field.widget === 'sort') {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <Label>{t(field.labelKey)}</Label>
-            {helpTip(field)}
-            {supportBadge(field, supporters)}
-          </div>
+          <LabelRow field={field} supporters={supporters} />
           <div className="flex h-9 items-center self-start rounded-md border p-0.5">
             {SORT_ORDERS.map((opt) => (
               <Button
@@ -282,22 +360,25 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     }
     if (field.widget === 'toggle') {
       return (
-        <div key={field.concept} className="flex items-center gap-3">
-          <Switch
-            id={field.field}
-            checked={state[field.field] as boolean}
-            onCheckedChange={(checked) => set({ [field.field]: checked })}
-          />
-          <Label htmlFor={field.field}>{t(field.labelKey)}</Label>
-          {helpTip(field)}
-          {supportBadge(field, supporters)}
-        </div>
+        <LabelRow
+          key={field.concept}
+          field={field}
+          supporters={supporters}
+          className="gap-3"
+          leading={
+            <Switch
+              id={field.field}
+              checked={state[field.field] as boolean}
+              onCheckedChange={(checked) => set({ [field.field]: checked })}
+            />
+          }
+        />
       )
     }
     if (field.widget === 'period') {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          {labelRow(field, supporters)}
+          <LabelRow field={field} supporters={supporters} />
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">
@@ -332,7 +413,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     ) {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          {labelRow(field, supporters)}
+          <LabelRow field={field} supporters={supporters} />
           <select
             id={field.field}
             className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -352,7 +433,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
       // 複数指定できる項目もEnter区切りのチップ入力。値はスペース結合の文字列のまま
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
-          {labelRow(field, supporters)}
+          <LabelRow field={field} supporters={supporters} />
           <ChipInput
             id={field.field}
             initialTokens={words(state[field.field] as string)}
@@ -364,7 +445,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
     }
     return (
       <div key={field.concept} className="flex flex-col gap-1.5">
-        {labelRow(field, supporters)}
+        <LabelRow field={field} supporters={supporters} />
         <Input
           id={field.field}
           type={field.widget === 'number' ? 'number' : 'text'}
