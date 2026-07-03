@@ -207,10 +207,14 @@ function PlatformCards({
                   <Tooltip>
                     <TooltipTrigger className="cursor-default p-0">
                       <Badge variant="outline" className="text-amber-600">
+                        {platform.name}
                         {t('launch.loginRequired')}
                       </Badge>
                     </TooltipTrigger>
-                    <TooltipContent>{t('launch.loginNote')}</TooltipContent>
+                    <TooltipContent>
+                      {platform.name}
+                      {t('launch.loginNote')}
+                    </TooltipContent>
                   </Tooltip>
                 )}
                 {appliedCountText(resolution) && (
