@@ -13,7 +13,7 @@ import {
 } from '@/core/storage'
 import { PLATFORMS } from '@/core/platforms'
 import { setMark } from '@/core/summary'
-import { hasOrTerms, hasPositiveTerm } from '@/core/text'
+import { hasPositiveTerm } from '@/core/text'
 import type { PlatformId, QueryState } from '@/core/types'
 import { t } from '@/i18n'
 import { Button } from '@/components/ui/button'
@@ -48,7 +48,7 @@ function initialSets(): SetEntry[] {
 export default function App() {
   const [sets, setSets] = useState<SetEntry[]>(initialSets)
   const states = sets.map((entry) => entry.state)
-  const canSearch = states.some((s) => hasPositiveTerm(s) || hasOrTerms(s))
+  const canSearch = states.some((s) => hasPositiveTerm(s))
   const [copied, setCopied] = useState(false)
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [saved, setSaved] = useState(loadSaved)

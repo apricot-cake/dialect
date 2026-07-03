@@ -1,4 +1,4 @@
-import type { TermMode, TermRow } from './types'
+import type { TermMode } from './types'
 
 /** 入力文字列の正規化ヘルパー。シリアライザ共通で使う */
 
@@ -7,9 +7,9 @@ export function words(input: string): string[] {
   return input.trim().split(/[\s　]+/).filter(Boolean)
 }
 
-/** ことば行の空でない語。1枠=1語で、枠の中身は分割しない */
-export function termValues(row: TermRow): string[] {
-  return row.texts.map((t) => t.trim()).filter(Boolean)
+/** キーワードの枠から空でない語を取り出す。1枠=1語で、枠の中身は分割しない。枠どうしはAND */
+export function andTerms(state: { terms: string[] }): string[] {
+  return state.terms.map((t) => t.trim()).filter(Boolean)
 }
 
 /**
@@ -18,24 +18,6 @@ export function termValues(row: TermRow): string[] {
  */
 export function quoteIfPhrase(term: string): string {
   return /[\s　]/.test(term) ? `"${term}"` : term
-}
-
-/** 「すべて含む」扱いになる語。枠が1つだけの行の語 */
-export function andTerms(state: { terms: TermRow[] }): string[] {
-  return state.terms
-    .map(termValues)
-    .filter((vs) => vs.length === 1)
-    .map((vs) => vs[0])
-}
-
-/** 「どれかを含む」行(枠2つ以上)を語配列の配列へ。行内はOR、行どうし・他の語とはAND */
-export function orTermGroups(state: { terms: TermRow[] }): string[][] {
-  return state.terms.map(termValues).filter((vs) => vs.length >= 2)
-}
-
-/** OR結合が必要な「どれかを含む」行があるか */
-export function hasOrTerms(state: { terms: TermRow[] }): boolean {
-  return orTermGroups(state).length > 0
 }
 
 /**
@@ -62,7 +44,7 @@ export function stripHash(input: string): string {
 
 /** 検索として成立する「正の条件」があるか(除外や期間だけでは検索できない) */
 export function hasPositiveTerm(state: {
-  terms: TermRow[]
+  terms: string[]
   exactPhrase: string
   fromUser: string
   hashtag: string

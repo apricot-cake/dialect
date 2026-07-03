@@ -9,7 +9,7 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const handle = stripAt(state.fromUser)
-  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す。完全一致は近似のキーワード扱い
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す。完全一致は近似のキーワード扱い
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)

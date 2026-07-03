@@ -1,6 +1,6 @@
 import type { QueryState } from './types'
 import { t } from '@/i18n'
-import { stripAt, stripHash, termValues, words } from './text'
+import { andTerms, stripAt, stripHash, words } from './text'
 
 /** スペースを含む語は「」で括り、ひとまとまりであることを示す */
 function markPhrase(term: string): string {
@@ -10,11 +10,8 @@ function markPhrase(term: string): string {
 /** 保存検索・履歴の一覧に表示する、条件の短い要約 */
 export function summarize(state: QueryState): string {
   const parts: string[] = []
-  for (const row of state.terms) {
-    const values = termValues(row)
-    if (values.length === 0) continue
-    parts.push(values.map(markPhrase).join(' または '))
-  }
+  const kw = andTerms(state).map(markPhrase)
+  if (kw.length > 0) parts.push(kw.join(' '))
   if (state.exactPhrase.trim()) {
     parts.push(`「${state.exactPhrase.trim()}」`)
   }

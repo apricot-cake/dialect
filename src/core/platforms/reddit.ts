@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, hasOrTerms, orTermGroups, quoteIfPhrase, stripAt, words } from '../text'
+import { andTerms, quoteIfPhrase, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -21,8 +21,7 @@ function buildUrl(state: QueryState): string | null {
     !(
       andTerms(state).length > 0 ||
       state.exactPhrase.trim() ||
-      state.fromUser.trim() ||
-      hasOrTerms(state)
+      state.fromUser.trim()
     )
   ) {
     return null
@@ -32,10 +31,6 @@ function buildUrl(state: QueryState): string | null {
   const field = state.titleOnly ? 'title:' : ''
   clauses.push(...andTerms(state).map((w) => `${field}${quoteIfPhrase(w)}`))
   if (state.exactPhrase.trim()) clauses.push(`${field}"${state.exactPhrase.trim()}"`)
-  // 「どれかを含む」行は括弧つきの節にする(Boolean演算子と括弧は公式仕様)
-  for (const group of orTermGroups(state)) {
-    clauses.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
-  }
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
   // コミュニティは複数指定で「どれか」(OR)
   const subs = words(state.subreddit).map(
@@ -65,7 +60,6 @@ export const reddit: PlatformDef = {
   googleSite: 'reddit.com',
   support: {
     keywords: { level: 'full' },
-    orAny: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },
     exclude: { level: 'full' },
     titleOnly: { level: 'full' },

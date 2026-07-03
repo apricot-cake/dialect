@@ -9,7 +9,6 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const parts: string[] = []
-  // OR構文がないため、「どれかを含む」の行は丸ごと外す(注記はorAny側で出る)
   parts.push(...andTerms(state).map(quoteIfPhrase))
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))

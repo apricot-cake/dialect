@@ -7,7 +7,7 @@ import { andTerms, modedWords, stripAt, stripHash } from '../text'
 function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
   // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)。
-  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)

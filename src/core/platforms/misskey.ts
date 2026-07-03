@@ -6,7 +6,7 @@ import { andTerms, modedWords, stripAt, stripHash } from '../text'
 // ユーザー指定は &username=(フロントエンドのルーター定義で確認した非公式パラメータ)。
 // タグ単独なら /tags/(タグページ)、併用時は本文に「#タグ」を含む検索として畳み込む。
 function buildUrl(state: QueryState): string | null {
-  // 完全一致・OR構文がないため、語句はキーワード扱い、「どれかを含む」の行・指定は丸ごと外す。
+  // 完全一致・OR構文がないため、語句はキーワード扱い、「どれかを含む」指定のフィールドは丸ごと外す。
   // 本文の部分一致検索なので、スペースを含む語はそのままフレーズとして効く
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())

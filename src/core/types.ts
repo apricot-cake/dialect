@@ -33,18 +33,13 @@ export type SortOrder = 'new' | 'top' | 'auto'
 /** mode付きフィールドの結合方法。all=全部を含む(かつ)、any=どれかを含む(または) */
 export type TermMode = 'all' | 'any'
 
-/**
- * ことば行。1枠=1語で、枠の中身は分割しない(スペースを含む語はフレーズ)。
- * 枠が2つ以上ある行は「どれかを含む」(OR)、行どうしは AND
- */
-export interface TermRow {
-  texts: string[]
-}
-
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
-  /** ことば行。常に1行以上 */
-  terms: TermRow[]
+  /**
+   * キーワードの枠。1枠=1語で、枠の中身は分割しない(スペースを含む語はフレーズ)。
+   * 枠どうしは常にAND。「または」は条件セット(セット間OR)で表現する。常に1枠以上
+   */
+  terms: string[]
   /** 1つの語句をこの語順のまま探す。分割しない */
   exactPhrase: string
   exclude: string

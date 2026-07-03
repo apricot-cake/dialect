@@ -1,6 +1,6 @@
 import type { MessageKey } from '@/i18n'
 import type { ConceptId, QueryState } from './types'
-import { andTerms, modedWords, orTermGroups } from './text'
+import { andTerms, modedWords } from './text'
 
 export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   keywords: 'concept.keywords.label',
@@ -39,7 +39,7 @@ export interface FieldDef {
 }
 
 export const FIELDS: FieldDef[] = [
-  // ことば行は1枠=1語。枠を縦に足すと「かつ」、行内に足すと「または」になる統合ウィジェット
+  // キーワードは1枠=1語。枠を足すと絞り込み(AND)。「または」は条件セットで表現する
   { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label' },
   { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', placeholderKey: 'concept.exactPhrase.placeholder' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', placeholderKey: 'concept.exclude.placeholder' },
@@ -67,12 +67,9 @@ export const FIELDS: FieldDef[] = [
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
   if (andTerms(state).length > 0) active.push('keywords')
-  // 「どれかを含む」はことば行に限らず、mode付きフィールドの複数値でも成立する。
+  // 「どれかを含む」はmode付きフィールド(ハッシュタグ)の複数値で成立する。
   // OR構文を持たないサイトでは該当フィールドごと外れるため、注記の対象にする
-  if (
-    orTermGroups(state).length > 0 ||
-    modedWords(state.hashtag, state.hashtagMode).or
-  ) {
+  if (modedWords(state.hashtag, state.hashtagMode).or) {
     active.push('orAny')
   }
   if (state.exactPhrase.trim()) active.push('exactPhrase')
@@ -103,7 +100,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
 
 export function defaultState(): QueryState {
   return {
-    terms: [{ texts: [''] }],
+    terms: [''],
     exactPhrase: '',
     exclude: '',
     titleOnly: false,

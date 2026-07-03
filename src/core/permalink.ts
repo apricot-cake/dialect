@@ -1,26 +1,27 @@
-import type { QueryState, TermRow } from './types'
+import type { QueryState } from './types'
 import { defaultState } from './concepts'
-import { termValues, words } from './text'
+import { words } from './text'
 
 // 検索条件をURLクエリパラメータへ埋め込む(パーマリンク)。
 // GitHub Pages でパスルーティングが使えないため、クエリパラメータ方式に固定。
 // v= はフォーマットのバージョン。概念が増えたら後方互換のまま読めるようにする。
-// v=3: 1枠=1語。kw= が「かつ」の枠1つ、or= が「または」行(枠をタブ区切りで連結)。
-//      語は分割しないため、スペースを含むフレーズもそのまま保持される。
+// v=3: 1枠=1語で kw= の繰り返し。語は分割しないため、スペースを含むフレーズも保持される。
+//      キーワードのORは廃止(「または」は条件セットで表現)。過去に書かれた or=
+//      (v3初期の「または」行、タブ区切り)は読み込み時に条件セットへ展開する。
 // v=1(旧): kw=/or= の語はスペース区切り、ph はスペース区切り+phm。読み込み時に変換する。
 // 条件セットが2つ以上のときは v=2 で、セットごとのクエリ文字列を q= に入れ子にして繰り返す
 const VERSION = '3'
 const VERSION_LEGACY = '1'
 const VERSION_SETS = '2'
 const OR_SEPARATOR = '\t'
+/** 旧OR行を条件セットへ展開するときの上限(組み合わせ爆発と大量タブを防ぐ) */
+const MAX_EXPANDED_SETS = 8
 
 export function stateToParams(state: QueryState): URLSearchParams {
   const params = new URLSearchParams()
   params.set('v', VERSION)
-  for (const row of state.terms) {
-    const values = termValues(row)
-    if (values.length === 1) params.append('kw', values[0])
-    else if (values.length >= 2) params.append('or', values.join(OR_SEPARATOR))
+  for (const term of state.terms) {
+    if (term.trim()) params.append('kw', term.trim())
   }
   if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
@@ -50,26 +51,35 @@ export function stateToParams(state: QueryState): URLSearchParams {
   return params
 }
 
-export function paramsToState(params: URLSearchParams): QueryState {
+/**
+ * 1セット分のパラメータを読む。廃止された「または」指定(or= と旧 phm=any)は
+ * orGroups として返し、呼び出し側(paramsToSets)で条件セットへ展開する
+ */
+function paramsToStateWithOr(params: URLSearchParams): {
+  state: QueryState
+  orGroups: string[][]
+} {
   const state = defaultState()
-  if (!params.has('v')) return state
+  if (!params.has('v')) return { state, orGroups: [] }
   const legacy = params.get('v') !== VERSION
-  const terms: TermRow[] = []
+  const terms: string[] = []
+  const orGroups: string[][] = []
   for (const s of params.getAll('kw')) {
     // 旧形式の kw はスペース区切りのAND。1語=1枠に分けると意味が保たれる
-    if (legacy) terms.push(...words(s).map((w): TermRow => ({ texts: [w] })))
-    else if (s.trim()) terms.push({ texts: [s.trim()] })
+    if (legacy) terms.push(...words(s))
+    else if (s.trim()) terms.push(s.trim())
   }
   for (const s of params.getAll('or')) {
     const texts = legacy
       ? words(s)
       : s.split(OR_SEPARATOR).map((t) => t.trim()).filter(Boolean)
-    if (texts.length > 0) terms.push({ texts })
+    if (texts.length === 1) terms.push(texts[0])
+    else if (texts.length >= 2) orGroups.push(texts)
   }
   const ph = (params.get('ph') ?? '').trim()
   if (legacy && params.get('phm') === 'any' && words(ph).length >= 2) {
-    // 旧形式の「どれかを含む」複数語句は、ことば行の「または」へ引き継ぐ
-    terms.push({ texts: words(ph) })
+    // 旧形式の「どれかを含む」複数語句もセット展開の対象へ
+    orGroups.push(words(ph))
   } else {
     state.exactPhrase = ph
   }
@@ -99,6 +109,37 @@ export function paramsToState(params: URLSearchParams): QueryState {
   state.japaneseOnly = params.get('ja') === '1'
   const sort = params.get('sort')
   if (sort === 'top' || sort === 'auto') state.sort = sort
+  return { state, orGroups }
+}
+
+/**
+ * 旧「または」指定を条件セットの組み合わせへ展開する。
+ * 「猫 (A または B)」→「猫 A」「猫 B」の2セット。上限を超えた分は切り捨てる
+ */
+function expandOrGroups(state: QueryState, orGroups: string[][]): QueryState[] {
+  let combos: string[][] = [[]]
+  for (const group of orGroups) {
+    combos = combos.flatMap((combo) => group.map((alt) => [...combo, alt]))
+    if (combos.length > MAX_EXPANDED_SETS) {
+      combos = combos.slice(0, MAX_EXPANDED_SETS)
+    }
+  }
+  return combos.map((combo) =>
+    combo.length === 0
+      ? state
+      : {
+          ...state,
+          terms: [...state.terms.filter((t) => t.trim()), ...combo],
+        },
+  )
+}
+
+export function paramsToState(params: URLSearchParams): QueryState {
+  const { state, orGroups } = paramsToStateWithOr(params)
+  // セットへ展開できない文脈では、少なくとも各グループの先頭の語を残す
+  if (orGroups.length > 0) {
+    state.terms = [...state.terms, ...orGroups.map((g) => g[0])]
+  }
   return state
 }
 
@@ -120,14 +161,15 @@ export function setsToParams(sets: QueryState[]): URLSearchParams {
 export function paramsToSets(params: URLSearchParams): QueryState[] {
   const nested = params.getAll('q')
   if (nested.length > 0) {
-    return nested.map((q) => {
+    return nested.flatMap((q) => {
       const inner = new URLSearchParams(q)
       if (!inner.has('v')) inner.set('v', VERSION_LEGACY)
-      return paramsToState(inner)
+      const { state, orGroups } = paramsToStateWithOr(inner)
+      return expandOrGroups(state, orGroups)
     })
   }
-  // v=1 (旧形式・単一セット) はそのまま1セットとして読む
-  return [paramsToState(params)]
+  const { state, orGroups } = paramsToStateWithOr(params)
+  return expandOrGroups(state, orGroups)
 }
 
 export function permalinkUrl(sets: QueryState[]): string {

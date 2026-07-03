@@ -5,7 +5,7 @@ import { andTerms, modedWords, stripHash } from '../text'
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
 // タグ単独ならタグページ(人気投稿のみ)、それ以外はキーワードSERP。
 function buildUrl(state: QueryState): string | null {
-  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す。完全一致は近似のキーワード扱い
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す。完全一致は近似のキーワード扱い
   const textParts = [...andTerms(state)]
   if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)

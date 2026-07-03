@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { andTerms, hasPositiveTerm, modedWords, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
@@ -7,14 +7,10 @@ import { andTerms, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, quoteI
 // min_faves:/min_retweets:/filter:blue_verified は公式フォームから削除済みの
 // 非公式演算子だが、2026-07-02にWeb UIでの動作を実機確認済み。
 function buildUrl(state: QueryState): string | null {
-  if (!hasPositiveTerm(state) && !hasOrTerms(state)) return null
+  if (!hasPositiveTerm(state)) return null
 
   const parts: string[] = []
   parts.push(...andTerms(state).map(quoteIfPhrase))
-  // 「どれかを含む」行は括弧で結び、他の語とはスペース(AND)で並置する
-  for (const group of orTermGroups(state)) {
-    parts.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
-  }
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)

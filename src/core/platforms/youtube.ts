@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState, VideoLength } from '../types'
-import { andTerms, hasOrTerms, hasPositiveTerm, modedWords, orTermGroups, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { andTerms, hasPositiveTerm, modedWords, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -26,14 +26,10 @@ const SP_SORT_AND_LENGTH: Record<'new' | 'top', Record<Exclude<VideoLength, ''>,
 }
 
 function buildUrl(state: QueryState): string | null {
-  if (!hasPositiveTerm(state) && !hasOrTerms(state)) return null
+  if (!hasPositiveTerm(state)) return null
 
   const parts: string[] = []
   parts.push(...andTerms(state).map(quoteIfPhrase))
-  // 「どれかを含む」行は括弧+|で結び、他の語とはスペース(AND)で並置する
-  for (const group of orTermGroups(state)) {
-    parts.push(`(${group.map(quoteIfPhrase).join(' | ')})`)
-  }
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.titleOnly) {

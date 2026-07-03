@@ -6,13 +6,10 @@ export const ja = {
   'concept.orAny.label': 'どれかを含む指定',
   'concept.terms.modeAll': 'すべて含む',
   'concept.terms.modeAny': 'どれかを含む',
-  'concept.terms.or': 'または',
-  'concept.terms.addAnd': '語を追加(かつ)',
+  'concept.terms.add': '語を追加',
   'concept.terms.removeTerm': 'この枠を削除',
   'concept.terms.phraseNote':
     'スペースを含む語は、その語順のひとまとまりとして探します。別々の語で探すには枠を分けてください',
-  'concept.terms.multiNote':
-    '枠が複数あるときは、すべての枠の条件を満たす投稿を探します(かつ)',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ (この語順のまま)',
   'concept.exclude.label': '除外するキーワード',
@@ -61,7 +58,7 @@ export const ja = {
   'builder.section.only': '専用',
   'builder.addField': '条件を追加',
   'builder.addField.empty': '追加できる条件はありません',
-  'builder.addField.termRow': 'キーワードの行',
+  'builder.addField.termRow': 'キーワードの枠',
   'builder.removeField': 'この条件を外す',
 
   // 追加パネルの入力タイプ凡例

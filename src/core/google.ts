@@ -1,6 +1,6 @@
 import type { ConceptId, PlatformDef, QueryState, Resolution } from './types'
 import { activeConcepts } from './concepts'
-import { andTerms, orTermGroups, quoteIfPhrase, words } from './text'
+import { andTerms, quoteIfPhrase, words } from './text'
 
 // Googleフォールバック: 本体サイトの検索で外れる条件を、Googleの site: 検索
 // (サイト内検索)で補う。note公式ヘルプ自身が除外検索の代替として
@@ -10,8 +10,9 @@ import { andTerms, orTermGroups, quoteIfPhrase, words } from './text'
  * フォールバックの提示トリガーになる概念。ネイティブ検索で外れた(dropped)
  * これらの条件は、Googleの公式演算子でそのまま表現できる
  */
+// orAny は含めない: キーワードのOR廃止後はハッシュタグの「どれか」だけが該当し、
+// Googleのsite:検索にはタグを引き継がないため回復できない
 const RECOVERABLE: ReadonlySet<ConceptId> = new Set([
-  'orAny', // (a OR b)
   'exactPhrase', // "..."
   'exclude', // -word
   'period', // after: / before: (2019年に公式化)
@@ -40,9 +41,6 @@ export interface GoogleFallback {
 function buildGoogleUrl(site: string, state: QueryState): string | null {
   const parts: string[] = []
   parts.push(...andTerms(state).map(quoteIfPhrase))
-  for (const group of orTermGroups(state)) {
-    parts.push(`(${group.map(quoteIfPhrase).join(' OR ')})`)
-  }
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   // 除外や期間だけではサイト全ページが対象になってしまうため検索として成立しない
   if (parts.length === 0) return null

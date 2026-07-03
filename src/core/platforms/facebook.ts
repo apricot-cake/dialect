@@ -5,7 +5,7 @@ import { andTerms, modedWords, quoteIfPhrase, stripHash } from '../text'
 // 検索はログイン必須。search/top が最も安全(search/posts はUI削除済みで将来リスク)。
 // filters=(base64)による最新順・日付指定は非公開仕様で不安定なため使わない。
 function buildUrl(state: QueryState): string | null {
-  // OR構文がないため「どれかを含む」の行・指定は丸ごと外す
+  // OR構文がないため「どれかを含む」指定のフィールドは丸ごと外す
   const parts: string[] = [...andTerms(state).map(quoteIfPhrase)]
   if (state.exactPhrase.trim()) parts.push(`"${state.exactPhrase.trim()}"`)
   const tags = modedWords(state.hashtag, state.hashtagMode)

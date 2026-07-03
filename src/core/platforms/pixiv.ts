@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, modedWords, orTermGroups, stripHash, words } from '../text'
+import { andTerms, modedWords, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。デフォルトはタグの部分一致(s_mode=s_tag)。
@@ -9,9 +9,6 @@ import { andTerms, modedWords, orTermGroups, stripHash, words } from '../text'
 function buildUrl(state: QueryState): string | null {
   // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
   const parts: string[] = [...andTerms(state)]
-  for (const group of orTermGroups(state)) {
-    parts.push(`(${group.join(' OR ')})`)
-  }
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
   if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
   const tags = modedWords(state.hashtag, state.hashtagMode)
