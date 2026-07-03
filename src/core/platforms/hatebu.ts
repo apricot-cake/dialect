@@ -1,0 +1,53 @@
+import type { PlatformDef, QueryState } from '../types'
+import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
+
+// 出典: docs/operator-research.md(2026-07-03調査、実測)
+// 検索対象はパスで分ける: /search/text(本文)・/search/title(タイトル)・/search/tag(タグ)。
+// AND(スペース)・除外(-)・期間(date_begin/date_end)・並び順(sort=)・
+// 最低ブックマーク数(users=)が全てURLで効く。ログイン不要。
+// 引用符のフレーズ一致は絞り込み効果を実測したが公式ヘルプに記載なし(中信頼)。
+// 注意: 期間を指定しないと、はてブ側の標準で「直近5年・3users以上」に絞られる。
+function buildUrl(state: QueryState): string | null {
+  const textParts = [...andTerms(state).map(quoteIfPhrase)]
+  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
+  const tagNames = words(state.hashtag).map(stripHash)
+  const excludes = words(state.exclude).map((w) => `-${w}`)
+
+  // タグ単独ならタグ検索(タグの完全一致でAND)。キーワード併用時は本文検索へ畳み込む
+  const tagOnly = tagNames.length > 0 && textParts.length === 0
+  const path = tagOnly ? 'tag' : state.titleOnly ? 'title' : 'text'
+  const parts = tagOnly ? [...tagNames, ...excludes] : [...textParts, ...tagNames, ...excludes]
+  if (textParts.length === 0 && tagNames.length === 0) return null
+
+  const params = new URLSearchParams({ q: parts.join(' ') })
+  // sort=recent=新着、popular=人気(サイト既定)。おまかせは指定しない
+  if (state.sort === 'new') params.set('sort', 'recent')
+  else if (state.sort === 'top') params.set('sort', 'popular')
+  if (state.since) params.set('date_begin', state.since)
+  if (state.until) params.set('date_end', state.until)
+  if (state.minLikes.trim()) params.set('users', state.minLikes.trim())
+
+  return `https://b.hatena.ne.jp/search/${path}?${params.toString()}`
+}
+
+export const hatebu: PlatformDef = {
+  id: 'hatebu',
+  name: 'はてなブックマーク',
+  group: 'text',
+  brandColor: '#00A4DE',
+  requiresLogin: false,
+  googleSite: 'b.hatena.ne.jp',
+  support: {
+    keywords: { level: 'full' },
+    exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },
+    exclude: { level: 'full' },
+    titleOnly: { level: 'full' },
+    fromUser: { level: 'none', noteKey: 'note.hatebu.fromUser' },
+    hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
+    period: { level: 'full' },
+    minLikes: { level: 'partial', noteKey: 'note.hatebu.minLikes' },
+    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
+    sortOrder: { level: 'full' },
+  },
+  buildUrl,
+}

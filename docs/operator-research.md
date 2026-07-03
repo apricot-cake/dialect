@@ -364,6 +364,82 @@ https://misskey.io/search?q=<URLエンコード済みクエリ>&type=note[&usern
 | ハッシュタグ | ◎ `/tags/`ページ | 単独時。併用時は本文に「#タグ」が含まれる部分一致検索へ畳み込み(ノート本文にタグ文字列が残るため成立) |
 | 並び順 | ✕ | 検索結果は新着順固定。URL指定不可 |
 
+# 追加調査: はてなブックマーク / Mastodon / Twitch / 5ちゃんねる / あにまん掲示板 / ニコニコ静画(2026-07-03)
+
+6サイトすべてWeb調査+未ログインでのHTTP実測(curl、ブラウザUA)。Twitchのみ実ブラウザでも検証。
+
+## 概要
+
+| | 検索URL | ログイン | 演算子の濃さ |
+|---|---|---|---|
+| はてなブックマーク | `b.hatena.ne.jp/search/text?q=` | 不要 | **豊富**(AND/除外/任意期間/並び順/最低ブクマ数が全てURL可・実測) |
+| Mastodon(mstdn.jp) | **キーワード検索URLなし**(タグページのみ) | タグページは不要 | — |
+| Twitch | `twitch.tv/search?term=` | 不要 | 薄い(演算子ゼロ。type=で対象切替のみ) |
+| 5ちゃんねる | `ff5ch.syoboi.jp/?q=`(スレタイ検索) | 不要 | 中(AND/除外/@板が実測で有効) |
+| あにまん掲示板 | `bbs.animanch.com/searchRes/{query}` | 不要 | 薄い(スペースANDのみ。実測) |
+| ニコニコ静画 | `seiga.nicovideo.jp/search/{query}` | 不要 | 中〜豊富(AND/除外/OR/並び順が実測で有効) |
+
+## はてなブックマーク
+
+- 検索対象は**パスで指定**: `/search/text`(本文)・`/search/title`(タイトル)・`/search/tag`(タグ)。`target=`パラメータは実効なし
+- パラメータ(全て実測・高信頼): `q`(スペース区切りAND、`-語`除外)、`sort=recent|popular`(既定popular)、`date_begin`/`date_end`(YYYY-MM-DD)、`users=N`(最低ブクマ数。UI選択肢は1/3/50/100/500)、`page=N`
+- 引用符 `"..."` は絞り込み効果を実測したが公式ヘルプに記載なし(中信頼)
+- **落とし穴**: 期間を指定しないと、はてブ側の標準で「直近5年・users=3」に絞られる(date_begin明示で全期間になる)。サイト上で普通に検索しても同じ挙動のため、Dialectは site の既定に任せる
+- ユーザーのブックマーク内キーワード検索(`/{user}/search?q=`)は**要ログイン**(302でログインへ)→ fromUser 非対応
+
+## Mastodon(mstdn.jp)
+
+- mstdn.jp は **Mastodon v4.3.22**(API実測)。検索ページの `?q=` をWeb UIが読む機能は **v4.4.0 で初実装**(PR mastodon/mastodon#32949)のため、**検索語入りURLが組めない**(開いても検索欄は空)
+- 全文検索は要ログインのうえ、対象は検索許可をオプトインしたユーザーの公開投稿のみ(4.2以降の仕様)
+- 未ログインで機能する公開URLは**タグページ `/tags/{タグ}` のみ**(裏の公開API・RSSも実測で確認)→ ハッシュタグ専用+Googleフォールバックとして採用
+- mstdn.jp が4.4系に上がったら `?q=` 対応を再調査(チェックリストに記載)
+
+## Twitch
+
+- `twitch.tv/search?term=`(実ブラウザ実測)。ログイン不要
+- 演算子は**一切効かない**(引用符・`-`除外とも実測で無効。あいまい一致)
+- `type=channels|categories|videos` で対象切替(実測)。「配信中のみ」のtypeは存在しない
+- 言語絞り込み(日本語のみ)は**URL不可**(`?lang=ja`は無視。UIの言語フィルタはURLに反映されないクライアント内部状態)
+
+## 5ちゃんねる
+
+- **2026-03にドメインが5ch.net→5ch.ioへ移行**(レジストラ剥奪)。公式スレタイ検索は find.5ch.io(旧find.5ch.netは301転送)
+- 公式(find.5ch.io、検索エンジンv3)は**スペース区切りがANDにならない**(関連度ベース。実測で片方の語のみの結果が上位に混在)。除外・引用符も無効 → 「足す=絞る」を満たさず不採用
+- **ff5ch.syoboi.jp(スレタイ検索)を採用**: `?q=` でAND(実測)・`-語`除外(実測)・`@板ID`板指定(実測)が全て有効。部分文字列マッチ型・スレ作成の新しい順固定・ログイン不要・5ch.io移行済みインデックス
+- dig.5ch.net は死亡(522)。板指定は既存概念「このコミュニティの中だけ」(subreddit)に相乗り(先頭の1つだけ)
+
+## あにまん掲示板
+
+- 検索はパス埋め込み: `/search/{query}`(現行スレ・直近約2か月)・`/search2/{query}`(全期間の過去ログ)・`/searchRes/{query}`(レス本文・β)。いずれもスレタイトル検索(searchResのみ本文)
+- スペース区切りANDは実測で有効。除外・引用符・並び順・期間のパラメータは**なし**(検索フォームの実パラメータはflagとqのみ)
+- Dialectの翻訳: 既定=レス本文(`searchRes`、βのため取りこぼし注記)、「タイトルだけで探す」ON=全期間過去ログ(`search2`)
+- Cloudflare配下でボット的UAは403(ブラウザで開く分には問題ない)
+
+## ニコニコ静画
+
+- サービスは**稼働中**(2024年攻撃後も継続。終了したのは成人向けコーナーのみ)
+- イラスト: `/search/{query}?target=illust_all`(キーワード)・`/tag/{タグ}`(タグ一致)。ログイン不要
+- 演算子は件数比較で実測: スペースAND・`-語`除外(件数が完全に整合)・OR。引用符は無害だが効果未確定
+- 並び順 `sort=`(検索・タグ共通): `image_created`(新着)/`image_view`(閲覧数=人気の代用)。サイト既定は`comment_created`(コメント新着順)のため、新着順は必ず明示する
+- マンガは別ドメイン `manga.nicovideo.jp/search?q=`(実測で稼働)。並び順パラメータ未確認のため送らない → 概念「作品の種類」で切替
+
+## 新概念「作品の種類」「探すもの」(2026-07-03)
+
+URLで指定できる条件はすべて概念化する方針(対応1サイトでも追加してよい。ビルダーは対応サイト数順ソート+サイト絞り込みで吸収できる)。
+
+- **作品の種類(workType)**: イラスト/マンガ。pixiv(パス `/illustrations`・`/manga`、未指定は`/artworks`)とニコニコ静画(静画検索⇔ニコニコ漫画検索)が対応
+- **探すもの(resultType)**: 動画/チャンネル。YouTube(sp種別 type=1/2)とTwitch(`type=videos|channels`)が対応
+- YouTubeのsp値はソート×長さ×種別の組み合わせが必要になったため、固定テーブルをやめ**protobufバイト列からの組み立て**に変更(実測済みの CAM%3D・EgIYAQ%3D%3D・CAMSAhgB・EgIQAQ%3D%3D の再現をnode検算で確認)
+
+## 参考ソース(抜粋)
+
+- はてブ: 実測フェッチ多数(2026-07-03)、[公式ヘルプ 検索機能](https://b.hatena.ne.jp/help/entry/search)
+- Mastodon: mstdn.jp API実測(version/検索/タグタイムライン)、[公式ドキュメント user/network](https://docs.joinmastodon.org/user/network/)、[PR #32949(?q=対応、4.4.0)](https://github.com/mastodon/mastodon/pull/32949)
+- Twitch: 実ブラウザ実測(2026-07-03)、[公式ヘルプ How does search work](https://help.twitch.tv/s/article/how-does-search-work)
+- 5ch: find.5ch.io・ff5ch.syoboi.jp実測(2026-07-03)、[GIGAZINE(ドメイン剥奪)](https://gigazine.net/gsc_news/en/20260306-5ch-domain/)、JDim Issue #60(dig停止)
+- あにまん: bbs.animanch.com実測(フォーム定義・3種の検索。2026-07-03)
+- 静画: seiga.nicovideo.jp実測(件数比較27パターン相当。2026-07-03)、ニコニコインフォ(春画終了)
+
 # Googleフォールバック(site:検索、2026-07-03実装)
 
 本体サイトの検索で外れる条件を、Googleの `site:` 検索(サイト内検索)で補う機能。note公式ヘルプ自身が除外検索の代替として `site:note.com kw -除外` のGoogle検索を案内していることが着想の根拠(上記noteの節を参照)。

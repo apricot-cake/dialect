@@ -2,7 +2,9 @@ import type { PlatformDef, QueryState } from '../types'
 import { andTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
-// 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。デフォルトはタグの部分一致(s_mode=s_tag)。
+// 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。作品の種類を指定したときは
+// /illustrations(イラスト)・/manga(マンガ)にパスを切り替える。
+// デフォルトはタグの部分一致(s_mode=s_tag)。
 // OR・除外(-)・括弧グループは公式ヘルプに記載あり。引用符の完全一致はなくキーワード扱い。
 // ハッシュタグ=pixivのタグそのものなので、#を外してタグ語として畳み込む。
 // 期間(scd=/ecd=)は非公式なURLパラメータ。人気順(order=popular_d)はプレミアム会員のみ有効。
@@ -24,7 +26,13 @@ function buildUrl(state: QueryState): string | null {
   if (state.until) params.set('ecd', state.until)
   const qs = params.toString()
 
-  return `https://www.pixiv.net/tags/${encodeURIComponent(parts.join(' '))}/artworks${qs ? `?${qs}` : ''}`
+  const section =
+    state.workType === 'illust'
+      ? 'illustrations'
+      : state.workType === 'manga'
+        ? 'manga'
+        : 'artworks'
+  return `https://www.pixiv.net/tags/${encodeURIComponent(parts.join(' '))}/${section}${qs ? `?${qs}` : ''}`
 }
 
 export const pixiv: PlatformDef = {
@@ -41,6 +49,7 @@ export const pixiv: PlatformDef = {
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
     hashtag: { level: 'full' },
     period: { level: 'partial', noteKey: 'note.unofficial' },
+    workType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
     japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },

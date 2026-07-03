@@ -35,7 +35,7 @@ export const ja = {
   'concept.subreddit.label': 'このコミュニティの中だけ',
   'concept.subreddit.placeholder': '例: japan',
   'concept.subreddit.help':
-    '指定したコミュニティの中の投稿だけを探します。名前にr/はつけません。複数指定すると、どれかのコミュニティの中を探します',
+    '指定したコミュニティ(Redditのsubreddit、5ちゃんねるの板)の中の投稿だけを探します。名前にr/はつけません。複数指定すると、どれかのコミュニティの中を探します',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.domain.help':
@@ -73,6 +73,18 @@ export const ja = {
     'リポスト数が指定した数以上の投稿だけに絞り込みます',
   'concept.japaneseOnly.label': '日本語の投稿だけ',
   'concept.japaneseOnly.help': '日本語で書かれた投稿だけに絞り込みます',
+  'concept.workType.label': '作品の種類',
+  'concept.workType.none': '指定なし',
+  'concept.workType.illust': 'イラスト',
+  'concept.workType.manga': 'マンガ',
+  'concept.workType.help':
+    'イラストを探すかマンガを探すかを指定します。指定しないときは各サイトの標準の検索対象で探します',
+  'concept.resultType.label': '探すもの',
+  'concept.resultType.none': '指定なし',
+  'concept.resultType.video': '動画',
+  'concept.resultType.channel': 'チャンネル',
+  'concept.resultType.help':
+    '検索結果の種類を指定します。「チャンネル」は動画ではなく投稿者・配信者を探します',
   'concept.sortOrder.label': '並び順',
   'concept.sortOrder.new': '新しい順',
   'concept.sortOrder.top': '人気順',
@@ -141,6 +153,17 @@ export const ja = {
   'note.misskey.keywords': '本文の部分一致で検索されます。まれな語は結果が出ないことがあります',
   'note.misskey.exclude': 'Misskeyには除外検索がありません',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',
+  'note.youtube.resultType': '非公式な指定方法です。ユーザー指定との併用はできません',
+  'note.hatebu.minLikes': 'ブックマーク数で絞り込みます。はてブ側の選択肢(1/3/50/100/500)にない数は効かない可能性があります',
+  'note.hatebu.fromUser': 'ユーザーのブックマークの中のキーワード検索は、はてなへのログインが必要なため対応していません',
+  'note.mastodon.keywords': 'mstdn.jpは検索語入りのURLに対応していません(ハッシュタグのタグページだけ開けます)',
+  'note.mastodon.hashtag': 'タグは1つだけ指定できます。キーワードや他のタグとの組み合わせはできません',
+  'note.twitch.japaneseOnly': '言語での絞り込みはURLでは指定できません',
+  'note.fivech.keywords': 'スレッドのタイトルだけが検索対象です。スレタイ検索サービス(ff5ch.syoboi.jp)を開きます',
+  'note.fivech.subreddit': '板のID(例: sony)を1つだけ指定できます。2つ目以降は無視されます',
+  'note.animanch.keywords': 'レスの本文を検索します(β機能のため、取りこぼしがあることがあります)',
+  'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
+  'note.seiga.sort': '人気順は閲覧数の多い順で代用します。マンガでは並び順を指定できません',
 
   // 起動パネルのグループ見出し
   'group.sns': 'SNS',

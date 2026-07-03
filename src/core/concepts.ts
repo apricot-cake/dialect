@@ -23,6 +23,8 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   minLikes: 'concept.minLikes.label',
   minReposts: 'concept.minReposts.label',
   japaneseOnly: 'concept.japaneseOnly.label',
+  workType: 'concept.workType.label',
+  resultType: 'concept.resultType.label',
   sortOrder: 'concept.sortOrder.label',
 }
 
@@ -30,7 +32,16 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
 export interface FieldDef {
   concept: ConceptId
   field: keyof QueryState
-  widget: 'text' | 'number' | 'toggle' | 'period' | 'videoLength' | 'terms' | 'sort'
+  widget:
+    | 'text'
+    | 'number'
+    | 'toggle'
+    | 'period'
+    | 'videoLength'
+    | 'workType'
+    | 'resultType'
+    | 'terms'
+    | 'sort'
   labelKey: MessageKey
   /** ⓘホバーで出す機能説明 */
   helpKey: MessageKey
@@ -50,6 +61,8 @@ export const FIELDS: FieldDef[] = [
   { concept: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label', helpKey: 'concept.titleOnly.help' },
   { concept: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label', helpKey: 'concept.mediaOnly.help' },
   { concept: 'videoLength', field: 'videoLength', widget: 'videoLength', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },
+  { concept: 'workType', field: 'workType', widget: 'workType', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help' },
+  { concept: 'resultType', field: 'resultType', widget: 'resultType', labelKey: 'concept.resultType.label', helpKey: 'concept.resultType.help' },
   { concept: 'japaneseOnly', field: 'japaneseOnly', widget: 'toggle', labelKey: 'concept.japaneseOnly.label', helpKey: 'concept.japaneseOnly.help' },
   { concept: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label', helpKey: 'concept.sortOrder.help' },
   { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', helpKey: 'concept.toUser.help', placeholderKey: 'concept.toUser.placeholder', multi: true },
@@ -87,6 +100,8 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.japaneseOnly) active.push('japaneseOnly')
+  if (state.workType) active.push('workType')
+  if (state.resultType) active.push('resultType')
   // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
   // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えず、
   // ユーザーが意図的に選んだ「人気順」だけを注記・件数の対象にする
@@ -117,6 +132,8 @@ export function defaultState(): QueryState {
     minLikes: '',
     minReposts: '',
     japaneseOnly: false,
+    workType: '',
+    resultType: '',
     sort: 'new',
   }
 }

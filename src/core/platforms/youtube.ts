@@ -3,26 +3,34 @@ import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } f
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
-// sp= はprotobufのbase64。ソートと動画の長さは1つのspに合成する(連結は不可)。
-// 合成値はktsk.xyzのフィールド定義から計算:
-//   sort: 0x08 0x02(アップロード日順) / 0x08 0x03(視聴回数順=人気の近似)
-//   filter{duration}: 0x12 0x02 0x18 0x0N (N=1:短,3:中,2:長)
+// sp= はprotobufのbase64。ソート・種別・動画の長さは1つのspに合成が必要(連結は不可)
+// なので、ktsk.xyzのフィールド定義に基づいてバイト列から組み立てる:
+//   sort(field1): 0x08 0x02(アップロード日順) / 0x08 0x03(視聴回数順=人気の近似)
+//   filter(field2のサブメッセージ): type(field2) 0x10 0x0N、duration(field3) 0x18 0x0N
+// 実測済みの値(CAM%3D・EgIYAQ%3D%3D・CAMSAhgB・EgIQAQ%3D%3D)をこの組み立てが
+// 再現することを確認している。
 // 2026-07-03実機確認: 視聴回数順(CAM系)は単独・長さとの合成とも動作するが、
 // アップロード日順(CAI系)はソートが効かなくなっている(関連度のまま)。
 // 復活の可能性に賭けて送信は続けるが、実質なりゆき表示になる。
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
-const SP_SORT: Record<'new' | 'top', string> = {
-  new: 'CAI%3D',
-  top: 'CAM%3D',
+const SORT_BYTE: Record<'new' | 'top', number> = { new: 0x02, top: 0x03 }
+const TYPE_BYTE: Record<'video' | 'channel', number> = { video: 0x01, channel: 0x02 }
+const LENGTH_BYTE: Record<Exclude<VideoLength, ''>, number> = {
+  short: 0x01,
+  medium: 0x03,
+  long: 0x02,
 }
-const SP_LENGTH: Record<Exclude<VideoLength, ''>, string> = {
-  short: 'EgIYAQ%3D%3D',
-  medium: 'EgIYAw%3D%3D',
-  long: 'EgIYAg%3D%3D',
-}
-const SP_SORT_AND_LENGTH: Record<'new' | 'top', Record<Exclude<VideoLength, ''>, string>> = {
-  new: { short: 'CAISAhgB', medium: 'CAISAhgD', long: 'CAISAhgC' },
-  top: { short: 'CAMSAhgB', medium: 'CAMSAhgD', long: 'CAMSAhgC' },
+
+function spParam(state: QueryState): string {
+  const sort = state.sort === 'auto' ? null : state.sort
+  const filter: number[] = []
+  if (state.resultType) filter.push(0x10, TYPE_BYTE[state.resultType])
+  if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
+  const bytes: number[] = []
+  if (sort) bytes.push(0x08, SORT_BYTE[sort])
+  if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
+  if (bytes.length === 0) return ''
+  return `&sp=${encodeURIComponent(btoa(String.fromCharCode(...bytes)))}`
 }
 
 function buildUrl(state: QueryState): string | null {
@@ -51,16 +59,7 @@ function buildUrl(state: QueryState): string | null {
     return `https://www.youtube.com/@${encodeURIComponent(handle)}/search?query=${encodeURIComponent(query)}`
   }
 
-  const sort = state.sort === 'auto' ? null : state.sort
-  let sp = ''
-  if (state.videoLength && sort) {
-    sp = `&sp=${SP_SORT_AND_LENGTH[sort][state.videoLength]}`
-  } else if (state.videoLength) {
-    sp = `&sp=${SP_LENGTH[state.videoLength]}`
-  } else if (sort) {
-    sp = `&sp=${SP_SORT[sort]}`
-  }
-  return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${sp}`
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${spParam(state)}`
 }
 
 export const youtube: PlatformDef = {
@@ -80,6 +79,7 @@ export const youtube: PlatformDef = {
     period: { level: 'partial', noteKey: 'note.youtube.period' },
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial', noteKey: 'note.unofficial' },
+    resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     japaneseOnly: { level: 'none', noteKey: 'note.youtube.japaneseOnly' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },

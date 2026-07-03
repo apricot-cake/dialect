@@ -39,6 +39,8 @@ export function summarize(state: QueryState): string {
   }
   if (state.since || state.until) parts.push(`${state.since}〜${state.until}`)
   if (state.minLikes.trim()) parts.push(`♥${state.minLikes.trim()}+`)
+  if (state.workType) parts.push(t(`concept.workType.${state.workType}`))
+  if (state.resultType) parts.push(t(`concept.resultType.${state.resultType}`))
   if (state.mediaOnly) parts.push(t('concept.mediaOnly.label'))
   if (state.japaneseOnly) parts.push(t('concept.japaneseOnly.label'))
   return parts.join(' / ')

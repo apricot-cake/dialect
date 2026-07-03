@@ -22,9 +22,17 @@ export type ConceptId =
   | 'minLikes'
   | 'minReposts'
   | 'japaneseOnly'
+  | 'workType'
+  | 'resultType'
   | 'sortOrder'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
+
+/** 作品の種類。イラスト/マンガの投稿サイト(pixiv・ニコニコ静画)向け */
+export type WorkType = '' | 'illust' | 'manga'
+
+/** 探すものの種類。動画=投稿された動画、チャンネル=投稿者・配信者 */
+export type ResultType = '' | 'video' | 'channel'
 
 /** 並び順。new=新しい順、top=人気順、auto=サイトにおまかせ(URLで指定しない) */
 export type SortOrder = 'new' | 'top' | 'auto'
@@ -60,6 +68,8 @@ export interface QueryState {
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   japaneseOnly: boolean
+  workType: WorkType
+  resultType: ResultType
   sort: SortOrder
 }
 
@@ -90,6 +100,12 @@ export type PlatformId =
   | 'reddit'
   | 'pixiv'
   | 'misskey'
+  | 'hatebu'
+  | 'mastodon'
+  | 'twitch'
+  | 'fivech'
+  | 'animanch'
+  | 'seiga'
 
 export interface PlatformDef {
   id: PlatformId

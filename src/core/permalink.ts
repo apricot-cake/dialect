@@ -41,6 +41,8 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.japaneseOnly) params.set('ja', '1')
+  if (state.workType) params.set('wt', state.workType)
+  if (state.resultType) params.set('rt', state.resultType)
   // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める
   if (state.sort !== 'new') params.set('sort', state.sort)
   return params
@@ -93,6 +95,10 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   state.japaneseOnly = params.get('ja') === '1'
+  const wt = params.get('wt')
+  if (wt === 'illust' || wt === 'manga') state.workType = wt
+  const rt = params.get('rt')
+  if (rt === 'video' || rt === 'channel') state.resultType = rt
   const sort = params.get('sort')
   if (sort === 'top' || sort === 'auto') state.sort = sort
   return state

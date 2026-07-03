@@ -38,6 +38,10 @@ function hasValue(state: QueryState, field: FieldDef): boolean {
       return Boolean(state.since || state.until)
     case 'videoLength':
       return state.videoLength !== ''
+    case 'workType':
+      return state.workType !== ''
+    case 'resultType':
+      return state.resultType !== ''
     default:
       return Boolean((state[field.field] as string).trim())
   }
@@ -147,6 +151,23 @@ const VIDEO_LENGTHS: Array<{ value: VideoLength; labelKey: Parameters<typeof t>[
   { value: 'medium', labelKey: 'concept.videoLength.medium' },
   { value: 'long', labelKey: 'concept.videoLength.long' },
 ]
+
+/** 選択式(select)の条件の選択肢。値はQueryStateの各フィールドの値と対応する */
+const SELECT_OPTIONS = {
+  videoLength: VIDEO_LENGTHS,
+  workType: [
+    { value: '', labelKey: 'concept.workType.none' },
+    { value: 'illust', labelKey: 'concept.workType.illust' },
+    { value: 'manga', labelKey: 'concept.workType.manga' },
+  ],
+  resultType: [
+    { value: '', labelKey: 'concept.resultType.none' },
+    { value: 'video', labelKey: 'concept.resultType.video' },
+    { value: 'channel', labelKey: 'concept.resultType.channel' },
+  ],
+} as const satisfies Partial<
+  Record<FieldDef['widget'], ReadonlyArray<{ value: string; labelKey: Parameters<typeof t>[0] }>>
+>
 
 export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
@@ -304,17 +325,21 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
         </div>
       )
     }
-    if (field.widget === 'videoLength') {
+    if (
+      field.widget === 'videoLength' ||
+      field.widget === 'workType' ||
+      field.widget === 'resultType'
+    ) {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
           {labelRow(field, supporters)}
           <select
             id={field.field}
             className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-            value={state.videoLength}
-            onChange={(e) => set({ videoLength: e.target.value as VideoLength })}
+            value={state[field.field] as string}
+            onChange={(e) => set({ [field.field]: e.target.value })}
           >
-            {VIDEO_LENGTHS.map((opt) => (
+            {SELECT_OPTIONS[field.widget].map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {t(opt.labelKey)}
               </option>

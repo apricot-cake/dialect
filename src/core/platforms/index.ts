@@ -1,6 +1,7 @@
 import type { PlatformDef } from '../types'
 import { x } from './x'
 import { bluesky } from './bluesky'
+import { mastodon } from './mastodon'
 import { youtube } from './youtube'
 import { note } from './note'
 import { niconico } from './niconico'
@@ -11,6 +12,11 @@ import { facebook } from './facebook'
 import { reddit } from './reddit'
 import { pixiv } from './pixiv'
 import { misskey } from './misskey'
+import { hatebu } from './hatebu'
+import { twitch } from './twitch'
+import { fivech } from './fivech'
+import { animanch } from './animanch'
+import { seiga } from './seiga'
 
 export const PLATFORMS: PlatformDef[] = [
   x,
@@ -25,4 +31,10 @@ export const PLATFORMS: PlatformDef[] = [
   reddit,
   pixiv,
   misskey,
+  mastodon,
+  hatebu,
+  twitch,
+  fivech,
+  animanch,
+  seiga,
 ]

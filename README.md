@@ -34,8 +34,14 @@ https://apricot-cake.github.io/dialect/
 | note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
 | TikTok | `tiktok.com/search` | 不要 | キーワードのみ |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
-| pixiv | `pixiv.net/tags` | 不要 | OR・除外・期間・並び順(タグ検索) |
+| pixiv | `pixiv.net/tags` | 不要 | OR・除外・期間・並び順・イラスト/マンガ(タグ検索) |
 | Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
+| Mastodon (mstdn.jp) | `mstdn.jp/tags` | 不要 | ハッシュタグのみ(検索語入りURLは v4.3系が非対応) |
+| はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
+| Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |
+| 5ちゃんねる | `ff5ch.syoboi.jp`(スレタイ検索) | 不要 | 除外・板指定(公式検索はANDが効かないため外部検索を使用) |
+| あにまん掲示板 | `bbs.animanch.com/searchRes` | 不要 | キーワードのみ(本文/過去ログタイトル切替) |
+| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・並び順・イラスト/マンガ切替 |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 
