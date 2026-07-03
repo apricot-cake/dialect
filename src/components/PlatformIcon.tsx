@@ -13,6 +13,7 @@ import {
   siYoutube,
 } from 'simple-icons'
 import type { PlatformId } from '@/core/types'
+import { cn } from '@/lib/utils'
 
 // simple-icons(CC0)のブランドロゴ。色は currentColor を継承する。
 // simple-iconsにないサイトは自作アイコン: 5ちゃんねる・あにまんは吹き出し+文字
@@ -74,22 +75,46 @@ export function PlatformIcon({
   id,
   className,
   style,
+  brandColor,
 }: {
   id: PlatformId
   className?: string
   style?: React.CSSProperties
+  /** 指定すると色をブランド色に。X/niconico など暗い色はダーク時に白へ寄せて可視化する */
+  brandColor?: string
 }) {
+  // ライト時はブランド色そのまま、ダーク時だけ白へ少し寄せる(暗い色が暗い面に埋もれるのを防ぐ)
+  const colorClass = brandColor
+    ? 'text-(--brand-icon) dark:text-[color-mix(in_oklch,var(--brand-icon)_72%,white)]'
+    : undefined
+  const mergedStyle = brandColor
+    ? ({ ...style, '--brand-icon': brandColor } as React.CSSProperties)
+    : style
   if (id === 'fivech') {
-    return <BubbleIcon label="5" fontSize={12} className={className} style={style} />
+    return (
+      <BubbleIcon
+        label="5"
+        fontSize={12}
+        className={cn(colorClass, className)}
+        style={mergedStyle}
+      />
+    )
   }
   if (id === 'animanch') {
-    return <BubbleIcon label="あ" fontSize={11} className={className} style={style} />
+    return (
+      <BubbleIcon
+        label="あ"
+        fontSize={11}
+        className={cn(colorClass, className)}
+        style={mergedStyle}
+      />
+    )
   }
   return (
     <svg
       viewBox="0 0 24 24"
-      className={className}
-      style={style}
+      className={cn(colorClass, className)}
+      style={mergedStyle}
       fill="currentColor"
       aria-hidden="true"
     >

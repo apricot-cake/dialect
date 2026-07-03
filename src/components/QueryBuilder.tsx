@@ -154,7 +154,7 @@ function SupportIcons({ supporters }: { supporters: PlatformDef[] }) {
           key={p.id}
           id={p.id}
           className="size-3.5 shrink-0"
-          style={{ color: p.brandColor }}
+          brandColor={p.brandColor}
         />
       ))}
     </>

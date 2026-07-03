@@ -5,8 +5,10 @@ import {
   Eraser,
   Languages,
   Link as LinkIcon,
+  Moon,
   Search,
   SlidersHorizontal,
+  Sun,
 } from 'lucide-react'
 import { defaultState } from '@/core/concepts'
 import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
@@ -90,6 +92,14 @@ export default function App() {
     setLang(next)
     setLangState(next)
   }
+  // ダークモード。初期値は index.html の先読みスクリプトが付けた class から拾う
+  const [dark, setDark] = useState(() =>
+    document.documentElement.classList.contains('dark'),
+  )
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+    localStorage.setItem('theme', dark ? 'dark' : 'light')
+  }, [dark])
 
   const replaceQuery = (state: QueryState) => {
     setQuery(state)
@@ -117,39 +127,64 @@ export default function App() {
 
   return (
     <TooltipProvider>
-      <div
-        className={`mx-auto flex min-h-dvh flex-col px-4 ${
-          isMobile ? 'max-w-4xl' : 'max-w-7xl'
-        }`}
-      >
-        {/* ページ左上のツール名+機能説明。右端に言語切替。ロゴやキャッチコピーは置かない */}
-        <header className="flex items-start justify-between gap-4 pt-6">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-lg font-semibold tracking-tight">
-              {t('app.title')}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {t('app.description')}
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="shrink-0 text-muted-foreground"
-            onClick={toggleLang}
+      <div className="flex min-h-dvh flex-col">
+        {/* 追従ヘッダー: ロゴマーク+ツール名+機能説明。右端にテーマ/言語切替。
+            スクロールで背後のカードが透けるよう半透明+backdrop-blur を敷く */}
+        <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-md">
+          <div
+            className={`mx-auto flex w-full items-center justify-between gap-4 px-4 py-2.5 ${
+              isMobile ? 'max-w-4xl' : 'max-w-7xl'
+            }`}
           >
-            <Languages className="size-3.5" />
-            {t('app.langSwitch')}
-          </Button>
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                <Search className="size-[1.1rem]" />
+              </div>
+              <div className="flex min-w-0 flex-col">
+                <h1 className="truncate text-[0.95rem] leading-tight font-semibold tracking-tight">
+                  {t('app.title')}
+                </h1>
+                <p className="hidden truncate text-xs text-muted-foreground sm:block">
+                  {t('app.description')}
+                </p>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-muted-foreground"
+                aria-label={t('app.themeToggle')}
+                onClick={() => setDark((d) => !d)}
+              >
+                {dark ? <Sun /> : <Moon />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                onClick={toggleLang}
+              >
+                <Languages className="size-3.5" />
+                {t('app.langSwitch')}
+              </Button>
+            </div>
+          </div>
         </header>
-        <main
-          className={
-            isMobile
-              ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
-                'flex flex-col gap-8 pt-8 pb-24'
-              : 'grid grid-cols-2 items-start gap-10 pt-8 pb-6'
-          }
+
+        <div
+          className={`mx-auto flex w-full flex-1 flex-col px-4 ${
+            isMobile ? 'max-w-4xl' : 'max-w-7xl'
+          }`}
         >
+          <main
+            className={
+              isMobile
+                ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
+                  'flex flex-col gap-8 pt-6 pb-24'
+                : 'grid grid-cols-2 items-start gap-10 pt-8 pb-6'
+            }
+          >
           {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
           <section
             className={`${
@@ -263,7 +298,7 @@ export default function App() {
                           <PlatformIcon
                             id={p.id}
                             className="size-4"
-                            style={{ color: p.brandColor }}
+                            brandColor={p.brandColor}
                           />
                         </TooltipTrigger>
                         <TooltipContent>{p.name}</TooltipContent>
@@ -309,7 +344,20 @@ export default function App() {
               onLaunch={() => setHistoryEntries(recordHistory(query))}
             />
           </section>
-        </main>
+          </main>
+
+          <footer className="mt-auto flex items-center justify-between gap-4 border-t py-4 text-xs text-muted-foreground">
+            <span>{t('footer.disclaimer')}</span>
+            <a
+              className="shrink-0 underline underline-offset-2"
+              href="https://github.com/apricot-cake/dialect"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('footer.github')}
+            </a>
+          </footer>
+        </div>
 
         {/* スマホは右下の浮きボタン1つで「条件を入力」と「検索する」を行き来する。
             ラベルは移動先の画面を示す */}
@@ -326,18 +374,6 @@ export default function App() {
             {t(tab === 'build' ? 'tab.launch' : 'tab.build')}
           </Button>
         )}
-
-        <footer className="mt-auto flex items-center justify-between gap-4 border-t py-4 text-xs text-muted-foreground">
-          <span>{t('footer.disclaimer')}</span>
-          <a
-            className="shrink-0 underline underline-offset-2"
-            href="https://github.com/apricot-cake/dialect"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('footer.github')}
-          </a>
-        </footer>
       </div>
     </TooltipProvider>
   )

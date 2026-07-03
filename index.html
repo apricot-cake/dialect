@@ -10,6 +10,18 @@
       content="検索条件を組み立てると、X・Bluesky・YouTube・niconico・pixiv・はてなブックマーク・5ちゃんねるなど18のSNS・掲示板の検索構文に翻訳して検索ページを開くツール"
     />
     <title>SNSまとめて検索</title>
+    <!-- 描画前にテーマを確定してダークモードのちらつきを防ぐ。保存値がなければOS設定に従う -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved
+            ? saved === 'dark'
+            : matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

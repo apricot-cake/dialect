@@ -6,6 +6,7 @@ export const ja = {
     '検索条件を組み立てると、各SNS・掲示板の検索構文に翻訳して検索ページを開きます',
   // 言語切替ボタンのラベルは切替先の言語名(英語表示なら「日本語」)
   'app.langSwitch': 'English',
+  'app.themeToggle': 'テーマを切り替え',
 
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',

@@ -203,7 +203,8 @@ const SearchLink = forwardRef<HTMLAnchorElement, SearchLinkProps>(
         tabIndex={enabled ? undefined : -1}
         className={cn(
           buttonVariants(),
-          'w-full shadow-sm hover:brightness-95',
+          // ダーク時は暗いブランド色(X/niconico等)が暗い面に埋もれるので内側の淡い輪郭で分離する
+          'w-full shadow-sm hover:brightness-95 dark:ring-1 dark:ring-inset dark:ring-white/15',
           !enabled && 'pointer-events-none opacity-50',
           className,
         )}
@@ -282,13 +283,16 @@ function PlatformCards({
         const fallback = googleFallback(platform, state, resolution)
 
         return (
-          <Card key={platform.id} className="gap-3 py-4 shadow-sm">
+          <Card
+            key={platform.id}
+            className="gap-3 py-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
             <CardContent className="flex flex-col gap-3 px-4">
               <div className="flex items-center gap-2">
                 <PlatformIcon
                   id={platform.id}
                   className="size-4 shrink-0"
-                  style={{ color: platform.brandColor }}
+                  brandColor={platform.brandColor}
                 />
                 <span className="font-semibold">{platform.name}</span>
                 <AppliedCountBadge resolution={resolution} />
