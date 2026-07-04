@@ -19,6 +19,9 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.exclude).map((w) => `-${w}`))
 
   const params = new URLSearchParams()
+  // タイトルだけ=タイトル・キャプション検索(s_mode=s_tc、公式ヘルプ記載)。
+  // 既定はタグ部分一致(s_tag)なので、ONのときだけ切り替える(2026-07-04実測で動作確認)
+  if (state.titleOnly) params.set('s_mode', 's_tc')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
   // popular_d=人気(プレミアム限定)のときだけ order を指定する。おまかせも指定しない
@@ -46,6 +49,7 @@ export const pixiv: PlatformDef = {
   support: {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    titleOnly: { level: 'partial', noteKey: 'note.pixiv.titleOnly' },
     exclude: { level: 'full' },
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
     hashtag: { level: 'full' },

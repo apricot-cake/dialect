@@ -162,6 +162,7 @@ export const ja = {
   'note.instagram.multiTag':
     'ハッシュタグを2つ以上指定すると、タグページではなくゆるいキーワード検索になり、すべてのタグを含む保証はありません',
   'note.pixiv.keywords': 'タグの部分一致で検索されます(タグにない語は本文にあってもヒットしません)',
+  'note.pixiv.titleOnly': 'タグではなく、タイトルとキャプション(説明文)から探します',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
   'note.misskey.keywords': '語ごとに部分一致でAND検索されます(まれな語は結果が出ないことも)。遷移後、検索ページで「検索」ボタンを押すと結果が表示されます',

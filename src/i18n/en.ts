@@ -178,6 +178,8 @@ export const en = {
     'With two or more hashtags this becomes a loose keyword search rather than a tag page, with no guarantee all tags are included.',
   'note.pixiv.keywords':
     'Searched by partial tag match (words not in the tags won’t hit even if they’re in the body).',
+  'note.pixiv.titleOnly':
+    'Searches titles and captions (descriptions), not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.misskey.keywords':

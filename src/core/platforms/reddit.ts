@@ -40,8 +40,6 @@ function buildUrl(state: QueryState): string | null {
   )
   if (subs.length >= 2) clauses.push(`(${subs.join(' OR ')})`)
   else clauses.push(...subs)
-  // リンク投稿だけ = self:no(テキスト投稿を除く。公式ヘルプ記載)
-  if (state.linksOnly) clauses.push('self:no')
   let q = clauses.join(' AND ')
   const excludes = words(state.exclude)
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
@@ -69,7 +67,6 @@ export const reddit: PlatformDef = {
     titleOnly: { level: 'full' },
     fromUser: { level: 'full' },
     subreddit: { level: 'full' },
-    linksOnly: { level: 'full' },
     hashtag: { level: 'none', noteKey: 'note.reddit.hashtag' },
     period: { level: 'partial', noteKey: 'note.reddit.period' },
     mediaOnly: { level: 'none' },
