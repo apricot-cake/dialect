@@ -42,6 +42,12 @@ import { SavedSearches } from '@/components/SavedSearches'
 // (塗りは淡めにしてブランド色アイコンを潰さない)
 const FILTER_ACTIVE = 'bg-primary/15 ring-1 ring-primary/40 hover:bg-primary/20'
 
+// 左右カラムを「面」として分けるため、PCでは各カラムを軽く沈めたトレイに載せる。
+// 中身のカードは白なので、ごく淡いグレー地の上で浮いて見える(面の明度差で分離する)。
+// bg/ring とも foreground のアルファ塗りにして、ライト=淡いグレー地/ダーク=淡い明色地の
+// どちらでも「一段沈んだ面」に見えるようにする
+const COLUMN_TRAY = 'rounded-2xl bg-foreground/[0.035] p-5 ring-1 ring-foreground/[0.07]'
+
 function initialQuery(): QueryState {
   if (location.search) {
     return paramsToQuery(new URLSearchParams(location.search))
@@ -153,13 +159,10 @@ export default function App() {
                 aria-hidden
                 className="size-8 shrink-0"
               />
-              <div className="flex min-w-0 flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col">
                 <h1 className="truncate text-base leading-tight font-semibold tracking-tight">
                   {t('app.title')}
                 </h1>
-                <p className="hidden truncate text-xs leading-tight text-muted-foreground sm:block">
-                  {t('app.description')}
-                </p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-0.5">
@@ -195,20 +198,19 @@ export default function App() {
               isMobile
                 ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
                   'flex flex-col gap-8 pt-6 pb-24'
-                : // 中央に 1px の縦罫トラックを挟んで左右を分ける。gap は罫の左右に取る
-                  'grid grid-cols-[1fr_1px_1fr] items-start gap-x-8 pt-8 pb-6'
+                : 'grid grid-cols-2 items-start gap-6 pt-8 pb-6'
             }
           >
           {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
           <section
             className={`${
               isMobile && tab !== 'build' ? 'hidden' : 'flex'
-            } flex-col gap-8`}
+            } flex-col gap-8 ${isMobile ? '' : COLUMN_TRAY}`}
           >
-            {/* カラム見出しにアイコンを添えて識別性を持たせる。
-                アイコンはモバイル切替ボタンと同じ(条件=スライダー)で対応づける */}
+            {/* カラム見出しにアイコンを添えて識別性を持たせる。押せると誤認させないよう
+                色は付けず中立色にする。アイコンはモバイル切替ボタンと同じ(条件=スライダー) */}
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="size-4 shrink-0 text-primary" />
+              <SlidersHorizontal className="size-4 shrink-0 text-muted-foreground" />
               <h2 className="text-sm font-semibold tracking-tight">
                 {t('column.build')}
               </h2>
@@ -359,20 +361,15 @@ export default function App() {
             />
           </section>
 
-          {/* PC限定: 左右カラムを分ける中央の縦罫。高い方の列に合わせて全高に伸ばす */}
-          {!isMobile && (
-            <div aria-hidden className="self-stretch bg-border" />
-          )}
-
           {/* 検索タブ / PCでは右カラム: 各サイトで開く */}
           <section
             className={`${
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
-            } flex-col gap-8`}
+            } flex-col gap-8 ${isMobile ? '' : COLUMN_TRAY}`}
           >
-            {/* 見出しに検索アイコンを添える。左カラムと同じ作り */}
+            {/* 見出しに検索アイコンを添える。左カラムと同じ作り(中立色) */}
             <div className="flex items-center gap-2">
-              <Search className="size-4 shrink-0 text-primary" />
+              <Search className="size-4 shrink-0 text-muted-foreground" />
               <h2 className="text-sm font-semibold tracking-tight">
                 {t('column.launch')}
               </h2>
