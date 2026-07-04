@@ -174,7 +174,7 @@ export const ja = {
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
-  'launch.bgHint': 'この画面を開いたまま、複数のサイトを次々に開けます。検索ボタンをホイールクリック（または Ctrl / ⌘ + クリック）すると、背面タブで開きます。',
+  'launch.bgHint': 'この画面を開いたまま、複数のサイトを背面タブで次々に開けます（ホイールクリック、または Ctrl / ⌘ + クリック）',
   'launch.loginNote': '{name}にログインしたブラウザでないと検索結果を見られません',
   'launch.appliedCount': '{applied}/{total} 条件を適用',
   'launch.approxHeading': '一部だけ効く',
