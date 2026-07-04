@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "tw-animate-css"; /* 旧UI用。新UIスワップ後に削除する */
+@import "shadcn/tailwind.css"; /* 旧UI用。新UIスワップ後に削除する */
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
@@ -8,37 +8,34 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
+
+    /* 新デザインのトークン(Dialect.dc.html の VARS) */
+    --color-bg: var(--bg);
+    --color-fg: var(--fg);
     --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
+    --color-tray: var(--tray);
+    --color-field: var(--field);
+    --color-muted: var(--muted);
+    --color-faint: var(--faint);
+    --color-border: var(--border);
+    --color-secondary: var(--secondary);
+    --color-primary: var(--primary);
+    --color-primary-fg: var(--primary-fg);
+    --color-accent: var(--accent);
+
+    /* 旧UI互換エイリアス(新UIスワップ後に削除する) */
+    --color-background: var(--bg);
+    --color-foreground: var(--fg);
+    --color-card-foreground: var(--fg);
+    --color-popover: var(--card);
+    --color-popover-foreground: var(--fg);
+    --color-primary-foreground: var(--primary-fg);
+    --color-secondary-foreground: var(--fg);
+    --color-muted-foreground: var(--muted);
+    --color-accent-foreground: var(--fg);
+    --color-destructive: oklch(0.577 0.245 27.325);
+    --color-input: var(--border);
+    --color-ring: var(--muted);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -49,91 +46,170 @@
 }
 
 :root {
-    /* 冷たい既定 zinc をやめ、ごく薄く青紫(272)を差した自前ニュートラル。
-       ページ地は白。奥行きはカラムのトレイ(淡いグレー面)とカードのリング/影で出す。
-       アクセント色は持たせない。色はブランドの検索ボタンだけに担わせ、枠側(primary/ring)は
-       濃い無彩色にとどめる。多ブランドを束ねるので、チロメを無彩色にして色の競合を避ける */
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.21 0.012 272);
+    /* デザイン(Dialect.dc.html)のライトテーマ。薄く青紫(272)を差したニュートラル。
+       アクセントは落ち着いたスレートブルー1色で、ブランド色(検索ボタン)と競合させない */
+    --bg: oklch(0.995 0.002 272);
+    --fg: oklch(0.21 0.012 272);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.21 0.012 272);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.21 0.012 272);
+    --tray: oklch(0.975 0.004 272);
+    --field: oklch(1 0 0);
+    --muted: oklch(0.552 0.02 272);
+    --faint: oklch(0.7 0.015 272);
+    --border: oklch(0.912 0.006 272);
+    --secondary: oklch(0.965 0.005 272);
     --primary: oklch(0.25 0.012 272);
-    --primary-foreground: oklch(0.985 0.01 272);
-    --secondary: oklch(0.967 0.005 272);
-    --secondary-foreground: oklch(0.28 0.012 272);
-    --muted: oklch(0.967 0.005 272);
-    --muted-foreground: oklch(0.552 0.02 272);
-    --accent: oklch(0.966 0.008 272);
-    --accent-foreground: oklch(0.28 0.012 272);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.918 0.006 272);
-    --input: oklch(0.918 0.006 272);
-    --ring: oklch(0.45 0.02 272);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    --primary-fg: oklch(0.99 0.01 272);
+    --accent: #4d5772;
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-    /* 漆黒は避けたソフトダーク。地は真っ黒でなく暗いグレーにし、カード/入力欄も
-       一段ずつ明るくして bg < トレイ < カード < フィールド の明度差で面を分ける */
-    --background: oklch(0.25 0.006 272);
-    --foreground: oklch(0.985 0.002 272);
-    --card: oklch(0.315 0.008 272);
-    --card-foreground: oklch(0.985 0.002 272);
-    --popover: oklch(0.315 0.008 272);
-    --popover-foreground: oklch(0.985 0.002 272);
+    /* 漆黒を避けたソフトダーク。bg < tray < card < field の明度差で面を分ける */
+    --bg: oklch(0.24 0.006 272);
+    --fg: oklch(0.985 0.002 272);
+    --card: oklch(0.305 0.008 272);
+    --tray: oklch(0.275 0.007 272);
+    --field: oklch(0.35 0.01 272);
+    --muted: oklch(0.72 0.015 272);
+    --faint: oklch(0.6 0.015 272);
+    --border: oklch(1 0 0 / 0.13);
+    --secondary: oklch(0.37 0.012 272);
     --primary: oklch(0.92 0.008 272);
-    --primary-foreground: oklch(0.24 0.01 272);
-    --secondary: oklch(0.36 0.01 272);
-    --secondary-foreground: oklch(0.985 0.002 272);
-    --muted: oklch(0.36 0.01 272);
-    --muted-foreground: oklch(0.72 0.015 272);
-    --accent: oklch(0.37 0.012 272);
-    --accent-foreground: oklch(0.985 0.002 272);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 16%);
-    --ring: oklch(0.62 0.02 272);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --primary-fg: oklch(0.24 0.01 272);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
     }
-  body {
-    @apply text-foreground;
-    /* アクセント色は使わないので背景グローも撤去。地は極薄グレーのフラットにして、
-       色はブランドの検索ボタンだけに担わせる */
-    background-color: var(--background);
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     }
   html {
     @apply font-sans;
     }
+  body {
+    @apply bg-bg text-fg;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    }
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+    }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, currentColor 18%, transparent);
+    border-radius: 999px;
+    }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    }
+  input::placeholder {
+    color: var(--faint);
+    opacity: 1;
+    }
+  button, input, select, kbd {
+    font: inherit;
+    }
+}
+
+/* ---- 新デザインのアニメーション ---- */
+@keyframes dl-drop {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes dl-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dl-bob { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
+@keyframes dl-bob-up { 0%, 100% { transform: translateY(1.5px); } 50% { transform: translateY(-1.5px); } }
+
+/* ボタン・外部リンクの共通トランジション+ホバースケール。
+   スイッチと data-noscale(独自のホバー演出を持つ要素)は除外する */
+button, a[target] {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), background 140ms ease, filter 140ms ease;
+}
+button:not([role="switch"]):not([data-noscale]):hover, a[target]:hover { transform: scale(1.04); }
+button:not([role="switch"]):not([data-noscale]):active, a[target]:active { transform: scale(0.97); }
+
+/* ホバーで即時に出る説明ツールチップ(ブラウザ標準title の遅延なし版) */
+[data-tip] { position: relative; }
+[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+  width: max-content; max-width: 250px; white-space: normal; text-align: left;
+  padding: 10px 12px; border-radius: 12px;
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--border); color: var(--muted);
+  font-size: 11.5px; line-height: 1.45; font-weight: 500;
+  box-shadow: 0 16px 44px oklch(0 0 0 / 0.18); z-index: 200; pointer-events: none;
+  animation: dl-fade 160ms ease both;
+}
+
+/* ホバー中のバーは前面へ(対応ポップオーバーが下のバーに潜らないように) */
+[data-bar]:hover { z-index: 45 !important; }
+
+/* ガラス面(ポップオーバー・メニュー・ツールチップ共通の質感) */
+.dl-glass {
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 44px oklch(0 0 0 / 0.18);
+}
+
+/* 統一条件バーのシェル(検索バーと各条件が共有するピル型の面) */
+.dl-bar {
+  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; min-height: 58px;
+  padding: 8px 14px 8px 22px; color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--border); border-radius: 999px;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 18px oklch(0 0 0 / 0.04);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dl-bar:hover {
+  transform: scale(1.014);
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.09), 0 16px 36px oklch(0 0 0 / 0.06);
+}
+
+/* 「条件を追加」ボタン: スケールではなく浮き上がり(data-noscale とセットで使う) */
+.dl-add { transition: box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1); }
+.dl-add:hover { box-shadow: 0 8px 22px oklch(0 0 0 / 0.12); transform: translateY(-1px); }
+
+/* カレンダーのヘッダー(年月表示)ボタンのホバー */
+.dl-calhead:hover { background: var(--secondary); }
+
+/* ドロップダウン・ポップオーバーの出現アニメーション */
+.dl-drop-in { animation: dl-drop 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* 条件追加モーダル(Base UI Dialog)の開閉トランジション。
+   [data-starting-style]/[data-ending-style] は Base UI が開閉時に付ける状態属性 */
+.dl-scrim {
+  background: oklch(0 0 0 / 0.34);
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+.dl-scrim[data-starting-style], .dl-scrim[data-ending-style] { opacity: 0; }
+.dl-sheet {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 260ms ease;
+}
+.dl-sheet[data-starting-style], .dl-sheet[data-ending-style] {
+  transform: translate(-50%, -50%) scale(0.965);
+  opacity: 0;
+}
+
+/* ---- モバイル / 狭幅 ---- */
+@media (max-width: 560px) {
+  .dl-bar { flex-wrap: wrap !important; row-gap: 10px !important; padding-top: 12px !important; padding-bottom: 12px !important; padding-left: 18px !important; }
+  .dl-bar input { min-width: 0 !important; }
+  .dl-sup { display: none !important; }
+  .dl-tagline { display: none !important; }
+  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
+  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
+}
+@media (max-width: 380px) {
+  .dl-bar { padding-left: 16px !important; }
 }

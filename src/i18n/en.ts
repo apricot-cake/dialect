@@ -6,16 +6,17 @@ export const en = {
   'app.langSwitch': '日本語',
   'app.themeToggle': 'Toggle theme',
   'app.backToTop': 'Back to top',
+  'app.tagline': 'Build your conditions, then search each site',
 
   // Search concepts (builder rows). placeholder = input example, help = the ⓘ hover description
   'concept.keywords.label': 'Keywords',
-  'concept.keywords.placeholder': 'e.g. typhoon',
+  'concept.keywords.placeholder': 'Type what you want to find',
   'concept.keywords.help': 'Finds posts that contain the words you enter.',
   'concept.terms.removeTerm': 'Remove this word',
   'concept.exactPhrase.label': 'Exact phrase',
   'concept.exactPhrase.placeholder': 'e.g. planned service suspension',
   'concept.exactPhrase.help':
-    'Finds only posts containing this exact wording, including word order and spacing. Press Enter to add several phrases and narrow to posts containing all of them.',
+    'Finds only posts containing this exact wording, including word order and spacing.',
   'concept.exclude.label': 'Exclude keywords',
   'concept.exclude.placeholder': 'e.g. ad',
   'concept.exclude.help':
@@ -87,23 +88,21 @@ export const en = {
   'concept.workType.none': 'Any',
   'concept.workType.illust': 'Illustration',
   'concept.workType.manga': 'Manga',
-  'concept.workType.help':
-    'Choose whether to search illustrations or manga. If left unset, each site’s default target is used.',
-  'concept.resultType.label': 'Looking for',
+  'concept.workType.help': 'Choose whether to search illustrations or manga.',
+  'concept.resultType.label': 'Video / channel type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
   'concept.resultType.short': 'Shorts',
   'concept.resultType.channel': 'Channels',
   'concept.resultType.playlist': 'Playlists',
   'concept.resultType.help':
-    'Choose the type of result. “Channels” finds creators/broadcasters instead of videos. Shorts and Playlists work on YouTube only.',
+    'On video sites (YouTube, Twitch), choose what to look for — videos, channels, and so on. Shorts and Playlists work on YouTube only.',
   'concept.sortOrder.label': 'Sort order',
   'concept.sortOrder.new': 'Newest',
   'concept.sortOrder.top': 'Popular',
   'concept.sortOrder.hot': 'Trending',
   'concept.sortOrder.auto': 'Auto',
-  'concept.sortOrder.help':
-    'Sets the result order. “Auto” uses each site’s default order.',
+  'concept.sortOrder.help': 'Sets the result order.',
 
   // Shared hint above the builder
   'builder.hint.enter':
@@ -114,7 +113,7 @@ export const en = {
   // Site filter and supported-site badge
   'builder.filter.label': 'Show conditions a site supports',
   'builder.filter.help':
-    'Shows only the conditions the chosen site supports. This changes what is listed, not which sites you search. Conditions you have already filled in stay visible.',
+    'Shows only the conditions the chosen site supports. This changes what is listed, not which sites you search.',
   'builder.help.iconLabel': 'About this condition',
   'builder.filter.active': 'Filtered',
   'builder.filter.all': 'All',
@@ -212,7 +211,7 @@ export const en = {
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
   'launch.bgHint':
-    'Open several sites one after another without leaving this page. Middle-click a search button (or Ctrl/⌘-click) to open it in a background tab.',
+    'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
   'launch.loginNote':
     'You must be signed in to {name} in this browser to see results.',
   'launch.appliedCount': '{applied}/{total} conditions applied',
@@ -257,8 +256,24 @@ export const en = {
   'history.title': 'Recently opened',
   'summary.exclude': 'Exclude',
 
+  // New UI (two-screen snap layout)
+  'ui.addCondition': 'Add a condition',
+  'ui.removeCondition': 'Remove this condition',
+  'ui.scrollToLinks': 'Scroll to open the searches',
+  'ui.scrollToConditions': 'Scroll back to conditions',
+  'ui.enterToAdd': 'to add',
+  'ui.loginRequired': 'Sign-in required',
+  'ui.notSearchable': 'Not searchable with these conditions',
+  'support.full': 'Full support',
+  'support.partial': 'Partial support',
+  'picker.title': 'Add a condition',
+  'cal.clear': 'Clear',
+  'cal.pickDate': 'Pick a date',
+
   // Footer
   'footer.disclaimer':
-    'Search syntax relies on each site’s unofficial behavior, so it may stop working without notice.',
+    'Some filters rely on unofficial behavior and may break without notice.',
+  'footer.privacy':
+    'Your conditions are never sent to a server — search URLs are built entirely in your browser.',
   'footer.github': 'GitHub',
 }

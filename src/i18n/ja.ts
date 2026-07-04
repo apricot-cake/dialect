@@ -8,16 +8,18 @@ export const ja = {
   'app.langSwitch': 'English',
   'app.themeToggle': 'テーマを切り替え',
   'app.backToTop': '最上部へ戻る',
+  // タイトル下の機能説明(キャッチコピーではなく画面の流れの説明)
+  'app.tagline': '条件を組み立てて、各SNS・掲示板で検索',
 
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
-  'concept.keywords.placeholder': '例: 台風',
+  'concept.keywords.placeholder': '検索したいことばを入力',
   'concept.keywords.help': '入力した語を含む投稿を探します',
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
   'concept.exactPhrase.help':
-    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します。Enterで区切ると、複数の語句をすべて含む投稿に絞れます',
+    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
   'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告',
   'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',
@@ -89,23 +91,21 @@ export const ja = {
   'concept.workType.none': '指定なし',
   'concept.workType.illust': 'イラスト',
   'concept.workType.manga': 'マンガ',
-  'concept.workType.help':
-    'イラストを探すかマンガを探すかを指定します。指定しないときは各サイトの標準の検索対象で探します',
-  'concept.resultType.label': '探すもの',
+  'concept.workType.help': 'イラストを探すかマンガを探すかを指定します',
+  'concept.resultType.label': '動画・チャンネルの種類',
   'concept.resultType.none': '指定なし',
   'concept.resultType.video': '動画',
   'concept.resultType.short': 'ショート',
   'concept.resultType.channel': 'チャンネル',
   'concept.resultType.playlist': '再生リスト',
   'concept.resultType.help':
-    '検索結果の種類を指定します。「チャンネル」は動画ではなく投稿者・配信者を探します。ショート・再生リストはYouTubeだけで使えます',
+    '動画サイト（YouTube・Twitch）で、動画・チャンネルなど探す種類を指定します。ショート・再生リストはYouTubeだけで使えます',
   'concept.sortOrder.label': '並び順',
   'concept.sortOrder.new': '新しい順',
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.hot': '急上昇',
   'concept.sortOrder.auto': 'おまかせ',
-  'concept.sortOrder.help':
-    '検索結果の並び順を指定します。「おまかせ」は各サイトの標準の並び順で表示します',
+  'concept.sortOrder.help': '検索結果の並び順を指定します',
 
   // ビルダー上部の共通ヒント
   'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
@@ -116,7 +116,7 @@ export const ja = {
   // ビルダーのサイト絞り込み・対応サイト数バッジ
   'builder.filter.label': 'サイトで使える条件だけ表示',
   'builder.filter.help':
-    '選んだサイトで使える条件だけを一覧に表示します。表示が変わるだけで、検索先のサイトは変わりません。すでに値を入れた条件は、表示を切り替えても隠れません',
+    '選んだサイトで使える条件だけを一覧に表示します。表示が変わるだけで、検索先のサイトは変わりません',
   'builder.help.iconLabel': 'この条件の説明',
   'builder.filter.active': '表示中',
   'builder.filter.all': 'すべて',
@@ -185,7 +185,7 @@ export const ja = {
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
-  'launch.bgHint': 'この画面を開いたまま、複数のサイトを背面タブで次々に開けます（ホイールクリック、または Ctrl / ⌘ + クリック）',
+  'launch.bgHint': 'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
   'launch.loginNote': '{name}にログインしたブラウザでないと検索結果を見られません',
   'launch.appliedCount': '{applied}/{total} 条件を適用',
   'launch.approxHeading': '一部だけ効く',
@@ -229,8 +229,25 @@ export const ja = {
   'history.title': '最近ひらいた検索',
   'summary.exclude': '除外',
 
+  // 新UI(2画面スナップ構成)の操作まわり
+  'ui.addCondition': '条件を追加',
+  'ui.removeCondition': 'この条件を外す',
+  'ui.scrollToLinks': 'スクロールで検索を開く',
+  'ui.scrollToConditions': 'スクロールで条件へ戻る',
+  // チップ入力のEnterヒント(<kbd>Enter</kbd> の後ろに続ける)
+  'ui.enterToAdd': 'で区切る',
+  'ui.loginRequired': '要ログイン',
+  'ui.notSearchable': 'この条件では検索できません',
+  'support.full': '完全対応',
+  'support.partial': '一部対応',
+  'picker.title': '条件を追加',
+  'cal.clear': 'クリア',
+  'cal.pickDate': '日付を選択',
+
   // フッター
   'footer.disclaimer':
-    '検索構文は各SNSの非公式な仕様に基づくため、予告なく動かなくなることがあります。',
+    '一部の絞り込みは非公式な仕組みのため、動かなくなることがあります。',
+  'footer.privacy':
+    '入力した条件がサーバーへ送信されることはありません。検索URLの組み立てはすべてブラウザ内で行われます。',
   'footer.github': 'GitHub',
 } as const
