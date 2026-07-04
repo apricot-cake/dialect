@@ -65,7 +65,12 @@ export function DotsCanvas({ dark }: { dark: boolean }) {
       mouse.x += (mouse.tx - mouse.x) * 0.09
       mouse.y += (mouse.ty - mouse.y) * 0.09
       ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = darkRef.current ? 'rgb(206,213,226)' : 'rgb(40,44,56)'
+      const isDark = darkRef.current
+      // ダークは明色ドットが地に沈みやすいので、濃さ(不透明度)を持ち上げて
+      // ライトと同じくらいドット地が見えるようにする
+      const boost = isDark ? 2.2 : 1
+      const cap = isDark ? 0.52 : 0.34
+      ctx.fillStyle = isDark ? 'rgb(206,213,226)' : 'rgb(40,44,56)'
       for (let x = SPACING / 2; x < width; x += SPACING) {
         for (let y = SPACING / 2; y < height; y += SPACING) {
           const n = nhash(x * 0.11, y * 0.13)
@@ -81,9 +86,9 @@ export function DotsCanvas({ dark }: { dark: boolean }) {
           // ゆっくり漂う大きなノイズ場で、ベースの濃淡もアナログにする
           const field = vnoise(x * 0.006 + 3, y * 0.006 + t * 0.015)
           const baseAlpha = (0.013 + 0.03 * n) * (0.3 + 0.95 * field)
-          let alpha = baseAlpha * 0.7 + influence * 0.32
+          let alpha = (baseAlpha * 0.7 + influence * 0.32) * boost
           if (alpha < 0.011) continue
-          if (alpha > 0.34) alpha = 0.34
+          if (alpha > cap) alpha = cap
           const radius = (0.82 + n * 0.42) * (1 + influence * 0.65)
           ctx.globalAlpha = alpha
           ctx.beginPath()

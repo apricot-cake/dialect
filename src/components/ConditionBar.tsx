@@ -21,7 +21,7 @@ function SupSection({
     <span className="flex flex-col gap-[7px]">
       <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.04em] text-muted">
         {tone === 'full' ? (
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
             <path d="M20 6 9 17l-5-5" />
           </svg>
         ) : (

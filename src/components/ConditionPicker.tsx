@@ -151,6 +151,7 @@ export function ConditionPicker({
                     <button
                       key={p.id}
                       type="button"
+                      data-noscale
                       data-tip={p.name}
                       aria-pressed={filterId === p.id}
                       className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
@@ -173,12 +174,9 @@ export function ConditionPicker({
                     key={def.id}
                     type="button"
                     data-noscale
-                    className="relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg transition-colors duration-100"
-                    style={{
-                      background: isAdded
-                        ? 'color-mix(in oklch, var(--accent) 5%, transparent)'
-                        : 'transparent',
-                    }}
+                    className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
+                      isAdded ? 'bg-(--picker-added)' : 'hover:bg-secondary'
+                    }`}
                     onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
                     onMouseEnter={() => setHover(def.id)}
                     onMouseLeave={() => setHover(null)}
@@ -196,7 +194,7 @@ export function ConditionPicker({
                       <InlineSupport concept={def.id} query={query} dark={dark} />
                     )}
                     {isAdded ? (
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                         <path d="M20 6 9 17l-5-5" />
                       </svg>
                     ) : (

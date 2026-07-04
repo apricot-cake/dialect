@@ -36,6 +36,11 @@
     --primary: oklch(0.25 0.012 272);
     --primary-fg: oklch(0.99 0.01 272);
     --accent: #4d5772;
+    /* アクセントをアイコン・チェックなど前景として使うときの色。
+       ダークでは #4d5772 が地に沈むので、そこだけ明るい変種に差し替える */
+    --accent-bright: #4d5772;
+    /* 追加済み条件の行の淡いアクセント塗り(テーマごとに視認できる濃さにする) */
+    --picker-added: color-mix(in oklch, var(--accent-bright) 7%, transparent);
 }
 
 .dark {
@@ -51,6 +56,9 @@
     --secondary: oklch(0.37 0.012 272);
     --primary: oklch(0.92 0.008 272);
     --primary-fg: oklch(0.24 0.01 272);
+    /* 暗い地に沈まない明るいスレートブルー。前景アクセント(チェック・行の塗り)に使う */
+    --accent-bright: oklch(0.78 0.06 268);
+    --picker-added: color-mix(in oklch, var(--accent-bright) 16%, transparent);
 }
 
 @layer base {
@@ -143,8 +151,10 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 18px oklch(0 0 0 / 0.04);
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* ホバー時は影で浮かせるだけにする。以前はここで scale(1.014) していたが、
+   拡大された祖先の内側に描かれるツールチップ・対応ポップが分数倍で再ラスタライズ
+   されて文字が滲むため、スケールはやめて影の変化だけで表現する */
 .dl-bar:hover {
-  transform: scale(1.014);
   box-shadow: 0 6px 16px oklch(0 0 0 / 0.09), 0 16px 36px oklch(0 0 0 / 0.06);
 }
 
@@ -154,6 +164,13 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
 
 /* カレンダーのヘッダー(年月表示)ボタンのホバー */
 .dl-calhead:hover { background: var(--secondary); }
+
+/* 条件追加モーダルの行。ホバーでわずかに拡大する(data-noscale で共通スケールは切り、
+   ここで専用の控えめなスケールをかける) */
+.dl-pick-row {
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background 130ms ease;
+}
+.dl-pick-row:hover { transform: scale(1.02); }
 
 /* ドロップダウン・ポップオーバーの出現アニメーション */
 .dl-drop-in { animation: dl-drop 200ms cubic-bezier(0.22, 1, 0.36, 1); }
