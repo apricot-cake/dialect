@@ -88,12 +88,15 @@ export const en = {
   'concept.resultType.label': 'Looking for',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
+  'concept.resultType.short': 'Shorts',
   'concept.resultType.channel': 'Channels',
+  'concept.resultType.playlist': 'Playlists',
   'concept.resultType.help':
-    'Choose the type of result. “Channels” finds creators/broadcasters instead of videos.',
+    'Choose the type of result. “Channels” finds creators/broadcasters instead of videos. Shorts and Playlists work on YouTube only.',
   'concept.sortOrder.label': 'Sort order',
   'concept.sortOrder.new': 'Newest',
   'concept.sortOrder.top': 'Popular',
+  'concept.sortOrder.hot': 'Trending',
   'concept.sortOrder.auto': 'Auto',
   'concept.sortOrder.help':
     'Sets the result order. “Auto” uses each site’s default order.',
@@ -198,6 +201,8 @@ export const en = {
     'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
   'note.twitch.japaneseOnly':
     'Filtering by language cannot be set via URL.',
+  'note.twitch.resultType': 'Twitch can only search videos and channels.',
+  'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.fivech.keywords':
     'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
   'note.fivech.subreddit':

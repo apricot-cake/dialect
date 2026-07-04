@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
@@ -49,4 +50,5 @@ export const bluesky: PlatformDef = {
     sortOrder: { level: 'partial', noteKey: 'note.bluesky.sort' },
   },
   buildUrl,
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

@@ -103,9 +103,9 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.workType) active.push('workType')
   if (state.resultType) active.push('resultType')
   // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
-  // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えず、
-  // ユーザーが意図的に選んだ「人気順」だけを注記・件数の対象にする
-  if (state.sort === 'top') active.push('sortOrder')
+  // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えない。
+  // ユーザーが意図的に選んだ並び順(人気順・急上昇など)だけを注記・件数の対象にする
+  if (state.sort !== 'new' && state.sort !== 'auto') active.push('sortOrder')
   return active
 }
 

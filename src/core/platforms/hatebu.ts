@@ -1,4 +1,5 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
@@ -38,10 +39,12 @@ function dynamicSupport(
     words(state.hashtag).length > 0 &&
     andTerms(state).length === 0 &&
     !state.exactPhrase.trim()
-  if (tagOnly && state.titleOnly) {
-    return { titleOnly: { level: 'none', noteKey: 'note.hatebu.titleTagConflict' } }
-  }
-  return {}
+  const overrides: Partial<Record<ConceptId, ConceptSupport>> =
+    tagOnly && state.titleOnly
+      ? { titleOnly: { level: 'none', noteKey: 'note.hatebu.titleTagConflict' } }
+      : {}
+  // 急上昇(note専用)などはてブにない並び順は落とす
+  return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
 
 export const hatebu: PlatformDef = {

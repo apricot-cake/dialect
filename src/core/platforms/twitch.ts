@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { andTerms } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実ブラウザ実測)
@@ -17,6 +17,16 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.twitch.tv/search?${params.toString()}`
 }
 
+// Twitchで探せるのは動画とチャンネルだけ。ショート/再生リストが選ばれたら落とす
+function dynamicSupport(
+  state: QueryState,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  if (state.resultType && state.resultType !== 'video' && state.resultType !== 'channel') {
+    return { resultType: { level: 'none', noteKey: 'note.twitch.resultType' } }
+  }
+  return {}
+}
+
 export const twitch: PlatformDef = {
   id: 'twitch',
   name: 'Twitch',
@@ -33,4 +43,5 @@ export const twitch: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  dynamicSupport,
 }

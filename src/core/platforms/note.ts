@@ -19,9 +19,14 @@ function buildUrl(state: QueryState): string | null {
   if (handle) parts.push(`from:@${handle}`)
   if (parts.length === 0) return null
 
-  // sort=new=新着、popular=人気(既定)。おまかせは指定しない
-  const sort =
-    state.sort === 'new' ? '&sort=new' : state.sort === 'top' ? '&sort=popular' : ''
+  // new=新着、top=人気(既定)、hot=急上昇。おまかせ(auto)は指定しない。全て実測で動作
+  const SORT_PARAM: Partial<Record<QueryState['sort'], string>> = {
+    new: 'new',
+    top: 'popular',
+    hot: 'hot',
+  }
+  const sortVal = SORT_PARAM[state.sort]
+  const sort = sortVal ? `&sort=${sortVal}` : ''
   return `https://note.com/search?context=note&q=${encodeURIComponent(parts.join(' '))}${sort}`
 }
 

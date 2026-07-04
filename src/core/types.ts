@@ -31,11 +31,17 @@ export type VideoLength = '' | 'short' | 'medium' | 'long'
 /** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
 export type WorkType = '' | 'illust' | 'manga'
 
-/** 探すものの種類。動画=投稿された動画、チャンネル=投稿者・配信者 */
-export type ResultType = '' | 'video' | 'channel'
+/**
+ * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
+ * playlist=再生リスト。ショート/再生リストはYouTube専用(Twitchは動画・チャンネルのみ)
+ */
+export type ResultType = '' | 'video' | 'short' | 'channel' | 'playlist'
 
-/** 並び順。new=新しい順、top=人気順、auto=サイトにおまかせ(URLで指定しない) */
-export type SortOrder = 'new' | 'top' | 'auto'
+/**
+ * 並び順。new=新しい順、top=人気順、hot=急上昇(note)、auto=サイトにおまかせ(指定しない)。
+ * hot は note 専用。対応しないサイトでは dynamicSupport(limitSort)で non-対応に落とす
+ */
+export type SortOrder = 'new' | 'top' | 'hot' | 'auto'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
@@ -131,6 +137,22 @@ export function supportOf(
   concept: ConceptId,
 ): ConceptSupport {
   return platform.support[concept] ?? NO_SUPPORT
+}
+
+/**
+ * dynamicSupport 用ヘルパー。選ばれた並び順が allowed に含まれないとき、sortOrder を
+ * 非対応(none)に落とす。'auto'(サイト任せ)は並び順を課さないので常に許容。
+ * note 専用の hot などを、その並び順を持たないサイトで「適用」に見せないために使う
+ */
+export function limitSort(
+  sort: SortOrder,
+  allowed: SortOrder[],
+  noteKey: MessageKey,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  if (sort !== 'auto' && !allowed.includes(sort)) {
+    return { sortOrder: { level: 'none', noteKey } }
+  }
+  return {}
 }
 
 /** ある条件セットをあるSNSへ翻訳した結果 */

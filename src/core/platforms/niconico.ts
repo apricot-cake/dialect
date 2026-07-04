@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
@@ -60,4 +61,5 @@ export const niconico: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

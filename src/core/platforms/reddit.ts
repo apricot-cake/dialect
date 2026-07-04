@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, quoteIfPhrase, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
@@ -74,4 +75,5 @@ export const reddit: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

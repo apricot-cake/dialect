@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
@@ -60,4 +61,5 @@ export const pixiv: PlatformDef = {
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },
   },
   buildUrl,
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

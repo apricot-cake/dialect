@@ -1,4 +1,5 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState, VideoLength } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState, ResultType, VideoLength } from '../types'
+import { limitSort } from '../types'
 import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
@@ -14,7 +15,14 @@ import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } f
 // 復活の可能性に賭けて送信は続けるが、実質なりゆき表示になる。
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
 const SORT_BYTE: Record<'new' | 'top', number> = { new: 0x02, top: 0x03 }
-const TYPE_BYTE: Record<'video' | 'channel', number> = { video: 0x01, channel: 0x02 }
+// 種別(タイプ)のバイト。video=1/channel=2/playlist=3 は既存調査値、short=9 は
+// 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用
+const TYPE_BYTE: Record<Exclude<ResultType, ''>, number> = {
+  video: 0x01,
+  short: 0x09,
+  channel: 0x02,
+  playlist: 0x03,
+}
 const LENGTH_BYTE: Record<Exclude<VideoLength, ''>, number> = {
   short: 0x01,
   medium: 0x03,
@@ -22,7 +30,8 @@ const LENGTH_BYTE: Record<Exclude<VideoLength, ''>, number> = {
 }
 
 function spParam(state: QueryState): string {
-  const sort = state.sort === 'auto' ? null : state.sort
+  // spで表せるのは新着/視聴回数(=人気)順のみ。hot等はYouTubeにないので送らない
+  const sort = state.sort === 'new' || state.sort === 'top' ? state.sort : null
   const filter: number[] = []
   if (state.resultType) filter.push(0x10, TYPE_BYTE[state.resultType])
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
@@ -71,12 +80,14 @@ const CHANNEL_CONFLICT: ConceptSupport = {
 function dynamicSupport(
   state: QueryState,
 ): Partial<Record<ConceptId, ConceptSupport>> {
-  if (!state.fromUser.trim()) return {}
-  return {
-    sortOrder: CHANNEL_CONFLICT,
-    videoLength: CHANNEL_CONFLICT,
-    resultType: CHANNEL_CONFLICT,
+  const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
+  if (state.fromUser.trim()) {
+    overrides.sortOrder = CHANNEL_CONFLICT
+    overrides.videoLength = CHANNEL_CONFLICT
+    overrides.resultType = CHANNEL_CONFLICT
   }
+  // 急上昇(hot)はnote専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
+  return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
 
 export const youtube: PlatformDef = {

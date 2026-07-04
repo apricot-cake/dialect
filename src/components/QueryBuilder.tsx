@@ -231,6 +231,7 @@ function LabelRow({
 const SORT_ORDERS: Array<{ value: SortOrder; labelKey: Parameters<typeof t>[0] }> = [
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
+  { value: 'hot', labelKey: 'concept.sortOrder.hot' },
   { value: 'auto', labelKey: 'concept.sortOrder.auto' },
 ]
 
@@ -252,7 +253,9 @@ const SELECT_OPTIONS = {
   resultType: [
     { value: '', labelKey: 'concept.resultType.none' },
     { value: 'video', labelKey: 'concept.resultType.video' },
+    { value: 'short', labelKey: 'concept.resultType.short' },
     { value: 'channel', labelKey: 'concept.resultType.channel' },
+    { value: 'playlist', labelKey: 'concept.resultType.playlist' },
   ],
 } as const satisfies Partial<
   Record<FieldDef['widget'], ReadonlyArray<{ value: string; labelKey: Parameters<typeof t>[0] }>>

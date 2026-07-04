@@ -1,4 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
@@ -68,4 +69,6 @@ export const x: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  // 急上昇(note専用)などはXにないので、選ばれたら並び順を非対応に落とす
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }
