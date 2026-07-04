@@ -6,6 +6,8 @@
 
 https://apricot-cake.github.io/dialect/
 
+![Dialect のデモ: キーワードと条件を組み立てて、各サイトの検索を開くまで](docs/demo.gif)
+
 ## 使い方
 
 1. 「条件を追加」から、キーワード・期間・ユーザー指定などの条件を選んで組み立てる。条件は対応サイト数の多い順に並び、それぞれ対応しているサイトを確認できる
@@ -33,7 +35,7 @@ https://apricot-cake.github.io/dialect/
 | niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順) |
 | note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
-| pixiv | `pixiv.net/tags` | 不要 | OR・除外・期間・並び順・イラスト/マンガ(タグ検索) |
+| pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索) |
 | Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
 | はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
 | Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |

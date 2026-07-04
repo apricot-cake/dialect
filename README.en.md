@@ -6,6 +6,8 @@ Assemble your conditions, and each is translated into every site's own search sy
 
 https://apricot-cake.github.io/dialect/
 
+![Dialect demo: building keywords and conditions, then opening each site's search](docs/demo.gif)
+
 ## How to use
 
 1. Add conditions such as keywords, date range, or user from "Add a condition". Conditions are listed in order of how many sites support them, and you can see which sites support each one.
@@ -33,7 +35,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort) |
 | note | `note.com/search` | Not required | User / sort only |
 | Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators) |
-| pixiv | `pixiv.net/tags` | Not required | OR, exclusion, date, sort, illustration/manga (tag search) |
+| pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search) |
 | Misskey.io | `misskey.io/search` | Required | Keywords / user only |
 | Hatena Bookmark | `b.hatena.ne.jp/search` | Not required | Rich (exclusion, date, bookmark count, sort, title/tag) |
 | Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |
