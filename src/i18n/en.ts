@@ -2,7 +2,7 @@
 export const en = {
   'app.langSwitch': '日本語',
   'app.themeToggle': 'Toggle theme',
-  'app.tagline': 'Build your conditions, then search each site',
+  'app.tagline': 'Build your conditions, then search each platform',
 
   // Search concepts (builder rows). placeholder = input example, help = the ⓘ hover description
   'concept.keywords.label': 'Keywords',

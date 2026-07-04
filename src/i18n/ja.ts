@@ -4,7 +4,7 @@ export const ja = {
   'app.langSwitch': 'English',
   'app.themeToggle': 'テーマを切り替え',
   // タイトル下の機能説明(キャッチコピーではなく画面の流れの説明)
-  'app.tagline': '条件を組み立てて、各SNS・掲示板で検索',
+  'app.tagline': '条件を組み立てて、各プラットフォームで検索',
 
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',
