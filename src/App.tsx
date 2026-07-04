@@ -239,6 +239,18 @@ export default function App() {
     }
   }
 
+  // 検索条件をまとめて初期状態へ戻す。バー構成・チップ・入力中テキストも空にする。
+  // サイト絞り込み(filterId)は検索条件ではなくモーダルの表示設定なので残す
+  const clearAll = () => {
+    setQuery(defaultState())
+    setAdded([])
+    setChips({})
+    setRaw({})
+  }
+  // 消すものが何も無い(初期状態)ときはクリアを出さない。
+  // 入力中テキストも emitChips で query に即反映されるため activeConcepts で拾える
+  const canClear = added.length > 0 || activeConcepts(query).length > 0
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-bg text-fg">
       <DotsCanvas dark={dark} />
@@ -262,6 +274,7 @@ export default function App() {
           chipsApi={chipsApi}
           patch={patchQuery}
           removeConcept={removeConcept}
+          onClear={canClear ? clearAll : undefined}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
         />

@@ -208,6 +208,7 @@ export const en = {
 
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
+  'ui.clearConditions': 'Clear all',
   'ui.removeCondition': 'Remove this condition',
   'ui.scrollToLinks': 'Scroll to open the searches',
   'ui.scrollToConditions': 'Scroll back to conditions',
