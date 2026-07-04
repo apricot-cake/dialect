@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef } from 'react'
+import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react'
 import { Ban, TriangleAlert } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
@@ -189,6 +189,9 @@ type SearchLinkProps = {
   url: string | null
   label: string
   brandColor: string
+  /** ボタン左に置くアイコン。brandColorを渡さず currentColor 継承にしておくと、
+      ボタン地(ブランド色)の上で可読なインク色で出る */
+  icon?: ReactNode
   onLaunch?: () => void
 } & ComponentPropsWithoutRef<'a'>
 
@@ -199,7 +202,7 @@ type SearchLinkProps = {
  * onLaunch(履歴記録)は左クリック(onClick)と中クリック(onAuxClick)の両方で拾う。
  */
 const SearchLink = forwardRef<HTMLAnchorElement, SearchLinkProps>(
-  function SearchLink({ url, label, brandColor, onLaunch, className, ...props }, ref) {
+  function SearchLink({ url, label, brandColor, icon, onLaunch, className, ...props }, ref) {
     const enabled = Boolean(url)
     return (
       <a
@@ -225,6 +228,7 @@ const SearchLink = forwardRef<HTMLAnchorElement, SearchLinkProps>(
           if (enabled && e.button === 1) onLaunch?.()
         }}
       >
+        {icon}
         {label}
       </a>
     )
@@ -290,6 +294,12 @@ function PlatformCards({
       {platforms.map((platform) => {
         const resolution = resolve(platform, state)
         const fallback = googleFallback(platform, state, resolution)
+        // 条件が1つでも効いていれば、適用数バッジ/注記のメタ行を出す
+        const hasMeta =
+          resolution.applied.length +
+            resolution.approximated.length +
+            resolution.dropped.length >
+          0
 
         return (
           <Card
@@ -297,20 +307,17 @@ function PlatformCards({
             className="gap-3 py-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
           >
             <CardContent className="flex flex-col gap-3 px-4">
-              <div className="flex items-center gap-2">
-                <PlatformIcon
-                  id={platform.id}
-                  className="size-4 shrink-0"
-                  brandColor={platform.brandColor}
-                />
-                <span className="font-semibold">{platform.name}</span>
-                <AppliedCountBadge resolution={resolution} />
-              </div>
-
-              <ResolutionNotes resolution={resolution} />
-              {/* 検索ボタンは本物のリンク。左クリック=前面、ホイールクリック/Ctrl・⌘+クリック=背面。
-                  背面オープンの使い方は右カラム上部で一度だけ案内する。
-                  要ログインのサイトだけ、そのサイト固有の注意をホバー/タップで出す */}
+              {/* アイコン+サービス名は検索ボタンに集約したので、ここはメタ情報だけ。
+                  注記(左)と「N/N 条件を適用」バッジ(右)を、条件があるときだけ出す */}
+              {hasMeta && (
+                <div className="flex items-start gap-2">
+                  <ResolutionNotes resolution={resolution} />
+                  <AppliedCountBadge resolution={resolution} />
+                </div>
+              )}
+              {/* 検索ボタン=アイコン+「サービス名で検索」。本物のリンクで、左クリック=前面、
+                  ホイールクリック/Ctrl・⌘+クリック=背面。背面オープンの使い方は右カラム上部で
+                  一度だけ案内する。要ログインのサイトだけ、そのサイト固有の注意をホバー/タップで出す */}
               {platform.requiresLogin ? (
                 <Tooltip>
                   <TooltipTrigger
@@ -318,6 +325,12 @@ function PlatformCards({
                       <SearchLink
                         url={resolution.url}
                         label={tf('launch.search', { name: platform.name })}
+                        icon={
+                          <PlatformIcon
+                            id={platform.id}
+                            className="size-4 shrink-0"
+                          />
+                        }
                         brandColor={platform.brandColor}
                         onLaunch={onLaunch}
                       />
@@ -331,6 +344,9 @@ function PlatformCards({
                 <SearchLink
                   url={resolution.url}
                   label={tf('launch.search', { name: platform.name })}
+                  icon={
+                    <PlatformIcon id={platform.id} className="size-4 shrink-0" />
+                  }
                   brandColor={platform.brandColor}
                   onLaunch={onLaunch}
                 />
