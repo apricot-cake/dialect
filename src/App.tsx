@@ -338,6 +338,7 @@ export default function App() {
                     onChange={setQuery}
                     platforms={PLATFORMS}
                     filterId={filterId}
+                    isMobile={isMobile}
                   />
                 </CardContent>
               </Card>

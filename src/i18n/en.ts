@@ -101,6 +101,8 @@ export const en = {
   // Shared hint above the builder
   'builder.hint.enter':
     'Press Enter to separate words and set multiple words in one field.',
+  'builder.hint.help.pc': 'Point at a field name to see its explanation.',
+  'builder.hint.help.touch': 'Tap a field name to see its explanation.',
 
   // Site filter and supported-site badge
   'builder.filter.label': 'Filter conditions by site',

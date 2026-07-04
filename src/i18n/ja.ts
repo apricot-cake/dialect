@@ -102,6 +102,9 @@ export const ja = {
 
   // ビルダー上部の共通ヒント
   'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
+  // 項目の説明の出し方(発見性)。操作が違うのでPC/スマホで出し分ける
+  'builder.hint.help.pc': '項目名にカーソルを合わせると説明が出ます',
+  'builder.hint.help.touch': '項目名をタップすると説明が出ます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
   'builder.filter.label': 'サイトで条件を絞る',

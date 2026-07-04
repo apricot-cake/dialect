@@ -23,6 +23,8 @@ interface Props {
   platforms: PlatformDef[]
   /** このサイトが使える条件だけに絞って表示する(nullなら全条件) */
   filterId: PlatformId | null
+  /** 項目説明の出し方(ホバー/タップ)の案内を出し分けるため */
+  isMobile: boolean
 }
 
 /** 値が入っているか。サイト絞り込み中でも、値の入った条件は隠さないために使う */
@@ -255,7 +257,13 @@ const SELECT_OPTIONS = {
   Record<FieldDef['widget'], ReadonlyArray<{ value: string; labelKey: Parameters<typeof t>[0] }>>
 >
 
-export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
+export function QueryBuilder({
+  state,
+  onChange,
+  platforms,
+  filterId,
+  isMobile,
+}: Props) {
   const set = (patch: Partial<QueryState>) => onChange({ ...state, ...patch })
 
   const supportersOf = (field: FieldDef) =>
@@ -422,7 +430,11 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
 
   return (
     <div className="flex flex-col gap-7">
-      <p className="text-xs text-muted-foreground">{t('builder.hint.enter')}</p>
+      {/* ビルダー上部の使い方ヒント。項目説明の出し方はPC/スマホで文言を出し分ける */}
+      <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+        <p>{t('builder.hint.enter')}</p>
+        <p>{t(isMobile ? 'builder.hint.help.touch' : 'builder.hint.help.pc')}</p>
+      </div>
       {visibleFields.map(renderField)}
     </div>
   )
