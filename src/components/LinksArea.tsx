@@ -10,7 +10,8 @@ import type {
   Resolution,
 } from '@/core/types'
 import { t, tf, type MessageKey } from '@/i18n'
-import { PlatformBadge, readableInk } from './PlatformBadge'
+import { readableInk } from '@/lib/color'
+import { PlatformBadge } from './PlatformBadge'
 import { ScrollUpPill } from './ConditionsArea'
 
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [

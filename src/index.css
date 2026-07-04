@@ -1,15 +1,12 @@
 @import "tailwindcss";
-@import "tw-animate-css"; /* 旧UI用。新UIスワップ後に削除する */
-@import "shadcn/tailwind.css"; /* 旧UI用。新UIスワップ後に削除する */
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
 
-    /* 新デザインのトークン(Dialect.dc.html の VARS) */
+    /* デザイン(Dialect.dc.html)のトークンをTailwindユーティリティへ渡す */
     --color-bg: var(--bg);
     --color-fg: var(--fg);
     --color-card: var(--card);
@@ -22,27 +19,6 @@
     --color-primary: var(--primary);
     --color-primary-fg: var(--primary-fg);
     --color-accent: var(--accent);
-
-    /* 旧UI互換エイリアス(新UIスワップ後に削除する) */
-    --color-background: var(--bg);
-    --color-foreground: var(--fg);
-    --color-card-foreground: var(--fg);
-    --color-popover: var(--card);
-    --color-popover-foreground: var(--fg);
-    --color-primary-foreground: var(--primary-fg);
-    --color-secondary-foreground: var(--fg);
-    --color-muted-foreground: var(--muted);
-    --color-accent-foreground: var(--fg);
-    --color-destructive: oklch(0.577 0.245 27.325);
-    --color-input: var(--border);
-    --color-ring: var(--muted);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
@@ -60,7 +36,6 @@
     --primary: oklch(0.25 0.012 272);
     --primary-fg: oklch(0.99 0.01 272);
     --accent: #4d5772;
-    --radius: 0.625rem;
 }
 
 .dark {
