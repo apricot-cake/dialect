@@ -535,12 +535,17 @@ URLで指定できる条件はすべて概念化する方針(対応1サイトで
 
 追加した演算子を実機で確認した(curl＋ログイン済みブラウザ)。結果は上記各項目に反映済み: X `url:`✅ / 5ch 複数`@板`✅ / pixiv `s_mode=s_tc`✅ / Misskey `-語`・`"..."`⚠️(暫定) / Reddit `self:no`❌(撤回)。Misskeyの厳密な対比(`-犬`が犬投稿を実際に除くか)だけ次回に持ち越し。
 
-## 共通概念の拡張を見送った判断(YouTube Shorts/playlist/movie・Twitch categories・note like/hot)
+## 共通概念の拡張(2026-07-04 実装)
 
-監査で挙がった「共通enum(resultType/sortOrder)にプラットフォーム固有の選択肢を足す」案は、**今回は見送る**。理由:
+当初「1サイト専用の選択肢を共通enumに足すと散らかる」として見送りかけたが、これはプロジェクト方針(「URLで指定できる条件はすべて概念化する。対応1サイトでも追加してよい。対応サイト数順ソート＋サイト絞り込みで吸収」)および既存の1サイト専用フィールド(excludeUser/toUser/mediaOnly/linksOnly/verifiedOnly/minReposts=X専用、mentionsUser=Bluesky専用、workType=pixiv専用)と矛盾するため撤回。値レベルの他サイト非対応は dynamicSupport(共通ヘルパー `limitSort`)で「適用と出るのに送られない」を防げる。以下を実装:
 
-- **設計原則との衝突**: 「表現力より直感性優先」(足す=絞る原則)に反する。ショート/再生リスト/映画/カテゴリ/スキ数順/急上昇 はいずれも実質1サイトでしか効かず、共通ドロップダウンに並べると大半のサイトで灰色化して選択肢が散らかる。
-- **監査で潰したバグの再発**: これらは「名前としては対応でも、値としては他サイトで送れない」ため、他プラットフォームで dynamicSupport による打ち消しが多数必要になり、まさに今回直した「適用と出るのに送られない」不整合を各所に生む。
-- **一部はデータ未確定**: YouTube Shorts の sp protobuf バイトは公開情報でも特定できず(2026-07-04調査)、推測値は送れない。movie のバイトも未確認。
+- **resultType に short(ショート)/playlist(再生リスト)を追加**: YouTubeのタイプ。sp種別バイトは video=1/channel=2/playlist=3(既存調査)、**short=9 は2026-07-04にYouTubeフィルタUIから実測**(単体sp=EgIQCQ%3D%3D)。Twitchはショート/再生リストを持たないため twitch.ts の dynamicSupport で resultType を落とす。
+- **sortOrder に hot(急上昇)を追加**: note の `sort=hot`。**2026-07-04ブラウザ実測で動作確認**(タイトル「急上昇の記事一覧」・急上昇タブ選択)。note以外の並び順対応サイト(X/Bluesky/YouTube/niconico/Reddit/pixiv/はてブ)は `limitSort(sort, ['new','top'], …)` で hot 選択時に sortOrder を非対応へ落とす。
+- **pixiv タイトルだけ(s_mode=s_tc)**: 既存 titleOnly 概念の再利用(上記「網羅の穴」参照)。
 
-例外は **pixiv タイトルだけ**で、これは既存の titleOnly 概念の再利用(新しい選択肢を増やさない)なので実装した。真にサイト固有の絞り込みを増やすなら、共通enumではなく「サイト固有オプション」の仕組みが要る(別途の設計判断)。
+### 見送り(実装しないと判断)
+
+- **note `sort=like`(定番・スキの多い順)**: `sort=like` は実測で動作(タイトル「定番の記事一覧」・いいね5万→1.4万の降順)するが、既存の「人気順(top→popular)」と用途が重複しがちで、並び順ボタンが5個になり幅も溢れる。UXコストが価値を上回るため入れない。
+- **YouTube movie(映画)**: sp種別バイト未確定(採取が不安定)＋用途がニッチ(有料映画)。
+- **Twitch categories(type=categories)**: ゲーム/ディレクトリ閲覧でありキーワード検索の対象として薄い。
+- 真にサイト固有性が強い絞り込みを大量に増やすなら、共通enumではなく「サイト固有オプション」の仕組みを別途設計するのが筋。
