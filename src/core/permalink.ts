@@ -43,7 +43,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.excludeReplies) params.set('norep', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
-  if (state.japaneseOnly) params.set('ja', '1')
+  if (state.language) params.set('lang', state.language)
   if (state.workType) params.set('wt', state.workType)
   if (state.resultType) params.set('rt', state.resultType)
   // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める
@@ -97,13 +97,18 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.excludeReplies = params.get('norep') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
-  state.japaneseOnly = params.get('ja') === '1'
+  const lang = params.get('lang')
+  if (lang === 'ja' || lang === 'en') state.language = lang
+  // 旧形式(「日本語の投稿だけ」トグル時代)の ja=1 は日本語指定として読む
+  else if (params.get('ja') === '1') state.language = 'ja'
   const wt = params.get('wt')
   if (wt === 'illust' || wt === 'manga') state.workType = wt
   const rt = params.get('rt')
-  if (rt === 'video' || rt === 'channel') state.resultType = rt
+  if (rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist') {
+    state.resultType = rt
+  }
   const sort = params.get('sort')
-  if (sort === 'top' || sort === 'auto') state.sort = sort
+  if (sort === 'top' || sort === 'hot' || sort === 'auto') state.sort = sort
   return state
 }
 
