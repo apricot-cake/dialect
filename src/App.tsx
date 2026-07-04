@@ -37,10 +37,9 @@ import { QueryBuilder } from '@/components/QueryBuilder'
 import { LaunchPanel } from '@/components/LaunchPanel'
 import { SavedSearches } from '@/components/SavedSearches'
 
-// サイト絞り込みの選択中スタイル。薄グレーの枠背景(bg-muted/30)と secondary が
-// ほぼ同色で埋もれるため、淡い塗り+輪郭でコントラストを付ける
-// (塗りは淡めにしてブランド色アイコンを潰さない)
-const FILTER_ACTIVE = 'bg-primary/15 ring-1 ring-primary/40 hover:bg-primary/20'
+// サイト絞り込みの選択中スタイル。半透明塗り+濃いリングは濁って見えたので、
+// 単色の淡いグレー塗り(輪郭なし)にする。ブランド色アイコンを潰さない濃さに留める
+const FILTER_ACTIVE = 'bg-foreground/10 hover:bg-foreground/15'
 
 // 左右カラムを「面」として分けるため、PCでは各カラムを軽く沈めたトレイに載せる。
 // 中身のカードは白なので、ごく淡いグレー地の上で浮いて見える(面の明度差で分離する)。
@@ -145,9 +144,8 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="flex min-h-dvh flex-col">
-        {/* 追従ヘッダー: ロゴマーク+ツール名+機能説明。右端にテーマ/言語切替。
-            スクロールで背後のカードが透けるよう半透明+backdrop-blur を敷く */}
-        <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-md">
+        {/* ヘッダー: ロゴマーク+ツール名。右端にテーマ/言語切替。追従はせず先頭に置くだけ */}
+        <header className="border-b border-border/60 bg-background">
           <div
             className={`mx-auto flex w-full items-center justify-between gap-4 px-4 py-3 ${
               isMobile ? 'max-w-4xl' : 'max-w-7xl'
