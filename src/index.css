@@ -50,15 +50,16 @@
 
 :root {
     /* 冷たい既定 zinc をやめ、ごく薄く青紫(272)を差した自前ニュートラル。
-       ページ地は極薄グレー、カードは純白で面の明度差で奥行きを出す(Stripe/Notion系)。
-       アクセント(=primary/ring)はインディゴ。彩度は抑えて"味付け"程度に留める */
-    --background: oklch(0.976 0.003 272);
+       ページ地は白。奥行きはカラムのトレイ(淡いグレー面)とカードのリング/影で出す。
+       アクセント色は持たせない。色はブランドの検索ボタンだけに担わせ、枠側(primary/ring)は
+       濃い無彩色にとどめる。多ブランドを束ねるので、チロメを無彩色にして色の競合を避ける */
+    --background: oklch(1 0 0);
     --foreground: oklch(0.21 0.012 272);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.21 0.012 272);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.21 0.012 272);
-    --primary: oklch(0.55 0.2 272);
+    --primary: oklch(0.25 0.012 272);
     --primary-foreground: oklch(0.985 0.01 272);
     --secondary: oklch(0.967 0.005 272);
     --secondary-foreground: oklch(0.28 0.012 272);
@@ -69,7 +70,7 @@
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.918 0.006 272);
     --input: oklch(0.918 0.006 272);
-    --ring: oklch(0.55 0.2 272);
+    --ring: oklch(0.45 0.02 272);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
@@ -93,8 +94,8 @@
     --card-foreground: oklch(0.985 0.002 272);
     --popover: oklch(0.216 0.008 272);
     --popover-foreground: oklch(0.985 0.002 272);
-    --primary: oklch(0.62 0.19 272);
-    --primary-foreground: oklch(0.985 0.01 272);
+    --primary: oklch(0.92 0.008 272);
+    --primary-foreground: oklch(0.22 0.01 272);
     --secondary: oklch(0.27 0.01 272);
     --secondary-foreground: oklch(0.985 0.002 272);
     --muted: oklch(0.27 0.01 272);
@@ -104,7 +105,7 @@
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.62 0.19 272);
+    --ring: oklch(0.62 0.02 272);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
@@ -126,15 +127,9 @@
     }
   body {
     @apply text-foreground;
-    /* ページ地の上に、アクセント色のごく淡いグロー(上端中央)を敷いて奥行きを出す */
+    /* アクセント色は使わないので背景グローも撤去。地は極薄グレーのフラットにして、
+       色はブランドの検索ボタンだけに担わせる */
     background-color: var(--background);
-    background-image: radial-gradient(
-      55rem 30rem at 50% -9rem,
-      color-mix(in oklch, var(--primary) 12%, transparent),
-      transparent 62%
-    );
-    background-attachment: fixed;
-    background-repeat: no-repeat;
     }
   html {
     @apply font-sans;
