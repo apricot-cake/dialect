@@ -1,11 +1,7 @@
 // English UI strings. Keys mirror ja.ts exactly (enforced by the Record type in index.ts).
 export const en = {
-  'app.title': 'Cross-SNS Search',
-  'app.description':
-    'Build a search once, and open it on each social site and forum in that site’s own search syntax.',
   'app.langSwitch': '日本語',
   'app.themeToggle': 'Toggle theme',
-  'app.backToTop': 'Back to top',
   'app.tagline': 'Build your conditions, then search each site',
 
   // Search concepts (builder rows). placeholder = input example, help = the ⓘ hover description
@@ -52,8 +48,6 @@ export const en = {
   'concept.hashtag.help':
     'Finds posts with the given hashtag. Do not include #.',
   'concept.period.label': 'Date range',
-  'concept.period.since': 'From',
-  'concept.period.until': 'Before',
   'concept.period.help':
     'Filters by post date. You can set just one side.',
   'concept.mediaOnly.label': 'With image or video only',
@@ -104,18 +98,10 @@ export const en = {
   'concept.sortOrder.auto': 'Auto',
   'concept.sortOrder.help': 'Sets the result order.',
 
-  // Shared hint above the builder
-  'builder.hint.enter':
-    'Press Enter to separate words and set multiple words in one field.',
-  'builder.hint.help.pc': 'Point at a field name to see its explanation.',
-  'builder.hint.help.touch': 'Tap a field name to see its explanation.',
-
-  // Site filter and supported-site badge
+  // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
   'builder.filter.help':
     'Shows only the conditions the chosen site supports. This changes what is listed, not which sites you search.',
-  'builder.help.iconLabel': 'About this condition',
-  'builder.filter.active': 'Filtered',
   'builder.filter.all': 'All',
   'builder.support.label': 'Sites',
 
@@ -124,7 +110,6 @@ export const en = {
   'note.loose.exact':
     'Exact phrase does not work; it is searched as ordinary keywords.',
   'note.exact.unreliable': 'Exact phrase may not work.',
-  'note.hashtag.askeyword': 'Searched as an ordinary keyword.',
   'note.tagPage.combined':
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.nosort': 'Sort order cannot be set via URL.',
@@ -212,51 +197,16 @@ export const en = {
   'launch.search': 'Search {name}',
   'launch.bgHint':
     'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
-  'launch.loginNote':
-    'You must be signed in to {name} in this browser to see results.',
-  'launch.appliedCount': '{applied}/{total} conditions applied',
   'launch.approxHeading': 'Partially works',
   'launch.droppedHeading': 'Not available',
-  'launch.urlPreview': 'URL to open',
 
-  // Google fallback (site: search). The suffixes follow a list of condition names
-  'google.recovered.suffix':
-    ' can still be used by searching within this site on Google',
-  'google.lost.suffix': ' can’t be carried over to Google',
-  'google.launch': 'Search within {name} on Google',
-
-  // Sharing
-  'share.copyLink': 'Copy link',
-  'share.copyLink.tip':
-    'Copies a URL that opens the current conditions as-is. Handy for bookmarking or sharing.',
-  'share.copied': 'Copied',
-
-  // Mobile screen-switch button (bottom right). Names the destination screen
-  'tab.build': 'Enter conditions',
-  'tab.launch': 'Search',
-  'column.build': 'Search conditions',
-  'column.launch': 'Open on each site',
-
-  // Site group headings inside the right column
+  // Site group headings on the launch screen
   'group.sns': 'SNS',
   'group.video': 'Video',
   'group.image': 'Illustration & Images',
   'group.text': 'Blogs & Forums',
 
-  // Builder actions
-  'builder.clear': 'Clear conditions',
-  'builder.clear.tip': 'Resets all conditions to empty.',
-
-  // Saved searches and history
-  'saved.save': 'Save conditions',
-  'saved.save.tip':
-    'Saves the current conditions in this browser. Recall them from “Saved searches” below.',
-  'saved.title': 'Saved searches',
-  'saved.delete': 'Delete',
-  'history.title': 'Recently opened',
-  'summary.exclude': 'Exclude',
-
-  // New UI (two-screen snap layout)
+  // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
   'ui.removeCondition': 'Remove this condition',
   'ui.scrollToLinks': 'Scroll to open the searches',
@@ -275,5 +225,4 @@ export const en = {
     'Some filters rely on unofficial behavior and may break without notice.',
   'footer.privacy':
     'Your conditions are never sent to a server — search URLs are built entirely in your browser.',
-  'footer.github': 'GitHub',
 }

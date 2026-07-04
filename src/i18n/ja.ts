@@ -1,13 +1,8 @@
 // SNSまとめて検索の全UI文言。表示は日本語のみだが、将来の多言語化に備えて文言はこの辞書に集約する。
 export const ja = {
-  // ページ左上のツール名と、その下の機能説明(キャッチコピーではなく何をするかの説明)
-  'app.title': 'SNSまとめて検索',
-  'app.description':
-    '検索条件を組み立てると、各SNS・掲示板の検索構文に翻訳して検索ページを開きます',
   // 言語切替ボタンのラベルは切替先の言語名(英語表示なら「日本語」)
   'app.langSwitch': 'English',
   'app.themeToggle': 'テーマを切り替え',
-  'app.backToTop': '最上部へ戻る',
   // タイトル下の機能説明(キャッチコピーではなく画面の流れの説明)
   'app.tagline': '条件を組み立てて、各SNS・掲示板で検索',
 
@@ -55,8 +50,6 @@ export const ja = {
   'concept.hashtag.help':
     '指定したハッシュタグがついた投稿を探します。#はつけません',
   'concept.period.label': '期間',
-  'concept.period.since': 'この日から',
-  'concept.period.until': 'この日の前まで',
   'concept.period.help':
     '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
   'concept.mediaOnly.label': '画像・動画つきの投稿だけ',
@@ -107,18 +100,10 @@ export const ja = {
   'concept.sortOrder.auto': 'おまかせ',
   'concept.sortOrder.help': '検索結果の並び順を指定します',
 
-  // ビルダー上部の共通ヒント
-  'builder.hint.enter': 'Enterでワードを区切って、1つの項目に複数のワードを指定できます',
-  // 項目の説明の出し方(発見性)。操作が違うのでPC/スマホで出し分ける
-  'builder.hint.help.pc': '項目名にカーソルを合わせると説明が出ます',
-  'builder.hint.help.touch': '項目名をタップすると説明が出ます',
-
-  // ビルダーのサイト絞り込み・対応サイト数バッジ
+  // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
   'builder.filter.help':
     '選んだサイトで使える条件だけを一覧に表示します。表示が変わるだけで、検索先のサイトは変わりません',
-  'builder.help.iconLabel': 'この条件の説明',
-  'builder.filter.active': '表示中',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',
 
@@ -126,7 +111,6 @@ export const ja = {
   'note.loose.and': 'すべてのキーワードを含む保証はありません',
   'note.loose.exact': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.exact.unreliable': '完全一致は効かない場合があります',
-  'note.hashtag.askeyword': 'ふつうのキーワードとして検索されます',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.nosort': '並び順はURLでは指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
@@ -186,50 +170,16 @@ export const ja = {
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
   'launch.bgHint': 'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
-  'launch.loginNote': '{name}にログインしたブラウザでないと検索結果を見られません',
-  'launch.appliedCount': '{applied}/{total} 条件を適用',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
-  'launch.urlPreview': '開くURL',
 
-  // Googleフォールバック(site:検索)。suffix は条件名の一覧の後ろに続ける
-  'google.recovered.suffix': 'は、Googleでこのサイトの中だけを探せば使えます',
-  'google.lost.suffix': 'はGoogleには引き継げません',
-  'google.launch': 'Googleで{name}の中を検索',
-
-  // 共有
-  'share.copyLink': 'リンクをコピー',
-  'share.copyLink.tip':
-    '今の条件をそのまま開けるURLをコピーします。ブックマークや共有に使えます',
-  'share.copied': 'コピーしました',
-
-  // スマホの画面切り替えボタン(右下)。移動先の画面名として使う
-  'tab.build': '条件を入力',
-  'tab.launch': '検索する',
-  // PC2カラムの見出し(左=条件の組み立て、右=各サイトで開く)
-  'column.build': '検索条件',
-  'column.launch': '各サイトで開く',
-
-  // 右カラム内のサイトのグループ見出し
+  // 起動画面のサイトのグループ見出し
   'group.sns': 'SNS',
   'group.video': '動画',
   'group.image': 'イラスト・画像',
   'group.text': 'ブログ・掲示板',
 
-  // ビルダー操作
-  'builder.clear': '条件をクリア',
-  'builder.clear.tip': 'すべての条件を空に戻します',
-
-  // 保存検索・履歴
-  'saved.save': '条件を保存',
-  'saved.save.tip':
-    '今の条件をこのブラウザに保存します。下の「保存した検索」から呼び出せます',
-  'saved.title': '保存した検索',
-  'saved.delete': '削除',
-  'history.title': '最近ひらいた検索',
-  'summary.exclude': '除外',
-
-  // 新UI(2画面スナップ構成)の操作まわり
+  // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',
   'ui.removeCondition': 'この条件を外す',
   'ui.scrollToLinks': 'スクロールで検索を開く',
@@ -249,5 +199,4 @@ export const ja = {
     '一部の絞り込みは非公式な仕組みのため、動かなくなることがあります。',
   'footer.privacy':
     '入力した条件がサーバーへ送信されることはありません。検索URLの組み立てはすべてブラウザ内で行われます。',
-  'footer.github': 'GitHub',
 } as const
