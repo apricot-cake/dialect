@@ -273,6 +273,20 @@ export function QueryBuilder({
   const supportersOf = (field: FieldDef) =>
     platforms.filter((p) => supportOf(p, field.concept).level !== 'none')
 
+  // 「対応 N」バッジは選んだ値まで踏まえた実対応数にする。並び順の「急上昇」や
+  // 探すものの「ショート」のように、概念は多くのサイトが持つが特定の値は1サイト
+  // しか効かないとき、その値では dynamicSupport で落ちるサイトを除いて数える
+  // (見かけの対応数が水増しされないように)。表示位置は値で動くと鬱陶しいので、
+  // 並べ替え・絞り込みは supportersOf(静的)のまま使う
+  const dynByPlatform = new Map(
+    platforms.map((p) => [p.id, p.dynamicSupport?.(state)] as const),
+  )
+  const activeSupportersOf = (field: FieldDef) =>
+    platforms.filter((p) => {
+      const override = dynByPlatform.get(p.id)?.[field.concept]
+      return (override ?? supportOf(p, field.concept)).level !== 'none'
+    })
+
   // 対応サイト数の多い順に全条件を並べる(セクション分けなし)。
   // 絞り込み中でも、値が入っている条件は意図しない適用を防ぐため隠さない
   const visibleFields = FIELDS.map((field) => ({
@@ -442,7 +456,13 @@ export function QueryBuilder({
       </div>
       {visibleFields.map((item) => (
         <Card key={item.field.concept} size="sm" className="shadow-sm">
-          <CardContent>{renderField(item)}</CardContent>
+          {/* 並べ替え・絞り込みは静的な supporters、バッジは値まで踏まえた実対応数 */}
+          <CardContent>
+            {renderField({
+              field: item.field,
+              supporters: activeSupportersOf(item.field),
+            })}
+          </CardContent>
         </Card>
       ))}
     </div>
