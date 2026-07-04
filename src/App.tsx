@@ -195,7 +195,8 @@ export default function App() {
               isMobile
                 ? // 下部の切り替えボタンに最後の内容が隠れないよう余白をとる
                   'flex flex-col gap-8 pt-6 pb-24'
-                : 'grid grid-cols-2 items-start gap-10 pt-8 pb-6'
+                : // 中央に 1px の縦罫トラックを挟んで左右を分ける。gap は罫の左右に取る
+                  'grid grid-cols-[1fr_1px_1fr] items-start gap-x-8 pt-8 pb-6'
             }
           >
           {/* 条件タブ / PCでは左カラム: 検索条件の組み立て */}
@@ -204,9 +205,14 @@ export default function App() {
               isMobile && tab !== 'build' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
-            <h2 className="text-sm font-semibold tracking-tight">
-              {t('column.build')}
-            </h2>
+            {/* カラム見出しは、アイコン+下罫でカラムの「ヘッダー」として接地させる。
+                アイコンはモバイル切替ボタンと同じ(条件=スライダー)で対応づける */}
+            <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
+              <SlidersHorizontal className="size-4 shrink-0 text-primary" />
+              <h2 className="text-sm font-semibold tracking-tight">
+                {t('column.build')}
+              </h2>
+            </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -353,15 +359,24 @@ export default function App() {
             />
           </section>
 
+          {/* PC限定: 左右カラムを分ける中央の縦罫。高い方の列に合わせて全高に伸ばす */}
+          {!isMobile && (
+            <div aria-hidden className="self-stretch bg-border" />
+          )}
+
           {/* 検索タブ / PCでは右カラム: 各サイトで開く */}
           <section
             className={`${
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
-            <h2 className="text-sm font-semibold tracking-tight">
-              {t('column.launch')}
-            </h2>
+            {/* 見出し=検索アイコン+下罫。左カラムと同じ作りでヘッダーとして接地させる */}
+            <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
+              <Search className="size-4 shrink-0 text-primary" />
+              <h2 className="text-sm font-semibold tracking-tight">
+                {t('column.launch')}
+              </h2>
+            </div>
             <LaunchPanel
               state={query}
               onLaunch={() => setHistoryEntries(recordHistory(query))}
