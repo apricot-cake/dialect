@@ -181,12 +181,19 @@ function LabelRow({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {leading}
-      {/* フィールドタイトル自体がヒントのホバー対象(ⓘは廃止)。htmlForで見出しクリックは入力欄へ */}
+      {/* フィールドタイトル自体がヒントの対象(ⓘは廃止)。ホバー(PC)/タップ(スマホ)で説明を出す。
+          タップ時、トグル以外は htmlFor による入力欄フォーカス(スマホでキーボードが出る)を止め、
+          説明の表示だけにする。トグルはラベルタップでスイッチを切り替えられるよう既定動作を残す */}
       <Tooltip>
         <TooltipTrigger
           render={
             <label
               htmlFor={field.field}
+              onClick={
+                field.widget === 'toggle'
+                  ? undefined
+                  : (e) => e.preventDefault()
+              }
               className="cursor-help text-sm leading-none font-medium select-none"
             />
           }

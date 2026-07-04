@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "@/lib/utils"
@@ -17,19 +18,40 @@ function TooltipProvider({
   )
 }
 
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
-  // 既定ではツールチップ自体にカーソルを乗せると消えずに残るため無効化
+// タッチ端末はホバーが無く、base-ui のツールチップはタップでは開かない。
+// トリガーのタップ(=クリック)でも開閉できるよう、開閉stateをRootとTriggerで共有する。
+// ホバー/フォーカスは従来どおり base-ui が onOpenChange 経由で駆動する。
+const TooltipToggleContext =
+  React.createContext<React.Dispatch<React.SetStateAction<boolean>> | null>(null)
+
+function Tooltip(props: TooltipPrimitive.Root.Props) {
+  const [open, setOpen] = React.useState(false)
   return (
-    <TooltipPrimitive.Root
-      data-slot="tooltip"
-      disableHoverablePopup
-      {...props}
-    />
+    <TooltipToggleContext.Provider value={setOpen}>
+      {/* 既定ではツールチップ自体にカーソルを乗せると消えずに残るため無効化 */}
+      <TooltipPrimitive.Root
+        data-slot="tooltip"
+        disableHoverablePopup
+        {...props}
+        open={open}
+        onOpenChange={(o) => setOpen(o)}
+      />
+    </TooltipToggleContext.Provider>
   )
 }
 
-function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+function TooltipTrigger({ onClick, ...props }: TooltipPrimitive.Trigger.Props) {
+  const setOpen = React.useContext(TooltipToggleContext)
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      onClick={(event) => {
+        setOpen?.((o) => !o)
+        onClick?.(event)
+      }}
+      {...props}
+    />
+  )
 }
 
 /**
