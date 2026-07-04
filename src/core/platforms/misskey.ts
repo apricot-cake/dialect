@@ -44,6 +44,8 @@ export const misskey: PlatformDef = {
   name: 'Misskey.io',
   group: 'sns',
   brandColor: '#A1CA03',
+  // 黄緑は輝度判定だと黒字になるが、Misskey本家の配色に合わせて白字で固定する
+  ink: '#ffffff',
   requiresLogin: true,
   googleSite: 'misskey.io',
   support: {

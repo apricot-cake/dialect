@@ -120,6 +120,11 @@ export interface PlatformDef {
   group: PlatformGroup
   /** ボタン等に使うブランドカラー */
   brandColor: string
+  /**
+   * ブランド色の上に置く文字・アイコン色の明示指定(任意)。通常は輝度から自動判定するが、
+   * Misskeyの黄緑のように自動だと望む色にならないサイトで白/黒を固定するために使う
+   */
+  ink?: string
   requiresLogin: boolean
   /** Googleフォールバック(site:検索)で使うドメイン */
   googleSite: string

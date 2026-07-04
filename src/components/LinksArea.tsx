@@ -32,16 +32,19 @@ function BanIcon() {
   )
 }
 
-/** 「一部だけ効く/使えない」の見出し+条件名チップの1段 */
+/**
+ * 「一部だけ効く/使えない」の見出し+各条件の1段。条件名チップの下に、その条件が
+ * なぜ近似/非対応なのかの注記本文(noteKey)を出す。注記が無い条件は名前だけ
+ */
 function MetaSection({
   tone,
-  concepts,
+  items,
 }: {
   tone: 'approx' | 'dropped'
-  concepts: ConceptId[]
+  items: Array<{ concept: ConceptId; noteKey?: MessageKey }>
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-[7px]">
       <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.04em] text-muted">
         {tone === 'approx' ? (
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
@@ -54,17 +57,21 @@ function MetaSection({
         )}
         {t(tone === 'approx' ? 'launch.approxHeading' : 'launch.droppedHeading')}
       </span>
-      <div className="flex flex-wrap gap-1">
-        {concepts.map((concept) => (
-          <span
-            key={concept}
-            className={`inline-flex rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium ${
-              tone === 'dropped' ? 'line-through decoration-[var(--faint)]' : ''
-            }`}
-            style={{ color: SOFT_INK }}
-          >
-            {t(CONCEPT_LABEL_KEYS[concept])}
-          </span>
+      <div className="flex flex-col gap-[7px]">
+        {items.map(({ concept, noteKey }) => (
+          <div key={concept} className="flex flex-col gap-[3px]">
+            <span
+              className={`inline-flex self-start rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium ${
+                tone === 'dropped' ? 'line-through decoration-[var(--faint)]' : ''
+              }`}
+              style={{ color: SOFT_INK }}
+            >
+              {t(CONCEPT_LABEL_KEYS[concept])}
+            </span>
+            {noteKey && (
+              <span className="pl-0.5 text-[11px] leading-[1.4] text-muted">{t(noteKey)}</span>
+            )}
+          </div>
         ))}
       </div>
     </div>
@@ -86,7 +93,7 @@ function LaunchCard({
 }) {
   const [hover, setHover] = useState(false)
   const enabled = Boolean(resolution.url)
-  const ink = readableInk(platform.brandColor)
+  const ink = platform.ink ?? readableInk(platform.brandColor)
   const showLogin = platform.requiresLogin && enabled
   const popHasContent =
     showLogin || resolution.dropped.length > 0 || resolution.approximated.length > 0
@@ -147,10 +154,10 @@ function LaunchCard({
             </div>
           )}
           {resolution.approximated.length > 0 && (
-            <MetaSection tone="approx" concepts={resolution.approximated.map((a) => a.concept)} />
+            <MetaSection tone="approx" items={resolution.approximated} />
           )}
           {resolution.dropped.length > 0 && (
-            <MetaSection tone="dropped" concepts={resolution.dropped.map((d) => d.concept)} />
+            <MetaSection tone="dropped" items={resolution.dropped} />
           )}
         </div>
       )}
