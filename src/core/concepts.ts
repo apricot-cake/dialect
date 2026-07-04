@@ -26,6 +26,7 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   workType: 'concept.workType.label',
   resultType: 'concept.resultType.label',
   sortOrder: 'concept.sortOrder.label',
+  pixivPopular: 'concept.pixivPopular.label',
 }
 
 /** ビルダーに並ぶフィールドの定義。表示順・セクション分けは対応サイト数から自動計算する */
@@ -103,6 +104,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.language) active.push('language')
   if (state.workType) active.push('workType')
   if (state.resultType) active.push('resultType')
+  if (state.pixivPopular) active.push('pixivPopular')
   // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
   // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えない。
   // ユーザーが意図的に選んだ並び順(人気順・急上昇など)だけを注記・件数の対象にする
@@ -136,5 +138,6 @@ export function defaultState(): QueryState {
     workType: '',
     resultType: '',
     sort: 'new',
+    pixivPopular: '',
   }
 }

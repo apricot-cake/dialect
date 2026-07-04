@@ -46,6 +46,7 @@ const ICON: Record<ConceptId, string> = {
   excludeReplies: 'M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2zM9 10h6',
   minLikes: 'M12 20s-7-4.7-9.3-9.2A4.6 4.6 0 0 1 12 5a4.6 4.6 0 0 1 9.3 5.8C19 15.3 12 20 12 20z',
   minReposts: 'M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3',
+  pixivPopular: 'M12 2l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 9.7l6.5-.9z',
 }
 
 /** 新UIの条件メタデータ。並び順はピッカーの同数タイブレークに使う(デザイン準拠) */
@@ -60,6 +61,7 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label', helpKey: 'concept.mediaOnly.help', iconPath: ICON.mediaOnly },
   { id: 'videoLength', field: 'videoLength', widget: 'select', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help', iconPath: ICON.videoLength },
   { id: 'workType', field: 'workType', widget: 'select', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help', iconPath: ICON.workType },
+  { id: 'pixivPopular', field: 'pixivPopular', widget: 'select', labelKey: 'concept.pixivPopular.label', helpKey: 'concept.pixivPopular.help', iconPath: ICON.pixivPopular },
   { id: 'resultType', field: 'resultType', widget: 'select', labelKey: 'concept.resultType.label', helpKey: 'concept.resultType.help', iconPath: ICON.resultType },
   { id: 'language', field: 'language', widget: 'select', labelKey: 'concept.language.label', helpKey: 'concept.language.help', iconPath: ICON.language },
   { id: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label', helpKey: 'concept.sortOrder.help', iconPath: ICON.sortOrder },
@@ -148,6 +150,15 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: '', labelKey: 'concept.language.none' },
     { value: 'ja', labelKey: 'concept.language.ja' },
     { value: 'en', labelKey: 'concept.language.en' },
+  ],
+  pixivPopular: [
+    { value: '', labelKey: 'concept.pixivPopular.none' },
+    { value: '500', labelKey: 'concept.pixivPopular.500' },
+    { value: '1000', labelKey: 'concept.pixivPopular.1000' },
+    { value: '5000', labelKey: 'concept.pixivPopular.5000' },
+    { value: '10000', labelKey: 'concept.pixivPopular.10000' },
+    { value: '50000', labelKey: 'concept.pixivPopular.50000' },
+    { value: '100000', labelKey: 'concept.pixivPopular.100000' },
   ],
 }
 

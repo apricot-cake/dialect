@@ -25,8 +25,15 @@ export type ConceptId =
   | 'workType'
   | 'resultType'
   | 'sortOrder'
+  | 'pixivPopular'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
+
+/**
+ * pixivの人気作の目安。「{N}users入り」タグ(一定ブックマーク数で付く)を利用して
+ * プレミアム会員でなくても擬似的な人気順にする。空は指定なし。値は実在するタグ段階のみ
+ */
+export type PixivPopular = '' | '500' | '1000' | '5000' | '10000' | '50000' | '100000'
 
 /** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
 export type PostLanguage = '' | 'ja' | 'en'
@@ -83,6 +90,8 @@ export interface QueryState {
   workType: WorkType
   resultType: ResultType
   sort: SortOrder
+  /** pixiv専用。「{N}users入り」タグで擬似人気順にする(空=指定なし) */
+  pixivPopular: PixivPopular
 }
 
 /**

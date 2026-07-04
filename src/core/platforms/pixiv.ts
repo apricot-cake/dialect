@@ -15,6 +15,10 @@ function buildUrl(state: QueryState): string | null {
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
   parts.push(...exactPhrases(state))
   parts.push(...words(state.hashtag).map(stripHash))
+  // 人気の目安=「{N}users入り」タグ(一定ブックマーク数で付く)を1タグとして畳み込む。
+  // これ単独でも検索が成立する(=正の条件)ので、null判定より前に足す。
+  // プレミアム限定の order=popular_d を使わずに擬似的な人気順を作るハック
+  if (state.pixivPopular) parts.push(`${state.pixivPopular}users入り`)
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
   parts.push(...words(state.exclude).map((w) => `-${w}`))
@@ -58,6 +62,7 @@ export const pixiv: PlatformDef = {
     workType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },
+    pixivPopular: { level: 'partial', noteKey: 'note.pixiv.popular' },
   },
   buildUrl,
   dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),

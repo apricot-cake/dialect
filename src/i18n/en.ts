@@ -97,6 +97,16 @@ export const en = {
   'concept.sortOrder.hot': 'Trending',
   'concept.sortOrder.auto': 'Auto',
   'concept.sortOrder.help': 'Sets the result order.',
+  'concept.pixivPopular.label': 'Popularity',
+  'concept.pixivPopular.none': 'Any',
+  'concept.pixivPopular.500': '500+ bookmarks',
+  'concept.pixivPopular.1000': '1000+ bookmarks',
+  'concept.pixivPopular.5000': '5000+ bookmarks',
+  'concept.pixivPopular.10000': '10000+ bookmarks',
+  'concept.pixivPopular.50000': '50000+ bookmarks',
+  'concept.pixivPopular.100000': '100000+ bookmarks',
+  'concept.pixivPopular.help':
+    'On pixiv, finds only popular works that reached a given bookmark count — a pseudo “popular” sort without Premium (uses the “N users入り” tags).',
 
   // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
@@ -168,6 +178,8 @@ export const en = {
     'Searches titles and captions (descriptions), not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
+  'note.pixiv.popular':
+    'Filters to popular works via the “N users入り” tags. These are added by fans by hand, so some popular works may be missed.',
   'note.misskey.keywords':
     'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
   'note.misskey.exclude':

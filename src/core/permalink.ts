@@ -46,6 +46,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.language) params.set('lang', state.language)
   if (state.workType) params.set('wt', state.workType)
   if (state.resultType) params.set('rt', state.resultType)
+  if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める
   if (state.sort !== 'new') params.set('sort', state.sort)
   return params
@@ -106,6 +107,13 @@ function paramsToState(params: URLSearchParams): QueryState {
   const rt = params.get('rt')
   if (rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist') {
     state.resultType = rt
+  }
+  const pxu = params.get('pxu')
+  if (
+    pxu === '500' || pxu === '1000' || pxu === '5000' ||
+    pxu === '10000' || pxu === '50000' || pxu === '100000'
+  ) {
+    state.pixivPopular = pxu
   }
   const sort = params.get('sort')
   if (sort === 'top' || sort === 'hot' || sort === 'auto') state.sort = sort

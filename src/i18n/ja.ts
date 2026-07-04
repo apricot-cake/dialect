@@ -99,6 +99,16 @@ export const ja = {
   'concept.sortOrder.hot': '急上昇',
   'concept.sortOrder.auto': 'おまかせ',
   'concept.sortOrder.help': '検索結果の並び順を指定します',
+  'concept.pixivPopular.label': '人気の目安',
+  'concept.pixivPopular.none': '指定なし',
+  'concept.pixivPopular.500': '500users以上',
+  'concept.pixivPopular.1000': '1000users以上',
+  'concept.pixivPopular.5000': '5000users以上',
+  'concept.pixivPopular.10000': '10000users以上',
+  'concept.pixivPopular.50000': '50000users以上',
+  'concept.pixivPopular.100000': '100000users以上',
+  'concept.pixivPopular.help':
+    'pixivで、一定のブックマーク数に達した人気作だけを探します。プレミアム会員でなくても擬似的に人気順になります（「◯◯users入り」タグを利用）',
 
   // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
@@ -153,6 +163,7 @@ export const ja = {
   'note.pixiv.titleOnly': 'タグではなく、タイトルとキャプション(説明文)から探します',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
+  'note.pixiv.popular': '「◯◯users入り」タグで擬似的に人気作を絞り込みます。ファンが手動で付けるタグのため、付いていない人気作は漏れることがあります',
   'note.misskey.keywords': '語ごとに部分一致でAND検索されます(まれな語は結果が出ないことも)。遷移後、検索ページで「検索」ボタンを押すと結果が表示されます',
   'note.misskey.exclude': '先頭に - をつけて除外します(非公式のため、効かない場合があります)',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',
