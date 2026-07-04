@@ -5,6 +5,8 @@ import { andTerms, stripAt, stripHash, words } from '../text'
 // 検索は /search?q=&type=note(要ログイン)。q内の演算子はなく、本文の部分一致検索。
 // ユーザー指定は &username=(フロントエンドのルーター定義で確認した非公式パラメータ)。
 // タグ単独なら /tags/(タグページ)、併用時は本文に「#タグ」を含む検索として畳み込む。
+// 注意(2026-07-04確認): /search はSPAのためURL遷移だけでは検索が自動実行されず、遷移先で
+// 「検索」ボタンの手動クリックが要る(q欄は埋まる)。その旨は note.misskey.keywords で告知する。
 function buildUrl(state: QueryState): string | null {
   // 完全一致がないため語句はキーワード扱い。
   // 本文の部分一致検索なので、スペースを含む語はそのままフレーズとして効く

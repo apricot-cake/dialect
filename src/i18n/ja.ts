@@ -156,7 +156,7 @@ export const ja = {
   'note.pixiv.keywords': 'タグの部分一致で検索されます(タグにない語は本文にあってもヒットしません)',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
-  'note.misskey.keywords': '本文の部分一致で検索されます。まれな語は結果が出ないことがあります',
+  'note.misskey.keywords': '本文の部分一致で検索されます(まれな語は結果が出ないことも)。遷移後、検索ページで「検索」ボタンを押すと結果が表示されます',
   'note.misskey.exclude': 'Misskeyには除外検索がありません',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',
   'note.youtube.resultType': '非公式な指定方法です。ユーザー指定との併用はできません',

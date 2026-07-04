@@ -174,7 +174,7 @@ export const en = {
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.misskey.keywords':
-    'Searched by partial body match. Rare words may return no results.',
+    'Searched by partial body match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
   'note.misskey.exclude': 'Misskey has no exclusion search.',
   'note.misskey.fromUser':
     'Requires combining with a keyword. Uses an unofficial URL parameter and may stop working in the future.',
