@@ -194,8 +194,7 @@ function LabelRow({
                   ? undefined
                   : (e) => e.preventDefault()
               }
-              // 点線下線で「説明あり(ホバー/タップで出る)」を静的に示す。注記と同じ合図に揃える
-              className="cursor-help text-sm leading-none font-medium underline decoration-dotted decoration-muted-foreground/50 underline-offset-4 select-none"
+              className="cursor-help text-sm leading-none font-medium select-none"
             />
           }
         >
