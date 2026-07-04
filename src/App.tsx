@@ -25,7 +25,6 @@ import { hasPositiveTerm } from '@/core/text'
 import type { PlatformId, QueryState } from '@/core/types'
 import { getLang, setLang, t, type Lang } from '@/i18n'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Tooltip,
   TooltipContent,
@@ -338,18 +337,14 @@ export default function App() {
                 </div>
               </div>
 
-              <Card className="shadow-sm">
-                <CardContent className="flex flex-col gap-4">
-                  <QueryBuilder
-                    key={builderKey}
-                    state={query}
-                    onChange={setQuery}
-                    platforms={PLATFORMS}
-                    filterId={filterId}
-                    isMobile={isMobile}
-                  />
-                </CardContent>
-              </Card>
+              <QueryBuilder
+                key={builderKey}
+                state={query}
+                onChange={setQuery}
+                platforms={PLATFORMS}
+                filterId={filterId}
+                isMobile={isMobile}
+              />
 
             </div>
 

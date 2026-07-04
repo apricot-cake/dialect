@@ -8,6 +8,7 @@ import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
 import { PlatformIcon } from '@/components/PlatformIcon'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import {
@@ -429,13 +430,18 @@ export function QueryBuilder({
   }
 
   return (
-    <div className="flex flex-col gap-9">
-      {/* ビルダー上部の使い方ヒント。項目説明の出し方はPC/スマホで文言を出し分ける */}
-      <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+    // 各フィールドを個別カードにしてトレイへ直載せ(右カラムのリンクカードと揃える)。
+    // カード間は gap-3、上部の使い方ヒントだけカード外の素テキストで置く
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1 px-1 text-xs text-muted-foreground">
         <p>{t('builder.hint.enter')}</p>
         <p>{t(isMobile ? 'builder.hint.help.touch' : 'builder.hint.help.pc')}</p>
       </div>
-      {visibleFields.map(renderField)}
+      {visibleFields.map((item) => (
+        <Card key={item.field.concept} size="sm" className="shadow-sm">
+          <CardContent>{renderField(item)}</CardContent>
+        </Card>
+      ))}
     </div>
   )
 }
