@@ -7,7 +7,10 @@ import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } f
 // min_faves:/min_retweets:/filter:blue_verified は公式フォームから削除済みの
 // 非公式演算子だが、2026-07-02にWeb UIでの動作を実機確認済み。
 function buildUrl(state: QueryState): string | null {
-  if (!hasPositiveTerm(state)) return null
+  // 宛先・リンク先だけの検索もXでは成立するので、正の条件に数える
+  if (!hasPositiveTerm(state) && !state.toUser.trim() && !state.domain.trim()) {
+    return null
+  }
 
   const parts: string[] = []
   parts.push(...andTerms(state).map(quoteIfPhrase))
@@ -19,6 +22,8 @@ function buildUrl(state: QueryState): string | null {
   const tos = words(state.toUser).map((u) => `to:${stripAt(u)}`)
   if (tos.length >= 2) parts.push(`(${tos.join(' OR ')})`)
   else parts.push(...tos)
+  // リンク先ドメインは url: で絞る(部分一致)
+  if (state.domain.trim()) parts.push(`url:${state.domain.trim()}`)
   parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
@@ -50,6 +55,7 @@ export const x: PlatformDef = {
     fromUser: { level: 'full' },
     excludeUser: { level: 'full' },
     toUser: { level: 'full' },
+    domain: { level: 'full' },
     hashtag: { level: 'full' },
     period: { level: 'full', noteKey: 'note.x.period' },
     mediaOnly: { level: 'full' },

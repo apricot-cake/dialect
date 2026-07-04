@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
@@ -30,6 +30,20 @@ function buildUrl(state: QueryState): string | null {
   return `https://b.hatena.ne.jp/search/${path}?${params.toString()}`
 }
 
+// ハッシュタグ単独のときはタグ検索パスになり、「タイトルだけ」は参照されず効かない
+function dynamicSupport(
+  state: QueryState,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  const tagOnly =
+    words(state.hashtag).length > 0 &&
+    andTerms(state).length === 0 &&
+    !state.exactPhrase.trim()
+  if (tagOnly && state.titleOnly) {
+    return { titleOnly: { level: 'none', noteKey: 'note.hatebu.titleTagConflict' } }
+  }
+  return {}
+}
+
 export const hatebu: PlatformDef = {
   id: 'hatebu',
   name: 'はてなブックマーク',
@@ -50,4 +64,5 @@ export const hatebu: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  dynamicSupport,
 }

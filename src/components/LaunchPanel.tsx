@@ -100,6 +100,9 @@ function ResolutionNotes({ resolution }: { resolution: Resolution }) {
 
 /** 「2/3 条件を適用」のテキスト。条件が1つもなければ null */
 function appliedCountText(resolution: Resolution): string | null {
+  // 開くURLが無い(絞り込みフィルタ単独など、その条件だけでは検索が成立しない)ときは
+  // 「N/N 適用」を出さない。ボタンは無効なので、適用済みと表示すると実態と食い違う
+  if (!resolution.url) return null
   const activeCount =
     resolution.applied.length +
     resolution.approximated.length +

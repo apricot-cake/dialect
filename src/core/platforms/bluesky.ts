@@ -6,7 +6,10 @@ import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } f
 // tab=latest は未文書化だが social-app のコードに実装されている。
 // メディア絞り込み(media=true)はフィーチャーゲート中のため使わない。
 function buildUrl(state: QueryState): string | null {
-  if (!hasPositiveTerm(state)) return null
+  // メンション先・リンク先だけの検索もBlueskyでは成立するので、正の条件に数える
+  if (!hasPositiveTerm(state) && !state.mentionsUser.trim() && !state.domain.trim()) {
+    return null
+  }
 
   const parts: string[] = []
   parts.push(...andTerms(state).map(quoteIfPhrase))

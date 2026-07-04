@@ -115,6 +115,13 @@ export interface PlatformDef {
   support: Partial<Record<ConceptId, ConceptSupport>>
   /** 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null */
   buildUrl(state: QueryState): string | null
+  /**
+   * state に応じて support を上書きする(任意)。同じ概念でも入力の組み合わせ次第で
+   * 実際にはURLへ送れないことがある(例: YouTubeはユーザー指定を入れると
+   * チャンネル内検索に切り替わり、並び順・動画の長さ・探すものが送れない)。
+   * その概念だけ level を下げて注記を差し替えるために使う。静的 support にマージされる
+   */
+  dynamicSupport?(state: QueryState): Partial<Record<ConceptId, ConceptSupport>>
 }
 
 export const NO_SUPPORT: ConceptSupport = { level: 'none' }

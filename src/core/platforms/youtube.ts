@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState, VideoLength } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState, VideoLength } from '../types'
 import { andTerms, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
@@ -62,6 +62,23 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${spParam(state)}`
 }
 
+// ユーザー指定時はチャンネル内検索URL(/@handle/search)に切り替わり、sp= を送れない。
+// このとき並び順・動画の長さ・探すものは実際には効かないので「使えない」に落とす
+const CHANNEL_CONFLICT: ConceptSupport = {
+  level: 'none',
+  noteKey: 'note.youtube.channelConflict',
+}
+function dynamicSupport(
+  state: QueryState,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  if (!state.fromUser.trim()) return {}
+  return {
+    sortOrder: CHANNEL_CONFLICT,
+    videoLength: CHANNEL_CONFLICT,
+    resultType: CHANNEL_CONFLICT,
+  }
+}
+
 export const youtube: PlatformDef = {
   id: 'youtube',
   name: 'YouTube',
@@ -84,4 +101,5 @@ export const youtube: PlatformDef = {
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
   buildUrl,
+  dynamicSupport,
 }

@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { andTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
@@ -18,6 +18,16 @@ function buildUrl(state: QueryState): string | null {
   if (parts.length === 0) return null
 
   return `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(parts.join(' '))}`
+}
+
+// タグ1つならタグページ(厳密)だが、2つ以上はキーワードSERPに落ちてAND保証がなくなる
+function dynamicSupport(
+  state: QueryState,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  if (words(state.hashtag).length > 1) {
+    return { hashtag: { level: 'partial', noteKey: 'note.instagram.multiTag' } }
+  }
+  return {}
 }
 
 export const instagram: PlatformDef = {
@@ -40,4 +50,5 @@ export const instagram: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  dynamicSupport,
 }

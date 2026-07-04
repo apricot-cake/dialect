@@ -153,7 +153,9 @@ export const en = {
     'YouTube is video-only, so this filter is unnecessary.',
   'note.youtube.japaneseOnly': 'YouTube has no way to filter by language.',
   'note.youtube.sort':
-    'Popular is approximated by view count (unofficial). Newest currently no longer works on YouTube. It cannot be combined with a user filter.',
+    'Popular is approximated by view count (unofficial). Newest currently no longer works on YouTube.',
+  'note.youtube.channelConflict':
+    'This filter has no effect when combined with a user filter (in-channel search).',
   'note.note.keywords':
     'There is no guarantee that all keywords are included (similar articles may also appear).',
   'note.note.exactPhrase':
@@ -172,19 +174,24 @@ export const en = {
   'note.reddit.period': 'Rounded to “past day / week / month / year”.',
   'note.instagram.hashtag':
     'Tag pages show only top posts (no latest order).',
+  'note.instagram.multiTag':
+    'With two or more hashtags this becomes a loose keyword search rather than a tag page, with no guarantee all tags are included.',
   'note.pixiv.keywords':
     'Searched by partial tag match (words not in the tags won’t hit even if they’re in the body).',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.misskey.keywords':
-    'Searched by partial body match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
-  'note.misskey.exclude': 'Misskey has no exclusion search.',
+    'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
+  'note.misskey.exclude':
+    'Excludes terms prefixed with “-” (unofficial, so it may not work).',
   'note.misskey.fromUser':
     'Requires combining with a keyword. Uses an unofficial URL parameter and may stop working in the future.',
   'note.youtube.resultType':
     'This is an unofficial method. It cannot be combined with a user filter.',
   'note.hatebu.minLikes':
-    'Filters by bookmark count. Numbers not among Hatena’s options (1/3/50/100/500) may not work.',
+    'The number you set is used as the minimum bookmark count.',
+  'note.hatebu.titleTagConflict':
+    'When searching by hashtag alone, the title-only filter has no effect.',
   'note.hatebu.fromUser':
     'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
   'note.twitch.japaneseOnly':
@@ -192,7 +199,7 @@ export const en = {
   'note.fivech.keywords':
     'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
   'note.fivech.subreddit':
-    'You can set only one board ID (e.g. sony). Any beyond the first are ignored.',
+    'Filters by board ID (e.g. sony). Set several to match any of those boards (OR).',
   'note.animanch.keywords':
     'Searches post bodies (a beta feature, so some may be missed).',
   'note.animanch.titleOnly':

@@ -6,15 +6,16 @@ import { andTerms, words } from '../text'
 // スペース区切りが絞り込みにならない(関連度ベース)ため「足す=絞る」を満たさず、
 // AND・除外(-)・板指定(@板ID)が全て実測で効く ff5ch.syoboi.jp を検索先にする。
 // 部分文字列マッチ型なので引用符は不要(存在しない)。検索対象はスレタイトルのみ。
+// 板は複数指定でいずれか(OR)。@板ID を並べると和集合になる(2026-07-04実測)。
 function buildUrl(state: QueryState): string | null {
   const parts = [...andTerms(state)]
   // 引用符構文はないが部分文字列マッチのため、語句はそのまま埋め込めば効く
   if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
-  if (parts.length === 0) return null
+  const boards = words(state.subreddit).map((b) => `@${b.replace(/^@+/, '')}`)
+  // 正の条件はキーワード/フレーズ、または板指定。除外だけでは検索にならない
+  if (parts.length === 0 && boards.length === 0) return null
   parts.push(...words(state.exclude).map((w) => `-${w}`))
-  // 板は1つだけ(複数指定の動作は未確認のため先頭のみ)
-  const board = words(state.subreddit)[0]
-  if (board) parts.push(`@${board.replace(/^@+/, '')}`)
+  parts.push(...boards)
 
   return `https://ff5ch.syoboi.jp/?q=${encodeURIComponent(parts.join(' '))}`
 }
