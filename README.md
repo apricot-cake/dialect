@@ -6,7 +6,7 @@
 
 https://apricot-cake.github.io/dialect/
 
-<video src="https://github.com/apricot-cake/dialect/raw/main/docs/demo.mp4" controls autoplay loop muted></video>
+![Dialect のデモ: キーワードと条件を組み立てて、各サイトの検索を開くまで](docs/demo.gif)
 
 ## 使い方
 

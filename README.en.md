@@ -6,7 +6,7 @@ Assemble your conditions, and each is translated into every site's own search sy
 
 https://apricot-cake.github.io/dialect/
 
-<video src="https://github.com/apricot-cake/dialect/raw/main/docs/demo.mp4" controls autoplay loop muted></video>
+![Dialect demo: building keywords and conditions, then opening each site's search](docs/demo.gif)
 
 ## How to use
 
