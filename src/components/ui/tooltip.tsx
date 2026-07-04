@@ -40,13 +40,18 @@ function Tooltip(props: TooltipPrimitive.Root.Props) {
   )
 }
 
-function TooltipTrigger({ onClick, ...props }: TooltipPrimitive.Trigger.Props) {
+function TooltipTrigger({
+  onClick,
+  disableTapToggle,
+  ...props
+}: TooltipPrimitive.Trigger.Props & { disableTapToggle?: boolean }) {
   const setOpen = React.useContext(TooltipToggleContext)
   return (
     <TooltipPrimitive.Trigger
       data-slot="tooltip-trigger"
       onClick={(event) => {
-        setOpen?.((o) => !o)
+        // 主アクション付き/誤爆しやすいトリガーは disableTapToggle でタップ開閉を無効化する
+        if (!disableTapToggle) setOpen?.((o) => !o)
         onClick?.(event)
       }}
       {...props}

@@ -5,6 +5,7 @@ export const en = {
     'Build a search once, and open it on each social site and forum in that site’s own search syntax.',
   'app.langSwitch': '日本語',
   'app.themeToggle': 'Toggle theme',
+  'app.backToTop': 'Back to top',
 
   // Search concepts (builder rows). placeholder = input example, help = the ⓘ hover description
   'concept.keywords.label': 'Keywords',

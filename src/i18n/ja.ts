@@ -7,6 +7,7 @@ export const ja = {
   // 言語切替ボタンのラベルは切替先の言語名(英語表示なら「日本語」)
   'app.langSwitch': 'English',
   'app.themeToggle': 'テーマを切り替え',
+  'app.backToTop': '最上部へ戻る',
 
   // 検索概念(ビルダーの各行)。placeholder は入力例、help はⓘホバーで出す機能説明
   'concept.keywords.label': 'キーワード',

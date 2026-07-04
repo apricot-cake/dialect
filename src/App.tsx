@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  ArrowUp,
   Bookmark,
   Check,
   Eraser,
@@ -100,6 +101,14 @@ export default function App() {
     document.documentElement.classList.toggle('dark', dark)
     localStorage.setItem('theme', dark ? 'dark' : 'light')
   }, [dark])
+  // スクロール時だけ出す「最上部へ戻る」ボタンの表示制御
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 320)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const replaceQuery = (state: QueryState) => {
     setQuery(state)
@@ -132,7 +141,7 @@ export default function App() {
             スクロールで背後のカードが透けるよう半透明+backdrop-blur を敷く */}
         <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-md">
           <div
-            className={`mx-auto flex w-full items-center justify-between gap-4 px-4 py-2.5 ${
+            className={`mx-auto flex w-full items-center justify-between gap-4 px-4 py-3 ${
               isMobile ? 'max-w-4xl' : 'max-w-7xl'
             }`}
           >
@@ -142,13 +151,13 @@ export default function App() {
                 src={`${import.meta.env.BASE_URL}favicon.svg`}
                 alt=""
                 aria-hidden
-                className="size-7 shrink-0"
+                className="size-8 shrink-0"
               />
-              <div className="flex min-w-0 flex-col">
-                <h1 className="truncate text-[0.95rem] leading-tight font-semibold tracking-tight">
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <h1 className="truncate text-base leading-tight font-semibold tracking-tight">
                   {t('app.title')}
                 </h1>
-                <p className="hidden truncate text-xs text-muted-foreground sm:block">
+                <p className="hidden truncate text-xs leading-tight text-muted-foreground sm:block">
                   {t('app.description')}
                 </p>
               </div>
@@ -272,25 +281,34 @@ export default function App() {
                       {t('builder.filter.help')}
                     </TooltipContent>
                   </Tooltip>
-                  <div className="flex flex-wrap items-center gap-1">
+                  {/* スマホはタップしやすいよう各ボタンを大きめ(約40px)にする */}
+                  <div
+                    className={`flex flex-wrap items-center ${
+                      isMobile ? 'gap-1.5' : 'gap-1'
+                    }`}
+                  >
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`h-7 ${filterId === null ? FILTER_ACTIVE : ''}`}
+                      className={`${isMobile ? 'h-10 px-4' : 'h-7'} ${
+                        filterId === null ? FILTER_ACTIVE : ''
+                      }`}
                       onClick={() => setFilterId(null)}
                     >
                       {t('builder.filter.all')}
                     </Button>
                     {PLATFORMS.map((p) => (
                       <Tooltip key={p.id}>
+                        {/* アイコンはタップで絞り込みを選ぶのが主目的。ツールチップが残らないようタップ開閉は無効 */}
                         <TooltipTrigger
+                          disableTapToggle
                           render={
                             <Button
                               variant="ghost"
                               size="icon-sm"
-                              className={
-                                filterId === p.id ? FILTER_ACTIVE : undefined
-                              }
+                              className={`${isMobile ? 'size-10 ' : ''}${
+                                filterId === p.id ? FILTER_ACTIVE : ''
+                              }`}
                               aria-label={p.name}
                               aria-pressed={filterId === p.id}
                               onClick={() =>
@@ -301,7 +319,7 @@ export default function App() {
                         >
                           <PlatformIcon
                             id={p.id}
-                            className="size-4"
+                            className={isMobile ? 'size-5' : 'size-4'}
                             brandColor={p.brandColor}
                           />
                         </TooltipTrigger>
@@ -350,7 +368,13 @@ export default function App() {
           </section>
           </main>
 
-          <footer className="mt-auto flex items-center justify-between gap-4 border-t py-4 text-xs text-muted-foreground">
+          {/* スマホは検索/条件切替ボタン、PCは戻るボタンが右下に浮くので、
+              最下部の注記・GitHubリンクが隠れないよう下余白を確保する */}
+          <footer
+            className={`mt-auto flex items-center justify-between gap-4 border-t pt-4 text-xs text-muted-foreground ${
+              isMobile ? 'pb-24' : 'pb-16'
+            }`}
+          >
             <span>{t('footer.disclaimer')}</span>
             <a
               className="shrink-0 underline underline-offset-2"
@@ -376,6 +400,21 @@ export default function App() {
           >
             {tab === 'build' ? <Search /> : <SlidersHorizontal />}
             {t(tab === 'build' ? 'tab.launch' : 'tab.build')}
+          </Button>
+        )}
+
+        {/* 最上部へ戻る。スマホは右下が切替ボタンで埋まるため左下に置く */}
+        {showScrollTop && (
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label={t('app.backToTop')}
+            className={`fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 size-10 rounded-full shadow-lg ${
+              isMobile ? 'left-4' : 'right-4'
+            }`}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            <ArrowUp />
           </Button>
         )}
       </div>

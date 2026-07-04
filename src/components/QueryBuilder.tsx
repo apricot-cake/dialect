@@ -203,7 +203,11 @@ function LabelRow({
         <TooltipContent className="max-w-64">{t(field.helpKey)}</TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger className={cn(SUPPORT_PILL, 'ml-auto cursor-default')}>
+        {/* 対応サイト数バッジ。入力欄に近くタップで誤爆しやすいので、タップ開閉はしない(ホバーのみ) */}
+        <TooltipTrigger
+          disableTapToggle
+          className={cn(SUPPORT_PILL, 'ml-auto cursor-default')}
+        >
           <span className="text-[11px] leading-none text-muted-foreground/70">
             {t('builder.support.label')}
           </span>
@@ -337,7 +341,7 @@ export function QueryBuilder({ state, onChange, platforms, filterId }: Props) {
       return (
         <div key={field.concept} className="flex flex-col gap-1.5">
           <LabelRow field={field} supporters={supporters} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">
                 {t('concept.period.since')}
