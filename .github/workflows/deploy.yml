@@ -5,10 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# 既定は読み取りのみ。Pages公開に要る昇格権限は deploy ジョブだけに与える(最小権限)
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -17,8 +16,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          # ビルドはpushしないので、認証トークンをローカルgit configに残さない
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,6 +36,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # Pagesへの公開とOIDC発行はこのジョブに限定する
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
