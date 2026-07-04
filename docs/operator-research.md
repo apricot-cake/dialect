@@ -499,3 +499,37 @@ URLで指定できる条件はすべて概念化する方針(対応1サイトで
 
 - Googleのインデックス反映には時間差があり、直近の投稿はヒットしない(リアルタイム性はネイティブ検索が上)
 - ログインウォールのあるサイト(Instagram・Facebook等)はインデックス範囲が部分的
+
+# フィールド網羅・文法監査(ultracode、2026-07-04)
+
+13サイト＋共通コアを多エージェント(静的整合性＋サイト別調査＋敵対的検証、24件採用/11件棄却)で監査した結果と、それを受けた実装変更。結論=網羅はほぼ完了・URL文法は健全だが、「UIが適用と表示するのに実際は落ちる/開けない」食い違いが数件あったため修正した。
+
+## 1. 単独フィールド検索がガードで握りつぶされていた(最重要)
+
+`hasPositiveTerm`(terms/exactPhrase/fromUser/hashtag のみを正の条件とみなす)を X/Bluesky が、独自ガードを Reddit/5ch が使っており、それ以外のフィールドだけを入れた検索が `buildUrl`→null になっていた。一方 `resolve` は静的 support だけを見て applied に振り分けるため、LaunchPanel は「1/1 条件を適用」と緑表示しつつボタンは無効(url=null)という食い違いになる(UI実コードで裏取り)。
+
+- 修正: X は `to:`(toUser)・`url:`(domain)単独、Bluesky は `mentions:`(mentionsUser)・`domain:` 単独、Reddit は `subreddit:` 単独を正の条件に追加。いずれも各サイトで実在する単独検索。
+
+## 2. resolve が実態を反映しない(パス分岐での取りこぼし)
+
+`resolve` が静的 support レベルだけで applied/approximated/dropped を決めていたため、`buildUrl` が状態次第で概念を落とすケースを「適用」と誤表示していた。→ `PlatformDef.dynamicSupport?(state)` を追加し、状態に応じて support を上書きできるようにした(resolve が静的 support にマージ)。適用先:
+
+- **YouTube**: ユーザー指定時はチャンネル内検索URLに切替わり sp= を送れない → 並び順・動画の長さ・探すものを `none`(注記 `note.youtube.channelConflict`)へ落とす。
+- **Instagram**: ハッシュタグ2つ以上はタグページでなくキーワードSERPに落ちAND保証がない → hashtag を `partial`(`note.instagram.multiTag`)へ。
+- **はてブ**: ハッシュタグ単独のときタグ検索パスになり titleOnly が無視される → titleOnly を `none`(`note.hatebu.titleTagConflict`)へ。
+
+## 3. 網羅の穴(実在演算子の追加)
+
+- **X `url:`**(domain概念): リンク先ドメインで絞る演算子。support.domain=full＋`url:<domain>` を追加(igorbrigadir参照)。
+- **Reddit `self:no`**(linksOnly概念): テキスト投稿を除く=リンク投稿だけ。公式ヘルプ「Available search features」記載。ANDクローズに追加。
+- **5ch 複数板 OR**: `@板ID` を先頭のみ→ words(subreddit) 全部送信に。複数板の和集合は2026-07-04実測で確認済。
+- **Misskey 除外・フレーズ**: 本文検索はMeilisearchなので `-語` の除外(support.exclude none→partial)と `"..."` のフレーズ一致(exactPhrase を引用符で括る)を送るようにした。キーワード注記も「本文の部分一致」→「語ごとのAND」に修正。リモートユーザー `@user@host` は `username=`＋`host=` に分離。
+
+## 4. 表記・軽微
+
+- **YouTube 動画長**: 2026-01の再編でUIラベルが「4分未満/4〜20分/20分超」→「3分未満/3〜20分/20分超」に変わった。送信するsp protobufバイト(0x01/0x03/0x02)は不変で正しくバケットに効くため送信は変更なし。DialectのUIラベルは niconico(4分基準の枠組み)と共有のため据え置き。
+- **はてブ minLikes**: 任意の `users=N` が最低ブックマーク数として効く(実測 users=7/25)。「選択肢にない数は効かない可能性」の注記は誤りだったので、ブックマーク数として絞る旨に修正(partialは概念の使い回し明示のため維持)。
+
+## 実装上まだ未実測(operator-checklist.md に確認行を追加済み)
+
+- X `url:<domain>`(単独・併用)/ Reddit `self:no` の実効 / 5ch 複数 `@板` OR / Misskey `-語`除外・`"..."`フレーズ。いずれもWeb調査ベースで追加したため、次回の定期確認で実機裏取りする。
