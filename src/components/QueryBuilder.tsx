@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FIELDS, type FieldDef } from '@/core/concepts'
-import { andTerms, words } from '@/core/text'
+import { andTerms, exactPhrases, words } from '@/core/text'
 import type { PlatformDef, PlatformId, QueryState, SortOrder, VideoLength } from '@/core/types'
 import { supportOf } from '@/core/types'
 import { t } from '@/i18n'
@@ -33,6 +33,8 @@ function hasValue(state: QueryState, field: FieldDef): boolean {
   switch (field.widget) {
     case 'terms':
       return andTerms(state).length > 0
+    case 'phrases':
+      return exactPhrases(state).length > 0
     case 'sort':
       return state.sort !== 'new'
     case 'toggle':
@@ -320,6 +322,24 @@ export function QueryBuilder({
             phrase
             onTokensChange={(tokens) =>
               set({ terms: tokens.length > 0 ? tokens : [''] })
+            }
+          />
+        </div>
+      )
+    }
+    if (field.widget === 'phrases') {
+      // 完全一致もキーワードと同じEnter区切りのチップ入力。1枠=1語句でAND。
+      // 語句はスペースを保つ(phrase)。各枠は送信時に引用符で括られる
+      return (
+        <div key={field.concept} className="flex flex-col gap-1.5">
+          <LabelRow field={field} supporters={supporters} />
+          <ChipInput
+            id={field.field}
+            initialTokens={exactPhrases(state)}
+            placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
+            phrase
+            onTokensChange={(tokens) =>
+              set({ exactPhrase: tokens.length > 0 ? tokens : [''] })
             }
           />
         </div>

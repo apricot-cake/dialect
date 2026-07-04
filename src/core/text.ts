@@ -10,6 +10,11 @@ export function andTerms(state: { terms: string[] }): string[] {
   return state.terms.map((t) => t.trim()).filter(Boolean)
 }
 
+/** 完全一致の枠から空でない語句を取り出す。1枠=1フレーズで、中身は分割しない。枠どうしはAND */
+export function exactPhrases(state: { exactPhrase: string[] }): string[] {
+  return state.exactPhrase.map((t) => t.trim()).filter(Boolean)
+}
+
 /**
  * スペースを含む語(フレーズ)を引用符で括る。
  * 引用符構文のあるサイトのシリアライザで語を埋め込むときに通す
@@ -31,13 +36,13 @@ export function stripHash(input: string): string {
 /** 検索として成立する「正の条件」があるか(除外や期間だけでは検索できない) */
 export function hasPositiveTerm(state: {
   terms: string[]
-  exactPhrase: string
+  exactPhrase: string[]
   fromUser: string
   hashtag: string
 }): boolean {
   return Boolean(
     andTerms(state).length > 0 ||
-      state.exactPhrase.trim() ||
+      exactPhrases(state).length > 0 ||
       state.fromUser.trim() ||
       state.hashtag.trim(),
   )

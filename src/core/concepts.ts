@@ -1,6 +1,6 @@
 import type { MessageKey } from '@/i18n'
 import type { ConceptId, QueryState } from './types'
-import { andTerms } from './text'
+import { andTerms, exactPhrases } from './text'
 
 export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   keywords: 'concept.keywords.label',
@@ -41,6 +41,7 @@ export interface FieldDef {
     | 'workType'
     | 'resultType'
     | 'terms'
+    | 'phrases'
     | 'sort'
   labelKey: MessageKey
   /** ⓘホバーで出す機能説明 */
@@ -53,7 +54,8 @@ export interface FieldDef {
 export const FIELDS: FieldDef[] = [
   // キーワードは1枠=1語。枠を足すと絞り込み(AND)。「または」は条件セットで表現する
   { concept: 'keywords', field: 'terms', widget: 'terms', labelKey: 'concept.keywords.label', helpKey: 'concept.keywords.help' },
-  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'text', labelKey: 'concept.exactPhrase.label', helpKey: 'concept.exactPhrase.help', placeholderKey: 'concept.exactPhrase.placeholder' },
+  // 完全一致も1枠=1語句。枠を足すと絞り込み(AND)。各枠は引用符つきで送られる
+  { concept: 'exactPhrase', field: 'exactPhrase', widget: 'phrases', labelKey: 'concept.exactPhrase.label', helpKey: 'concept.exactPhrase.help', placeholderKey: 'concept.exactPhrase.placeholder' },
   { concept: 'exclude', field: 'exclude', widget: 'text', labelKey: 'concept.exclude.label', helpKey: 'concept.exclude.help', placeholderKey: 'concept.exclude.placeholder', multi: true },
   { concept: 'fromUser', field: 'fromUser', widget: 'text', labelKey: 'concept.fromUser.label', helpKey: 'concept.fromUser.help', placeholderKey: 'concept.fromUser.placeholder' },
   { concept: 'hashtag', field: 'hashtag', widget: 'text', labelKey: 'concept.hashtag.label', helpKey: 'concept.hashtag.help', placeholderKey: 'concept.hashtag.placeholder', multi: true },
@@ -81,7 +83,7 @@ export const FIELDS: FieldDef[] = [
 export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
   if (andTerms(state).length > 0) active.push('keywords')
-  if (state.exactPhrase.trim()) active.push('exactPhrase')
+  if (exactPhrases(state).length > 0) active.push('exactPhrase')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
   if (state.fromUser.trim()) active.push('fromUser')
@@ -112,7 +114,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
 export function defaultState(): QueryState {
   return {
     terms: [''],
-    exactPhrase: '',
+    exactPhrase: [''],
     exclude: '',
     titleOnly: false,
     fromUser: '',

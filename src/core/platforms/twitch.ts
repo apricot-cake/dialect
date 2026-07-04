@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
-import { andTerms } from '../text'
+import { andTerms, exactPhrases } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実ブラウザ実測)
 // 検索は /search?term=(あいまい一致)。引用符・除外などの演算子は一切効かない。
@@ -8,7 +8,7 @@ import { andTerms } from '../text'
 function buildUrl(state: QueryState): string | null {
   const parts = [...andTerms(state)]
   // 演算子がないため語句もそのままキーワードとして埋め込む
-  if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
+  parts.push(...exactPhrases(state))
   if (parts.length === 0) return null
 
   const params = new URLSearchParams({ term: parts.join(' ') })

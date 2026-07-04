@@ -1,6 +1,6 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, quoteIfPhrase, stripAt, words } from '../text'
+import { andTerms, exactPhrases, quoteIfPhrase, stripAt, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -21,7 +21,7 @@ function buildUrl(state: QueryState): string | null {
   if (
     !(
       andTerms(state).length > 0 ||
-      state.exactPhrase.trim() ||
+      exactPhrases(state).length > 0 ||
       state.fromUser.trim() ||
       // コミュニティ単独(subreddit:のみ)の検索もRedditでは成立する
       state.subreddit.trim()
@@ -33,7 +33,7 @@ function buildUrl(state: QueryState): string | null {
   const clauses: string[] = []
   const field = state.titleOnly ? 'title:' : ''
   clauses.push(...andTerms(state).map((w) => `${field}${quoteIfPhrase(w)}`))
-  if (state.exactPhrase.trim()) clauses.push(`${field}"${state.exactPhrase.trim()}"`)
+  clauses.push(...exactPhrases(state).map((p) => `${field}"${p}"`))
   if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
   // コミュニティは複数指定で「どれか」(OR)
   const subs = words(state.subreddit).map(

@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
-import { andTerms, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
@@ -7,7 +7,7 @@ import { andTerms, stripHash, words } from '../text'
 function buildUrl(state: QueryState): string | null {
   // 完全一致は近似のキーワード扱い
   const textParts = [...andTerms(state)]
-  if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
+  textParts.push(...exactPhrases(state))
   const tagNames = words(state.hashtag).map(stripHash)
 
   if (tagNames.length === 1 && textParts.length === 0) {

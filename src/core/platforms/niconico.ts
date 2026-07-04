@@ -1,6 +1,6 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
+import { andTerms, exactPhrases, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
@@ -8,7 +8,7 @@ import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 // タグ単独なら /tag/(タグ一致検索)、ことばと併用時はキーワード検索に畳み込む。
 function buildUrl(state: QueryState): string | null {
   const textParts: string[] = [...andTerms(state).map(quoteIfPhrase)]
-  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
+  textParts.push(...exactPhrases(state).map((p) => `"${p}"`))
   const tagNames = words(state.hashtag).map(stripHash)
   const excludes = words(state.exclude).map((w) => `-${w}`)
 

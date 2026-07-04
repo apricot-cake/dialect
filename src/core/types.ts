@@ -50,8 +50,11 @@ export interface QueryState {
    * 語どうしは常にAND。常に1要素以上
    */
   terms: string[]
-  /** 1つの語句をこの語順のまま探す。分割しない */
-  exactPhrase: string
+  /**
+   * 完全一致の語句の並び。1要素=1つの語句で、語句の中身は分割しない(語順のまま探す)。
+   * 語句どうしは常にAND。常に1要素以上(terms と同じ扱い)
+   */
+  exactPhrase: string[]
   exclude: string
   titleOnly: boolean
   fromUser: string

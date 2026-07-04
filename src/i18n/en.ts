@@ -15,7 +15,7 @@ export const en = {
   'concept.exactPhrase.label': 'Exact phrase',
   'concept.exactPhrase.placeholder': 'e.g. planned service suspension',
   'concept.exactPhrase.help':
-    'Finds only posts containing this exact wording, including word order and spacing.',
+    'Finds only posts containing this exact wording, including word order and spacing. Press Enter to add several phrases and narrow to posts containing all of them.',
   'concept.exclude.label': 'Exclude keywords',
   'concept.exclude.placeholder': 'e.g. ad',
   'concept.exclude.help':

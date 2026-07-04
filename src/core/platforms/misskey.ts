@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, stripAt, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /search?q=&type=note(要ログイン)。本文検索はMeilisearchで、語ごとのAND・
@@ -11,7 +11,7 @@ import { andTerms, stripAt, stripHash, words } from '../text'
 function buildUrl(state: QueryState): string | null {
   // フレーズは "..." で括ると隣接一致になる(Meilisearch)
   const textParts = [...andTerms(state)]
-  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
+  textParts.push(...exactPhrases(state).map((p) => `"${p}"`))
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
 

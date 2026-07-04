@@ -1,6 +1,6 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
+import { andTerms, exactPhrases, quoteIfPhrase, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索対象はパスで分ける: /search/text(本文)・/search/title(タイトル)・/search/tag(タグ)。
@@ -10,7 +10,7 @@ import { andTerms, quoteIfPhrase, stripHash, words } from '../text'
 // 注意: 期間を指定しないと、はてブ側の標準で「直近5年・3users以上」に絞られる。
 function buildUrl(state: QueryState): string | null {
   const textParts = [...andTerms(state).map(quoteIfPhrase)]
-  if (state.exactPhrase.trim()) textParts.push(`"${state.exactPhrase.trim()}"`)
+  textParts.push(...exactPhrases(state).map((p) => `"${p}"`))
   const tagNames = words(state.hashtag).map(stripHash)
   const excludes = words(state.exclude).map((w) => `-${w}`)
 
@@ -38,7 +38,7 @@ function dynamicSupport(
   const tagOnly =
     words(state.hashtag).length > 0 &&
     andTerms(state).length === 0 &&
-    !state.exactPhrase.trim()
+    exactPhrases(state).length === 0
   const overrides: Partial<Record<ConceptId, ConceptSupport>> =
     tagOnly && state.titleOnly
       ? { titleOnly: { level: 'none', noteKey: 'note.hatebu.titleTagConflict' } }

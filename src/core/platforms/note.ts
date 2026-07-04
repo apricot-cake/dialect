@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, stripAt, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
@@ -8,7 +8,7 @@ function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
   // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
   const textParts = [...andTerms(state)]
-  if (state.exactPhrase.trim()) textParts.push(state.exactPhrase.trim())
+  textParts.push(...exactPhrases(state))
   const tagNames = words(state.hashtag).map(stripHash)
 
   if (tagNames.length === 1 && !handle && textParts.length === 0) {

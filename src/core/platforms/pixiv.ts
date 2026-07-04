@@ -1,6 +1,6 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。作品の種類を指定したときは
@@ -13,7 +13,7 @@ function buildUrl(state: QueryState): string | null {
   // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
   const parts: string[] = [...andTerms(state)]
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
-  if (state.exactPhrase.trim()) parts.push(state.exactPhrase.trim())
+  parts.push(...exactPhrases(state))
   parts.push(...words(state.hashtag).map(stripHash))
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null

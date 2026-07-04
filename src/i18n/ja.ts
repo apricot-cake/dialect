@@ -17,7 +17,7 @@ export const ja = {
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
   'concept.exactPhrase.help':
-    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
+    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します。Enterで区切ると、複数の語句をすべて含む投稿に絞れます',
   'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告',
   'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',

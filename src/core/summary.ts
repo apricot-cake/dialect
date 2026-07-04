@@ -1,6 +1,6 @@
 import type { QueryState } from './types'
 import { getLang, t } from '@/i18n'
-import { andTerms, stripAt, stripHash, words } from './text'
+import { andTerms, exactPhrases, stripAt, stripHash, words } from './text'
 
 /** ひとまとまりの語句を括る引用符。日本語は「」、英語は"" */
 function quote(s: string): string {
@@ -17,9 +17,8 @@ export function summarize(state: QueryState): string {
   const parts: string[] = []
   const kw = andTerms(state).map(markPhrase)
   if (kw.length > 0) parts.push(kw.join(' '))
-  if (state.exactPhrase.trim()) {
-    parts.push(quote(state.exactPhrase.trim()))
-  }
+  const phrases = exactPhrases(state).map(quote)
+  if (phrases.length > 0) parts.push(phrases.join(' '))
   if (state.exclude.trim()) {
     parts.push(`${t('summary.exclude')}: ${words(state.exclude).join(' ')}`)
   }

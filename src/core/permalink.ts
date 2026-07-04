@@ -21,7 +21,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   for (const term of state.terms) {
     if (term.trim()) params.append('kw', term.trim())
   }
-  if (state.exactPhrase.trim()) params.set('ph', state.exactPhrase.trim())
+  // 完全一致も1枠=1語句で ph= を繰り返す(kw と同じ形式)
+  for (const phrase of state.exactPhrase) {
+    if (phrase.trim()) params.append('ph', phrase.trim())
+  }
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
@@ -65,12 +68,12 @@ function paramsToState(params: URLSearchParams): QueryState {
       : s.split(OR_SEPARATOR).map((t) => t.trim()).filter(Boolean)
     if (texts.length > 0) terms.push(texts[0])
   }
-  const ph = (params.get('ph') ?? '').trim()
-  if (legacy && params.get('phm') === 'any' && words(ph).length >= 2) {
+  const phrases = params.getAll('ph').map((s) => s.trim()).filter(Boolean)
+  if (legacy && params.get('phm') === 'any' && words(phrases[0] ?? '').length >= 2) {
     // 旧形式の「どれかを含む」複数語句も先頭だけ残す
-    terms.push(words(ph)[0])
-  } else {
-    state.exactPhrase = ph
+    terms.push(words(phrases[0])[0])
+  } else if (phrases.length > 0) {
+    state.exactPhrase = phrases
   }
   if (terms.length > 0) state.terms = terms
   state.exclude = params.get('ex') ?? ''
