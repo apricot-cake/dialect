@@ -198,7 +198,8 @@ export const en = {
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
-  'launch.bgHint': 'Middle-click, or Ctrl/⌘-click, to open in a background tab',
+  'launch.bgHint':
+    'Open sites you want in background tabs, one after another, without leaving this page. Middle-click, or Ctrl/⌘-click.',
   'launch.loginNote':
     'You must be signed in to {name} in this browser to see results.',
   'launch.appliedCount': '{applied}/{total} conditions applied',
