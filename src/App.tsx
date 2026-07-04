@@ -277,7 +277,7 @@ export default function App() {
                     </Tooltip>
                   </div>
                 </div>
-                {/* サイトで絞る: ラベルを1行目に独立させ、2行目以降にサイトの絞り込みを折り返す。
+                {/* サイトで使える条件だけ表示: ラベルを1行目に独立させ、2行目以降にサイトの選択を折り返す。
                     各サイトはアイコンのみ(ホバーで名前)。選択中はハイライト、もう一度押すと解除=すべて */}
                 <div className="flex flex-col gap-2 rounded-xl bg-card p-3 shadow-sm ring-1 ring-foreground/10">
                   <Tooltip>

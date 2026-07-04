@@ -107,11 +107,11 @@ export const ja = {
   'builder.hint.help.touch': '項目名をタップすると説明が出ます',
 
   // ビルダーのサイト絞り込み・対応サイト数バッジ
-  'builder.filter.label': 'サイトで条件を絞る',
+  'builder.filter.label': 'サイトで使える条件だけ表示',
   'builder.filter.help':
-    '選んだサイトで使える条件だけに、下の一覧の表示を絞ります。検索先のサイトが変わるわけではありません。すでに値を入れた条件は絞り込み中も隠れません',
+    '選んだサイトで使える条件だけを一覧に表示します。表示が変わるだけで、検索先のサイトは変わりません。すでに値を入れた条件は、表示を切り替えても隠れません',
   'builder.help.iconLabel': 'この条件の説明',
-  'builder.filter.active': '絞り込み中',
+  'builder.filter.active': '表示中',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',
 

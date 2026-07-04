@@ -105,11 +105,11 @@ export const en = {
   'builder.hint.help.touch': 'Tap a field name to see its explanation.',
 
   // Site filter and supported-site badge
-  'builder.filter.label': 'Filter conditions by site',
+  'builder.filter.label': 'Show conditions a site supports',
   'builder.filter.help':
-    'Narrows the list below to the conditions the chosen site supports. It does not change which sites you search. Conditions you have already filled in stay visible while filtering.',
+    'Shows only the conditions the chosen site supports. This changes what is listed, not which sites you search. Conditions you have already filled in stay visible.',
   'builder.help.iconLabel': 'About this condition',
-  'builder.filter.active': 'Filtering',
+  'builder.filter.active': 'Filtered',
   'builder.filter.all': 'All',
   'builder.support.label': 'Sites',
 
