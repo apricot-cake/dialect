@@ -141,15 +141,23 @@ function AppliedCountBadge({ resolution }: { resolution: Resolution }) {
 export function LaunchPanel({
   state,
   onLaunch,
+  isMobile,
 }: {
   state: QueryState
   onLaunch?: () => void
+  isMobile: boolean
 }) {
   return (
-    // 罫線は引かず、見出しの字面(小さめの太字)とグループ間の広めの余白だけで
-    // 塊を見分ける。グループ間 gap-9 > 見出し→カード gap-3 の非対称で、
-    // 見出しが上のグループから離れて下のカード群に属して見えるようにする
-    <div className="flex flex-col gap-9">
+    <div className="flex flex-col gap-6">
+      {/* 背面タブで複数サイトを次々に開く使い方は、ここで一度だけ案内する。
+          ホイールクリック等はPCの操作なので、スマホでは出さない */}
+      {!isMobile && (
+        <p className="text-xs text-muted-foreground">{t('launch.bgHint')}</p>
+      )}
+      {/* 罫線は引かず、見出しの字面(小さめの太字)とグループ間の広めの余白だけで
+          塊を見分ける。グループ間 gap-9 > 見出し→カード gap-3 の非対称で、
+          見出しが上のグループから離れて下のカード群に属して見えるようにする */}
+      <div className="flex flex-col gap-9">
       {GROUPS.map(({ group, labelKey }) => {
         const platforms = PLATFORMS.filter((p) => p.group === group)
         if (platforms.length === 0) return null
@@ -166,6 +174,7 @@ export function LaunchPanel({
           </section>
         )
       })}
+      </div>
     </div>
   )
 }
@@ -299,27 +308,33 @@ function PlatformCards({
               </div>
 
               <ResolutionNotes resolution={resolution} />
-              {/* 検索ボタンは本物のリンク。左クリック=前面、中クリック/Ctrl・⌘+クリック=背面。
-                  背面で開く操作のヒントは常時表示をやめ、リンクのホバーに畳む。
-                  要ログインのサイトは、その注意も同じホバーに併せて出す */}
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <SearchLink
-                      url={resolution.url}
-                      label={tf('launch.search', { name: platform.name })}
-                      brandColor={platform.brandColor}
-                      onLaunch={onLaunch}
-                    />
-                  }
+              {/* 検索ボタンは本物のリンク。左クリック=前面、ホイールクリック/Ctrl・⌘+クリック=背面。
+                  背面オープンの使い方は右カラム上部で一度だけ案内する。
+                  要ログインのサイトだけ、そのサイト固有の注意をホバー/タップで出す */}
+              {platform.requiresLogin ? (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <SearchLink
+                        url={resolution.url}
+                        label={tf('launch.search', { name: platform.name })}
+                        brandColor={platform.brandColor}
+                        onLaunch={onLaunch}
+                      />
+                    }
+                  />
+                  <TooltipContent className="max-w-64">
+                    {tf('launch.loginNote', { name: platform.name })}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <SearchLink
+                  url={resolution.url}
+                  label={tf('launch.search', { name: platform.name })}
+                  brandColor={platform.brandColor}
+                  onLaunch={onLaunch}
                 />
-                <TooltipContent className="flex max-w-64 flex-col gap-1">
-                  {platform.requiresLogin && (
-                    <span>{tf('launch.loginNote', { name: platform.name })}</span>
-                  )}
-                  <span>{t('launch.bgHint')}</span>
-                </TooltipContent>
-              </Tooltip>
+              )}
               {fallback && (
                 <GoogleFallbackBlock
                   platform={platform}

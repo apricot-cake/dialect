@@ -365,6 +365,7 @@ export default function App() {
             <LaunchPanel
               state={query}
               onLaunch={() => setHistoryEntries(recordHistory(query))}
+              isMobile={isMobile}
             />
           </section>
           </main>
