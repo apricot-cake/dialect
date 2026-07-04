@@ -429,7 +429,7 @@ export function QueryBuilder({
   }
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-9">
       {/* ビルダー上部の使い方ヒント。項目説明の出し方はPC/スマホで文言を出し分ける */}
       <div className="flex flex-col gap-1 text-xs text-muted-foreground">
         <p>{t('builder.hint.enter')}</p>
