@@ -97,7 +97,7 @@ function ChipInput({
 
   return (
     // Inputと同等の見た目のチップ入力。クリックで内側のinputへフォーカス
-    <div className="flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/30">
+    <div className="flex min-h-8 w-full flex-wrap items-center gap-1.5 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 md:text-sm dark:bg-input/50">
       {chips.map((chip, i) => (
         <span
           key={`${chip}-${i}`}

@@ -46,7 +46,9 @@ const FILTER_ACTIVE = 'bg-primary/15 ring-1 ring-primary/40 hover:bg-primary/20'
 // 中身のカードは白なので、ごく淡いグレー地の上で浮いて見える(面の明度差で分離する)。
 // bg/ring とも foreground のアルファ塗りにして、ライト=淡いグレー地/ダーク=淡い明色地の
 // どちらでも「一段沈んだ面」に見えるようにする
-const COLUMN_TRAY = 'rounded-2xl bg-foreground/[0.035] p-5 ring-1 ring-foreground/[0.07]'
+const COLUMN_TRAY =
+  'rounded-2xl bg-foreground/[0.035] p-5 ring-1 ring-foreground/[0.07] ' +
+  'dark:bg-foreground/[0.05] dark:ring-foreground/[0.12]'
 
 function initialQuery(): QueryState {
   if (location.search) {
