@@ -176,19 +176,31 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
 .dl-drop-in { animation: dl-drop 200ms cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* 条件追加モーダル(Base UI Dialog)の開閉トランジション。
-   [data-starting-style]/[data-ending-style] は Base UI が開閉時に付ける状態属性 */
+   開きの初期状態はネイティブの @starting-style で与える。Base UI の
+   data-starting-style は開いた後も残ることがあり、それを transform に使うと
+   モーダルが 0.965 倍のまま固定されて、文字が滲む・要素が非整数px になって
+   バッジ間の余白がずれる。閉じるときは Base UI が付ける data-ending-style を使う */
 .dl-scrim {
   background: oklch(0 0 0 / 0.34);
   opacity: 1;
   transition: opacity 300ms ease;
 }
-.dl-scrim[data-starting-style], .dl-scrim[data-ending-style] { opacity: 0; }
+@starting-style {
+  .dl-scrim { opacity: 0; }
+}
+.dl-scrim[data-ending-style] { opacity: 0; }
 .dl-sheet {
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
   transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 260ms ease;
 }
-.dl-sheet[data-starting-style], .dl-sheet[data-ending-style] {
+@starting-style {
+  .dl-sheet {
+    transform: translate(-50%, -50%) scale(0.965);
+    opacity: 0;
+  }
+}
+.dl-sheet[data-ending-style] {
   transform: translate(-50%, -50%) scale(0.965);
   opacity: 0;
 }
