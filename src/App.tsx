@@ -205,9 +205,9 @@ export default function App() {
               isMobile && tab !== 'build' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
-            {/* カラム見出しは、アイコン+下罫でカラムの「ヘッダー」として接地させる。
+            {/* カラム見出しにアイコンを添えて識別性を持たせる。
                 アイコンはモバイル切替ボタンと同じ(条件=スライダー)で対応づける */}
-            <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
+            <div className="flex items-center gap-2">
               <SlidersHorizontal className="size-4 shrink-0 text-primary" />
               <h2 className="text-sm font-semibold tracking-tight">
                 {t('column.build')}
@@ -370,8 +370,8 @@ export default function App() {
               isMobile && tab !== 'launch' ? 'hidden' : 'flex'
             } flex-col gap-8`}
           >
-            {/* 見出し=検索アイコン+下罫。左カラムと同じ作りでヘッダーとして接地させる */}
-            <div className="flex items-center gap-2 border-b border-border/70 pb-2.5">
+            {/* 見出しに検索アイコンを添える。左カラムと同じ作り */}
+            <div className="flex items-center gap-2">
               <Search className="size-4 shrink-0 text-primary" />
               <h2 className="text-sm font-semibold tracking-tight">
                 {t('column.launch')}
