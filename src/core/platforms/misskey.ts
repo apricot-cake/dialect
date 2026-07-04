@@ -52,7 +52,6 @@ export const misskey: PlatformDef = {
     exclude: { level: 'partial', noteKey: 'note.misskey.exclude' },
     fromUser: { level: 'partial', noteKey: 'note.misskey.fromUser' },
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,

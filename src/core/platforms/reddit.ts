@@ -71,7 +71,6 @@ export const reddit: PlatformDef = {
     hashtag: { level: 'none', noteKey: 'note.reddit.hashtag' },
     period: { level: 'partial', noteKey: 'note.reddit.period' },
     mediaOnly: { level: 'none' },
-    japaneseOnly: { level: 'none' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

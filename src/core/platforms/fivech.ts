@@ -33,7 +33,6 @@ export const fivech: PlatformDef = {
     exclude: { level: 'full' },
     titleOnly: { level: 'full' },
     subreddit: { level: 'partial', noteKey: 'note.fivech.subreddit' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,

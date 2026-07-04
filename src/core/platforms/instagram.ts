@@ -46,7 +46,6 @@ export const instagram: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.instagram.hashtag' },
     period: { level: 'none' },
     mediaOnly: { level: 'none' },
-    japaneseOnly: { level: 'none' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,

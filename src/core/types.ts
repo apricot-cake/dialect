@@ -21,12 +21,15 @@ export type ConceptId =
   | 'excludeReplies'
   | 'minLikes'
   | 'minReposts'
-  | 'japaneseOnly'
+  | 'language'
   | 'workType'
   | 'resultType'
   | 'sortOrder'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
+
+/** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
+export type PostLanguage = '' | 'ja' | 'en'
 
 /** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
 export type WorkType = '' | 'illust' | 'manga'
@@ -76,7 +79,7 @@ export interface QueryState {
   excludeReplies: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
-  japaneseOnly: boolean
+  language: PostLanguage
   workType: WorkType
   resultType: ResultType
   sort: SortOrder

@@ -22,7 +22,7 @@ export const CONCEPT_LABEL_KEYS: Record<ConceptId, MessageKey> = {
   excludeReplies: 'concept.excludeReplies.label',
   minLikes: 'concept.minLikes.label',
   minReposts: 'concept.minReposts.label',
-  japaneseOnly: 'concept.japaneseOnly.label',
+  language: 'concept.language.label',
   workType: 'concept.workType.label',
   resultType: 'concept.resultType.label',
   sortOrder: 'concept.sortOrder.label',
@@ -65,7 +65,6 @@ export const FIELDS: FieldDef[] = [
   { concept: 'videoLength', field: 'videoLength', widget: 'videoLength', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },
   { concept: 'workType', field: 'workType', widget: 'workType', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help' },
   { concept: 'resultType', field: 'resultType', widget: 'resultType', labelKey: 'concept.resultType.label', helpKey: 'concept.resultType.help' },
-  { concept: 'japaneseOnly', field: 'japaneseOnly', widget: 'toggle', labelKey: 'concept.japaneseOnly.label', helpKey: 'concept.japaneseOnly.help' },
   { concept: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label', helpKey: 'concept.sortOrder.help' },
   { concept: 'toUser', field: 'toUser', widget: 'text', labelKey: 'concept.toUser.label', helpKey: 'concept.toUser.help', placeholderKey: 'concept.toUser.placeholder', multi: true },
   { concept: 'excludeUser', field: 'excludeUser', widget: 'text', labelKey: 'concept.excludeUser.label', helpKey: 'concept.excludeUser.help', placeholderKey: 'concept.excludeUser.placeholder', multi: true },
@@ -101,7 +100,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.excludeReplies) active.push('excludeReplies')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
-  if (state.japaneseOnly) active.push('japaneseOnly')
+  if (state.language) active.push('language')
   if (state.workType) active.push('workType')
   if (state.resultType) active.push('resultType')
   // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
@@ -133,7 +132,7 @@ export function defaultState(): QueryState {
     excludeReplies: false,
     minLikes: '',
     minReposts: '',
-    japaneseOnly: false,
+    language: '',
     workType: '',
     resultType: '',
     sort: 'new',

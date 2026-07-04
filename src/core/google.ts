@@ -18,12 +18,12 @@ const RECOVERABLE: ReadonlySet<ConceptId> = new Set([
 
 /**
  * Google URLに引き継げる概念の全体。トリガーにはしないが keywords は q= に、
- * japaneseOnly は lr=lang_ja に翻訳される
+ * language は lr=lang_* に翻訳される
  */
 const CARRIED: ReadonlySet<ConceptId> = new Set([
   ...RECOVERABLE,
   'keywords',
-  'japaneseOnly',
+  'language',
 ])
 
 /** ネイティブ検索の代替としてのGoogleサイト内検索 */
@@ -47,7 +47,7 @@ function buildGoogleUrl(site: string, state: QueryState): string | null {
   parts.push(...words(state.exclude).map((w) => `-${w}`))
   if (state.since) parts.push(`after:${state.since}`)
   if (state.until) parts.push(`before:${state.until}`)
-  const lang = state.japaneseOnly ? '&lr=lang_ja' : ''
+  const lang = state.language ? `&lr=lang_${state.language}` : ''
   return `https://www.google.com/search?q=${encodeURIComponent(parts.join(' '))}${lang}`
 }
 

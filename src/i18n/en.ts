@@ -77,8 +77,12 @@ export const en = {
   'concept.minReposts.placeholder': 'e.g. 50',
   'concept.minReposts.help':
     'Keeps only posts with at least the given number of reposts.',
-  'concept.japaneseOnly.label': 'Japanese posts only',
-  'concept.japaneseOnly.help': 'Keeps only posts written in Japanese.',
+  'concept.language.label': 'Post language',
+  'concept.language.none': 'Any',
+  'concept.language.ja': 'Japanese',
+  'concept.language.en': 'English',
+  'concept.language.help':
+    'Filters by the language the post is written in (X and Bluesky only).',
   'concept.workType.label': 'Work type',
   'concept.workType.none': 'Any',
   'concept.workType.illust': 'Illustration',
@@ -128,8 +132,6 @@ export const en = {
   'note.videoOnly': 'This site is video-only, so this filter is unnecessary.',
   'note.imageOnly':
     'This site is image/illustration-only, so this filter is unnecessary.',
-  'note.jaOnly.service':
-    'This is a Japanese service, so this filter is unnecessary.',
 
   // Per-platform notes
   'note.x.period':
@@ -154,7 +156,6 @@ export const en = {
     'This is an unofficial method and may stop working in the future.',
   'note.youtube.mediaOnly':
     'YouTube is video-only, so this filter is unnecessary.',
-  'note.youtube.japaneseOnly': 'YouTube has no way to filter by language.',
   'note.youtube.sort':
     'Popular is approximated by view count (unofficial). Newest currently no longer works on YouTube.',
   'note.youtube.channelConflict':
@@ -169,8 +170,6 @@ export const en = {
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
-  'note.note.japaneseOnly':
-    'note is a Japanese service, so this filter is unnecessary.',
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
@@ -199,8 +198,6 @@ export const en = {
     'When searching by hashtag alone, the title-only filter has no effect.',
   'note.hatebu.fromUser':
     'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
-  'note.twitch.japaneseOnly':
-    'Filtering by language cannot be set via URL.',
   'note.twitch.resultType': 'Twitch can only search videos and channels.',
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.fivech.keywords':

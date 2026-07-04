@@ -57,7 +57,6 @@ export const niconico: PlatformDef = {
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

@@ -108,7 +108,6 @@ export const youtube: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial', noteKey: 'note.unofficial' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
-    japaneseOnly: { level: 'none', noteKey: 'note.youtube.japaneseOnly' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
   buildUrl,

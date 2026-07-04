@@ -39,7 +39,6 @@ export const twitch: PlatformDef = {
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     resultType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
-    japaneseOnly: { level: 'none', noteKey: 'note.twitch.japaneseOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,

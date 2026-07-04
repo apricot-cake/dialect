@@ -46,6 +46,6 @@ export function summarize(state: QueryState): string {
   if (state.workType) parts.push(t(`concept.workType.${state.workType}`))
   if (state.resultType) parts.push(t(`concept.resultType.${state.resultType}`))
   if (state.mediaOnly) parts.push(t('concept.mediaOnly.label'))
-  if (state.japaneseOnly) parts.push(t('concept.japaneseOnly.label'))
+  if (state.language) parts.push(t(`concept.language.${state.language}`))
   return parts.join(' / ')
 }

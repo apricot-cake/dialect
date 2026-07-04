@@ -28,7 +28,6 @@ export const animanch: PlatformDef = {
     keywords: { level: 'partial', noteKey: 'note.animanch.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     titleOnly: { level: 'partial', noteKey: 'note.animanch.titleOnly' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,

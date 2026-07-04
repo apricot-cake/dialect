@@ -63,7 +63,6 @@ export const hatebu: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     period: { level: 'full' },
     minLikes: { level: 'partial', noteKey: 'note.hatebu.minLikes' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

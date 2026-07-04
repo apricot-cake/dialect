@@ -45,7 +45,6 @@ export const note: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.note.hashtag' },
     period: { level: 'none', noteKey: 'note.note.period' },
     mediaOnly: { level: 'none', noteKey: 'note.note.mediaOnly' },
-    japaneseOnly: { level: 'none', noteKey: 'note.note.japaneseOnly' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

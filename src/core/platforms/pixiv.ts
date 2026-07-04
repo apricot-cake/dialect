@@ -57,7 +57,6 @@ export const pixiv: PlatformDef = {
     period: { level: 'partial', noteKey: 'note.unofficial' },
     workType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
-    japaneseOnly: { level: 'none', noteKey: 'note.jaOnly.service' },
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },
   },
   buildUrl,

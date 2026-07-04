@@ -22,7 +22,7 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
-  if (state.japaneseOnly) parts.push('lang:ja')
+  if (state.language) parts.push(`lang:${state.language}`)
 
   // tab=latest=新しい順。人気順・おまかせは既定のTopタブのまま開く
   const tab = state.sort === 'new' ? '&tab=latest' : ''
@@ -46,7 +46,7 @@ export const bluesky: PlatformDef = {
     hashtag: { level: 'full' },
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.bluesky.mediaOnly' },
-    japaneseOnly: { level: 'full' },
+    language: { level: 'full' },
     sortOrder: { level: 'partial', noteKey: 'note.bluesky.sort' },
   },
   buildUrl,

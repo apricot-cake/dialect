@@ -79,8 +79,12 @@ export const ja = {
   'concept.minReposts.placeholder': '例: 50',
   'concept.minReposts.help':
     'リポスト数が指定した数以上の投稿だけに絞り込みます',
-  'concept.japaneseOnly.label': '日本語の投稿だけ',
-  'concept.japaneseOnly.help': '日本語で書かれた投稿だけに絞り込みます',
+  'concept.language.label': '投稿の言語',
+  'concept.language.none': '指定なし',
+  'concept.language.ja': '日本語',
+  'concept.language.en': '英語',
+  'concept.language.help':
+    '投稿が書かれている言語で絞り込みます（X・Blueskyのみ対応）',
   'concept.workType.label': '作品の種類',
   'concept.workType.none': '指定なし',
   'concept.workType.illust': 'イラスト',
@@ -127,7 +131,6 @@ export const ja = {
   'note.nosort': '並び順はURLでは指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
   'note.imageOnly': 'もともと画像・イラストだけのサイトなので、この絞り込みは不要です',
-  'note.jaOnly.service': '日本語のサービスなので、この絞り込みは不要です',
 
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
@@ -144,7 +147,6 @@ export const ja = {
   'note.youtube.hashtag': 'ふつうのキーワードとして検索されます',
   'note.youtube.period': '非公式な指定方法のため、将来使えなくなる可能性があります',
   'note.youtube.mediaOnly': 'YouTube はもともと動画だけなので、この絞り込みは不要です',
-  'note.youtube.japaneseOnly': 'YouTube には言語で絞る機能がありません',
   'note.youtube.sort':
     '人気順は視聴回数順で代用します(非公式)。新しい順は現在YouTube側で効かなくなっています',
   'note.youtube.channelConflict':
@@ -156,7 +158,6 @@ export const ja = {
   'note.note.hashtag': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
-  'note.note.japaneseOnly': 'note は日本語のサービスなので、この絞り込みは不要です',
 
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
@@ -175,7 +176,6 @@ export const ja = {
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
   'note.hatebu.titleTagConflict': 'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
   'note.hatebu.fromUser': 'ユーザーのブックマークの中のキーワード検索は、はてなへのログインが必要なため対応していません',
-  'note.twitch.japaneseOnly': '言語での絞り込みはURLでは指定できません',
   'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.fivech.keywords': 'スレッドのタイトルだけが検索対象です。スレタイ検索サービス(ff5ch.syoboi.jp)を開きます',
