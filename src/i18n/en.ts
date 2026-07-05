@@ -200,6 +200,8 @@ export const en = {
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.fivech.keywords':
     'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
+  'note.fivech.titleOnly':
+    '5ch search always targets thread titles only (it searches titles regardless of this toggle).',
   'note.fivech.subreddit':
     'Filters by board ID (e.g. sony). Set several to match any of those boards (OR).',
   'note.animanch.keywords':

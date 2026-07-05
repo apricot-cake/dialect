@@ -175,6 +175,7 @@ export const ja = {
   'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.fivech.keywords': 'スレッドのタイトルだけが検索対象です。スレタイ検索サービス(ff5ch.syoboi.jp)を開きます',
+  'note.fivech.titleOnly': '5ちゃんねる検索はもともとスレッドのタイトルだけが対象です(このトグルに関わらず常にタイトルを検索します)',
   'note.fivech.subreddit': '板のID(例: sony)で絞り込みます。複数指定するといずれかの板(OR)になります',
   'note.animanch.keywords': 'レスの本文を検索します(β機能のため、取りこぼしがあることがあります)',
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',

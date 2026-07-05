@@ -31,7 +31,8 @@ export const fivech: PlatformDef = {
     keywords: { level: 'partial', noteKey: 'note.fivech.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     exclude: { level: 'full' },
-    titleOnly: { level: 'full' },
+    // ff5chは元々スレタイのみ検索。トグルは何も変えない(常にタイトル対象)ので注記で伝える
+    titleOnly: { level: 'partial', noteKey: 'note.fivech.titleOnly' },
     subreddit: { level: 'partial', noteKey: 'note.fivech.subreddit' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
