@@ -219,7 +219,9 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
    にする。サムは透明ボーダー+padding-box clipで右端からも少し浮かせる */
 .dl-modal-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--faint) 60%, transparent) transparent; }
 .dl-modal-scroll::-webkit-scrollbar { width: 12px; }
-.dl-modal-scroll::-webkit-scrollbar-track { background: transparent; margin: 16px 0; }
+/* Chrome はバーをカスタムすると上下に増減ボタン(▲▼)が出て角丸に食い込むため消す */
+.dl-modal-scroll::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.dl-modal-scroll::-webkit-scrollbar-track { background: transparent; margin: 18px 0; }
 .dl-modal-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in oklch, var(--faint) 55%, transparent);
   border: 3px solid transparent;
