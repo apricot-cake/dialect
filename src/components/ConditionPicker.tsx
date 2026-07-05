@@ -190,7 +190,7 @@ export function ConditionPicker({
                     <Icon size={18} color="var(--faint)" className="shrink-0" />
                     <span className="flex min-w-0 flex-1 flex-col gap-[3px] text-left">
                       <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
-                      <span className="overflow-hidden text-xs overflow-ellipsis whitespace-nowrap text-muted">
+                      <span className="text-xs leading-snug text-muted">
                         {t(def.helpKey)}
                       </span>
                     </span>
