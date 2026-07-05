@@ -1,0 +1,34 @@
+name: CI
+
+# main へマージする前のゲート。決定論的なチェック(型・ビルド・lint)だけを必須にする。
+# 外部サイトへ実アクセスする check:urls は不達で赤くなりマージが詰まるため、ここには入れず
+# リリース前に手元/operator-check で回す運用にしている。
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # チェックはpushしないので、認証トークンをローカルgit configに残さない
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
