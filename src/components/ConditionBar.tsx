@@ -5,6 +5,7 @@ import { t } from '@/i18n'
 import { PlatformBadgeTile } from './PlatformBadge'
 import { ChipsField, PlainField, SelectField, SortField, ToggleField } from './widgets'
 import { PeriodField } from './PeriodField'
+import { CONCEPT_ICONS } from './conceptIcons'
 
 /** 「完全対応/一部対応」の見出し+バッジタイル1段 */
 function SupSection({
@@ -124,13 +125,13 @@ export function ConditionBar({
     ? splitSupporters(def.id, query)
     : { full: [], partial: [] }
 
+  const Icon = CONCEPT_ICONS[def.id]
+
   return (
     <>
       <div className="w-[30px] shrink-0" />
       <div className="dl-bar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-          <path d={def.iconPath} />
-        </svg>
+        <Icon size={18} color="var(--faint)" className="shrink-0" />
         <span
           data-tip={t(def.helpKey)}
           className="shrink-0 cursor-default text-[15px] font-semibold whitespace-nowrap text-muted"

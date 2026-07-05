@@ -1,0 +1,60 @@
+import type { LucideIcon } from 'lucide-react'
+import {
+  ArrowUpDown,
+  AtSign,
+  BadgeCheck,
+  Calendar,
+  CircleMinus,
+  Clock,
+  Globe,
+  Hash,
+  Heading,
+  Heart,
+  Image as ImageIcon,
+  Link,
+  Link2,
+  MessageSquare,
+  MessageSquareOff,
+  Palette,
+  Quote,
+  Repeat2,
+  Reply,
+  Search,
+  Star,
+  User,
+  UserX,
+  Video,
+} from 'lucide-react'
+import type { ConceptId } from '@/core/types'
+
+/**
+ * 各条件の先頭に出す性質アイコン。core/conceptDefs はフレームワーク非依存に保ちたい
+ * ので、Lucideコンポーネントとの対応表はUI層のここに置く。以前は手書きのSVGパスを
+ * 使っていたが字形が歪む(星など)ため、本物のLucideに統一した。
+ */
+export const CONCEPT_ICONS: Record<ConceptId, LucideIcon> = {
+  keywords: Search,
+  exactPhrase: Quote,
+  exclude: CircleMinus,
+  fromUser: User,
+  excludeUser: UserX,
+  toUser: Reply,
+  mentionsUser: AtSign,
+  subreddit: MessageSquare,
+  domain: Link2,
+  hashtag: Hash,
+  period: Calendar,
+  titleOnly: Heading,
+  mediaOnly: ImageIcon,
+  videoLength: Clock,
+  workType: Palette,
+  resultType: Video,
+  language: Globe,
+  sortOrder: ArrowUpDown,
+  linksOnly: Link,
+  verifiedOnly: BadgeCheck,
+  excludeReplies: MessageSquareOff,
+  minLikes: Heart,
+  minReposts: Repeat2,
+  pixivPopular: Star,
+}

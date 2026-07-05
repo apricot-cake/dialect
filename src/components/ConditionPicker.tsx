@@ -6,6 +6,7 @@ import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 import { CONCEPT_DEFS, splitSupporters, SUPPORT_COUNT } from '@/core/conceptDefs'
 import { t } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
+import { CONCEPT_ICONS } from './conceptIcons'
 
 /** サイトフィルタの選択中スタイル(アクセントを薄く差した枠+地)。
    card/border と混ぜると OKLCH の白補間で色相が紫に転ぶため、ピッカー選択済み行と
@@ -171,6 +172,7 @@ export function ConditionPicker({
             <div className="px-[22px] pt-3.5 pb-[26px]">
               {rows.map((def) => {
                 const isAdded = addedSet.has(def.id)
+                const Icon = CONCEPT_ICONS[def.id]
                 return (
                   <button
                     key={def.id}
@@ -185,9 +187,7 @@ export function ConditionPicker({
                     onMouseEnter={() => setHover(def.id)}
                     onMouseLeave={() => setHover(null)}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                      <path d={def.iconPath} />
-                    </svg>
+                    <Icon size={18} color="var(--faint)" className="shrink-0" />
                     <span className="flex min-w-0 flex-1 flex-col gap-[3px] text-left">
                       <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
                       <span className="overflow-hidden text-xs overflow-ellipsis whitespace-nowrap text-muted">
