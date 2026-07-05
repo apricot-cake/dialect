@@ -151,7 +151,9 @@ function LaunchCard({
     resolution.applied.length + resolution.approximated.length + droppedReal.length
   const score = resolution.applied.length + resolution.approximated.length * 0.5
   const ratio = relevant > 0 ? score / relevant : 1
-  const dotColor = `color-mix(in oklch, var(--accent) ${Math.round(ratio * 100)}%, var(--faint))`
+  // 完全度を色相＋濃淡で。効くほど緑、落ちるほど琥珀→赤へ(グレーの濃淡だけだと
+  // 識別しづらいため色相も動かす)。oklchの短い弧で緑150→赤25が琥珀85を通る
+  const dotColor = `color-mix(in oklch, oklch(0.72 0.17 150) ${Math.round(ratio * 100)}%, oklch(0.62 0.2 25))`
 
   return (
     <div
