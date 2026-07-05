@@ -144,14 +144,14 @@ function LaunchCard({
   const showMeta = hover && (popHasContent || !enabled)
 
   // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルの列で常時表示する。
-  // 先頭のドットは翻訳完全度の濃淡(緑=全部そのまま/琥珀=一部近似/薄=一部は送れず落ちる)。
-  // 専用フィールドの落ち(droppedSpecialty)はこのサイトの守備範囲外なので完全度に数えない
   const preview = enabled ? translationPreview(resolution, query) : ''
-  const dotColor = droppedReal.length
-    ? 'var(--faint)'
-    : resolution.approximated.length
-      ? '#e0a015'
-      : 'var(--accent)'
+  // 先頭ドットは翻訳完全度の濃淡。applied=満点/近似=半分/使えない(droppedReal)=0 で 0〜1 を出し、
+  // faint→accent のグラデにする。専用フィールドの落ち(droppedSpecialty)は守備範囲外なので分母に数えない
+  const relevant =
+    resolution.applied.length + resolution.approximated.length + droppedReal.length
+  const score = resolution.applied.length + resolution.approximated.length * 0.5
+  const ratio = relevant > 0 ? score / relevant : 1
+  const dotColor = `color-mix(in oklch, var(--accent) ${Math.round(ratio * 100)}%, var(--faint))`
 
   return (
     <div
