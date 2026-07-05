@@ -48,6 +48,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
   if (!['', '00users', '000users', '0000users'].includes(query.pixivPopular)) {
     query.pixivPopular = ''
   }
+  if (!['', 'safe', 'r18'].includes(query.ageRating)) query.ageRating = ''
   if (!['new', 'top', 'hot', 'auto'].includes(query.sort)) query.sort = 'new'
   if (!['', 'ja', 'en'].includes(query.language)) query.language = ''
   return query

@@ -35,6 +35,9 @@ function spParam(state: QueryState): string {
   const filter: number[] = []
   if (state.resultType) filter.push(0x10, TYPE_BYTE[state.resultType])
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
+  // 「特徴>ライブ」= filterサブメッセージの field8=1(sp=EgJAAQ%3D%3D を2026-07-05に
+  // フィルタUIから実測)。type/長さと同じサブメッセージに合流する
+  if (state.liveOnly) filter.push(0x40, 0x01)
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
   if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
@@ -84,6 +87,7 @@ function dynamicSupport(
     overrides.sortOrder = CHANNEL_CONFLICT
     overrides.videoLength = CHANNEL_CONFLICT
     overrides.resultType = CHANNEL_CONFLICT
+    overrides.liveOnly = CHANNEL_CONFLICT
   }
   // 急上昇(hot)はnote専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
   return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
@@ -106,6 +110,7 @@ export const youtube: PlatformDef = {
     period: { level: 'partial', noteKey: 'note.youtube.period' },
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial', noteKey: 'note.unofficial' },
+    liveOnly: { level: 'partial', noteKey: 'note.unofficial' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },

@@ -21,12 +21,15 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.linksOnly) active.push('linksOnly')
   if (state.verifiedOnly) active.push('verifiedOnly')
   if (state.excludeReplies) active.push('excludeReplies')
+  if (state.liveOnly) active.push('liveOnly')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.language) active.push('language')
   if (state.workType) active.push('workType')
   if (state.resultType) active.push('resultType')
   if (state.pixivPopular) active.push('pixivPopular')
+  if (state.ageRating) active.push('ageRating')
+  if (state.excludeAi) active.push('excludeAi')
   // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
   // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えない。
   // ユーザーが意図的に選んだ並び順(人気順・急上昇など)だけを注記・件数の対象にする
@@ -54,6 +57,7 @@ export function defaultState(): QueryState {
     linksOnly: false,
     verifiedOnly: false,
     excludeReplies: false,
+    liveOnly: false,
     minLikes: '',
     minReposts: '',
     language: '',
@@ -61,5 +65,7 @@ export function defaultState(): QueryState {
     resultType: '',
     sort: 'new',
     pixivPopular: '',
+    ageRating: '',
+    excludeAi: false,
   }
 }

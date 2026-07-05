@@ -41,12 +41,15 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.linksOnly) params.set('links', '1')
   if (state.verifiedOnly) params.set('ver', '1')
   if (state.excludeReplies) params.set('norep', '1')
+  if (state.liveOnly) params.set('live', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.language) params.set('lang', state.language)
   if (state.workType) params.set('wt', state.workType)
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
+  if (state.ageRating) params.set('age', state.ageRating)
+  if (state.excludeAi) params.set('noai', '1')
   // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める。
   // おまかせ(auto)は「サイト任せ=既定と機能的に等価」で条件に数えない(activeConcepts)ため
   // URLにも出さない。出すと他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ
@@ -99,6 +102,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.linksOnly = params.get('links') === '1'
   state.verifiedOnly = params.get('ver') === '1'
   state.excludeReplies = params.get('norep') === '1'
+  state.liveOnly = params.get('live') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   const lang = params.get('lang')
@@ -115,6 +119,9 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (pxu === '00users' || pxu === '000users' || pxu === '0000users') {
     state.pixivPopular = pxu
   }
+  const age = params.get('age')
+  if (age === 'safe' || age === 'r18') state.ageRating = age
+  state.excludeAi = params.get('noai') === '1'
   const sort = params.get('sort')
   if (sort === 'top' || sort === 'hot' || sort === 'auto') state.sort = sort
   return state

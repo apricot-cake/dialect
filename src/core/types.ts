@@ -19,6 +19,7 @@ export type ConceptId =
   | 'linksOnly'
   | 'verifiedOnly'
   | 'excludeReplies'
+  | 'liveOnly'
   | 'minLikes'
   | 'minReposts'
   | 'language'
@@ -26,6 +27,8 @@ export type ConceptId =
   | 'resultType'
   | 'sortOrder'
   | 'pixivPopular'
+  | 'ageRating'
+  | 'excludeAi'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -36,6 +39,13 @@ export type VideoLength = '' | 'short' | 'medium' | 'long'
  * 00users≒100以上 / 000users≒1000以上 / 0000users≒10000以上
  */
 export type PixivPopular = '' | '00users' | '000users' | '0000users'
+
+/**
+ * pixivの年齢制限フィルタ(mode)。空=指定なし(アカウント既定=すべて)、
+ * safe=全年齢のみ(mode=safe)、r18=R18のみ(mode=r18)。実機確認済み(2026-07-05)で
+ * safe+r18が件数上ちょうど全件に分割される。R18の表示は未ログインだと出ない
+ */
+export type AgeRating = '' | 'safe' | 'r18'
 
 /** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
 export type PostLanguage = '' | 'ja' | 'en'
@@ -86,6 +96,8 @@ export interface QueryState {
   linksOnly: boolean
   verifiedOnly: boolean
   excludeReplies: boolean
+  /** YouTube専用。ライブ配信だけに絞る(sp のfilterサブメッセージ field8=1) */
+  liveOnly: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   language: PostLanguage
@@ -94,6 +106,10 @@ export interface QueryState {
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */
   pixivPopular: PixivPopular
+  /** pixiv専用。年齢制限(mode=safe/r18)。空=指定なし */
+  ageRating: AgeRating
+  /** pixiv専用。AI生成作品を除く(ai_type=1)。false=指定なし(アカウント既定に従う) */
+  excludeAi: boolean
 }
 
 /**

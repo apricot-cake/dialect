@@ -29,9 +29,12 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'period', field: 'since', widget: 'period', labelKey: 'concept.period.label', helpKey: 'concept.period.help' },
   { id: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label', helpKey: 'concept.titleOnly.help' },
   { id: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label', helpKey: 'concept.mediaOnly.help' },
+  { id: 'liveOnly', field: 'liveOnly', widget: 'toggle', labelKey: 'concept.liveOnly.label', helpKey: 'concept.liveOnly.help' },
   { id: 'videoLength', field: 'videoLength', widget: 'select', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },
   { id: 'workType', field: 'workType', widget: 'select', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help' },
   { id: 'pixivPopular', field: 'pixivPopular', widget: 'select', labelKey: 'concept.pixivPopular.label', helpKey: 'concept.pixivPopular.help' },
+  { id: 'ageRating', field: 'ageRating', widget: 'select', labelKey: 'concept.ageRating.label', helpKey: 'concept.ageRating.help' },
+  { id: 'excludeAi', field: 'excludeAi', widget: 'toggle', labelKey: 'concept.excludeAi.label', helpKey: 'concept.excludeAi.help' },
   { id: 'resultType', field: 'resultType', widget: 'select', labelKey: 'concept.resultType.label', helpKey: 'concept.resultType.help' },
   { id: 'language', field: 'language', widget: 'select', labelKey: 'concept.language.label', helpKey: 'concept.language.help' },
   { id: 'sortOrder', field: 'sort', widget: 'sort', labelKey: 'concept.sortOrder.label', helpKey: 'concept.sortOrder.help' },
@@ -126,6 +129,11 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: '00users', labelKey: 'concept.pixivPopular.100' },
     { value: '000users', labelKey: 'concept.pixivPopular.1000' },
     { value: '0000users', labelKey: 'concept.pixivPopular.10000' },
+  ],
+  ageRating: [
+    { value: '', labelKey: 'concept.ageRating.none' },
+    { value: 'safe', labelKey: 'concept.ageRating.safe' },
+    { value: 'r18', labelKey: 'concept.ageRating.r18' },
   ],
 }
 

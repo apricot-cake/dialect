@@ -54,6 +54,8 @@ export const ja = {
     '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
   'concept.mediaOnly.label': '画像・動画つきの投稿だけ',
   'concept.mediaOnly.help': '画像または動画がついた投稿だけに絞り込みます',
+  'concept.liveOnly.label': 'ライブ配信だけ',
+  'concept.liveOnly.help': 'YouTubeで、ライブ配信（生放送・アーカイブ）だけに絞り込みます',
   'concept.videoLength.label': '動画の長さ',
   'concept.videoLength.none': '指定なし',
   'concept.videoLength.short': '短い (〜4分)',
@@ -106,6 +108,13 @@ export const ja = {
   'concept.pixivPopular.10000': '10000users以上',
   'concept.pixivPopular.help':
     'pixivで、一定のブックマーク数に達した人気作だけを探します。プレミアム会員でなくても擬似的に人気順になります（「◯◯users入り」タグを利用）',
+  'concept.ageRating.label': '年齢制限',
+  'concept.ageRating.none': '指定なし',
+  'concept.ageRating.safe': '全年齢のみ',
+  'concept.ageRating.r18': 'R18のみ',
+  'concept.ageRating.help': 'pixivで、全年齢の作品だけ、またはR18の作品だけに絞り込みます',
+  'concept.excludeAi.label': 'AI生成作品を除く',
+  'concept.excludeAi.help': 'pixivで、AI生成作品を検索結果から除きます',
 
   // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
@@ -162,6 +171,7 @@ export const ja = {
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
   'note.pixiv.popular': '「◯◯users入り」タグで擬似的に人気作を絞り込みます。ファンが手動で付けるタグのため、付いていない人気作は漏れることがあります',
+  'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
   'note.misskey.keywords': '語ごとに部分一致でAND検索されます(まれな語は結果が出ないことも)。遷移後、検索ページで「検索」ボタンを押すと結果が表示されます',
   'note.misskey.exclude': '先頭に - をつけて除外します(非公式のため、効かない場合があります)',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',

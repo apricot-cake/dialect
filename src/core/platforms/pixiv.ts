@@ -37,6 +37,11 @@ function buildUrl(state: QueryState): string | null {
   if (state.sort === 'top') params.set('order', 'popular_d')
   if (state.since) params.set('scd', state.since)
   if (state.until) params.set('ecd', state.until)
+  // 年齢制限とAI生成は /tags エンドポイントでも有効(2026-07-05実機確認)。
+  // mode=safe(全年齢)/r18(R18のみ)。空(すべて)はアカウント既定なので送らない。
+  // ai_type=1 でAI生成作品を除外(送らなければアカウント既定に従う)。どちらも非会員でも効く
+  if (state.ageRating) params.set('mode', state.ageRating)
+  if (state.excludeAi) params.set('ai_type', '1')
   const qs = params.toString()
 
   const section =
@@ -67,7 +72,16 @@ export const pixiv: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },
     pixivPopular: { level: 'partial', noteKey: 'note.pixiv.popular' },
+    ageRating: { level: 'full' },
+    excludeAi: { level: 'full' },
   },
   buildUrl,
-  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+  // R18のみ(mode=r18)は未ログインだと結果に出ないので、その値のときだけ注記つきに落とす。
+  // 全年齢(safe)は誰でも効くので full のまま
+  dynamicSupport: (state) => ({
+    ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+    ...(state.ageRating === 'r18'
+      ? { ageRating: { level: 'partial', noteKey: 'note.pixiv.r18Login' } }
+      : {}),
+  }),
 }

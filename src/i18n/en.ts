@@ -52,6 +52,8 @@ export const en = {
     'Filters by post date. You can set just one side.',
   'concept.mediaOnly.label': 'With image or video only',
   'concept.mediaOnly.help': 'Keeps only posts that include an image or video.',
+  'concept.liveOnly.label': 'Live streams only',
+  'concept.liveOnly.help': 'On YouTube, keeps only live streams (live and their archives).',
   'concept.videoLength.label': 'Video length',
   'concept.videoLength.none': 'Any',
   'concept.videoLength.short': 'Short (under 4 min)',
@@ -104,6 +106,13 @@ export const en = {
   'concept.pixivPopular.10000': '10,000+ bookmarks',
   'concept.pixivPopular.help':
     'On pixiv, finds only popular works that reached a given bookmark count — a pseudo “popular” sort without Premium (uses the “N users入り” tags).',
+  'concept.ageRating.label': 'Age rating',
+  'concept.ageRating.none': 'Any',
+  'concept.ageRating.safe': 'All ages only',
+  'concept.ageRating.r18': 'R-18 only',
+  'concept.ageRating.help': 'On pixiv, keeps only all-ages works, or only R-18 works.',
+  'concept.excludeAi.label': 'Exclude AI-generated',
+  'concept.excludeAi.help': 'On pixiv, removes AI-generated works from the results.',
 
   // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
@@ -179,6 +188,8 @@ export const en = {
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.pixiv.popular':
     'Filters to popular works via the “N users入り” tags. These are added by fans by hand, so some popular works may be missed.',
+  'note.pixiv.r18Login':
+    'Showing R-18 works requires being logged in to pixiv (they won’t appear when logged out).',
   'note.misskey.keywords':
     'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
   'note.misskey.exclude':
