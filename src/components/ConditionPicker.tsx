@@ -31,11 +31,11 @@ function InlineSupport({
   const { full, partial } = splitSupporters(concept, query)
   return (
     <span
-      className="inline-flex shrink-0 flex-col items-end justify-center gap-1"
+      className="inline-flex shrink-0 flex-col items-start justify-center gap-1"
       style={{ animation: 'dl-fade 140ms ease both' }}
     >
       {full.length > 0 && (
-        <span className="inline-flex items-center justify-end gap-[5px]">
+        <span className="inline-flex items-center justify-start gap-[5px]">
           <span className="text-[10.5px] font-semibold whitespace-nowrap text-faint">
             {t('support.full')}
           </span>
@@ -45,7 +45,7 @@ function InlineSupport({
         </span>
       )}
       {partial.length > 0 && (
-        <span className="inline-flex items-center justify-end gap-[5px]">
+        <span className="inline-flex items-center justify-start gap-[5px]">
           <span className="text-[10.5px] font-semibold whitespace-nowrap text-faint">
             {t('support.partial')}
           </span>
