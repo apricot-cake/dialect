@@ -7,12 +7,14 @@ import { CONCEPT_DEFS, splitSupporters, SUPPORT_COUNT } from '@/core/conceptDefs
 import { t } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
 
-/** サイトフィルタの選択中スタイル(アクセントを薄く差した枠+地) */
+/** サイトフィルタの選択中スタイル(アクセントを薄く差した枠+地)。
+   card/border と混ぜると OKLCH の白補間で色相が紫に転ぶため、ピッカー選択済み行と
+   同じく accent-bright を透明と混ぜて色相を保つ(ダークで沈まない変種でもある) */
 function activeChipStyle(on: boolean): CSSProperties | undefined {
   if (!on) return undefined
   return {
-    borderColor: 'color-mix(in oklch, var(--accent) 55%, var(--border))',
-    background: 'color-mix(in oklch, var(--accent) 14%, var(--card))',
+    borderColor: 'color-mix(in oklch, var(--accent-bright) 55%, transparent)',
+    background: 'color-mix(in oklch, var(--accent-bright) 14%, transparent)',
   }
 }
 
@@ -176,7 +178,7 @@ export function ConditionPicker({
                     data-noscale
                     className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
                       isAdded
-                        ? 'bg-(--picker-added) border-[color:var(--picker-added-border)] shadow-[var(--picker-added-shadow)]'
+                        ? 'bg-(--picker-added) border-[color:var(--picker-added-border)]'
                         : 'hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]'
                     }`}
                     onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
