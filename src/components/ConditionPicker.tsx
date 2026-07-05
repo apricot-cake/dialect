@@ -109,7 +109,7 @@ export function ConditionPicker({
       <Dialog.Portal>
         <Dialog.Backdrop className="dl-scrim fixed inset-0 z-[60]" />
         <Dialog.Popup className="dl-sheet fixed top-1/2 left-1/2 z-[61] flex max-h-[84vh] w-[min(760px,94vw)] flex-col overflow-hidden rounded-[18px] bg-card shadow-[0_24px_70px_oklch(0_0_0_/_0.32)] outline-none">
-          <div className="mx-auto flex min-h-0 w-full max-w-[860px] flex-1 flex-col overflow-y-auto">
+          <div className="dl-modal-scroll mx-auto flex min-h-0 w-full max-w-[860px] flex-1 flex-col overflow-y-auto">
             {/* スティッキーなガラスヘッダー(タイトル+サイトフィルタ) */}
             <div
               className="sticky top-0 z-[5]"
