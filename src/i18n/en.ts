@@ -99,9 +99,9 @@ export const en = {
   'concept.sortOrder.help': 'Sets the result order.',
   'concept.pixivPopular.label': 'Popularity',
   'concept.pixivPopular.none': 'Any',
-  'concept.pixivPopular.100': 'Noticed (100+ bookmarks)',
-  'concept.pixivPopular.1000': 'Popular (1,000+ bookmarks)',
-  'concept.pixivPopular.10000': 'Very popular (10,000+ bookmarks)',
+  'concept.pixivPopular.100': '100+ bookmarks',
+  'concept.pixivPopular.1000': '1,000+ bookmarks',
+  'concept.pixivPopular.10000': '10,000+ bookmarks',
   'concept.pixivPopular.help':
     'On pixiv, finds only popular works that reached a given bookmark count — a pseudo “popular” sort without Premium (uses the “N users入り” tags).',
 
