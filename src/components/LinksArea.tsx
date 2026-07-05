@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
-import { translationPreview, specialtyOwner } from '@/core/preview'
+import { translationParts, specialtyOwner } from '@/core/preview'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type {
   ConceptId,
@@ -143,17 +143,18 @@ function LaunchCard({
     resolution.approximated.length > 0
   const showMeta = hover && (popHasContent || !enabled)
 
-  // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルの列で常時表示する。
-  const preview = enabled ? translationPreview(resolution, query) : ''
-  // 先頭ドットは翻訳完全度の濃淡。applied=満点/近似=半分/使えない(droppedReal)=0 で 0〜1 を出し、
-  // faint→accent のグラデにする。専用フィールドの落ち(droppedSpecialty)は守備範囲外なので分母に数えない
+  // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルで常時表示する。
+  const parts = enabled ? translationParts(resolution, query) : []
+  // 先頭ドットは翻訳完全度の濃淡。applied=満点/近似=半分/使えない(droppedReal)=0 で 0〜1 を出す。
+  // 専用フィールドの落ち(droppedSpecialty)は守備範囲外なので分母に数えない
   const relevant =
     resolution.applied.length + resolution.approximated.length + droppedReal.length
   const score = resolution.applied.length + resolution.approximated.length * 0.5
   const ratio = relevant > 0 ? score / relevant : 1
-  // 完全度を色相＋濃淡で。効くほど緑、落ちるほど琥珀→赤へ(グレーの濃淡だけだと
-  // 識別しづらいため色相も動かす)。oklchの短い弧で緑150→赤25が琥珀85を通る
-  const dotColor = `color-mix(in oklch, oklch(0.72 0.17 150) ${Math.round(ratio * 100)}%, oklch(0.62 0.2 25))`
+  // 完全度を色相＋濃淡で。効くほど明るい緑、落ちるほど琥珀→赤黒(「ダメ」と分かるよう低域を暗い赤に)。
+  // oklchの短い弧で緑152→赤25が琥珀を通る。低域を効かせるため ratio を軽く指数で寝かせる
+  const pct = Math.round(Math.pow(ratio, 1.3) * 100)
+  const dotColor = `color-mix(in oklch, oklch(0.74 0.17 152) ${pct}%, oklch(0.38 0.17 25))`
 
   return (
     <div
@@ -188,16 +189,22 @@ function LaunchCard({
         />
         {tf('launch.search', { name: platform.name })}
       </a>
-      {enabled && preview && (
-        <div className="mt-[7px] flex items-center gap-1.5 px-1" title={preview}>
+      {enabled && parts.length > 0 && (
+        <div className="mt-[7px] flex items-start gap-1.5 px-1">
           <span
             aria-hidden
-            className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+            className="mt-[5px] inline-block h-1.5 w-1.5 shrink-0 rounded-full"
             style={{ background: dotColor }}
           />
-          <span className="min-w-0 flex-1 truncate text-[11px] leading-[1.4] text-muted">
-            {preview}
-          </span>
+          {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
+            {parts.map((p, i) => (
+              <span key={i} className="whitespace-nowrap">
+                {p}
+                {i < parts.length - 1 && <span className="text-faint">・</span>}
+              </span>
+            ))}
+          </div>
         </div>
       )}
       {showMeta && (

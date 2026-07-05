@@ -79,11 +79,12 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
 
 /**
  * 起動カードの翻訳プレビュー。そのサイトで実際に効く条件(applied＋近似)だけを、
- * 読みやすいラベルの列にして返す。落ちる条件(dropped)は含めない
+ * 読みやすいラベルの配列にして返す。落ちる条件(dropped)は含めない
  * ——「各サイトで効く条件の違い」がそのまま見え、打ち消し線の羅列にもならない。
- * 並びは条件バーと同じ CONCEPT_DEFS 順。
+ * 並びは条件バーと同じ CONCEPT_DEFS 順。1要素=1条件で、表示側は要素の途中で改行させず
+ * 区切りでだけ折り返す(「初音ミ／ク」のような中途改行を避ける)。
  */
-export function translationPreview(resolution: Resolution, state: QueryState): string {
+export function translationParts(resolution: Resolution, state: QueryState): string[] {
   const effective = new Set<ConceptId>([
     ...resolution.applied,
     ...resolution.approximated.map((a) => a.concept),
@@ -94,7 +95,7 @@ export function translationPreview(resolution: Resolution, state: QueryState): s
     const s = conceptSummary(def.id, state)
     if (s) parts.push(s)
   }
-  return parts.join(' ・ ')
+  return parts
 }
 
 /**
