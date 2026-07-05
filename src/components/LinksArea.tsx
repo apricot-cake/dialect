@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
+import { translationPreview, specialtyOwner } from '@/core/preview'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type {
   ConceptId,
@@ -78,6 +79,32 @@ function MetaSection({
   )
 }
 
+/** 他サイト専用の条件を、打ち消し線で騒がせず「〇〇専用」と静かに伝える */
+function SpecialtySection({
+  items,
+}: {
+  items: Array<{ concept: ConceptId; owner: PlatformDef }>
+}) {
+  return (
+    <div className="flex flex-col gap-[7px]">
+      <span className="text-[10px] font-bold tracking-[0.04em] text-faint">
+        {t('launch.specialtyHeading')}
+      </span>
+      <div className="flex flex-col gap-[5px]">
+        {items.map(({ concept, owner }) => (
+          <span key={concept} className="text-[11px] leading-[1.35] text-muted">
+            {t(CONCEPT_MAP[concept].labelKey)}
+            <span className="text-faint">
+              {' '}
+              {tf('launch.specialtyOnly', { name: owner.name })}
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /**
  * サイト1つ分の検索ボタン。本物のリンク(<a target="_blank">)なので、
  * ホイールクリック/Ctrl・⌘+クリックの背面タブ開きはブラウザ標準の挙動に委ねる
@@ -85,19 +112,46 @@ function MetaSection({
 function LaunchCard({
   platform,
   resolution,
+  query,
   dark,
 }: {
   platform: PlatformDef
   resolution: Resolution
+  query: QueryState
   dark: boolean
 }) {
   const [hover, setHover] = useState(false)
   const enabled = Boolean(resolution.url)
   const ink = platform.ink ?? readableInk(platform.brandColor)
   const showLogin = platform.requiresLogin && enabled
+
+  // 落ちる条件を「このサイトが本来できるはずなのに使えない」ものと、
+  // 「もともと単一サイト専用で、このサイトの守備範囲外」のものに分ける。
+  // 後者は打ち消し線で騒がせず「〇〇専用」と静かに見せ、完全度の判定にも数えない
+  const droppedReal: typeof resolution.dropped = []
+  const droppedSpecialty: Array<{ concept: ConceptId; owner: PlatformDef }> = []
+  for (const d of resolution.dropped) {
+    const owner = specialtyOwner(d.concept)
+    if (owner && owner.id !== platform.id) droppedSpecialty.push({ concept: d.concept, owner })
+    else droppedReal.push(d)
+  }
+
   const popHasContent =
-    showLogin || resolution.dropped.length > 0 || resolution.approximated.length > 0
+    showLogin ||
+    droppedReal.length > 0 ||
+    droppedSpecialty.length > 0 ||
+    resolution.approximated.length > 0
   const showMeta = hover && (popHasContent || !enabled)
+
+  // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルの列で常時表示する。
+  // 先頭のドットは翻訳完全度の濃淡(緑=全部そのまま/琥珀=一部近似/薄=一部は送れず落ちる)。
+  // 専用フィールドの落ち(droppedSpecialty)はこのサイトの守備範囲外なので完全度に数えない
+  const preview = enabled ? translationPreview(resolution, query) : ''
+  const dotColor = droppedReal.length
+    ? 'var(--faint)'
+    : resolution.approximated.length
+      ? '#e0a015'
+      : 'var(--accent)'
 
   return (
     <div
@@ -132,6 +186,18 @@ function LaunchCard({
         />
         {tf('launch.search', { name: platform.name })}
       </a>
+      {enabled && preview && (
+        <div className="mt-[7px] flex items-center gap-1.5 px-1" title={preview}>
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+            style={{ background: dotColor }}
+          />
+          <span className="min-w-0 flex-1 truncate text-[11px] leading-[1.4] text-muted">
+            {preview}
+          </span>
+        </div>
+      )}
       {showMeta && (
         <div
           className="dl-glass pointer-events-none absolute top-[calc(100%+8px)] right-2 left-2 z-30 flex flex-col gap-[11px] rounded-[14px] p-[13px]"
@@ -156,8 +222,11 @@ function LaunchCard({
           {resolution.approximated.length > 0 && (
             <MetaSection tone="approx" items={resolution.approximated} />
           )}
-          {resolution.dropped.length > 0 && (
-            <MetaSection tone="dropped" items={resolution.dropped} />
+          {droppedReal.length > 0 && (
+            <MetaSection tone="dropped" items={droppedReal} />
+          )}
+          {droppedSpecialty.length > 0 && (
+            <SpecialtySection items={droppedSpecialty} />
           )}
         </div>
       )}
@@ -221,6 +290,7 @@ export function LinksArea({
                       key={p.id}
                       platform={p}
                       resolution={resolutions.get(p.id)!}
+                      query={query}
                       dark={dark}
                     />
                   ))}

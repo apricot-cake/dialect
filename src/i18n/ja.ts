@@ -192,6 +192,22 @@ export const ja = {
   'launch.bgHint': 'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
+  'launch.specialtyHeading': '他サイト専用',
+  'launch.specialtyOnly': '{name}専用',
+
+  // 起動カードの翻訳プレビュー(効く条件を読みやすいラベルに畳む)。{v}に値が入る
+  'sum.exclude': '{v}を除く',
+  'sum.from': '{v}から',
+  'sum.to': '{v}宛て',
+  'sum.excludeUser': '{v}を除く',
+  'sum.mentions': '{v}へ',
+  'sum.community': '{v}内',
+  'sum.domain': '{v}へのリンク',
+  'sum.minLikes': '{v}いいね以上',
+  'sum.minReposts': '{v}リポスト以上',
+  'sum.since': '{v}以降',
+  'sum.until': '{v}まで',
+  'sum.between': '{a}〜{b}',
 
   // 起動画面のサイトのグループ見出し
   'group.sns': 'SNS',
