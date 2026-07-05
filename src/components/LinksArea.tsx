@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
-import { CONCEPT_LABEL_KEYS } from '@/core/concepts'
+import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type {
   ConceptId,
   PlatformDef,
@@ -66,7 +66,7 @@ function MetaSection({
               }`}
               style={{ color: SOFT_INK }}
             >
-              {t(CONCEPT_LABEL_KEYS[concept])}
+              {t(CONCEPT_MAP[concept].labelKey)}
             </span>
             {noteKey && (
               <span className="pl-0.5 text-[11px] leading-[1.4] text-muted">{t(noteKey)}</span>

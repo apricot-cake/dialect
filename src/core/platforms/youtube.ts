@@ -1,6 +1,6 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState, ResultType, VideoLength } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -46,9 +46,8 @@ function buildUrl(state: QueryState): string | null {
   if (!hasPositiveTerm(state)) return null
 
   const parts: string[] = []
-  parts.push(...andTerms(state).map(quoteIfPhrase))
-  parts.push(...exactPhrases(state).map((p) => `"${p}"`))
-  parts.push(...words(state.exclude).map((w) => `-${w}`))
+  parts.push(...quotedTerms(state))
+  parts.push(...minusExcludes(state))
   if (state.titleOnly) {
     // intitle: は語ごとに付ける(非公式)
     for (let i = 0; i < parts.length; i++) {

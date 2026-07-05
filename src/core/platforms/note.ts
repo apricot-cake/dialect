@@ -4,6 +4,13 @@ import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
 // ハッシュタグ単独ならタグページ(厳密一致)、他条件と併用時はキーワードとして検索。
+// new=新着、top=人気(既定)、hot=急上昇。おまかせ(auto)は指定しない。全て実測で動作
+const SORT_PARAM: Partial<Record<QueryState['sort'], string>> = {
+  new: 'new',
+  top: 'popular',
+  hot: 'hot',
+}
+
 function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
   // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
@@ -19,12 +26,6 @@ function buildUrl(state: QueryState): string | null {
   if (handle) parts.push(`from:@${handle}`)
   if (parts.length === 0) return null
 
-  // new=新着、top=人気(既定)、hot=急上昇。おまかせ(auto)は指定しない。全て実測で動作
-  const SORT_PARAM: Partial<Record<QueryState['sort'], string>> = {
-    new: 'new',
-    top: 'popular',
-    hot: 'hot',
-  }
   const sortVal = SORT_PARAM[state.sort]
   const sort = sortVal ? `&sort=${sortVal}` : ''
   return `https://note.com/search?context=note&q=${encodeURIComponent(parts.join(' '))}${sort}`

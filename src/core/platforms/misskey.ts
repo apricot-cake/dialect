@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { andTerms, exactPhrases, minusExcludes, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /search?q=&type=note(要ログイン)。本文検索はMeilisearchで、語ごとのAND・
@@ -25,7 +25,7 @@ function buildUrl(state: QueryState): string | null {
   // ユーザー指定だけでは検索が実行されないため、検索語を必須にする
   if (parts.length === 0) return null
   // 除外は先頭に - をつける(Meilisearchのマイナス検索。非公式)
-  parts.push(...words(state.exclude).map((w) => `-${w}`))
+  parts.push(...minusExcludes(state))
 
   // URLSearchParamsはスペースを「+」にするが、Misskey側が「+」を
   // スペースへ戻す保証がないため、%20になるencodeURIComponentで組む

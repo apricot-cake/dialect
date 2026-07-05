@@ -168,6 +168,8 @@ export const en = {
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
   'note.reddit.period': 'Rounded to “past day / week / month / year”.',
+  'note.reddit.untilOnly':
+    'Reddit cannot filter by an end date alone (a start date is required).',
   'note.instagram.hashtag':
     'Tag pages show only top posts (no latest order).',
   'note.instagram.multiTag':

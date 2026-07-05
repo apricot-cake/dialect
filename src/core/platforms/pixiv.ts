@@ -1,6 +1,6 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { andTerms, exactPhrases, minusExcludes, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
 // 検索は /tags/{クエリ}/artworks(イラスト・マンガ)。作品の種類を指定したときは
@@ -21,7 +21,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.pixivPopular) parts.push(`${state.pixivPopular}users入り`)
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
-  parts.push(...words(state.exclude).map((w) => `-${w}`))
+  parts.push(...minusExcludes(state))
 
   const params = new URLSearchParams()
   // タイトルだけ=タイトル・キャプション検索(s_mode=s_tc、公式ヘルプ記載)。

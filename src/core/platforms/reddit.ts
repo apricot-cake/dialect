@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, quoteIfPhrase, stripAt, words } from '../text'
 
@@ -54,6 +54,19 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.reddit.com/search/?${params.toString()}`
 }
 
+// Reddit の t= は「今から過去Nへの丸め」しか表せず、開始日(since)を起点にする。
+// 終了日(until)だけ指定しても送れる形が無く buildUrl は t= を付けないので、
+// 「近似で適用」と見せず period を非対応に落として食い違いを防ぐ
+function dynamicSupport(
+  state: QueryState,
+): Partial<Record<ConceptId, ConceptSupport>> {
+  const overrides: Partial<Record<ConceptId, ConceptSupport>> =
+    state.until && !state.since
+      ? { period: { level: 'none', noteKey: 'note.reddit.untilOnly' } }
+      : {}
+  return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
+}
+
 export const reddit: PlatformDef = {
   id: 'reddit',
   name: 'Reddit',
@@ -74,5 +87,5 @@ export const reddit: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
-  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+  dynamicSupport,
 }

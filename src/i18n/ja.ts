@@ -156,6 +156,7 @@ export const ja = {
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
   'note.reddit.period': '「1日以内/1週間/1か月/1年以内」への丸めになります',
+  'note.reddit.untilOnly': 'Redditは「いつまで」だけの期間を指定できません(「いつから」が必要です)',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
   'note.instagram.multiTag':
     'ハッシュタグを2つ以上指定すると、タグページではなくゆるいキーワード検索になり、すべてのタグを含む保証はありません',

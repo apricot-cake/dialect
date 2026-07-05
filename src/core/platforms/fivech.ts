@@ -1,5 +1,5 @@
 import type { PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases, words } from '../text'
+import { andTerms, exactPhrases, minusExcludes, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 5chは2026-03に5ch.net→5ch.ioへドメイン移行。公式スレタイ検索(find.5ch.io)は
@@ -14,7 +14,7 @@ function buildUrl(state: QueryState): string | null {
   const boards = words(state.subreddit).map((b) => `@${b.replace(/^@+/, '')}`)
   // 正の条件はキーワード/フレーズ、または板指定。除外だけでは検索にならない
   if (parts.length === 0 && boards.length === 0) return null
-  parts.push(...words(state.exclude).map((w) => `-${w}`))
+  parts.push(...minusExcludes(state))
   parts.push(...boards)
 
   return `https://ff5ch.syoboi.jp/?q=${encodeURIComponent(parts.join(' '))}`

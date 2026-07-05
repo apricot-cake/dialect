@@ -1,6 +1,6 @@
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, quoteIfPhrase, stripHash, words } from '../text'
+import { andTerms, exactPhrases, minusExcludes, quotedTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索対象はパスで分ける: /search/text(本文)・/search/title(タイトル)・/search/tag(タグ)。
@@ -9,10 +9,9 @@ import { andTerms, exactPhrases, quoteIfPhrase, stripHash, words } from '../text
 // 引用符のフレーズ一致は絞り込み効果を実測したが公式ヘルプに記載なし(中信頼)。
 // 注意: 期間を指定しないと、はてブ側の標準で「直近5年・3users以上」に絞られる。
 function buildUrl(state: QueryState): string | null {
-  const textParts = [...andTerms(state).map(quoteIfPhrase)]
-  textParts.push(...exactPhrases(state).map((p) => `"${p}"`))
+  const textParts = quotedTerms(state)
   const tagNames = words(state.hashtag).map(stripHash)
-  const excludes = words(state.exclude).map((w) => `-${w}`)
+  const excludes = minusExcludes(state)
 
   // タグ単独ならタグ検索(タグの完全一致でAND)。キーワード併用時は本文検索へ畳み込む
   const tagOnly = tagNames.length > 0 && textParts.length === 0

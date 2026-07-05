@@ -23,6 +23,23 @@ export function quoteIfPhrase(term: string): string {
   return /[\s　]/.test(term) ? `"${term}"` : term
 }
 
+/**
+ * 引用符構文のあるサイト向けに、AND語(フレーズは引用符つき)と完全一致語句("…")を
+ * 連結して返す。x/bluesky/youtube/niconico/hatebu が共通で使う先頭2行の集約。
+ * 引用符を使わない misskey/pixiv や、field接頭辞の付く reddit は対象外
+ */
+export function quotedTerms(state: { terms: string[]; exactPhrase: string[] }): string[] {
+  return [
+    ...andTerms(state).map(quoteIfPhrase),
+    ...exactPhrases(state).map((p) => `"${p}"`),
+  ]
+}
+
+/** 除外語を -語 の配列にする(マイナス検索構文のサイト共通)。別文法の reddit は対象外 */
+export function minusExcludes(state: { exclude: string }): string[] {
+  return words(state.exclude).map((w) => `-${w}`)
+}
+
 /** 先頭の @ を除去したユーザー名 */
 export function stripAt(input: string): string {
   return input.trim().replace(/^@+/, '')

@@ -47,8 +47,11 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.workType) params.set('wt', state.workType)
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
-  // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める
-  if (state.sort !== 'new') params.set('sort', state.sort)
+  // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める。
+  // おまかせ(auto)は「サイト任せ=既定と機能的に等価」で条件に数えない(activeConcepts)ため
+  // URLにも出さない。出すと他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ
+  // 復元されない非対称が起きる
+  if (state.sort !== 'new' && state.sort !== 'auto') params.set('sort', state.sort)
   return params
 }
 

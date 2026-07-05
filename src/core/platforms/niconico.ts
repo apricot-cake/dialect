@@ -1,16 +1,15 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, quoteIfPhrase, stripHash, words } from '../text'
+import { minusExcludes, quotedTerms, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
 // デフォルトソートはABテストで変わり得るため sort は常に明示する。
 // タグ単独なら /tag/(タグ一致検索)、ことばと併用時はキーワード検索に畳み込む。
 function buildUrl(state: QueryState): string | null {
-  const textParts: string[] = [...andTerms(state).map(quoteIfPhrase)]
-  textParts.push(...exactPhrases(state).map((p) => `"${p}"`))
+  const textParts = quotedTerms(state)
   const tagNames = words(state.hashtag).map(stripHash)
-  const excludes = words(state.exclude).map((w) => `-${w}`)
+  const excludes = minusExcludes(state)
 
   const params = new URLSearchParams()
   // sort=f&order=d=投稿が新しい順、sort=h=人気(注目度)順。
@@ -35,8 +34,11 @@ function buildUrl(state: QueryState): string | null {
     return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}${query}`
   }
 
-  const parts = [...textParts, ...tagNames, ...excludes]
-  if (parts.length === 0) return null
+  // 除外語は正の条件に数えない。キーワード/完全一致/タグが空で除外だけの入力では
+  // 検索として成立しない(「足す=絞る」原則。他サイトと揃える)
+  const positive = [...textParts, ...tagNames]
+  if (positive.length === 0) return null
+  const parts = [...positive, ...excludes]
 
   return `https://www.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}${query}`
 }

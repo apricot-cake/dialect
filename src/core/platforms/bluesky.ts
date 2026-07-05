@@ -1,6 +1,6 @@
 import type { PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, hasPositiveTerm, quoteIfPhrase, stripAt, stripHash, words } from '../text'
+import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は公式ドキュメントあり(除外 - のみ未文書化・実測動作)。ログイン不要。
@@ -13,9 +13,8 @@ function buildUrl(state: QueryState): string | null {
   }
 
   const parts: string[] = []
-  parts.push(...andTerms(state).map(quoteIfPhrase))
-  parts.push(...exactPhrases(state).map((p) => `"${p}"`))
-  parts.push(...words(state.exclude).map((w) => `-${w}`))
+  parts.push(...quotedTerms(state))
+  parts.push(...minusExcludes(state))
   if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
   if (state.mentionsUser.trim()) parts.push(`mentions:${stripAt(state.mentionsUser)}`)
   if (state.domain.trim()) parts.push(`domain:${state.domain.trim()}`)
