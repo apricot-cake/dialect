@@ -223,6 +223,22 @@ export const en = {
     'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
   'launch.approxHeading': 'Partially works',
   'launch.droppedHeading': 'Not available',
+  'launch.specialtyHeading': 'Only on other sites',
+  'launch.specialtyOnly': '{name} only',
+
+  // Launch-card translation preview (effective conditions as readable labels). {v} is the value
+  'sum.exclude': 'excluding {v}',
+  'sum.from': 'from {v}',
+  'sum.to': 'to {v}',
+  'sum.excludeUser': 'excluding {v}',
+  'sum.mentions': 'mentioning {v}',
+  'sum.community': 'in {v}',
+  'sum.domain': 'links to {v}',
+  'sum.minLikes': '{v}+ likes',
+  'sum.minReposts': '{v}+ reposts',
+  'sum.since': 'since {v}',
+  'sum.until': 'until {v}',
+  'sum.between': '{a}–{b}',
 
   // Site group headings on the launch screen
   'group.sns': 'SNS',

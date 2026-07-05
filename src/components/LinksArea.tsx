@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
+import { translationParts, specialtyOwner } from '@/core/preview'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type {
   ConceptId,
@@ -78,6 +79,32 @@ function MetaSection({
   )
 }
 
+/** 他サイト専用の条件を、打ち消し線で騒がせず「〇〇専用」と静かに伝える */
+function SpecialtySection({
+  items,
+}: {
+  items: Array<{ concept: ConceptId; owner: PlatformDef }>
+}) {
+  return (
+    <div className="flex flex-col gap-[7px]">
+      <span className="text-[10px] font-bold tracking-[0.04em] text-faint">
+        {t('launch.specialtyHeading')}
+      </span>
+      <div className="flex flex-col gap-[5px]">
+        {items.map(({ concept, owner }) => (
+          <span key={concept} className="text-[11px] leading-[1.35] text-muted">
+            {t(CONCEPT_MAP[concept].labelKey)}
+            <span className="text-faint">
+              {' '}
+              {tf('launch.specialtyOnly', { name: owner.name })}
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /**
  * サイト1つ分の検索ボタン。本物のリンク(<a target="_blank">)なので、
  * ホイールクリック/Ctrl・⌘+クリックの背面タブ開きはブラウザ標準の挙動に委ねる
@@ -85,19 +112,49 @@ function MetaSection({
 function LaunchCard({
   platform,
   resolution,
+  query,
   dark,
 }: {
   platform: PlatformDef
   resolution: Resolution
+  query: QueryState
   dark: boolean
 }) {
   const [hover, setHover] = useState(false)
   const enabled = Boolean(resolution.url)
   const ink = platform.ink ?? readableInk(platform.brandColor)
   const showLogin = platform.requiresLogin && enabled
+
+  // 落ちる条件を「このサイトが本来できるはずなのに使えない」ものと、
+  // 「もともと単一サイト専用で、このサイトの守備範囲外」のものに分ける。
+  // 後者は打ち消し線で騒がせず「〇〇専用」と静かに見せ、完全度の判定にも数えない
+  const droppedReal: typeof resolution.dropped = []
+  const droppedSpecialty: Array<{ concept: ConceptId; owner: PlatformDef }> = []
+  for (const d of resolution.dropped) {
+    const owner = specialtyOwner(d.concept)
+    if (owner && owner.id !== platform.id) droppedSpecialty.push({ concept: d.concept, owner })
+    else droppedReal.push(d)
+  }
+
   const popHasContent =
-    showLogin || resolution.dropped.length > 0 || resolution.approximated.length > 0
+    showLogin ||
+    droppedReal.length > 0 ||
+    droppedSpecialty.length > 0 ||
+    resolution.approximated.length > 0
   const showMeta = hover && (popHasContent || !enabled)
+
+  // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルで常時表示する。
+  const parts = enabled ? translationParts(resolution, query) : []
+  // 先頭ドットは翻訳完全度の濃淡。applied=満点/近似=半分/使えない(droppedReal)=0 で 0〜1 を出す。
+  // 専用フィールドの落ち(droppedSpecialty)は守備範囲外なので分母に数えない
+  const relevant =
+    resolution.applied.length + resolution.approximated.length + droppedReal.length
+  const score = resolution.applied.length + resolution.approximated.length * 0.5
+  const ratio = relevant > 0 ? score / relevant : 1
+  // 完全度を色相＋濃淡で。効くほど明るい緑、落ちるほど琥珀→赤黒(「ダメ」と分かるよう低域を暗い赤に)。
+  // oklchの短い弧で緑152→赤25が琥珀を通る。低域を効かせるため ratio を軽く指数で寝かせる
+  const pct = Math.round(Math.pow(ratio, 1.3) * 100)
+  const dotColor = `color-mix(in oklch, oklch(0.74 0.17 152) ${pct}%, oklch(0.38 0.17 25))`
 
   return (
     <div
@@ -132,6 +189,24 @@ function LaunchCard({
         />
         {tf('launch.search', { name: platform.name })}
       </a>
+      {enabled && parts.length > 0 && (
+        <div className="mt-[7px] flex items-start gap-1.5 px-1">
+          <span
+            aria-hidden
+            className="mt-[5px] inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+            style={{ background: dotColor }}
+          />
+          {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
+            {parts.map((p, i) => (
+              <span key={i} className="whitespace-nowrap">
+                {p}
+                {i < parts.length - 1 && <span className="text-faint">・</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       {showMeta && (
         <div
           className="dl-glass pointer-events-none absolute top-[calc(100%+8px)] right-2 left-2 z-30 flex flex-col gap-[11px] rounded-[14px] p-[13px]"
@@ -156,8 +231,11 @@ function LaunchCard({
           {resolution.approximated.length > 0 && (
             <MetaSection tone="approx" items={resolution.approximated} />
           )}
-          {resolution.dropped.length > 0 && (
-            <MetaSection tone="dropped" items={resolution.dropped} />
+          {droppedReal.length > 0 && (
+            <MetaSection tone="dropped" items={droppedReal} />
+          )}
+          {droppedSpecialty.length > 0 && (
+            <SpecialtySection items={droppedSpecialty} />
           )}
         </div>
       )}
@@ -221,6 +299,7 @@ export function LinksArea({
                       key={p.id}
                       platform={p}
                       resolution={resolutions.get(p.id)!}
+                      query={query}
                       dark={dark}
                     />
                   ))}
