@@ -15,18 +15,22 @@ function buildUrl(state: QueryState): string | null {
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
   parts.push(...exactPhrases(state))
   parts.push(...words(state.hashtag).map(stripHash))
-  // 人気の目安=「{N}users入り」タグ(一定ブックマーク数で付く)を1タグとして畳み込む。
+  // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
+  // 先頭の桁を固定しないので 1000/5000/10000…users入り をまとめて拾える。
   // これ単独でも検索が成立する(=正の条件)ので、null判定より前に足す。
-  // プレミアム限定の order=popular_d を使わずに擬似的な人気順を作るハック
-  if (state.pixivPopular) parts.push(`${state.pixivPopular}users入り`)
+  // 部分一致には s_mode=s_tag の明示が必須(省略はタグ完全一致になり #000users で0件。
+  // 2026-07-05 実機確認)。プレミアム限定の order=popular_d を使わない擬似人気順ハック
+  if (state.pixivPopular) parts.push(state.pixivPopular)
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
   parts.push(...minusExcludes(state))
 
   const params = new URLSearchParams()
-  // タイトルだけ=タイトル・キャプション検索(s_mode=s_tc、公式ヘルプ記載)。
-  // 既定はタグ部分一致(s_tag)なので、ONのときだけ切り替える(2026-07-04実測で動作確認)
+  // タイトルだけ=タイトル・キャプション検索(s_mode=s_tc、公式ヘルプ記載、2026-07-04実測)。
+  // 人気の目安は部分一致が要るので s_tag を明示(省略はタグ完全一致で0件になる)。
+  // 両方ONは同時に満たせないため、タイトルだけを優先する(稀な組み合わせ)
   if (state.titleOnly) params.set('s_mode', 's_tc')
+  else if (state.pixivPopular) params.set('s_mode', 's_tag')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
   // popular_d=人気(プレミアム限定)のときだけ order を指定する。おまかせも指定しない

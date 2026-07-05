@@ -45,7 +45,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
   if (!['', 'video', 'short', 'channel', 'playlist'].includes(query.resultType)) {
     query.resultType = ''
   }
-  if (!['', '500', '1000', '5000', '10000', '50000', '100000'].includes(query.pixivPopular)) {
+  if (!['', '00users', '000users', '0000users'].includes(query.pixivPopular)) {
     query.pixivPopular = ''
   }
   if (!['new', 'top', 'hot', 'auto'].includes(query.sort)) query.sort = 'new'

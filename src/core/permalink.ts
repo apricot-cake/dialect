@@ -112,10 +112,7 @@ function paramsToState(params: URLSearchParams): QueryState {
     state.resultType = rt
   }
   const pxu = params.get('pxu')
-  if (
-    pxu === '500' || pxu === '1000' || pxu === '5000' ||
-    pxu === '10000' || pxu === '50000' || pxu === '100000'
-  ) {
+  if (pxu === '00users' || pxu === '000users' || pxu === '0000users') {
     state.pixivPopular = pxu
   }
   const sort = params.get('sort')

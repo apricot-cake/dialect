@@ -101,12 +101,9 @@ export const ja = {
   'concept.sortOrder.help': '検索結果の並び順を指定します',
   'concept.pixivPopular.label': '人気の目安',
   'concept.pixivPopular.none': '指定なし',
-  'concept.pixivPopular.500': '500users以上',
-  'concept.pixivPopular.1000': '1000users以上',
-  'concept.pixivPopular.5000': '5000users以上',
-  'concept.pixivPopular.10000': '10000users以上',
-  'concept.pixivPopular.50000': '50000users以上',
-  'concept.pixivPopular.100000': '100000users以上',
+  'concept.pixivPopular.100': '注目作（100users以上）',
+  'concept.pixivPopular.1000': '人気作（1000users以上）',
+  'concept.pixivPopular.10000': '大人気作（10000users以上）',
   'concept.pixivPopular.help':
     'pixivで、一定のブックマーク数に達した人気作だけを探します。プレミアム会員でなくても擬似的に人気順になります（「◯◯users入り」タグを利用）',
 

@@ -30,10 +30,12 @@ export type ConceptId =
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
 /**
- * pixivの人気作の目安。「{N}users入り」タグ(一定ブックマーク数で付く)を利用して
- * プレミアム会員でなくても擬似的な人気順にする。空は指定なし。値は実在するタグ段階のみ
+ * pixivの人気作の目安。「{N}users入り」タグ(一定ブックマーク数で付く)を、先頭の桁を
+ * 固定しない部分パターン(末尾ゼロの数)で拾う。例: '000users' は 1000/5000/10000…users入り
+ * を s_mode=s_tag の部分一致でまとめてヒット。空は指定なし。
+ * 00users≒100以上 / 000users≒1000以上 / 0000users≒10000以上
  */
-export type PixivPopular = '' | '500' | '1000' | '5000' | '10000' | '50000' | '100000'
+export type PixivPopular = '' | '00users' | '000users' | '0000users'
 
 /** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
 export type PostLanguage = '' | 'ja' | 'en'
@@ -90,7 +92,7 @@ export interface QueryState {
   workType: WorkType
   resultType: ResultType
   sort: SortOrder
-  /** pixiv専用。「{N}users入り」タグで擬似人気順にする(空=指定なし) */
+  /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */
   pixivPopular: PixivPopular
 }
 

@@ -123,12 +123,9 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
   ],
   pixivPopular: [
     { value: '', labelKey: 'concept.pixivPopular.none' },
-    { value: '500', labelKey: 'concept.pixivPopular.500' },
-    { value: '1000', labelKey: 'concept.pixivPopular.1000' },
-    { value: '5000', labelKey: 'concept.pixivPopular.5000' },
-    { value: '10000', labelKey: 'concept.pixivPopular.10000' },
-    { value: '50000', labelKey: 'concept.pixivPopular.50000' },
-    { value: '100000', labelKey: 'concept.pixivPopular.100000' },
+    { value: '00users', labelKey: 'concept.pixivPopular.100' },
+    { value: '000users', labelKey: 'concept.pixivPopular.1000' },
+    { value: '0000users', labelKey: 'concept.pixivPopular.10000' },
   ],
 }
 
