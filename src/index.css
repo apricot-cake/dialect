@@ -43,8 +43,11 @@
     /* アクセントをアイコン・チェックなど前景として使うときの色。
        ダークでは #4d5772 が地に沈むので、そこだけ明るい変種に差し替える */
     --accent-bright: #4d5772;
-    /* 追加済み条件の行の淡いアクセント塗り(テーマごとに視認できる濃さにする) */
-    --picker-added: color-mix(in oklch, var(--accent-bright) 7%, transparent);
+    /* 追加済み条件の行。新ホバー(中立の浮き)と対に、アクセント寄りの浮きにする。
+       塗り+アクセントのヘアライン枠+淡いアクセント影の3点で「選択済み」を表す */
+    --picker-added: color-mix(in oklch, var(--accent-bright) 9%, transparent);
+    --picker-added-border: color-mix(in oklch, var(--accent-bright) 42%, var(--border));
+    --picker-added-shadow: 0 2px 10px color-mix(in oklch, var(--accent-bright) 15%, transparent);
 }
 
 .dark {
@@ -63,6 +66,8 @@
     /* 暗い地に沈まない明るいスレートブルー。前景アクセント(チェック・行の塗り)に使う */
     --accent-bright: oklch(0.78 0.06 268);
     --picker-added: color-mix(in oklch, var(--accent-bright) 16%, transparent);
+    --picker-added-border: color-mix(in oklch, var(--accent-bright) 45%, var(--border));
+    --picker-added-shadow: 0 2px 10px color-mix(in oklch, var(--accent-bright) 20%, transparent);
 }
 
 @layer base {

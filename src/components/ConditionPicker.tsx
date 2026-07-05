@@ -176,7 +176,7 @@ export function ConditionPicker({
                     data-noscale
                     className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
                       isAdded
-                        ? 'bg-(--picker-added)'
+                        ? 'bg-(--picker-added) border-[color:var(--picker-added-border)] shadow-[var(--picker-added-shadow)]'
                         : 'hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]'
                     }`}
                     onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
