@@ -14,6 +14,7 @@
     --color-field: var(--field);
     --color-muted: var(--muted);
     --color-faint: var(--faint);
+    --color-label: var(--label);
     --color-border: var(--border);
     --color-secondary: var(--secondary);
     --color-primary: var(--primary);
@@ -31,6 +32,9 @@
     --field: oklch(1 0 0);
     --muted: oklch(0.552 0.02 272);
     --faint: oklch(0.7 0.015 272);
+    /* 太字見出し/ピッカー行タイトル専用。--fg(ニアブラック)だと太字で真っ黒に
+       見えてグレー基調から浮くため、mutedを少し混ぜて軟らかくする。両テーマ追従 */
+    --label: color-mix(in oklch, var(--fg) 72%, var(--muted));
     --border: oklch(0.912 0.006 272);
     --secondary: oklch(0.965 0.005 272);
     --primary: oklch(0.25 0.012 272);
@@ -168,7 +172,8 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
 /* 条件追加モーダルの行。ホバーでわずかに拡大する(data-noscale で共通スケールは切り、
    ここで専用の控えめなスケールをかける) */
 .dl-pick-row {
-  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background 130ms ease;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background 130ms ease,
+    box-shadow 150ms ease, border-color 150ms ease;
 }
 .dl-pick-row:hover { transform: scale(1.02); }
 

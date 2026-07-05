@@ -155,7 +155,7 @@ export function ConditionsArea({
             <button
               type="button"
               data-noscale
-              className="dl-add inline-flex h-11 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-5 pl-3.5 text-sm font-semibold text-fg shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
+              className="dl-add inline-flex h-11 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-5 pl-3.5 text-sm font-semibold text-label shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
               onClick={onOpenPicker}
             >
               <span className="inline-flex size-6 items-center justify-center rounded-full bg-accent text-white">

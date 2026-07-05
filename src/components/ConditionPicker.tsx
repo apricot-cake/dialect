@@ -118,7 +118,7 @@ export function ConditionPicker({
               }}
             >
               <div className="flex items-center gap-3 px-[26px] pt-5 pb-3">
-                <Dialog.Title className="m-0 text-base font-bold tracking-[-0.02em]">
+                <Dialog.Title className="m-0 text-base font-bold tracking-[-0.02em] text-label">
                   {t('picker.title')}
                 </Dialog.Title>
                 <Dialog.Close
@@ -175,7 +175,9 @@ export function ConditionPicker({
                     type="button"
                     data-noscale
                     className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
-                      isAdded ? 'bg-(--picker-added)' : 'hover:bg-secondary'
+                      isAdded
+                        ? 'bg-(--picker-added)'
+                        : 'hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]'
                     }`}
                     onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
                     onMouseEnter={() => setHover(def.id)}
@@ -185,7 +187,7 @@ export function ConditionPicker({
                       <path d={def.iconPath} />
                     </svg>
                     <span className="flex min-w-0 flex-1 flex-col gap-[3px] text-left">
-                      <span className="text-[14.5px] font-semibold">{t(def.labelKey)}</span>
+                      <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
                       <span className="overflow-hidden text-xs overflow-ellipsis whitespace-nowrap text-muted">
                         {t(def.helpKey)}
                       </span>
