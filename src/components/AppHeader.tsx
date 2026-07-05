@@ -32,9 +32,6 @@ export function AppHeader({
           ))}
         </span>
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-base leading-[1.1] font-bold tracking-[-0.02em] text-fg">
-            Dialect
-          </span>
           <span className="dl-tagline text-[11.5px] leading-[1.35] font-medium text-muted">
             {t('app.tagline')}
           </span>
