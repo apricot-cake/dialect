@@ -38,7 +38,7 @@ export const bluesky: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },
-    exclude: { level: 'partial', noteKey: 'note.bluesky.exclude' },
+    exclude: { level: 'partial' },
     fromUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
     mentionsUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
     domain: { level: 'full' },
@@ -46,7 +46,7 @@ export const bluesky: PlatformDef = {
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.bluesky.mediaOnly' },
     language: { level: 'full' },
-    sortOrder: { level: 'partial', noteKey: 'note.bluesky.sort' },
+    sortOrder: { level: 'partial' },
   },
   buildUrl,
   dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),

@@ -76,7 +76,7 @@ export const pixiv: PlatformDef = {
     exclude: { level: 'full' },
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
     hashtag: { level: 'full' },
-    period: { level: 'partial', noteKey: 'note.unofficial' },
+    period: { level: 'partial' },
     workType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
     sortOrder: { level: 'partial', noteKey: 'note.pixiv.sort' },
