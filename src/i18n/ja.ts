@@ -174,22 +174,22 @@ export const ja = {
 
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
-  'note.x.unofficial': '非公式な機能のため、将来使えなくなる可能性があります',
+  'note.x.unofficial': 'Xが公式に案内している書き方ではないため、将来使えなくなる可能性があります（現在は動作を確認済み）',
   'note.x.listInvalid': 'リストのURL（またはID）からIDを読み取れませんでした。リストのページのURLを貼り付けてください',
-  'note.unofficial': '非公式な指定方法のため、将来使えなくなる可能性があります',
+  'note.unofficial': '公式に案内されている指定方法ではないため、将来使えなくなる可能性があります（現在は動作を確認済み）',
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
   'note.bluesky.exclude': '公式には案内されていない機能のため、将来使えなくなる可能性があります',
   'note.bluesky.fromUser': 'ユーザー名は「user.bsky.social」の形式です',
   'note.bluesky.mediaOnly': 'Bluesky には画像・動画で絞る機能がありません',
-  'note.bluesky.sort': '新しい順は非公式なURL指定のため、将来使えなくなる可能性があります',
+  'note.bluesky.sort': '新しい順は公式に案内されていないURL指定のため、将来使えなくなる可能性があります',
   'note.youtube.exactPhrase': '完全一致は効かないことが多くあります',
   'note.youtube.exclude': '除外が効かない場合があります',
   'note.youtube.fromUser': 'チャンネル内検索ページを開きます',
   'note.youtube.hashtag': 'ふつうのキーワードとして検索されます',
-  'note.youtube.period': '非公式な指定方法のため、将来使えなくなる可能性があります',
+  'note.youtube.period': '公式に案内されていない指定方法のため、将来使えなくなる可能性があります',
   'note.youtube.mediaOnly': 'YouTube はもともと動画だけなので、この絞り込みは不要です',
   'note.youtube.sort':
-    '人気順は視聴回数順で代用します(非公式)。新しい順は現在YouTube側で効かなくなっています',
+    '人気順は視聴回数順で代用します(公式の指定方法ではありません)。新しい順は現在YouTube側で効かなくなっています',
   'note.youtube.channelConflict':
     'ユーザー指定(チャンネル内検索)と組み合わせると、この絞り込みは効きません',
   'note.note.keywords': 'すべてのキーワードを含む保証はありません(近い記事も混ざります)',
@@ -215,9 +215,9 @@ export const ja = {
   'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
   'note.pixiv.smodeConflict': 'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
   'note.misskey.keywords': '語ごとに部分一致でAND検索されます(まれな語は結果が出ないことも)。遷移後、検索ページで「検索」ボタンを押すと結果が表示されます',
-  'note.misskey.exclude': '先頭に - をつけて除外します(非公式のため、効かない場合があります)',
-  'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。非公式なURL指定のため、将来使えなくなる可能性があります',
-  'note.youtube.resultType': '非公式な指定方法です。ユーザー指定との併用はできません',
+  'note.misskey.exclude': '先頭に - をつけて除外します(公式に案内されていないため、効かない場合があります)',
+  'note.misskey.fromUser': 'キーワードとの組み合わせが必要です。公式に案内されていないURL指定のため、将来使えなくなる可能性があります',
+  'note.youtube.resultType': '公式に案内されていない指定方法です。ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
   'note.hatebu.titleTagConflict': 'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
   'note.hatebu.fromUser': 'ユーザーのブックマークの中のキーワード検索は、はてなへのログインが必要なため対応していません',
@@ -277,7 +277,7 @@ export const ja = {
 
   // フッター
   'footer.disclaimer':
-    '一部の絞り込みは非公式な仕組みのため、動かなくなることがあります。',
+    '一部の絞り込みは公式に案内されていない仕組みを使っているため、動かなくなることがあります。',
   'footer.privacy':
     '入力した条件がサーバーへ送信されることはありません。検索URLの組み立てはすべてブラウザ内で行われます。',
 } as const

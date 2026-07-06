@@ -177,11 +177,11 @@ export const en = {
   'note.x.period':
     'You cannot search by date alone. Combine it with a keyword.',
   'note.x.unofficial':
-    'This is an unofficial feature and may stop working in the future.',
+    'X doesn’t officially list this search syntax, so it may stop working in the future. (Verified working for now.)',
   'note.x.listInvalid':
     'Couldn’t read a List ID from that input. Paste the URL of the List’s page.',
   'note.unofficial':
-    'This is an unofficial method and may stop working in the future.',
+    'This isn’t an officially listed option, so it may stop working in the future. (Verified working for now.)',
   'note.niconico.videoLength':
     '“Medium (4–20 min)” cannot be set and is ignored.',
   'note.bluesky.exclude':
@@ -189,17 +189,17 @@ export const en = {
   'note.bluesky.fromUser': 'The username is in the form “user.bsky.social”.',
   'note.bluesky.mediaOnly': 'Bluesky has no way to filter by image/video.',
   'note.bluesky.sort':
-    'Newest uses an unofficial URL parameter and may stop working in the future.',
+    'Newest uses an undocumented URL parameter and may stop working in the future.',
   'note.youtube.exactPhrase': 'Exact phrase often does not work.',
   'note.youtube.exclude': 'Exclusion may not work.',
   'note.youtube.fromUser': 'Opens the in-channel search page.',
   'note.youtube.hashtag': 'Searched as an ordinary keyword.',
   'note.youtube.period':
-    'This is an unofficial method and may stop working in the future.',
+    'This isn’t an officially documented option and may stop working in the future.',
   'note.youtube.mediaOnly':
     'YouTube is video-only, so this filter is unnecessary.',
   'note.youtube.sort':
-    'Popular is approximated by view count (unofficial). Newest currently no longer works on YouTube.',
+    'Popular is approximated by view count (not an official option). Newest currently no longer works on YouTube.',
   'note.youtube.channelConflict':
     'This filter has no effect when combined with a user filter (in-channel search).',
   'note.note.keywords':
@@ -237,11 +237,11 @@ export const en = {
   'note.misskey.keywords':
     'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
   'note.misskey.exclude':
-    'Excludes terms prefixed with “-” (unofficial, so it may not work).',
+    'Excludes terms prefixed with “-” (undocumented, so it may not work).',
   'note.misskey.fromUser':
-    'Requires combining with a keyword. Uses an unofficial URL parameter and may stop working in the future.',
+    'Requires combining with a keyword. Uses an undocumented URL parameter and may stop working in the future.',
   'note.youtube.resultType':
-    'This is an unofficial method. It cannot be combined with a user filter.',
+    'This isn’t an officially documented option. It cannot be combined with a user filter.',
   'note.hatebu.minLikes':
     'The number you set is used as the minimum bookmark count.',
   'note.hatebu.titleTagConflict':
@@ -309,7 +309,7 @@ export const en = {
 
   // Footer
   'footer.disclaimer':
-    'Some filters rely on unofficial behavior and may break without notice.',
+    'Some filters rely on undocumented behavior and may break without notice.',
   'footer.privacy':
     'Your conditions are never sent to a server — search URLs are built entirely in your browser.',
 }
