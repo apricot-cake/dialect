@@ -309,8 +309,6 @@ export function LinksArea({
           })}
 
           <div className="px-0.5 pt-7 pb-1.5 text-[11.5px] leading-[1.6] text-faint">
-            {t('footer.disclaimer')}
-            <br />
             {t('footer.privacy')}
           </div>
         </div>

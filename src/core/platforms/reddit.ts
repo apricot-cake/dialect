@@ -46,9 +46,10 @@ function buildUrl(state: QueryState): string | null {
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
 
   const params = new URLSearchParams({ q })
-  // sort=new=新着、top=人気。おまかせは指定しない(既定は関連度順)
+  // sort=new=新着、top=人気、hot=注目順(急上昇に相当)。おまかせは指定しない(既定は関連度順)
   if (state.sort === 'new') params.set('sort', 'new')
   if (state.sort === 'top') params.set('sort', 'top')
+  if (state.sort === 'hot') params.set('sort', 'hot')
   if (state.since) params.set('t', tParam(state.since))
 
   return `https://www.reddit.com/search/?${params.toString()}`
@@ -64,7 +65,7 @@ function dynamicSupport(
     state.until && !state.since
       ? { period: { level: 'none', noteKey: 'note.reddit.untilOnly' } }
       : {}
-  return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
+  return { ...overrides, ...limitSort(state.sort, ['new', 'top', 'hot'], 'note.sortOrder.otherSite') }
 }
 
 export const reddit: PlatformDef = {

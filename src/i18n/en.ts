@@ -20,6 +20,9 @@ export const en = {
   'concept.titleOnly.label': 'Title only',
   'concept.titleOnly.help':
     'Finds only posts whose title contains the keyword, not the body.',
+  'concept.exactTag.label': 'Exact tag',
+  'concept.exactTag.help':
+    'Finds only works tagged with exactly your search term (pixiv only).',
   'concept.fromUser.label': 'From this user only',
   'concept.fromUser.placeholder': 'e.g. nhk_news',
   'concept.fromUser.help':
@@ -43,6 +46,10 @@ export const en = {
   'concept.domain.label': 'Links to this site',
   'concept.domain.placeholder': 'e.g. nhk.or.jp',
   'concept.domain.help': 'Finds only posts that link to the given site.',
+  'concept.xList.label': 'Search within an X List',
+  'concept.xList.placeholder': 'List URL or ID',
+  'concept.xList.help':
+    'Finds only posts from an X List (a set of accounts grouped together). Paste the List’s URL or ID.',
   'concept.hashtag.label': 'Hashtag',
   'concept.hashtag.placeholder': 'e.g. booklog',
   'concept.hashtag.help':
@@ -74,17 +81,50 @@ export const en = {
   'concept.minReposts.placeholder': 'e.g. 50',
   'concept.minReposts.help':
     'Keeps only posts with at least the given number of reposts.',
+  'concept.minReplies.label': 'Minimum replies',
+  'concept.minReplies.placeholder': 'e.g. 10',
+  'concept.minReplies.help':
+    'Keeps only posts with at least the given number of replies.',
   'concept.language.label': 'Post language',
   'concept.language.none': 'Any',
   'concept.language.ja': 'Japanese',
   'concept.language.en': 'English',
+  'concept.language.zh': 'Chinese',
+  'concept.language.ko': 'Korean',
+  'concept.language.es': 'Spanish',
+  'concept.language.fr': 'French',
+  'concept.language.de': 'German',
+  'concept.language.pt': 'Portuguese',
+  'concept.language.ru': 'Russian',
+  'concept.language.it': 'Italian',
+  'concept.language.ar': 'Arabic',
+  'concept.language.hi': 'Hindi',
+  'concept.language.th': 'Thai',
+  'concept.language.id': 'Indonesian',
   'concept.language.help':
     'Filters by the language the post is written in (X and Bluesky only).',
   'concept.workType.label': 'Work type',
   'concept.workType.none': 'Any',
   'concept.workType.illust': 'Illustration',
   'concept.workType.manga': 'Manga',
-  'concept.workType.help': 'Choose whether to search illustrations or manga.',
+  'concept.workType.ugoira': 'Animation (ugoira)',
+  'concept.workType.novel': 'Novel',
+  'concept.workType.help': 'Choose the work type: illustration, manga, ugoira, or novel.',
+  'concept.genre.label': 'Genre',
+  'concept.genre.none': 'Any',
+  'concept.genre.music_sound': 'Music & sound',
+  'concept.genre.game': 'Gaming',
+  'concept.genre.entertainment': 'Entertainment',
+  'concept.genre.anime': 'Anime',
+  'concept.genre.dance': 'Dance',
+  'concept.genre.technology_craft': 'Tech & craft',
+  'concept.genre.commentary_lecture': 'Commentary & lectures',
+  'concept.genre.sports': 'Sports',
+  'concept.genre.radio': 'Radio',
+  'concept.genre.vehicle': 'Vehicles',
+  'concept.genre.traveling_outdoor': 'Travel & outdoors',
+  'concept.genre.other': 'Other',
+  'concept.genre.help': 'Filters videos by genre (niconico only).',
   'concept.resultType.label': 'Video / channel type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
@@ -122,13 +162,14 @@ export const en = {
   'builder.support.label': 'Sites',
 
   // Notes shared across platforms
-  'note.loose.and': 'There is no guarantee that all keywords are included.',
+  'note.loose.and': 'Some results may contain only some of your words.',
   'note.loose.exact':
     'Exact phrase does not work; it is searched as ordinary keywords.',
-  'note.exact.unreliable': 'Exact phrase may not work.',
+  'note.exact.unreliable':
+    'Searches for the exact phrase, but some results may have the words scattered apart.',
   'note.tagPage.combined':
     'When combined with other conditions, it is searched as an ordinary keyword.',
-  'note.nosort': 'Sort order cannot be set via URL.',
+  'note.nosort': 'Sort order cannot be set.',
   'note.videoOnly': 'This site is video-only, so this filter is unnecessary.',
   'note.imageOnly':
     'This site is image/illustration-only, so this filter is unnecessary.',
@@ -136,36 +177,29 @@ export const en = {
   // Per-platform notes
   'note.x.period':
     'You cannot search by date alone. Combine it with a keyword.',
-  'note.x.unofficial':
-    'This is an unofficial feature and may stop working in the future.',
-  'note.unofficial':
-    'This is an unofficial method and may stop working in the future.',
+  'note.x.listInvalid':
+    'Couldn’t read the List from that input. Paste the URL of the List’s page.',
   'note.niconico.videoLength':
     '“Medium (4–20 min)” cannot be set and is ignored.',
-  'note.bluesky.exclude':
-    'This feature is not officially documented and may stop working in the future.',
   'note.bluesky.fromUser': 'The username is in the form “user.bsky.social”.',
   'note.bluesky.mediaOnly': 'Bluesky has no way to filter by image/video.',
-  'note.bluesky.sort':
-    'Newest uses an unofficial URL parameter and may stop working in the future.',
-  'note.youtube.exactPhrase': 'Exact phrase often does not work.',
-  'note.youtube.exclude': 'Exclusion may not work.',
+  'note.youtube.exactPhrase':
+    'Searches for the exact phrase, but many results may have the words scattered apart.',
+  'note.youtube.exclude': 'Words you exclude may still appear in the results.',
   'note.youtube.fromUser': 'Opens the in-channel search page.',
   'note.youtube.hashtag': 'Searched as an ordinary keyword.',
-  'note.youtube.period':
-    'This is an unofficial method and may stop working in the future.',
   'note.youtube.mediaOnly':
     'YouTube is video-only, so this filter is unnecessary.',
   'note.youtube.sort':
-    'Popular is approximated by view count (unofficial). Newest currently no longer works on YouTube.',
+    'Popular is approximated by view count. Newest currently no longer works on YouTube.',
   'note.youtube.channelConflict':
     'This filter has no effect when combined with a user filter (in-channel search).',
   'note.note.keywords':
-    'There is no guarantee that all keywords are included (similar articles may also appear).',
+    'Some articles may contain only some of your words.',
   'note.note.exactPhrase':
     'Exact phrase does not work; it is searched as ordinary keywords.',
   'note.note.exclude': 'note has no exclusion search.',
-  'note.note.fromUser': 'The username is the note ID (the part after @).',
+  'note.note.fromUser': 'The username is the part after @.',
   'note.note.hashtag':
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.note.period': 'note has no date filter.',
@@ -173,31 +207,30 @@ export const en = {
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
-  'note.reddit.period': 'Rounded to “past day / week / month / year”.',
+  'note.reddit.period': 'Filtered roughly by “past day / week / month / year”.',
   'note.reddit.untilOnly':
     'Reddit cannot filter by an end date alone (a start date is required).',
   'note.instagram.hashtag':
     'Tag pages show only top posts (no latest order).',
   'note.instagram.multiTag':
-    'With two or more hashtags this becomes a loose keyword search rather than a tag page, with no guarantee all tags are included.',
+    'With two or more hashtags this becomes a loose search rather than a tag page, and some results may include only some of the tags.',
   'note.pixiv.keywords':
-    'Searched by partial tag match (words not in the tags won’t hit even if they’re in the body).',
+    'Searches by tags. Words not in the tags won’t be found even if they’re in the body.',
   'note.pixiv.titleOnly':
-    'Searches titles and captions (descriptions), not tags.',
+    'Searches titles and descriptions, not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.pixiv.popular':
     'Filters to popular works via the “N users入り” tags. These are added by fans by hand, so some popular works may be missed.',
   'note.pixiv.r18Login':
     'Showing R-18 works requires being logged in to pixiv (they won’t appear when logged out).',
+  'note.pixiv.smodeConflict':
+    'pixiv allows only one match target, so another mode (title only / exact tag) takes priority and this condition is not sent.',
   'note.misskey.keywords':
-    'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
-  'note.misskey.exclude':
-    'Excludes terms prefixed with “-” (unofficial, so it may not work).',
-  'note.misskey.fromUser':
-    'Requires combining with a keyword. Uses an unofficial URL parameter and may stop working in the future.',
-  'note.youtube.resultType':
-    'This is an unofficial method. It cannot be combined with a user filter.',
+    'Finds posts that contain all your words. On the page that opens, press the “Search” button to see results.',
+  'note.misskey.exclude': 'Words you exclude may still appear in the results.',
+  'note.misskey.fromUser': 'Requires combining with a keyword.',
+  'note.youtube.resultType': 'It cannot be combined with a user filter.',
   'note.hatebu.minLikes':
     'The number you set is used as the minimum bookmark count.',
   'note.hatebu.titleTagConflict':
@@ -209,11 +242,11 @@ export const en = {
   'note.fivech.keywords':
     'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
   'note.fivech.titleOnly':
-    '5ch search always targets thread titles only (it searches titles regardless of this toggle).',
+    '5ch search always targets thread titles only (regardless of this setting).',
   'note.fivech.subreddit':
-    'Filters by board ID (e.g. sony). Set several to match any of those boards (OR).',
+    'Filters by board name (e.g. sony). Set several to match any of those boards.',
   'note.animanch.keywords':
-    'Searches post bodies (a beta feature, so some may be missed).',
+    'Searches post bodies (an experimental feature, so some may be missed).',
   'note.animanch.titleOnly':
     'Searches only thread titles across the full archive.',
 
@@ -234,8 +267,10 @@ export const en = {
   'sum.mentions': 'mentioning {v}',
   'sum.community': 'in {v}',
   'sum.domain': 'links to {v}',
+  'sum.xList': 'in a List',
   'sum.minLikes': '{v}+ likes',
   'sum.minReposts': '{v}+ reposts',
+  'sum.minReplies': '{v}+ replies',
   'sum.since': 'since {v}',
   'sum.until': 'until {v}',
   'sum.between': '{a}–{b}',
@@ -262,8 +297,6 @@ export const en = {
   'cal.pickDate': 'Pick a date',
 
   // Footer
-  'footer.disclaimer':
-    'Some filters rely on unofficial behavior and may break without notice.',
   'footer.privacy':
     'Your conditions are never sent to a server — search URLs are built entirely in your browser.',
 }

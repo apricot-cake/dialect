@@ -42,6 +42,8 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return tf('sum.community', { v: words(state.subreddit).join('・') })
     case 'domain':
       return tf('sum.domain', { v: state.domain.trim() })
+    case 'xList':
+      return t('sum.xList')
     case 'hashtag':
       return words(state.hashtag)
         .map((w) => `#${w}`)
@@ -55,10 +57,14 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return tf('sum.minLikes', { v: state.minLikes.trim() })
     case 'minReposts':
       return tf('sum.minReposts', { v: state.minReposts.trim() })
+    case 'minReplies':
+      return tf('sum.minReplies', { v: state.minReplies.trim() })
     case 'videoLength':
       return selectLabel('videoLength', state.videoLength)
     case 'workType':
       return selectLabel('workType', state.workType)
+    case 'genre':
+      return selectLabel('genre', state.genre)
     case 'resultType':
       return selectLabel('resultType', state.resultType)
     case 'language':

@@ -6,12 +6,14 @@ export type ConceptId =
   | 'exactPhrase'
   | 'exclude'
   | 'titleOnly'
+  | 'exactTag'
   | 'fromUser'
   | 'excludeUser'
   | 'toUser'
   | 'mentionsUser'
   | 'subreddit'
   | 'domain'
+  | 'xList'
   | 'hashtag'
   | 'period'
   | 'mediaOnly'
@@ -22,8 +24,10 @@ export type ConceptId =
   | 'liveOnly'
   | 'minLikes'
   | 'minReposts'
+  | 'minReplies'
   | 'language'
   | 'workType'
+  | 'genre'
   | 'resultType'
   | 'sortOrder'
   | 'pixivPopular'
@@ -47,11 +51,33 @@ export type PixivPopular = '' | '00users' | '000users' | '0000users'
  */
 export type AgeRating = '' | 'safe' | 'r18'
 
-/** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
-export type PostLanguage = '' | 'ja' | 'en'
+/**
+ * 投稿の言語コード(ISO 639-1)。lang: 演算子を持つサイト(X/Bluesky)向けの主要言語。
+ * 表示ラベルは i18n の concept.language.<code>、選択肢は SELECT_OPTIONS.language。
+ * permalink と App の検証もこの配列を単一の真実として参照する(追加時はここだけ増やす)
+ */
+export const POST_LANGUAGE_CODES = [
+  'ja', 'en', 'zh', 'ko', 'es', 'fr', 'de',
+  'pt', 'ru', 'it', 'ar', 'hi', 'th', 'id',
+] as const
 
-/** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
-export type WorkType = '' | 'illust' | 'manga'
+/** 投稿の言語。空は指定なし */
+export type PostLanguage = '' | (typeof POST_LANGUAGE_CODES)[number]
+
+/** 作品の種類。イラスト/マンガ/うごくイラスト/小説の投稿サイト(pixiv)向け */
+export type WorkType = '' | 'illust' | 'manga' | 'ugoira' | 'novel'
+
+/**
+ * niconicoのジャンル(genre=)。niconico専用。空=指定なし。
+ * 2026-07-06に /search と /tag の両方で有効(件数が段階的に絞られる)を実測。
+ * permalink と App の検証もこの配列を単一の真実として参照する
+ */
+export const NICO_GENRES = [
+  'music_sound', 'game', 'entertainment', 'other', 'dance', 'anime',
+  'technology_craft', 'commentary_lecture', 'sports', 'radio', 'vehicle', 'traveling_outdoor',
+] as const
+
+export type NicoGenre = '' | (typeof NICO_GENRES)[number]
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
@@ -60,8 +86,9 @@ export type WorkType = '' | 'illust' | 'manga'
 export type ResultType = '' | 'video' | 'short' | 'channel' | 'playlist'
 
 /**
- * 並び順。new=新しい順、top=人気順、hot=急上昇(note)、auto=サイトにおまかせ(指定しない)。
- * hot は note 専用。対応しないサイトでは dynamicSupport(limitSort)で non-対応に落とす
+ * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、auto=サイトにおまかせ(指定しない)。
+ * hot に対応するのは note(急上昇)と Reddit(注目順=sort=hot)。対応しないサイトでは
+ * dynamicSupport(limitSort)で non-対応に落とす
  */
 export type SortOrder = 'new' | 'top' | 'hot' | 'auto'
 
@@ -79,6 +106,8 @@ export interface QueryState {
   exactPhrase: string[]
   exclude: string
   titleOnly: boolean
+  /** pixiv専用。検索語をタグとして完全一致で探す(s_mode=s_tag_full。既定の部分一致を無効化) */
+  exactTag: boolean
   fromUser: string
   excludeUser: string
   /** スペース区切りで複数可(どれか宛て=OR) */
@@ -87,6 +116,8 @@ export interface QueryState {
   /** スペース区切りで複数可(どれか=OR) */
   subreddit: string
   domain: string
+  /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
+  xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */
   hashtag: string
   since: string // YYYY-MM-DD
@@ -100,8 +131,12 @@ export interface QueryState {
   liveOnly: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
+  /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */
+  minReplies: string
   language: PostLanguage
   workType: WorkType
+  /** niconico専用。ジャンル(genre=)。空=指定なし */
+  genre: NicoGenre
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */

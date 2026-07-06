@@ -27,6 +27,8 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 | 中 | `url:<ドメイン>`(2026-07-04追加) | このサイトへのリンクを含む | [x.com/search?q=台風 url:nhk.or.jp&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20url%3Anhk.or.jp&f=live) | 全結果が nhk.or.jp へのリンクを含む。2026-07-04ログイン済みブラウザで実測(結果本文に www2.nhk.or.jp リンク) | 2026-07-04 | ✅ |
 | 中 | `filter:links`(リンク付き)(2026-07-05追加) | リンク付きだけ | [x.com/search?q=天気 filter:links&f=live](https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks&f=live) | 全結果がリンク(URLカード等)を含む。2026-07-05ログイン済みブラウザ実測 | 2026-07-05 | ✅ |
 | 低 | `-from:<ユーザー>`(除外ユーザー)(2026-07-05追加) | 除外するユーザー | [x.com/search?q=天気 filter:links -from:zooaqua_5&f=live](https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks%20-from%3Azooaqua_5&f=live) | 指定ユーザーの投稿が結果から消える(from:の否定。ユーザー名は適宜読み替え)。2026-07-05実測(除外前に先頭だったアカウントが消えた) | 2026-07-05 | ✅ |
+| 高 | `min_replies:`(2026-07-06追加) | 最低返信数 | [x.com/search?q=猫 min_replies:200&f=live](https://x.com/search?q=%E7%8C%AB%20min_replies%3A200&f=live) | 全結果が200返信以上。2026-07-06実測(241/739/269/369/2497/209返信) | 2026-07-06 | ✅ |
+| 中 | `list:<リストID>`(2026-07-06追加) | Xのリスト内を検索 | [x.com/search?q=list:1215911364234924032 天気&f=live](https://x.com/search?q=list%3A1215911364234924032%20%E5%A4%A9%E6%B0%97&f=live) | そのリスト(公開のおすすめ「京都」)のメンバーの投稿だけ＋キーワードでAND絞り込み。2026-07-06実測(kyoto_np/nhk_kyoto等・全件「天気」を含む)。リストが消えたら別の公開リストIDに差し替え | 2026-07-06 | ✅ |
 
 ## Bluesky(ログイン不要)
 

@@ -1,4 +1,5 @@
-import type { QueryState } from './types'
+import type { NicoGenre, PostLanguage, QueryState } from './types'
+import { NICO_GENRES, POST_LANGUAGE_CODES } from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -27,12 +28,14 @@ export function stateToParams(state: QueryState): URLSearchParams {
   }
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
+  if (state.exactTag) params.set('xtag', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
   if (state.excludeUser.trim()) params.set('exfr', state.excludeUser.trim())
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
   if (state.domain.trim()) params.set('dom', state.domain.trim())
+  if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
   if (state.since) params.set('since', state.since)
   if (state.until) params.set('until', state.until)
@@ -44,8 +47,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.liveOnly) params.set('live', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
+  if (state.minReplies.trim()) params.set('reps', state.minReplies.trim())
   if (state.language) params.set('lang', state.language)
   if (state.workType) params.set('wt', state.workType)
+  if (state.genre) params.set('genre', state.genre)
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
@@ -85,12 +90,14 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (terms.length > 0) state.terms = terms
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
+  state.exactTag = params.get('xtag') === '1'
   state.fromUser = params.get('fr') ?? ''
   state.excludeUser = params.get('exfr') ?? ''
   state.toUser = params.get('to') ?? ''
   state.mentionsUser = params.get('men') ?? ''
   state.subreddit = params.get('sub') ?? ''
   state.domain = params.get('dom') ?? ''
+  state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
   state.since = params.get('since') ?? ''
   state.until = params.get('until') ?? ''
@@ -105,12 +112,21 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.liveOnly = params.get('live') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
+  state.minReplies = params.get('reps') ?? ''
   const lang = params.get('lang')
-  if (lang === 'ja' || lang === 'en') state.language = lang
+  if (lang && (POST_LANGUAGE_CODES as readonly string[]).includes(lang)) {
+    state.language = lang as PostLanguage
+  }
   // 旧形式(「日本語の投稿だけ」トグル時代)の ja=1 は日本語指定として読む
   else if (params.get('ja') === '1') state.language = 'ja'
   const wt = params.get('wt')
-  if (wt === 'illust' || wt === 'manga') state.workType = wt
+  if (wt === 'illust' || wt === 'manga' || wt === 'ugoira' || wt === 'novel') {
+    state.workType = wt
+  }
+  const genre = params.get('genre')
+  if (genre && (NICO_GENRES as readonly string[]).includes(genre)) {
+    state.genre = genre as NicoGenre
+  }
   const rt = params.get('rt')
   if (rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist') {
     state.resultType = rt
