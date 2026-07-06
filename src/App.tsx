@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
+import { POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, type ConceptDef } from '@/core/conceptDefs'
 import { paramsToQuery, stateToParams } from '@/core/permalink'
@@ -50,7 +51,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
   }
   if (!['', 'safe', 'r18'].includes(query.ageRating)) query.ageRating = ''
   if (!['new', 'top', 'hot', 'auto'].includes(query.sort)) query.sort = 'new'
-  if (!['', 'ja', 'en'].includes(query.language)) query.language = ''
+  if (!(['', ...POST_LANGUAGE_CODES] as string[]).includes(query.language)) query.language = ''
   return query
 }
 

@@ -1,4 +1,5 @@
-import type { QueryState } from './types'
+import type { PostLanguage, QueryState } from './types'
+import { POST_LANGUAGE_CODES } from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -106,7 +107,9 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   const lang = params.get('lang')
-  if (lang === 'ja' || lang === 'en') state.language = lang
+  if (lang && (POST_LANGUAGE_CODES as readonly string[]).includes(lang)) {
+    state.language = lang as PostLanguage
+  }
   // 旧形式(「日本語の投稿だけ」トグル時代)の ja=1 は日本語指定として読む
   else if (params.get('ja') === '1') state.language = 'ja'
   const wt = params.get('wt')

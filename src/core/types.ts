@@ -47,8 +47,18 @@ export type PixivPopular = '' | '00users' | '000users' | '0000users'
  */
 export type AgeRating = '' | 'safe' | 'r18'
 
-/** 投稿の言語。lang: 演算子を持つサイト(X/Bluesky)向け。空は指定なし */
-export type PostLanguage = '' | 'ja' | 'en'
+/**
+ * 投稿の言語コード(ISO 639-1)。lang: 演算子を持つサイト(X/Bluesky)向けの主要言語。
+ * 表示ラベルは i18n の concept.language.<code>、選択肢は SELECT_OPTIONS.language。
+ * permalink と App の検証もこの配列を単一の真実として参照する(追加時はここだけ増やす)
+ */
+export const POST_LANGUAGE_CODES = [
+  'ja', 'en', 'zh', 'ko', 'es', 'fr', 'de',
+  'pt', 'ru', 'it', 'ar', 'hi', 'th', 'id',
+] as const
+
+/** 投稿の言語。空は指定なし */
+export type PostLanguage = '' | (typeof POST_LANGUAGE_CODES)[number]
 
 /** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
 export type WorkType = '' | 'illust' | 'manga'
@@ -60,8 +70,9 @@ export type WorkType = '' | 'illust' | 'manga'
 export type ResultType = '' | 'video' | 'short' | 'channel' | 'playlist'
 
 /**
- * 並び順。new=新しい順、top=人気順、hot=急上昇(note)、auto=サイトにおまかせ(指定しない)。
- * hot は note 専用。対応しないサイトでは dynamicSupport(limitSort)で non-対応に落とす
+ * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、auto=サイトにおまかせ(指定しない)。
+ * hot に対応するのは note(急上昇)と Reddit(注目順=sort=hot)。対応しないサイトでは
+ * dynamicSupport(limitSort)で non-対応に落とす
  */
 export type SortOrder = 'new' | 'top' | 'hot' | 'auto'
 
