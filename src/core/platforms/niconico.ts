@@ -25,6 +25,8 @@ function buildUrl(state: QueryState): string | null {
   // 「ふつう(4〜20分)」に相当する値はniconicoに存在しないため指定しない
   if (state.videoLength === 'short') params.set('l_range', '1')
   if (state.videoLength === 'long') params.set('l_range', '2')
+  // ジャンル。/search・/tag の両方で有効(2026-07-06 実測: ゲーム2万≪音楽29万<無し38万)
+  if (state.genre) params.set('genre', state.genre)
   const qs = params.toString()
   const query = qs ? `?${qs}` : ''
 
@@ -59,6 +61,7 @@ export const niconico: PlatformDef = {
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
+    genre: { level: 'full' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

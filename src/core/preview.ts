@@ -55,10 +55,14 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return tf('sum.minLikes', { v: state.minLikes.trim() })
     case 'minReposts':
       return tf('sum.minReposts', { v: state.minReposts.trim() })
+    case 'minReplies':
+      return tf('sum.minReplies', { v: state.minReplies.trim() })
     case 'videoLength':
       return selectLabel('videoLength', state.videoLength)
     case 'workType':
       return selectLabel('workType', state.workType)
+    case 'genre':
+      return selectLabel('genre', state.genre)
     case 'resultType':
       return selectLabel('resultType', state.resultType)
     case 'language':

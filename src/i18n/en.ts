@@ -20,6 +20,9 @@ export const en = {
   'concept.titleOnly.label': 'Title only',
   'concept.titleOnly.help':
     'Finds only posts whose title contains the keyword, not the body.',
+  'concept.exactTag.label': 'Exact tag',
+  'concept.exactTag.help':
+    'Matches the search term as an exact tag, disabling the default partial match (pixiv only).',
   'concept.fromUser.label': 'From this user only',
   'concept.fromUser.placeholder': 'e.g. nhk_news',
   'concept.fromUser.help':
@@ -74,6 +77,10 @@ export const en = {
   'concept.minReposts.placeholder': 'e.g. 50',
   'concept.minReposts.help':
     'Keeps only posts with at least the given number of reposts.',
+  'concept.minReplies.label': 'Minimum replies',
+  'concept.minReplies.placeholder': 'e.g. 10',
+  'concept.minReplies.help':
+    'Keeps only posts with at least the given number of replies.',
   'concept.language.label': 'Post language',
   'concept.language.none': 'Any',
   'concept.language.ja': 'Japanese',
@@ -96,7 +103,24 @@ export const en = {
   'concept.workType.none': 'Any',
   'concept.workType.illust': 'Illustration',
   'concept.workType.manga': 'Manga',
-  'concept.workType.help': 'Choose whether to search illustrations or manga.',
+  'concept.workType.ugoira': 'Animation (ugoira)',
+  'concept.workType.novel': 'Novel',
+  'concept.workType.help': 'Choose the work type: illustration, manga, ugoira, or novel.',
+  'concept.genre.label': 'Genre',
+  'concept.genre.none': 'Any',
+  'concept.genre.music_sound': 'Music & sound',
+  'concept.genre.game': 'Gaming',
+  'concept.genre.entertainment': 'Entertainment',
+  'concept.genre.anime': 'Anime',
+  'concept.genre.dance': 'Dance',
+  'concept.genre.technology_craft': 'Tech & craft',
+  'concept.genre.commentary_lecture': 'Commentary & lectures',
+  'concept.genre.sports': 'Sports',
+  'concept.genre.radio': 'Radio',
+  'concept.genre.vehicle': 'Vehicles',
+  'concept.genre.traveling_outdoor': 'Travel & outdoors',
+  'concept.genre.other': 'Other',
+  'concept.genre.help': 'Filters videos by genre (niconico only).',
   'concept.resultType.label': 'Video / channel type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
@@ -202,6 +226,8 @@ export const en = {
     'Filters to popular works via the “N users入り” tags. These are added by fans by hand, so some popular works may be missed.',
   'note.pixiv.r18Login':
     'Showing R-18 works requires being logged in to pixiv (they won’t appear when logged out).',
+  'note.pixiv.smodeConflict':
+    'pixiv allows only one match target, so another mode (title only / exact tag) takes priority and this condition is not sent.',
   'note.misskey.keywords':
     'Searched as an AND of each word by partial match (rare words may return nothing). After the page opens, press the “Search” button there to show results.',
   'note.misskey.exclude':
@@ -248,6 +274,7 @@ export const en = {
   'sum.domain': 'links to {v}',
   'sum.minLikes': '{v}+ likes',
   'sum.minReposts': '{v}+ reposts',
+  'sum.minReplies': '{v}+ replies',
   'sum.since': 'since {v}',
   'sum.until': 'until {v}',
   'sum.between': '{a}–{b}',

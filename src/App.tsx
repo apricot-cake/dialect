@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
-import { POST_LANGUAGE_CODES } from '@/core/types'
+import { NICO_GENRES, POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, type ConceptDef } from '@/core/conceptDefs'
 import { paramsToQuery, stateToParams } from '@/core/permalink'
@@ -42,7 +42,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
   query.terms = strArray(query.terms)
   query.exactPhrase = strArray(query.exactPhrase)
   if (!['', 'short', 'medium', 'long'].includes(query.videoLength)) query.videoLength = ''
-  if (!['', 'illust', 'manga'].includes(query.workType)) query.workType = ''
+  if (!['', 'illust', 'manga', 'ugoira', 'novel'].includes(query.workType)) query.workType = ''
   if (!['', 'video', 'short', 'channel', 'playlist'].includes(query.resultType)) {
     query.resultType = ''
   }
@@ -52,6 +52,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
   if (!['', 'safe', 'r18'].includes(query.ageRating)) query.ageRating = ''
   if (!['new', 'top', 'hot', 'auto'].includes(query.sort)) query.sort = 'new'
   if (!(['', ...POST_LANGUAGE_CODES] as string[]).includes(query.language)) query.language = ''
+  if (!(['', ...NICO_GENRES] as string[]).includes(query.genre)) query.genre = ''
   return query
 }
 

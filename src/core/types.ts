@@ -6,6 +6,7 @@ export type ConceptId =
   | 'exactPhrase'
   | 'exclude'
   | 'titleOnly'
+  | 'exactTag'
   | 'fromUser'
   | 'excludeUser'
   | 'toUser'
@@ -22,8 +23,10 @@ export type ConceptId =
   | 'liveOnly'
   | 'minLikes'
   | 'minReposts'
+  | 'minReplies'
   | 'language'
   | 'workType'
+  | 'genre'
   | 'resultType'
   | 'sortOrder'
   | 'pixivPopular'
@@ -60,8 +63,20 @@ export const POST_LANGUAGE_CODES = [
 /** 投稿の言語。空は指定なし */
 export type PostLanguage = '' | (typeof POST_LANGUAGE_CODES)[number]
 
-/** 作品の種類。イラスト/マンガの投稿サイト(pixiv)向け */
-export type WorkType = '' | 'illust' | 'manga'
+/** 作品の種類。イラスト/マンガ/うごくイラスト/小説の投稿サイト(pixiv)向け */
+export type WorkType = '' | 'illust' | 'manga' | 'ugoira' | 'novel'
+
+/**
+ * niconicoのジャンル(genre=)。niconico専用。空=指定なし。
+ * 2026-07-06に /search と /tag の両方で有効(件数が段階的に絞られる)を実測。
+ * permalink と App の検証もこの配列を単一の真実として参照する
+ */
+export const NICO_GENRES = [
+  'music_sound', 'game', 'entertainment', 'other', 'dance', 'anime',
+  'technology_craft', 'commentary_lecture', 'sports', 'radio', 'vehicle', 'traveling_outdoor',
+] as const
+
+export type NicoGenre = '' | (typeof NICO_GENRES)[number]
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
@@ -90,6 +105,8 @@ export interface QueryState {
   exactPhrase: string[]
   exclude: string
   titleOnly: boolean
+  /** pixiv専用。検索語をタグとして完全一致で探す(s_mode=s_tag_full。既定の部分一致を無効化) */
+  exactTag: boolean
   fromUser: string
   excludeUser: string
   /** スペース区切りで複数可(どれか宛て=OR) */
@@ -111,8 +128,12 @@ export interface QueryState {
   liveOnly: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
+  /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */
+  minReplies: string
   language: PostLanguage
   workType: WorkType
+  /** niconico専用。ジャンル(genre=)。空=指定なし */
+  genre: NicoGenre
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */

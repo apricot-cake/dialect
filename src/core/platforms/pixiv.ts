@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, minusExcludes, stripHash, words } from '../text'
 
@@ -17,20 +17,21 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.hashtag).map(stripHash))
   // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
   // 先頭の桁を固定しないので 1000/5000/10000…users入り をまとめて拾える。
-  // これ単独でも検索が成立する(=正の条件)ので、null判定より前に足す。
-  // 部分一致には s_mode=s_tag の明示が必須(省略はタグ完全一致になり #000users で0件。
-  // 2026-07-05 実機確認)。プレミアム限定の order=popular_d を使わない擬似人気順ハック
-  if (state.pixivPopular) parts.push(state.pixivPopular)
+  // 部分一致には s_mode=s_tag が必須。タイトルだけ(s_tc)や完全一致(s_tag_full)が
+  // s_mode 枠を取ると効かないので、そのときは term も足さない(送っても嘘になる)。
+  const usePopular = Boolean(state.pixivPopular) && !state.titleOnly && !state.exactTag
+  if (usePopular) parts.push(state.pixivPopular)
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
   parts.push(...minusExcludes(state))
 
   const params = new URLSearchParams()
-  // タイトルだけ=タイトル・キャプション検索(s_mode=s_tc、公式ヘルプ記載、2026-07-04実測)。
-  // 人気の目安は部分一致が要るので s_tag を明示(省略はタグ完全一致で0件になる)。
-  // 両方ONは同時に満たせないため、タイトルだけを優先する(稀な組み合わせ)
+  // s_mode は1枠。優先度 タイトルだけ(s_tc) > タグ完全一致(s_tag_full) > 人気の目安(s_tag)。
+  // タイトルだけ=タイトル・キャプション検索(公式ヘルプ記載)。完全一致=s_tag_full(2026-07-06実測、
+  // 部分732千→完全724千で実際に絞られる)。人気の目安は部分一致が要るので s_tag を明示。
   if (state.titleOnly) params.set('s_mode', 's_tc')
-  else if (state.pixivPopular) params.set('s_mode', 's_tag')
+  else if (state.exactTag) params.set('s_mode', 's_tag_full')
+  else if (usePopular) params.set('s_mode', 's_tag')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
   // popular_d=人気(プレミアム限定)のときだけ order を指定する。おまかせも指定しない
@@ -42,14 +43,21 @@ function buildUrl(state: QueryState): string | null {
   // ai_type=1 でAI生成作品を除外(送らなければアカウント既定に従う)。どちらも非会員でも効く
   if (state.ageRating) params.set('mode', state.ageRating)
   if (state.excludeAi) params.set('ai_type', '1')
+  // うごくイラストは専用パスが無く(/tags/…/ugoira は「不正なリクエスト」)、
+  // illustrations カテゴリで type=ugoira を付けて絞る(2026-07-06 実測: 全72万→約7千)。
+  if (state.workType === 'ugoira') params.set('type', 'ugoira')
   const qs = params.toString()
 
+  // イラスト・うごくイラストは illustrations、マンガは manga、小説は novels、
+  // 指定なしは全作品(artworks)。うごくは上の type=ugoira で更に絞る
   const section =
-    state.workType === 'illust'
-      ? 'illustrations'
-      : state.workType === 'manga'
-        ? 'manga'
-        : 'artworks'
+    state.workType === 'manga'
+      ? 'manga'
+      : state.workType === 'novel'
+        ? 'novels'
+        : state.workType === 'illust' || state.workType === 'ugoira'
+          ? 'illustrations'
+          : 'artworks'
   return `https://www.pixiv.net/tags/${encodeURIComponent(parts.join(' '))}/${section}${qs ? `?${qs}` : ''}`
 }
 
@@ -64,6 +72,7 @@ export const pixiv: PlatformDef = {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     titleOnly: { level: 'partial', noteKey: 'note.pixiv.titleOnly' },
+    exactTag: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
     hashtag: { level: 'full' },
@@ -76,12 +85,25 @@ export const pixiv: PlatformDef = {
     excludeAi: { level: 'full' },
   },
   buildUrl,
-  // R18のみ(mode=r18)は未ログインだと結果に出ないので、その値のときだけ注記つきに落とす。
-  // 全年齢(safe)は誰でも効くので full のまま
-  dynamicSupport: (state) => ({
-    ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
-    ...(state.ageRating === 'r18'
-      ? { ageRating: { level: 'partial', noteKey: 'note.pixiv.r18Login' } }
-      : {}),
-  }),
+  dynamicSupport: (state) => {
+    const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
+    // s_mode は1枠。優先度 titleOnly > exactTag > pixivPopular で負けた概念は
+    // 実際には送られないので none に落として正直に(「適用と出るのに効かない」を防ぐ)
+    const conflict: ConceptSupport = { level: 'none', noteKey: 'note.pixiv.smodeConflict' }
+    if (state.titleOnly) {
+      if (state.exactTag) overrides.exactTag = conflict
+      if (state.pixivPopular) overrides.pixivPopular = conflict
+    } else if (state.exactTag && state.pixivPopular) {
+      overrides.pixivPopular = conflict
+    }
+    return {
+      ...overrides,
+      ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+      // R18のみ(mode=r18)は未ログインだと結果に出ないので、その値のときだけ注記つきに落とす。
+      // 全年齢(safe)は誰でも効くので full のまま
+      ...(state.ageRating === 'r18'
+        ? { ageRating: { level: 'partial', noteKey: 'note.pixiv.r18Login' } }
+        : {}),
+    }
+  },
 }

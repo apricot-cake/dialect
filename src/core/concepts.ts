@@ -8,6 +8,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (exactPhrases(state).length > 0) active.push('exactPhrase')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
+  if (state.exactTag) active.push('exactTag')
   if (state.fromUser.trim()) active.push('fromUser')
   if (state.excludeUser.trim()) active.push('excludeUser')
   if (state.toUser.trim()) active.push('toUser')
@@ -24,8 +25,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.liveOnly) active.push('liveOnly')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
+  if (state.minReplies.trim()) active.push('minReplies')
   if (state.language) active.push('language')
   if (state.workType) active.push('workType')
+  if (state.genre) active.push('genre')
   if (state.resultType) active.push('resultType')
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
@@ -43,6 +46,7 @@ export function defaultState(): QueryState {
     exactPhrase: [''],
     exclude: '',
     titleOnly: false,
+    exactTag: false,
     fromUser: '',
     excludeUser: '',
     toUser: '',
@@ -60,8 +64,10 @@ export function defaultState(): QueryState {
     liveOnly: false,
     minLikes: '',
     minReposts: '',
+    minReplies: '',
     language: '',
     workType: '',
+    genre: '',
     resultType: '',
     sort: 'new',
     pixivPopular: '',

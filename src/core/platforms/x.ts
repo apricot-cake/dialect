@@ -33,6 +33,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.excludeReplies) parts.push('-filter:replies')
   if (state.minLikes.trim()) parts.push(`min_faves:${state.minLikes.trim()}`)
   if (state.minReposts.trim()) parts.push(`min_retweets:${state.minReposts.trim()}`)
+  if (state.minReplies.trim()) parts.push(`min_replies:${state.minReplies.trim()}`)
   if (state.language) parts.push(`lang:${state.language}`)
 
   // f=live=新しい順、f=top=人気順(話題)。おまかせは指定しない(Xの既定はtop)
@@ -64,6 +65,7 @@ export const x: PlatformDef = {
     excludeReplies: { level: 'full' },
     minLikes: { level: 'partial', noteKey: 'note.x.unofficial' },
     minReposts: { level: 'partial', noteKey: 'note.x.unofficial' },
+    minReplies: { level: 'partial', noteKey: 'note.x.unofficial' },
     language: { level: 'full' },
     sortOrder: { level: 'full' },
   },
