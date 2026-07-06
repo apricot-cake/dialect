@@ -1,10 +1,18 @@
-import { useState, type CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
+import { Search } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
 import { supportOf } from '@/core/types'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
-import { CONCEPT_DEFS, splitSupporters, SUPPORT_COUNT } from '@/core/conceptDefs'
-import { t } from '@/i18n'
+import {
+  CONCEPT_DEFS,
+  CONCEPT_MAP,
+  splitSupporters,
+  SUPPORT_COUNT,
+  type ConceptDef,
+} from '@/core/conceptDefs'
+import { buildSearchIndex, searchConcepts, type MatchTier } from '@/core/conceptSearch'
+import { t, type Lang } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
 import { CONCEPT_ICONS } from './conceptIcons'
 
@@ -70,6 +78,7 @@ export function ConditionPicker({
   filterId,
   query,
   dark,
+  lang,
   onAdd,
   onRemove,
   onSetFilter,
@@ -80,30 +89,51 @@ export function ConditionPicker({
   filterId: PlatformId | null
   query: QueryState
   dark: boolean
+  lang: Lang
   onAdd: (concept: ConceptId) => void
   onRemove: (concept: ConceptId) => void
   onSetFilter: (id: PlatformId | null) => void
 }) {
   const [hover, setHover] = useState<ConceptId | null>(null)
+  const [queryText, setQueryText] = useState('')
+  // ラベル・ヘルプ・値ラベルは言語依存なので、言語が変わったら索引を作り直す
+  const index = useMemo(() => buildSearchIndex(lang), [lang])
   const addedSet = new Set(added)
   const filterPlatform = filterId
     ? (PLATFORMS.find((p) => p.id === filterId) ?? null)
     : null
-  // フィルタ中でも追加済みの条件は隠さない(解除操作ができなくなるため)
-  const rows = CONCEPT_DEFS.filter((d) => d.id !== 'keywords')
-    .filter(
-      (d) =>
-        !filterPlatform ||
-        supportOf(filterPlatform, d.id).level !== 'none' ||
-        addedSet.has(d.id),
+  const matchesFilter = (id: ConceptId) =>
+    !filterPlatform || supportOf(filterPlatform, id).level !== 'none'
+
+  // 検索中は一致した概念をスコア順で、そうでなければ全概念を対応サイト数の多い順で。
+  // サイトフィルタはどちらでも効く。追加済みの条件は検索していないときだけ残す
+  // (解除操作ができなくなるのを防ぐ。検索中はクエリを消せば戻れる)
+  const q = queryText.trim()
+  const searching = q !== ''
+  let rows: ConceptDef[]
+  let searchTier: MatchTier | null = null
+  if (searching) {
+    const hits = searchConcepts(index, q).filter(
+      (h) => h.id !== 'keywords' && matchesFilter(h.id),
     )
-    .sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
+    searchTier = hits[0]?.tier ?? null
+    rows = hits.map((h) => CONCEPT_MAP[h.id])
+  } else {
+    rows = CONCEPT_DEFS.filter((d) => d.id !== 'keywords')
+      .filter((d) => matchesFilter(d.id) || addedSet.has(d.id))
+      .sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
+  }
+  // fuzzy 段でしか当たらなかったとき(表記ゆれ・タイポ)は「もしかして」として弱く見せる
+  const fuzzyMode = searchTier === 'fuzzy'
 
   return (
     <Dialog.Root
       open={open}
       onOpenChange={(next) => {
-        if (!next) setHover(null)
+        if (!next) {
+          setHover(null)
+          setQueryText('')
+        }
         onOpenChange(next)
       }}
     >
@@ -133,6 +163,41 @@ export function ConditionPicker({
                     <path d="M18 6 6 18M6 6l12 12" />
                   </svg>
                 </Dialog.Close>
+              </div>
+              {/* 意図語で条件を探す検索ボックス(方言の綴りを知らなくても見つかる) */}
+              <div className="px-[26px] pb-3.5">
+                <div className="flex h-[42px] items-center gap-2.5 rounded-[11px] border border-border bg-card px-3.5">
+                  <Search size={17} color="var(--faint)" className="shrink-0" />
+                  <input
+                    type="text"
+                    value={queryText}
+                    onChange={(e) => setQueryText(e.target.value)}
+                    onKeyDown={(e) => {
+                      // 入力があるときの Esc はクエリのクリアに使い、モーダルは閉じない
+                      // (IME変換中の Esc は候補取消なので拾わない)
+                      if (e.key === 'Escape' && !e.nativeEvent.isComposing && queryText) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        setQueryText('')
+                      }
+                    }}
+                    placeholder={t('picker.search.placeholder')}
+                    className="w-full min-w-0 border-none bg-transparent text-[15px] text-fg outline-none"
+                  />
+                  {queryText && (
+                    <button
+                      type="button"
+                      data-noscale
+                      aria-label={t('cal.clear')}
+                      className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-faint"
+                      onClick={() => setQueryText('')}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
                 <span
@@ -168,8 +233,18 @@ export function ConditionPicker({
               </div>
             </div>
 
-            {/* 条件リスト(対応サイト数の多い順) */}
+            {/* 条件リスト(検索中はスコア順、それ以外は対応サイト数の多い順) */}
             <div className="px-[22px] pt-3.5 pb-[26px]">
+              {searching && rows.length === 0 && (
+                <div className="py-12 text-center text-[13px] text-muted">
+                  {t('picker.search.empty')}
+                </div>
+              )}
+              {fuzzyMode && (
+                <div className="mb-2.5 px-[13px] text-[11.5px] font-semibold text-faint">
+                  {t('picker.search.didYouMean')}
+                </div>
+              )}
               {rows.map((def) => {
                 const isAdded = addedSet.has(def.id)
                 const Icon = CONCEPT_ICONS[def.id]
@@ -178,6 +253,7 @@ export function ConditionPicker({
                     key={def.id}
                     type="button"
                     data-noscale
+                    style={fuzzyMode ? { opacity: 0.72 } : undefined}
                     className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
                       isAdded
                         ? 'bg-(--picker-added) border-[color:var(--picker-added-border)]'

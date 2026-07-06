@@ -293,6 +293,9 @@ export const en = {
   'support.full': 'Full support',
   'support.partial': 'Partial support',
   'picker.title': 'Add a condition',
+  'picker.search.placeholder': 'Search conditions (e.g. buzz, quality, replies)',
+  'picker.search.empty': 'No matching conditions',
+  'picker.search.didYouMean': 'Did you mean',
   'cal.clear': 'Clear',
   'cal.pickDate': 'Pick a date',
 

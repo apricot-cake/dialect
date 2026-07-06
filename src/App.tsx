@@ -297,6 +297,7 @@ export default function App() {
         filterId={filterId}
         query={query}
         dark={dark}
+        lang={lang}
         onAdd={addConcept}
         onRemove={removeConcept}
         onSetFilter={setFilterId}
