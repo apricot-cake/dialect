@@ -50,6 +50,7 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'verifiedOnly', field: 'verifiedOnly', widget: 'toggle', labelKey: 'concept.verifiedOnly.label', helpKey: 'concept.verifiedOnly.help' },
   { id: 'mentionsUser', field: 'mentionsUser', widget: 'plain', labelKey: 'concept.mentionsUser.label', helpKey: 'concept.mentionsUser.help', placeholderKey: 'concept.mentionsUser.placeholder' },
   { id: 'domain', field: 'domain', widget: 'plain', labelKey: 'concept.domain.label', helpKey: 'concept.domain.help', placeholderKey: 'concept.domain.placeholder' },
+  { id: 'xList', field: 'xList', widget: 'plain', labelKey: 'concept.xList.label', helpKey: 'concept.xList.help', placeholderKey: 'concept.xList.placeholder' },
   { id: 'subreddit', field: 'subreddit', widget: 'chips', labelKey: 'concept.subreddit.label', helpKey: 'concept.subreddit.help', placeholderKey: 'concept.subreddit.placeholder' },
 ]
 

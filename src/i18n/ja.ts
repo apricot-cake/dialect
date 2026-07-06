@@ -48,6 +48,10 @@ export const ja = {
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.domain.help':
     '指定したサイトへのリンクを含む投稿だけを探します',
+  'concept.xList.label': 'Xのリスト内を検索',
+  'concept.xList.placeholder': 'リストのURL、またはID',
+  'concept.xList.help':
+    'Xの「リスト」（自分で作った・フォローしたアカウントのまとまり）の中だけを検索します。リストのページを開いてURLをコピーし、ここに貼るだけ。キーワードや期間など他の条件と組み合わせると、そのリストのメンバーの投稿にぐっと絞り込めます（Xのみ対応）。',
   'concept.hashtag.label': 'ハッシュタグ',
   'concept.hashtag.placeholder': '例: 読書記録',
   'concept.hashtag.help':
@@ -171,6 +175,7 @@ export const ja = {
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
   'note.x.unofficial': '非公式な機能のため、将来使えなくなる可能性があります',
+  'note.x.listInvalid': 'リストのURL（またはID）からIDを読み取れませんでした。リストのページのURLを貼り付けてください',
   'note.unofficial': '非公式な指定方法のため、将来使えなくなる可能性があります',
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
   'note.bluesky.exclude': '公式には案内されていない機能のため、将来使えなくなる可能性があります',
@@ -240,6 +245,7 @@ export const ja = {
   'sum.mentions': '{v}へ',
   'sum.community': '{v}内',
   'sum.domain': '{v}へのリンク',
+  'sum.xList': 'リスト内',
   'sum.minLikes': '{v}いいね以上',
   'sum.minReposts': '{v}リポスト以上',
   'sum.minReplies': '{v}返信以上',

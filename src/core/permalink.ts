@@ -35,6 +35,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
   if (state.domain.trim()) params.set('dom', state.domain.trim())
+  if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
   if (state.since) params.set('since', state.since)
   if (state.until) params.set('until', state.until)
@@ -96,6 +97,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.mentionsUser = params.get('men') ?? ''
   state.subreddit = params.get('sub') ?? ''
   state.domain = params.get('dom') ?? ''
+  state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
   state.since = params.get('since') ?? ''
   state.until = params.get('until') ?? ''

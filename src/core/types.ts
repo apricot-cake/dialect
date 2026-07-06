@@ -13,6 +13,7 @@ export type ConceptId =
   | 'mentionsUser'
   | 'subreddit'
   | 'domain'
+  | 'xList'
   | 'hashtag'
   | 'period'
   | 'mediaOnly'
@@ -115,6 +116,8 @@ export interface QueryState {
   /** スペース区切りで複数可(どれか=OR) */
   subreddit: string
   domain: string
+  /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
+  xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */
   hashtag: string
   since: string // YYYY-MM-DD

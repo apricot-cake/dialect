@@ -42,6 +42,8 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return tf('sum.community', { v: words(state.subreddit).join('・') })
     case 'domain':
       return tf('sum.domain', { v: state.domain.trim() })
+    case 'xList':
+      return t('sum.xList')
     case 'hashtag':
       return words(state.hashtag)
         .map((w) => `#${w}`)

@@ -46,6 +46,10 @@ export const en = {
   'concept.domain.label': 'Links to this site',
   'concept.domain.placeholder': 'e.g. nhk.or.jp',
   'concept.domain.help': 'Finds only posts that link to the given site.',
+  'concept.xList.label': 'Search within an X List',
+  'concept.xList.placeholder': 'List URL or ID',
+  'concept.xList.help':
+    'Searches only inside an X List (a set of accounts you built or follow). Open the List page, copy its URL, and paste it here. Combine it with keywords, dates, or other conditions to narrow down to just that List’s members (X only).',
   'concept.hashtag.label': 'Hashtag',
   'concept.hashtag.placeholder': 'e.g. booklog',
   'concept.hashtag.help':
@@ -174,6 +178,8 @@ export const en = {
     'You cannot search by date alone. Combine it with a keyword.',
   'note.x.unofficial':
     'This is an unofficial feature and may stop working in the future.',
+  'note.x.listInvalid':
+    'Couldn’t read a List ID from that input. Paste the URL of the List’s page.',
   'note.unofficial':
     'This is an unofficial method and may stop working in the future.',
   'note.niconico.videoLength':
@@ -272,6 +278,7 @@ export const en = {
   'sum.mentions': 'mentioning {v}',
   'sum.community': 'in {v}',
   'sum.domain': 'links to {v}',
+  'sum.xList': 'in a List',
   'sum.minLikes': '{v}+ likes',
   'sum.minReposts': '{v}+ reposts',
   'sum.minReplies': '{v}+ replies',

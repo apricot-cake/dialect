@@ -15,6 +15,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.mentionsUser.trim()) active.push('mentionsUser')
   if (state.subreddit.trim()) active.push('subreddit')
   if (state.domain.trim()) active.push('domain')
+  if (state.xList.trim()) active.push('xList')
   if (state.hashtag.trim()) active.push('hashtag')
   if (state.since || state.until) active.push('period')
   if (state.mediaOnly) active.push('mediaOnly')
@@ -53,6 +54,7 @@ export function defaultState(): QueryState {
     mentionsUser: '',
     subreddit: '',
     domain: '',
+    xList: '',
     hashtag: '',
     since: '',
     until: '',

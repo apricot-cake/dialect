@@ -7,9 +7,20 @@ import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words 
 // f=top(既定)はアルゴリズム選別で大半を隠すため、新しい順は f=live。
 // min_faves:/min_retweets:/filter:blue_verified は公式フォームから削除済みの
 // 非公式演算子だが、2026-07-02にWeb UIでの動作を実機確認済み。
+// リストのURL(例 https://x.com/i/lists/123)またはIDから数値のリストIDを取り出す。
+// list: 演算子は非公式だが実機確認済み(2026-07-06、リストのメンバー投稿に絞られる)。取れなければ null
+function listId(raw: string): string | null {
+  const s = raw.trim()
+  if (!s) return null
+  const m = s.match(/lists\/(\d+)/)
+  if (m) return m[1]
+  return /^\d+$/.test(s) ? s : null
+}
+
 function buildUrl(state: QueryState): string | null {
-  // 宛先・リンク先だけの検索もXでは成立するので、正の条件に数える
-  if (!hasPositiveTerm(state) && !state.toUser.trim() && !state.domain.trim()) {
+  const list = listId(state.xList)
+  // 宛先・リンク先・リスト内だけの検索もXでは成立するので、正の条件に数える
+  if (!hasPositiveTerm(state) && !state.toUser.trim() && !state.domain.trim() && !list) {
     return null
   }
 
@@ -24,6 +35,8 @@ function buildUrl(state: QueryState): string | null {
   else parts.push(...tos)
   // リンク先ドメインは url: で絞る(部分一致)
   if (state.domain.trim()) parts.push(`url:${state.domain.trim()}`)
+  // リスト内検索。list:<id> でそのリストのメンバーの投稿だけに絞る(他条件とAND可)
+  if (list) parts.push(`list:${list}`)
   parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
@@ -57,6 +70,7 @@ export const x: PlatformDef = {
     excludeUser: { level: 'full' },
     toUser: { level: 'full' },
     domain: { level: 'full' },
+    xList: { level: 'partial', noteKey: 'note.x.unofficial' },
     hashtag: { level: 'full' },
     period: { level: 'full', noteKey: 'note.x.period' },
     mediaOnly: { level: 'full' },
@@ -70,6 +84,13 @@ export const x: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
-  // 急上昇(note専用)などはXにないので、選ばれたら並び順を非対応に落とす
-  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+  dynamicSupport: (state) => ({
+    // 急上昇(note専用)などはXにないので、選ばれたら並び順を非対応に落とす
+    ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+    // リスト欄に入力はあるが数値IDを取り出せない(スラッグURL等)ときは送れないので、
+    // 「使えない」に落として直し方を注記する(適用と出るのに効かない、を防ぐ)
+    ...(state.xList.trim() && !listId(state.xList)
+      ? { xList: { level: 'none' as const, noteKey: 'note.x.listInvalid' as const } }
+      : {}),
+  }),
 }
