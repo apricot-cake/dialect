@@ -62,5 +62,13 @@ export const niconico: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
-  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+  // 「ふつう(4〜20分)」に当たる値は niconico に無く l_range で送れない(buildUrl も出さない)。
+  // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
+  // short/long は l_range=1/2 で実際に送れるので partial のまま
+  dynamicSupport: (state) => ({
+    ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+    ...(state.videoLength === 'medium'
+      ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
+      : {}),
+  }),
 }
