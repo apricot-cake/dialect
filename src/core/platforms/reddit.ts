@@ -46,11 +46,25 @@ function buildUrl(state: QueryState): string | null {
   if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
 
   const params = new URLSearchParams({ q })
-  // sort=new=新着、top=人気、hot=注目順(急上昇に相当)。おまかせは指定しない(既定は関連度順)
+  // sort=new=新着、top=人気、hot=注目順(急上昇に相当)、comments=コメント数順(2026-07-07実測)。
+  // おまかせは指定しない(既定は関連度順)
   if (state.sort === 'new') params.set('sort', 'new')
   if (state.sort === 'top') params.set('sort', 'top')
   if (state.sort === 'hot') params.set('sort', 'hot')
+  if (state.sort === 'comments') params.set('sort', 'comments')
   if (state.since) params.set('t', tParam(state.since))
+  // 結果タブ(type=)。すべて/投稿/コミュニティ/コメント/メディア/プロフィールの6タブが
+  // それぞれ 無指定/posts/communities/comments/media/people に対応(2026-07-07実測)。
+  // 指定なしは「すべて」タブ(投稿+コミュニティ+コメント+メディア+プロフィールが混在)
+  if (
+    state.resultType === 'posts' ||
+    state.resultType === 'communities' ||
+    state.resultType === 'comments' ||
+    state.resultType === 'media' ||
+    state.resultType === 'people'
+  ) {
+    params.set('type', state.resultType)
+  }
 
   return `https://www.reddit.com/search/?${params.toString()}`
 }
@@ -58,6 +72,10 @@ function buildUrl(state: QueryState): string | null {
 // Reddit の t= は「今から過去Nへの丸め」しか表せず、開始日(since)を起点にする。
 // 終了日(until)だけ指定しても送れる形が無く buildUrl は t= を付けないので、
 // 「近似で適用」と見せず period を非対応に落として食い違いを防ぐ
+const YOUTUBE_TWITCH_RESULT_TYPES: ReadonlySet<string> = new Set([
+  'video', 'short', 'channel', 'playlist',
+])
+
 function dynamicSupport(
   state: QueryState,
 ): Partial<Record<ConceptId, ConceptSupport>> {
@@ -65,7 +83,16 @@ function dynamicSupport(
     state.until && !state.since
       ? { period: { level: 'none', noteKey: 'note.reddit.untilOnly' } }
       : {}
-  return { ...overrides, ...limitSort(state.sort, ['new', 'top', 'hot'], 'note.sortOrder.otherSite') }
+  // YouTube/Twitch専用の値(動画・ショート・チャンネル・再生リスト)が選ばれたら落とす
+  const resultTypeOverride: Partial<Record<ConceptId, ConceptSupport>> =
+    state.resultType && YOUTUBE_TWITCH_RESULT_TYPES.has(state.resultType)
+      ? { resultType: { level: 'none', noteKey: 'note.resultType.otherSite' } }
+      : {}
+  return {
+    ...overrides,
+    ...resultTypeOverride,
+    ...limitSort(state.sort, ['new', 'top', 'hot', 'comments'], 'note.sortOrder.otherSite'),
+  }
 }
 
 export const reddit: PlatformDef = {
@@ -84,7 +111,8 @@ export const reddit: PlatformDef = {
     subreddit: { level: 'full' },
     hashtag: { level: 'none', noteKey: 'note.reddit.hashtag' },
     period: { level: 'partial', noteKey: 'note.reddit.period' },
-    mediaOnly: { level: 'none' },
+    mediaOnly: { level: 'none', noteKey: 'note.reddit.mediaOnly' },
+    resultType: { level: 'full' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

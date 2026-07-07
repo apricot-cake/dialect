@@ -100,6 +100,8 @@ Boolean演算子は公式仕様のため壊れにくい。old.reddit.com は2026
 | 中 | `author:` / `subreddit:` | ユーザー指定・コミュニティ | [reddit.com/search/?q=subreddit:japan typhoon](https://www.reddit.com/search/?q=subreddit%3Ajapan%20typhoon) | r/japan 内の結果のみ | 2026-07-04 | ✅ |
 | 低 | `sort=new` / `t=week` | 並び順・期間の丸め | [reddit.com/search/?q=typhoon&sort=new&t=week](https://www.reddit.com/search/?q=typhoon&sort=new&t=week) | 新着順・1週間以内 | 2026-07-04 | ✅ |
 | 低 | `self:no` **復活チェック**(現状は効かないので送っていない) | リンクを含む投稿だけ | [reddit.com/search/?q=typhoon AND self:yes](https://www.reddit.com/search/?q=typhoon%20AND%20self%3Ayes) | 現状は `self:` が無視される(self:yes でも画像投稿が並び self:no と結果同一。2026-07-04実測)。テキスト投稿だけに絞れるようになったら linksOnly を復活 | 2026-07-04 | ❌(送信しない) |
+| 中 | `sort=comments`(2026-07-07追加) | コメント数順 | [reddit.com/search/?q=typhoon&sort=comments](https://www.reddit.com/search/?q=typhoon&sort=comments) | コメント数の多い順に並ぶ | 2026-07-07 | ✅ |
+| 中 | `type=posts` / `type=communities` / `type=comments` / `type=media` / `type=people`(2026-07-07追加) | 探すものの種類 | [reddit.com/search/?q=typhoon&type=media](https://www.reddit.com/search/?q=typhoon&type=media) | 「メディア」タブに絞られる(他の値もそれぞれ投稿/コミュニティ/コメント/プロフィールタブに対応)。無指定は「すべて」タブ(投稿+コミュニティ+コメント+メディア+プロフィールが混在)のまま。2026-07-07にreddit.com/searchのタブをGUI操作で実測 | 2026-07-07 | ✅ |
 
 ## Instagram(URL存続チェックのみ)
 

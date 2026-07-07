@@ -81,16 +81,30 @@ export type NicoGenre = '' | (typeof NICO_GENRES)[number]
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
- * playlist=再生リスト。ショート/再生リストはYouTube専用(Twitchは動画・チャンネルのみ)
+ * playlist=再生リスト(YouTube専用の値。Twitchは動画・チャンネルのみ)。
+ * posts=投稿、communities=コミュニティ、comments=コメント、media=メディア、
+ * people=プロフィール(Reddit専用の値。2026-07-07にGUI操作で実測した検索結果タブ
+ * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)
  */
-export type ResultType = '' | 'video' | 'short' | 'channel' | 'playlist'
+export type ResultType =
+  | ''
+  | 'video'
+  | 'short'
+  | 'channel'
+  | 'playlist'
+  | 'posts'
+  | 'communities'
+  | 'comments'
+  | 'media'
+  | 'people'
 
 /**
- * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、auto=サイトにおまかせ(指定しない)。
- * hot に対応するのは note(急上昇)と Reddit(注目順=sort=hot)。対応しないサイトでは
- * dynamicSupport(limitSort)で non-対応に落とす
+ * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
+ * auto=サイトにおまかせ(指定しない)。hot に対応するのは note(急上昇)と
+ * Reddit(注目順=sort=hot)。comments は Reddit専用(sort=comments、2026-07-07にGUI操作で実測)。
+ * 対応しないサイトでは dynamicSupport(limitSort)で non-対応に落とす
  */
-export type SortOrder = 'new' | 'top' | 'hot' | 'auto'
+export type SortOrder = 'new' | 'top' | 'hot' | 'comments' | 'auto'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {

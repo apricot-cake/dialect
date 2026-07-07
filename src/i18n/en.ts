@@ -125,18 +125,24 @@ export const en = {
   'concept.genre.traveling_outdoor': 'Travel & outdoors',
   'concept.genre.other': 'Other',
   'concept.genre.help': 'Filters videos by genre (niconico only).',
-  'concept.resultType.label': 'Video / channel type',
+  'concept.resultType.label': 'Result type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
   'concept.resultType.short': 'Shorts',
   'concept.resultType.channel': 'Channels',
   'concept.resultType.playlist': 'Playlists',
+  'concept.resultType.posts': 'Posts',
+  'concept.resultType.communities': 'Communities',
+  'concept.resultType.comments': 'Comments',
+  'concept.resultType.media': 'Media',
+  'concept.resultType.people': 'Profiles',
   'concept.resultType.help':
-    'On video sites (YouTube, Twitch), choose what to look for — videos, channels, and so on. Shorts and Playlists work on YouTube only.',
+    'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
   'concept.sortOrder.new': 'Newest',
   'concept.sortOrder.top': 'Popular',
   'concept.sortOrder.hot': 'Trending',
+  'concept.sortOrder.comments': 'Comment count',
   'concept.sortOrder.auto': 'Auto',
   'concept.sortOrder.help': 'Sets the result order.',
   'concept.pixivPopular.label': 'Popularity',
@@ -210,6 +216,8 @@ export const en = {
   'note.reddit.period': 'Filtered roughly by “past day / week / month / year”.',
   'note.reddit.untilOnly':
     'Reddit cannot filter by an end date alone (a start date is required).',
+  'note.reddit.mediaOnly':
+    'This filter is not available. Choosing “Media” under Result type gets close.',
   'note.instagram.hashtag':
     'Tag pages show only top posts (no latest order).',
   'note.instagram.multiTag':
@@ -239,6 +247,7 @@ export const en = {
     'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
   'note.twitch.resultType': 'Twitch can only search videos and channels.',
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
+  'note.resultType.otherSite': 'This type is not available on this site.',
   'note.fivech.keywords':
     'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
   'note.fivech.titleOnly':

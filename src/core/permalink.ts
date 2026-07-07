@@ -128,7 +128,10 @@ function paramsToState(params: URLSearchParams): QueryState {
     state.genre = genre as NicoGenre
   }
   const rt = params.get('rt')
-  if (rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist') {
+  if (
+    rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
+    rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people'
+  ) {
     state.resultType = rt
   }
   const pxu = params.get('pxu')
@@ -139,7 +142,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (age === 'safe' || age === 'r18') state.ageRating = age
   state.excludeAi = params.get('noai') === '1'
   const sort = params.get('sort')
-  if (sort === 'top' || sort === 'hot' || sort === 'auto') state.sort = sort
+  if (sort === 'top' || sort === 'hot' || sort === 'comments' || sort === 'auto') state.sort = sort
   return state
 }
 

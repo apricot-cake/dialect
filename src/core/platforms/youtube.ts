@@ -16,8 +16,10 @@ import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words 
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
 const SORT_BYTE: Record<'new' | 'top', number> = { new: 0x02, top: 0x03 }
 // 種別(タイプ)のバイト。video=1/channel=2/playlist=3 は既存調査値、short=9 は
-// 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用
-const TYPE_BYTE: Record<Exclude<ResultType, ''>, number> = {
+// 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用。
+// posts/communities/comments/media/people はReddit専用の値でYouTubeには無いため未収録
+// (dynamicSupportでYouTube側は選択時にresultTypeをnoneへ落とす)
+const TYPE_BYTE: Partial<Record<Exclude<ResultType, ''>, number>> = {
   video: 0x01,
   short: 0x09,
   channel: 0x02,
@@ -33,7 +35,8 @@ function spParam(state: QueryState): string {
   // spで表せるのは新着/視聴回数(=人気)順のみ。hot等はYouTubeにないので送らない
   const sort = state.sort === 'new' || state.sort === 'top' ? state.sort : null
   const filter: number[] = []
-  if (state.resultType) filter.push(0x10, TYPE_BYTE[state.resultType])
+  const typeByte = state.resultType ? TYPE_BYTE[state.resultType] : undefined
+  if (typeByte !== undefined) filter.push(0x10, typeByte)
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
   // 「特徴>ライブ」= filterサブメッセージの field8=1(sp=EgJAAQ%3D%3D を2026-07-05に
   // フィルタUIから実測)。type/長さと同じサブメッセージに合流する
@@ -88,8 +91,11 @@ function dynamicSupport(
     overrides.videoLength = CHANNEL_CONFLICT
     overrides.resultType = CHANNEL_CONFLICT
     overrides.liveOnly = CHANNEL_CONFLICT
+  } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
+    // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
+    overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
   }
-  // 急上昇(hot)はnote専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
+  // 急上昇・コメント数順はnote/Reddit専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
   return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
 

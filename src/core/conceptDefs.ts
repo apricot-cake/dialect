@@ -124,6 +124,11 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'short', labelKey: 'concept.resultType.short' },
     { value: 'channel', labelKey: 'concept.resultType.channel' },
     { value: 'playlist', labelKey: 'concept.resultType.playlist' },
+    { value: 'posts', labelKey: 'concept.resultType.posts' },
+    { value: 'communities', labelKey: 'concept.resultType.communities' },
+    { value: 'comments', labelKey: 'concept.resultType.comments' },
+    { value: 'media', labelKey: 'concept.resultType.media' },
+    { value: 'people', labelKey: 'concept.resultType.people' },
   ],
   language: [
     { value: '', labelKey: 'concept.language.none' },
@@ -174,5 +179,6 @@ export const SORT_OPTIONS: Array<{ value: QueryState['sort']; labelKey: MessageK
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
   { value: 'hot', labelKey: 'concept.sortOrder.hot' },
+  { value: 'comments', labelKey: 'concept.sortOrder.comments' },
   { value: 'auto', labelKey: 'concept.sortOrder.auto' },
 ]

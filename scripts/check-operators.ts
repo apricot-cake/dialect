@@ -166,7 +166,13 @@ const PROBES: Probe[] = [
   { platform: 'reddit', concept: 'subreddit', label: 'コミュニティ', state: { subreddit: 'japan' }, token: 'subreddit:' },
   { platform: 'reddit', concept: 'period', label: '期間(丸め)', state: { since: '2026-06-25' }, token: 't=' },
   { platform: 'reddit', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=new' },
+  { platform: 'reddit', concept: 'sortOrder', label: 'コメント数順', state: { sort: 'comments' }, token: 'sort=comments' },
   { platform: 'reddit', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: 'title:', tracked: false, note: '公式・安定の検索フィールド(Boolean検索)。確認リスト対象外' },
+  { platform: 'reddit', concept: 'resultType', label: '探す=投稿', state: { resultType: 'posts' }, token: 'type=posts' },
+  { platform: 'reddit', concept: 'resultType', label: '探す=コミュニティ', state: { resultType: 'communities' }, token: 'type=communities' },
+  { platform: 'reddit', concept: 'resultType', label: '探す=コメント', state: { resultType: 'comments' }, token: 'type=comments' },
+  { platform: 'reddit', concept: 'resultType', label: '探す=メディア', state: { resultType: 'media' }, token: 'type=media' },
+  { platform: 'reddit', concept: 'resultType', label: '探す=プロフィール', state: { resultType: 'people' }, token: 'type=people' },
 
   // ---- pixiv ----
   { platform: 'pixiv', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: 's_mode=s_tc' },
