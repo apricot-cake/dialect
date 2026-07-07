@@ -81,6 +81,7 @@ export function ConditionsArea({
   patch,
   removeConcept,
   onClear,
+  shareUrl,
   onOpenPicker,
   onGoLinks,
 }: {
@@ -92,10 +93,24 @@ export function ConditionsArea({
   removeConcept: (concept: ConceptId) => void
   /** 条件が1つでもあるときだけ渡る。undefined ならクリアボタンを出さない */
   onClear?: () => void
+  /** いまの条件を丸ごと表すパーマリンク。条件が1つでもあるときだけ渡る */
+  shareUrl?: string
   onOpenPicker: () => void
   onGoLinks: () => void
 }) {
   const pillCompact = usePillCompact()
+  // URLコピーの一時フィードバック(「コピーしました」表示)。少し経つと元へ戻す
+  const [copied, setCopied] = useState(false)
+  const copyLink = async () => {
+    if (!shareUrl) return
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch {
+      /* クリップボードが使えない環境では何もしない(アドレスバーから手動コピー可) */
+    }
+  }
   const barDefs = [CONCEPT_MAP.keywords, ...added.map((c) => CONCEPT_MAP[c])]
   const scrollLabel = t('ui.scrollToLinks')
 
@@ -176,6 +191,28 @@ export function ConditionsArea({
                   <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
                 </svg>
                 {t('ui.clearConditions')}
+              </button>
+            )}
+            {shareUrl && (
+              <button
+                type="button"
+                data-noscale
+                title={t('ui.copyLinkHint')}
+                aria-label={t('ui.copyLink')}
+                className="dl-clear inline-flex h-11 cursor-pointer items-center gap-[7px] rounded-full border border-border bg-card pr-5 pl-4 text-sm font-semibold text-muted shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
+                onClick={copyLink}
+              >
+                {copied ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5" />
+                    <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5" />
+                  </svg>
+                )}
+                {copied ? t('ui.copyLinkDone') : t('ui.copyLink')}
               </button>
             )}
           </motion.div>

@@ -3,7 +3,7 @@ import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 import { NICO_GENRES, POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, type ConceptDef } from '@/core/conceptDefs'
-import { paramsToQuery, stateToParams } from '@/core/permalink'
+import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import { PLATFORMS } from '@/core/platforms'
 import { andTerms, exactPhrases, words } from '@/core/text'
 import { getLang, setLang, type Lang } from '@/i18n'
@@ -295,6 +295,7 @@ export default function App() {
           patch={patchQuery}
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
+          shareUrl={canClear ? permalinkUrl(query) : undefined}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
         />

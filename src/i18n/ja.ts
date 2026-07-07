@@ -257,6 +257,9 @@ export const ja = {
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',
   'ui.clearConditions': 'すべてクリア',
+  'ui.copyLink': 'URLをコピー',
+  'ui.copyLinkDone': 'コピーしました',
+  'ui.copyLinkHint': 'いまの条件がすべて入ったURLをコピーします。ブックマークや共有をすれば、別の端末やブラウザでも同じ条件で開けます。',
   'ui.removeCondition': 'この条件を外す',
   'ui.scrollToLinks': 'スクロールで検索を開く',
   'ui.scrollToConditions': 'スクロールで条件へ戻る',

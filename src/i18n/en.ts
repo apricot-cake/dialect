@@ -284,6 +284,9 @@ export const en = {
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
   'ui.clearConditions': 'Clear all',
+  'ui.copyLink': 'Copy URL',
+  'ui.copyLinkDone': 'Copied',
+  'ui.copyLinkHint': 'Copies a URL containing all your current conditions. Bookmark or share it to reopen the same search on another device or browser.',
   'ui.removeCondition': 'Remove this condition',
   'ui.scrollToLinks': 'Scroll to open the searches',
   'ui.scrollToConditions': 'Scroll back to conditions',
