@@ -29,6 +29,12 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.hdOnly) active.push('hdOnly')
   if (state.captionsOnly) active.push('captionsOnly')
   if (state.creativeCommons) active.push('creativeCommons')
+  if (state.threeSixty) active.push('threeSixty')
+  if (state.vr180) active.push('vr180')
+  if (state.threeD) active.push('threeD')
+  if (state.hdr) active.push('hdr')
+  if (state.locationOnly) active.push('locationOnly')
+  if (state.purchased) active.push('purchased')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.minReplies.trim()) active.push('minReplies')
@@ -74,6 +80,12 @@ export function defaultState(): QueryState {
     hdOnly: false,
     captionsOnly: false,
     creativeCommons: false,
+    threeSixty: false,
+    vr180: false,
+    threeD: false,
+    hdr: false,
+    locationOnly: false,
+    purchased: false,
     minLikes: '',
     minReposts: '',
     minReplies: '',

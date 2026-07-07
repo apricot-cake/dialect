@@ -39,13 +39,24 @@ function spParam(state: QueryState): string {
   if (typeByte !== undefined) filter.push(0x10, typeByte)
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
   // 「特徴」の各項目はfilterサブメッセージの別フィールドとして合流する(2026-07-07に
-  // フィルタUIから実測、field番号の昇順で並べる): HD=field4(0x20)・字幕=field5(0x28)・
-  // クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・4K=field14(0x70)。組み合わせ可能
+  // フィルタUIから実測、field番号の昇順で並べる): 3D=field7(0x38)・HD=field4(0x20)・
+  // 字幕=field5(0x28)・クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・
+  // 購入済み=field9(0x48)・4K=field14(0x70)・360°=field15(0x78)・場所=field23(0xb8,0x01)・
+  // HDR=field25(0xc8,0x01)・VR180=field26(0xd0,0x01)。field23以降は2バイトのvarintタグ
+  // (fieldが16以上でタグが128を超えるため)。いずれも組み合わせ可能(2026-07-08に
+  // 360°/VR180/3D/HDR/場所は実際に絞り込みが効くことをブラウザ実測、購入済みは
+  // このアカウントに購入履歴が無く未検証だがバイト値自体はUIから採取)
   if (state.hdOnly) filter.push(0x20, 0x01)
   if (state.captionsOnly) filter.push(0x28, 0x01)
   if (state.creativeCommons) filter.push(0x30, 0x01)
+  if (state.threeD) filter.push(0x38, 0x01)
   if (state.liveOnly) filter.push(0x40, 0x01)
+  if (state.purchased) filter.push(0x48, 0x01)
   if (state.fourK) filter.push(0x70, 0x01)
+  if (state.threeSixty) filter.push(0x78, 0x01)
+  if (state.locationOnly) filter.push(0xb8, 0x01, 0x01)
+  if (state.hdr) filter.push(0xc8, 0x01, 0x01)
+  if (state.vr180) filter.push(0xd0, 0x01, 0x01)
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
   if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
@@ -100,6 +111,12 @@ function dynamicSupport(
     overrides.hdOnly = CHANNEL_CONFLICT
     overrides.captionsOnly = CHANNEL_CONFLICT
     overrides.creativeCommons = CHANNEL_CONFLICT
+    overrides.threeSixty = CHANNEL_CONFLICT
+    overrides.vr180 = CHANNEL_CONFLICT
+    overrides.threeD = CHANNEL_CONFLICT
+    overrides.hdr = CHANNEL_CONFLICT
+    overrides.locationOnly = CHANNEL_CONFLICT
+    overrides.purchased = CHANNEL_CONFLICT
   } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
     // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
     overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
@@ -130,6 +147,12 @@ export const youtube: PlatformDef = {
     hdOnly: { level: 'full' },
     captionsOnly: { level: 'full' },
     creativeCommons: { level: 'full' },
+    threeSixty: { level: 'full' },
+    vr180: { level: 'full' },
+    threeD: { level: 'full' },
+    hdr: { level: 'full' },
+    locationOnly: { level: 'full' },
+    purchased: { level: 'full' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },

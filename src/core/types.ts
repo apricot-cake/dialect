@@ -27,6 +27,12 @@ export type ConceptId =
   | 'hdOnly'
   | 'captionsOnly'
   | 'creativeCommons'
+  | 'threeSixty'
+  | 'vr180'
+  | 'threeD'
+  | 'hdr'
+  | 'locationOnly'
+  | 'purchased'
   | 'minLikes'
   | 'minReposts'
   | 'minReplies'
@@ -162,6 +168,18 @@ export interface QueryState {
   hdOnly: boolean
   captionsOnly: boolean
   creativeCommons: boolean
+  /**
+   * YouTube専用。「特徴」の残り6項目(2026-07-08にGUI操作で実機解析、いずれも
+   * 他の特徴・タイプ・並び順と自由に組み合わせ可能): 360°=field15、VR180=field26、
+   * 3D=field7、HDR=field25、場所(撮影地の位置情報つき動画に絞る)=field23、
+   * 購入済み(自分が購入した映画・番組)=field9
+   */
+  threeSixty: boolean
+  vr180: boolean
+  threeD: boolean
+  hdr: boolean
+  locationOnly: boolean
+  purchased: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */

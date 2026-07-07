@@ -50,6 +50,12 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.hdOnly) params.set('hd', '1')
   if (state.captionsOnly) params.set('cap', '1')
   if (state.creativeCommons) params.set('cc', '1')
+  if (state.threeSixty) params.set('t360', '1')
+  if (state.vr180) params.set('vr180', '1')
+  if (state.threeD) params.set('t3d', '1')
+  if (state.hdr) params.set('hdr', '1')
+  if (state.locationOnly) params.set('loc', '1')
+  if (state.purchased) params.set('buy', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.minReplies.trim()) params.set('reps', state.minReplies.trim())
@@ -120,6 +126,12 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.hdOnly = params.get('hd') === '1'
   state.captionsOnly = params.get('cap') === '1'
   state.creativeCommons = params.get('cc') === '1'
+  state.threeSixty = params.get('t360') === '1'
+  state.vr180 = params.get('vr180') === '1'
+  state.threeD = params.get('t3d') === '1'
+  state.hdr = params.get('hdr') === '1'
+  state.locationOnly = params.get('loc') === '1'
+  state.purchased = params.get('buy') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   state.minReplies = params.get('reps') ?? ''
