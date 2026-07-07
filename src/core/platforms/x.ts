@@ -62,7 +62,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.minReplies.trim()) parts.push(`min_replies:${state.minReplies.trim()}`)
   if (state.language) parts.push(`lang:${state.language}`)
 
-  // f=live=新しい順、f=top=人気順(話題)。おまかせは指定しない(Xの既定はtop)
+  // f=live=新しい順、f=top=人気順(話題)。指定なしは何も送らない(Xの既定はtop)
   const tab =
     state.sort === 'new' ? '&f=live' : state.sort === 'top' ? '&f=top' : ''
   return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}${tab}`

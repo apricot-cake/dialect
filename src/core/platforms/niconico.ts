@@ -13,7 +13,7 @@ function buildUrl(state: QueryState): string | null {
 
   const params = new URLSearchParams()
   // sort=f&order=d=投稿が新しい順、sort=h=人気(注目度)順。
-  // おまかせは指定しない(デフォルトソートはABテスト依存でサイト任せになる)
+  // 指定なしは何も送らない(デフォルトソートはABテスト依存でサイト任せになる)
   if (state.sort === 'new') {
     params.set('sort', 'f')
     params.set('order', 'd')

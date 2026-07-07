@@ -93,6 +93,14 @@ export function effectiveLevel(
 }
 
 /**
+ * 現在の入力まで踏まえた実対応サイト。選んだ値によって dynamicSupport で落ちるサイト
+ * (急上昇を持たないサイト等)を除いて数える。「対応 N」バッジと選択肢ごとの対応数に使う
+ */
+export function activeSupportersOf(concept: ConceptId, state: QueryState): PlatformDef[] {
+  return supportersOf(concept).filter((p) => effectiveLevel(p, concept, state).level !== 'none')
+}
+
+/**
  * 対応ポップオーバー用: 対応サイトを「完全」と「それ以外(一部・今の入力では不可)」に
  * 振り分ける。入力次第で none に落ちたサイトも「一部対応」側に出す(デザイン準拠)
  */
@@ -141,6 +149,10 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'media', labelKey: 'concept.resultType.media' },
     { value: 'people', labelKey: 'concept.resultType.people' },
     { value: 'board', labelKey: 'concept.resultType.board' },
+    { value: 'bangumi', labelKey: 'concept.resultType.bangumi' },
+    { value: 'pgc', labelKey: 'concept.resultType.pgc' },
+    { value: 'live', labelKey: 'concept.resultType.live' },
+    { value: 'article', labelKey: 'concept.resultType.article' },
   ],
   language: [
     { value: '', labelKey: 'concept.language.none' },
@@ -187,10 +199,15 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
   ],
 }
 
+// 「指定なし(auto)」を先頭に置くのは他のセレクト(探すものの種類など)の「指定なし」と
+// 同じ作法。以降は対応サイト数の多い順(新しい順・人気順が大半、急上昇以下は少数サイト専用)
 export const SORT_OPTIONS: Array<{ value: QueryState['sort']; labelKey: MessageKey }> = [
+  { value: 'auto', labelKey: 'concept.sortOrder.auto' },
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
   { value: 'hot', labelKey: 'concept.sortOrder.hot' },
   { value: 'comments', labelKey: 'concept.sortOrder.comments' },
-  { value: 'auto', labelKey: 'concept.sortOrder.auto' },
+  { value: 'danmaku', labelKey: 'concept.sortOrder.danmaku' },
+  { value: 'favorites', labelKey: 'concept.sortOrder.favorites' },
+  { value: 'likes', labelKey: 'concept.sortOrder.likes' },
 ]

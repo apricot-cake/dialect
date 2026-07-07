@@ -41,7 +41,7 @@ export const pinterest: PlatformDef = {
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
-    exclude: { level: 'none', noteKey: 'note.pinterest.exclude' },
+    exclude: { level: 'none', noteKey: 'note.exclude.literal' },
     resultType: { level: 'full' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },

@@ -54,7 +54,7 @@ function buildUrl(state: QueryState): string | null {
   else if (usePopular) params.set('s_mode', 's_tag')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
-  // popular_d=人気(プレミアム限定)のときだけ order を指定する。おまかせも指定しない
+  // popular_d=人気(プレミアム限定)のときだけ order を指定する。指定なしも何も送らない
   if (state.sort === 'top') params.set('order', 'popular_d')
   if (state.since) params.set('scd', state.since)
   if (state.until) params.set('ecd', state.until)

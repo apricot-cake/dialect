@@ -98,7 +98,9 @@ export type NicoGenre = '' | (typeof NICO_GENRES)[number]
  * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)。
  * board=ボード(Pinterest専用。フィルターパネルの「すべてのピン/動画/ボード/
  * プロフィール」の4択のうち「ボード」に対応。2026-07-08にGUI操作で実測、peopleはpinterestの
- * 「プロフィール」とも共用)
+ * 「プロフィール」とも共用)。bangumi=アニメ番組、pgc=映画・ドラマなどの制作コンテンツ、
+ * live=生放送中のルーム、article=コラム記事(いずれもbilibili専用。トップの「综合/视频/
+ * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)
  */
 export type ResultType =
   | ''
@@ -112,14 +114,21 @@ export type ResultType =
   | 'media'
   | 'people'
   | 'board'
+  | 'bangumi'
+  | 'pgc'
+  | 'live'
+  | 'article'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
- * auto=サイトにおまかせ(指定しない)。hot に対応するのは note(急上昇)と
+ * auto=指定なし(サイトの標準の並びのまま=既定)。hot に対応するのは note(急上昇)と
  * Reddit(注目順=sort=hot)。comments は Reddit専用(sort=comments、2026-07-07にGUI操作で実測)。
- * 対応しないサイトでは dynamicSupport(limitSort)で non-対応に落とす
+ * danmaku=弾幕数順、favorites=収蔵(お気に入り登録)数順、likes=いいね数順は
+ * いずれもbilibili専用(2026-07-08にGUI操作で実測。動画検索はorder=dm/stow、
+ * コラム検索はorder=attention)。対応しないサイトでは dynamicSupport(limitSort)で
+ * non-対応に落とす
  */
-export type SortOrder = 'new' | 'top' | 'hot' | 'comments' | 'auto'
+export type SortOrder = 'new' | 'top' | 'hot' | 'comments' | 'auto' | 'danmaku' | 'favorites' | 'likes'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
@@ -235,6 +244,7 @@ export type PlatformId =
   | 'mastodon'
   | 'pinterest'
   | 'fanbox'
+  | 'bilibili'
 
 export interface PlatformDef {
   id: PlatformId

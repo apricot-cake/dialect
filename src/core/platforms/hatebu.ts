@@ -20,7 +20,7 @@ function buildUrl(state: QueryState): string | null {
   if (textParts.length === 0 && tagNames.length === 0) return null
 
   const params = new URLSearchParams({ q: parts.join(' ') })
-  // sort=recent=新着、popular=人気(サイト既定)。おまかせは指定しない
+  // sort=recent=新着、popular=人気(サイト既定)。指定なしは何も送らない
   if (state.sort === 'new') params.set('sort', 'recent')
   else if (state.sort === 'top') params.set('sort', 'popular')
   if (state.since) params.set('date_begin', state.since)

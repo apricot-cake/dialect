@@ -162,6 +162,10 @@ export const en = {
   'concept.resultType.media': 'Media',
   'concept.resultType.people': 'Profiles',
   'concept.resultType.board': 'Boards',
+  'concept.resultType.bangumi': 'Anime series',
+  'concept.resultType.pgc': 'Movies & shows',
+  'concept.resultType.live': 'Live streams',
+  'concept.resultType.article': 'Articles',
   'concept.resultType.help':
     'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
@@ -169,8 +173,12 @@ export const en = {
   'concept.sortOrder.top': 'Popular',
   'concept.sortOrder.hot': 'Trending',
   'concept.sortOrder.comments': 'Comment count',
-  'concept.sortOrder.auto': 'Auto',
-  'concept.sortOrder.help': 'Sets the result order.',
+  'concept.sortOrder.danmaku': 'Danmaku count',
+  'concept.sortOrder.favorites': 'Favorite count',
+  'concept.sortOrder.likes': 'Like count',
+  'concept.sortOrder.auto': 'Default',
+  'concept.sortOrder.help':
+    "Sets the result order. \"Default\" keeps each site's own ordering (usually relevance-based).",
   'concept.pixivPopular.label': 'Popularity',
   'concept.pixivPopular.none': 'Any',
   'concept.pixivPopular.100': '100+ bookmarks',
@@ -290,10 +298,14 @@ export const en = {
   'note.tumblr.tagSort': "Sort order can't be set when searching by hashtag alone (results are by popularity).",
   'note.mastodon.keywords':
     'Only covers posts your logged-in instance knows about (your own posts, people you follow, and posts it has seen through federation).',
-  'note.pinterest.exclude':
+  'note.exclude.literal':
     "The exclusion sign (-) has no effect; it's treated as a literal part of the search term.",
   'note.fanbox.hashtagOnly':
     'Only works when exactly one hashtag is given. Keywords and other conditions are not supported.',
+  'note.bilibili.videoLength':
+    'Length buckets differ slightly (short = under 10 min, medium = 10–30 min, long = over 60 min).',
+  'note.bilibili.tabSort': "This sort order isn't available for the selected result type.",
+  'note.bilibili.tabOnly': 'Only available when the result type is videos (or unspecified).',
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',

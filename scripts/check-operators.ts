@@ -56,6 +56,7 @@ const CHECKLIST_HEADING: Record<PlatformId, string> = {
   mastodon: 'Mastodon',
   pinterest: 'Pinterest',
   fanbox: 'FANBOX',
+  bilibili: 'bilibili',
 }
 
 /** `## 見出し ... 次の ## まで` を節に切り、見出し断片ごとに本文を返す */
@@ -262,6 +263,26 @@ const PROBES: Probe[] = [
 
   // ---- FANBOX ----
   { platform: 'fanbox', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('猫'), token: '/tags/' },
+
+  // ---- bilibili ----
+  { platform: 'bilibili', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'order=pubdate' },
+  { platform: 'bilibili', concept: 'sortOrder', label: '人気順(再生数)', state: { sort: 'top' }, token: 'order=click' },
+  { platform: 'bilibili', concept: 'sortOrder', label: '弾幕数順', state: { sort: 'danmaku' }, token: 'order=dm' },
+  { platform: 'bilibili', concept: 'sortOrder', label: '収蔵数順', state: { sort: 'favorites' }, token: 'order=stow' },
+  { platform: 'bilibili', concept: 'sortOrder', label: 'いいね順(コラム)', state: { resultType: 'article', sort: 'likes' }, token: 'order=attention' },
+  { platform: 'bilibili', concept: 'sortOrder', label: 'コメント数順(コラム)', state: { resultType: 'article', sort: 'comments' }, token: 'order=scores' },
+  { platform: 'bilibili', concept: 'sortOrder', label: '新規開始順(直播)', state: { resultType: 'live', sort: 'new' }, token: 'order=live_time' },
+  { platform: 'bilibili', concept: 'videoLength', label: '長さ(短)', state: { videoLength: 'short' }, token: 'duration=1' },
+  { platform: 'bilibili', concept: 'videoLength', label: '長さ(中)', state: { videoLength: 'medium' }, token: 'duration=2' },
+  { platform: 'bilibili', concept: 'videoLength', label: '長さ(長)', state: { videoLength: 'long' }, token: 'duration=4' },
+  { platform: 'bilibili', concept: 'period', label: '期間(開始)', state: { since: '2026-06-01' }, token: 'pubtime_begin_s=' },
+  { platform: 'bilibili', concept: 'period', label: '期間(終了)', state: { until: '2026-06-30' }, token: 'pubtime_end_s=' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=動画', state: { resultType: 'video' }, token: '/video?' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=アニメ番組', state: { resultType: 'bangumi' }, token: '/bangumi' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=映画・ドラマ', state: { resultType: 'pgc' }, token: '/pgc' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=生放送', state: { resultType: 'live' }, token: '/live' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=コラム記事', state: { resultType: 'article' }, token: '/article' },
+  { platform: 'bilibili', concept: 'resultType', label: '探す=チャンネル', state: { resultType: 'channel' }, token: '/upuser' },
 ]
 
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------
@@ -307,7 +328,7 @@ function surfacesOf(url: string): Set<string> {
   } catch {
     return set
   }
-  const IGNORE_KEYS = new Set(['q', 'term', 'search_query', 'context', 'host', 'sp'])
+  const IGNORE_KEYS = new Set(['q', 'term', 'search_query', 'keyword', 'context', 'host', 'sp'])
   for (const key of u.searchParams.keys()) {
     if (!IGNORE_KEYS.has(key)) set.add(`${key}=`)
   }

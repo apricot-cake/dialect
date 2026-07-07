@@ -44,7 +44,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.until) parts.push(`before:${state.until}`)
   const path = encodeURIComponent(parts.join(' '))
 
-  // 最新順だけ /recent を付ける。人気順(既定)・おまかせは何も付けない
+  // 最新順だけ /recent を付ける。人気順(既定)・指定なしは何も付けない
   const suffix = state.sort === 'new' ? '/recent' : ''
 
   // 投稿タイプ。画像・動画つきだけ/リンクだけを postTypes= の値集合で絞る

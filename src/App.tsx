@@ -262,7 +262,7 @@ export default function App() {
     // 値も一緒に空へ戻す(残すと次回起動時のバー復元で復活してしまう)
     if (concept === 'exactPhrase') patchQuery({ exactPhrase: [''] })
     else if (concept === 'period') patchQuery({ since: '', until: '' })
-    else if (concept === 'sortOrder') patchQuery({ sort: 'new' })
+    else if (concept === 'sortOrder') patchQuery({ sort: 'auto' })
     else if (def.widget === 'toggle') patchQuery({ [def.field]: false })
     else patchQuery({ [def.field]: '' })
     setAdded((a) => a.filter((c) => c !== concept))

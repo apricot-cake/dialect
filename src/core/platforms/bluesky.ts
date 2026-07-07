@@ -23,7 +23,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.until) parts.push(`until:${state.until}`)
   if (state.language) parts.push(`lang:${state.language}`)
 
-  // tab=latest=新しい順。人気順・おまかせは既定のTopタブのまま開く
+  // tab=latest=新しい順。人気順・指定なしは既定のTopタブのまま開く
   const tab = state.sort === 'new' ? '&tab=latest' : ''
   return `https://bsky.app/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
 }

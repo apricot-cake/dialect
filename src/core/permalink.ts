@@ -6,13 +6,15 @@ import { words } from './text'
 // 検索条件をURLクエリパラメータへ埋め込む(パーマリンク)。
 // GitHub Pages でパスルーティングが使えないため、クエリパラメータ方式に固定。
 // v= はフォーマットのバージョン。概念が増えたら後方互換のまま読めるようにする。
+// v=4: 並び順の既定が「指定なし(auto)」になり、新しい順(new)も明示的に sort=new で持つ。
 // v=3: 1要素=1語で kw= の繰り返し。語は分割しないため、スペースを含むフレーズも保持される。
+//      sort= の省略は「新しい順」を意味していた(読み込みで補う)
 // 廃止された古い形式も読み込みだけは対応する:
 //   v=1: kw=/or= の語はスペース区切り。読み込み時に変換する
 //   v=2: 条件セット(セット間OR)。セットごとのクエリ文字列が q= に入れ子で並ぶ。
 //        条件セット廃止後は先頭のセットだけを読む
 //   or= / tagm=any: 「または」指定。ORは廃止したため、各グループの先頭の語だけを残す
-const VERSION = '3'
+const VERSION = '4'
 const VERSION_LEGACY = '1'
 const OR_SEPARATOR = '\t'
 
@@ -66,11 +68,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
   if (state.excludeAi) params.set('noai', '1')
-  // 既定(新しい順)のときは省略。旧形式(v1初期)の sort=top もそのまま人気順として読める。
-  // おまかせ(auto)は「サイト任せ=既定と機能的に等価」で条件に数えない(activeConcepts)ため
-  // URLにも出さない。出すと他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ
-  // 復元されない非対称が起きる
-  if (state.sort !== 'new' && state.sort !== 'auto') params.set('sort', state.sort)
+  // 既定の「指定なし(auto)」のときは省略。条件に数えない(activeConcepts)選択をURLに
+  // 出すと、他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ復元されない
+  // 非対称が起きるため。v4からは新しい順(new)も意図的な選択なので明示的に持つ
+  if (state.sort !== 'auto') params.set('sort', state.sort)
   return params
 }
 
@@ -78,7 +79,9 @@ export function stateToParams(state: QueryState): URLSearchParams {
 function paramsToState(params: URLSearchParams): QueryState {
   const state = defaultState()
   if (!params.has('v')) return state
-  const legacy = params.get('v') !== VERSION
+  const version = Number.parseInt(params.get('v') ?? '1', 10) || 1
+  // v1/v2 だけが「kw がスペース区切り」の旧形式。v3以降は 1要素=1語
+  const legacy = version < 3
   const terms: string[] = []
   for (const s of params.getAll('kw')) {
     // 旧形式の kw はスペース区切りのAND。1語=1要素に分けると意味が保たれる
@@ -153,7 +156,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
     rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people' ||
-    rt === 'board'
+    rt === 'board' || rt === 'bangumi' || rt === 'pgc' || rt === 'live' || rt === 'article'
   ) {
     state.resultType = rt
   }
@@ -165,7 +168,15 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (age === 'safe' || age === 'r18') state.ageRating = age
   state.excludeAi = params.get('noai') === '1'
   const sort = params.get('sort')
-  if (sort === 'top' || sort === 'hot' || sort === 'comments' || sort === 'auto') state.sort = sort
+  if (
+    sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments' ||
+    sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'auto'
+  ) {
+    state.sort = sort
+  } else if (version < 4) {
+    // v3以前は sort 省略=「新しい順」が既定だった。読み込みで当時の意味を保つ
+    state.sort = 'new'
+  }
   return state
 }
 

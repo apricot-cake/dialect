@@ -1,10 +1,11 @@
 import type { PlatformDef, QueryState } from '../types'
+import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
 // ハッシュタグ単独ならタグページ(厳密一致)、他条件と併用時はキーワードとして検索。
-// new=新着、top=人気(既定)、hot=急上昇。おまかせ(auto)は指定しない。全て実測で動作
+// new=新着、top=人気(既定)、hot=急上昇。指定なし(auto)は何も送らない。全て実測で動作
 const SORT_PARAM: Partial<Record<QueryState['sort'], string>> = {
   new: 'new',
   top: 'popular',
@@ -49,4 +50,6 @@ export const note: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  // note に無い並び順(コメント数順など)を選んだとき「適用」に見せない
+  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top', 'hot'], 'note.sortOrder.otherSite'),
 }

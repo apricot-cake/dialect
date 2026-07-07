@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { PlatformDef, QueryState } from '@/core/types'
-import { splitSupporters, supportersOf, type ConceptDef } from '@/core/conceptDefs'
+import type { PlatformDef, QueryState, SortOrder } from '@/core/types'
+import { activeSupportersOf, SORT_OPTIONS, splitSupporters, type ConceptDef } from '@/core/conceptDefs'
 import { t } from '@/i18n'
 import { PlatformBadgeTile } from './PlatformBadge'
-import { ChipsField, PlainField, SelectField, SortField, ToggleField } from './widgets'
+import { ChipsField, PlainField, SelectField, ToggleField } from './widgets'
 import { PeriodField } from './PeriodField'
 import { CONCEPT_ICONS } from './conceptIcons'
 
@@ -109,12 +109,22 @@ export function ConditionBar({
         <SelectField
           concept={def.id}
           value={query[def.field] as string}
+          query={query}
           onChange={(value) => patch({ [def.field]: value } as Partial<QueryState>)}
         />
       )
       break
     case 'sort':
-      widget = <SortField value={query.sort} onChange={(sort) => patch({ sort })} />
+      widget = (
+        <SelectField
+          concept="sortOrder"
+          value={query.sort}
+          query={query}
+          options={SORT_OPTIONS}
+          noneValue="auto"
+          onChange={(value) => patch({ sort: value as SortOrder })}
+        />
+      )
       break
     case 'period':
       widget = <PeriodField since={query.since} until={query.until} onChange={patch} />
@@ -144,7 +154,7 @@ export function ConditionBar({
           onMouseEnter={() => setSupHover(true)}
           onMouseLeave={() => setSupHover(false)}
         >
-          {t('builder.support.label')} {supportersOf(def.id).length}
+          {t('builder.support.label')} {activeSupportersOf(def.id, query).length}
           {supHover && (
             <span
               className="dl-glass pointer-events-none absolute top-[calc(100%+10px)] right-0 z-50 flex w-[250px] flex-col gap-[11px] rounded-[14px] p-[13px]"

@@ -47,7 +47,7 @@ function buildUrl(state: QueryState): string | null {
 
   const params = new URLSearchParams({ q })
   // sort=new=新着、top=人気、hot=注目順(急上昇に相当)、comments=コメント数順(2026-07-07実測)。
-  // おまかせは指定しない(既定は関連度順)
+  // 指定なしは何も送らない(既定は関連度順)
   if (state.sort === 'new') params.set('sort', 'new')
   if (state.sort === 'top') params.set('sort', 'top')
   if (state.sort === 'hot') params.set('sort', 'hot')

@@ -164,6 +164,10 @@ export const ja = {
   'concept.resultType.media': 'メディア',
   'concept.resultType.people': 'プロフィール',
   'concept.resultType.board': 'ボード',
+  'concept.resultType.bangumi': 'アニメ番組',
+  'concept.resultType.pgc': '映画・ドラマ',
+  'concept.resultType.live': '生放送',
+  'concept.resultType.article': 'コラム記事',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -171,8 +175,12 @@ export const ja = {
   'concept.sortOrder.top': '人気順',
   'concept.sortOrder.hot': '急上昇',
   'concept.sortOrder.comments': 'コメント数順',
-  'concept.sortOrder.auto': 'おまかせ',
-  'concept.sortOrder.help': '検索結果の並び順を指定します',
+  'concept.sortOrder.danmaku': '弾幕数順',
+  'concept.sortOrder.favorites': '収蔵数順',
+  'concept.sortOrder.likes': 'いいね順',
+  'concept.sortOrder.auto': '指定なし',
+  'concept.sortOrder.help':
+    '検索結果の並び順を指定します。「指定なし」は、そのサイトの標準の並び（多くは関連度ベース）のまま開きます',
   'concept.pixivPopular.label': '人気の目安',
   'concept.pixivPopular.none': '指定なし',
   'concept.pixivPopular.100': '100users以上',
@@ -262,8 +270,11 @@ export const ja = {
   'note.tumblr.tagSort': 'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
   'note.mastodon.keywords':
     'ログイン中のインスタンスが把握している投稿（自分の投稿・フォロー先・連合内で見つかった投稿）だけが対象です',
-  'note.pinterest.exclude': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
+  'note.exclude.literal': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
   'note.fanbox.hashtagOnly': 'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
+  'note.bilibili.videoLength': '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
+  'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
+  'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

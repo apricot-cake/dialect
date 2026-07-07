@@ -45,10 +45,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
   if (state.excludeAi) active.push('excludeAi')
-  // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
-  // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えない。
-  // ユーザーが意図的に選んだ並び順(人気順・急上昇など)だけを注記・件数の対象にする
-  if (state.sort !== 'new' && state.sort !== 'auto') active.push('sortOrder')
+  // 並び順は既定の「指定なし(auto)」のままなら条件として数えない(サイトの標準の
+  // 並びのまま=何も課していないため)。ユーザーが意図的に選んだ並び順
+  // (新しい順・人気順など)だけを注記・件数の対象にする
+  if (state.sort !== 'auto') active.push('sortOrder')
   return active
 }
 
@@ -93,7 +93,7 @@ export function defaultState(): QueryState {
     workType: '',
     genre: '',
     resultType: '',
-    sort: 'new',
+    sort: 'auto',
     pixivPopular: '',
     ageRating: '',
     excludeAi: false,

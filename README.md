@@ -46,6 +46,7 @@ https://apricot-cake.github.io/dialect/
 | Mastodon | `mastodon.social/search` | 必要 | 豊富(除外・完全一致・送信者・期間・返信除外・言語・メディア/リンク) |
 | Pinterest | `pinterest.com/search` | 不要 | 探すもの(ピン/動画/ボード/プロフィール)のみ(除外・並び順は非対応) |
 | FANBOX | `fanbox.cc/tags` | 不要 | 単一タグのみ(全文検索・並び順・除外等は非対応) |
+| bilibili | `search.bilibili.com` | 不要 | 豊富(任意期間・長さ・タブ切替・弾幕数/収蔵数などの並び順) |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 
