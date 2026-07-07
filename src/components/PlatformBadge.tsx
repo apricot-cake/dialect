@@ -29,7 +29,7 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   twitch: siTwitch,
 }
 
-const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ' }
+const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静' }
 
 /**
  * ブランドアイコン1つ。simple-iconsのロゴ、なければ角丸矩形+1文字の吹き出し風。

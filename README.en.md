@@ -36,6 +36,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | note | `note.com/search` | Not required | User / sort only |
 | Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators) |
 | pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search) |
+| Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch |
 | Misskey.io | `misskey.io/search` | Required | Keywords / user only |
 | Hatena Bookmark | `b.hatena.ne.jp/search` | Not required | Rich (exclusion, date, bookmark count, sort, title/tag) |
 | Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |

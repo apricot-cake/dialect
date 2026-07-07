@@ -4,6 +4,7 @@ import { bluesky } from './bluesky'
 import { youtube } from './youtube'
 import { note } from './note'
 import { niconico } from './niconico'
+import { seiga } from './seiga'
 import { instagram } from './instagram'
 import { reddit } from './reddit'
 import { pixiv } from './pixiv'
@@ -29,6 +30,7 @@ export const PLATFORMS: PlatformDef[] = [
   twitch,
   // イラスト・画像
   pixiv,
+  seiga,
   // ブログ・掲示板
   note,
   reddit,

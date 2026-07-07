@@ -223,6 +223,8 @@ export const ja = {
   'note.fivech.subreddit': '板の名前(例: sony)で絞り込みます。複数指定すると、そのいずれかの板が対象になります',
   'note.animanch.keywords': '書き込みの本文を検索します(試験的な機能のため、取りこぼしがあることがあります)',
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
+  'note.seiga.workType': 'ニコニコ静画で探せるのはイラストとマンガだけです',
+  'note.seiga.mangaSort': 'マンガを選ぶと、並び順は指定できません',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

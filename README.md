@@ -36,6 +36,7 @@ https://apricot-cake.github.io/dialect/
 | note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
 | pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索) |
+| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替 |
 | Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
 | はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
 | Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |

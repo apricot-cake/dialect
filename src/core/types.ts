@@ -167,6 +167,7 @@ export type PlatformId =
   | 'youtube'
   | 'note'
   | 'niconico'
+  | 'seiga'
   | 'instagram'
   | 'reddit'
   | 'pixiv'

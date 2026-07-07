@@ -43,6 +43,7 @@ const CHECKLIST_HEADING: Record<PlatformId, string> = {
   youtube: 'YouTube',
   note: 'note(',
   niconico: 'niconico',
+  seiga: 'ニコニコ静画',
   instagram: 'Instagram',
   reddit: 'Reddit',
   pixiv: 'pixiv',
@@ -151,6 +152,12 @@ const PROBES: Probe[] = [
   { platform: 'niconico', concept: 'videoLength', label: '長さ(長)', state: { videoLength: 'long' }, token: 'l_range=2' },
   { platform: 'niconico', concept: 'genre', label: 'ジャンル', state: { genre: 'game' }, token: 'genre=' },
   { platform: 'niconico', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('ゲーム'), token: '/tag/' },
+
+  // ---- ニコニコ静画 ----
+  { platform: 'seiga', concept: 'sortOrder', label: '新着順', state: { sort: 'new' }, token: 'sort=image_created' },
+  { platform: 'seiga', concept: 'sortOrder', label: '閲覧数順', state: { sort: 'top' }, token: 'sort=image_view' },
+  { platform: 'seiga', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('猫'), token: '/tag/' },
+  { platform: 'seiga', concept: 'workType', label: '作品=マンガ', state: { workType: 'manga' }, token: 'manga.nicovideo.jp' },
 
   // ---- Reddit ----
   { platform: 'reddit', concept: 'fromUser', label: '送信者', state: { fromUser: 'spez' }, token: 'author:' },
