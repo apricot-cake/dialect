@@ -205,6 +205,14 @@ const PROBES: Probe[] = [
   // ---- tumblr ----
   { platform: 'tumblr', concept: 'sortOrder', label: '最新順', state: { sort: 'new' }, token: '/recent' },
   { platform: 'tumblr', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('猫'), token: '/tagged/' },
+  { platform: 'tumblr', concept: 'hashtag', label: 'タグ複数(AND)', state: { terms: [''], hashtag: 'photography sunset' }, token: '#sunset' },
+  { platform: 'tumblr', concept: 'exclude', label: '除外', state: { exclude: 'dog' }, token: '-dog' },
+  { platform: 'tumblr', concept: 'fromUser', label: '送信者', state: { fromUser: 'staff' }, token: 'from:staff' },
+  { platform: 'tumblr', concept: 'exactPhrase', label: '完全一致', state: { exactPhrase: ['golden retriever puppy'] }, token: '"golden retriever puppy"' },
+  { platform: 'tumblr', concept: 'period', label: '期間(以降)', state: { since: '2026-06-01' }, token: 'since:' },
+  { platform: 'tumblr', concept: 'period', label: '期間(以前)', state: { until: '2026-06-08' }, token: 'before:' },
+  { platform: 'tumblr', concept: 'mediaOnly', label: '画像・動画', state: { mediaOnly: true }, token: 'postTypes=photo' },
+  { platform: 'tumblr', concept: 'linksOnly', label: 'リンク', state: { linksOnly: true }, token: 'postTypes=link' },
 ]
 
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------
