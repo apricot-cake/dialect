@@ -190,7 +190,6 @@ export function ConditionPicker({
           <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
           <span className="text-xs leading-snug text-muted">{t(def.helpKey)}</span>
         </span>
-        {hover === def.id && <InlineSupport concept={def.id} query={query} dark={dark} />}
         {isAdded ? (
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
             <path d="M20 6 9 17l-5-5" />
@@ -199,6 +198,23 @@ export function ConditionPicker({
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2.2" strokeLinecap="round" className="shrink-0">
             <path d="M12 5v14M5 12h14" />
           </svg>
+        )}
+        {/* ホバー時の対応バッジは絶対配置のオーバーレイにする。フローに置くと flex-1 の
+           説明文を横から押し縮め、折り返しが増えて行高が変わり描画がガクッと跳ねるため。
+           右端のチェック/プラス(px-13 + 17px + gap-11 = 41px)の内側に浮かせ、左端は
+           行の地色へのグラデーションで説明文の裾を隠して溶け込ませる */}
+        {hover === def.id && (
+          <span
+            className="absolute inset-y-0 flex items-center"
+            style={{
+              right: 41,
+              paddingLeft: 22,
+              background: `linear-gradient(to right, transparent, ${isAdded ? 'var(--picker-added)' : 'var(--card)'} 22px)`,
+              animation: 'dl-fade 140ms ease both',
+            }}
+          >
+            <InlineSupport concept={def.id} query={query} dark={dark} />
+          </span>
         )}
       </button>
     )
