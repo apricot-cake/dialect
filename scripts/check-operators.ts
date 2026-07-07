@@ -101,6 +101,7 @@ const PROBES: Probe[] = [
   { platform: 'x', concept: 'fromUser', label: '送信者', state: { fromUser: 'nhk' }, token: 'from:' },
   { platform: 'x', concept: 'excludeUser', label: '除外ユーザー', state: { excludeUser: 'foo' }, token: '-from:' },
   { platform: 'x', concept: 'toUser', label: '宛先', state: { toUser: 'nhk' }, token: 'to:' },
+  { platform: 'x', concept: 'mentionsUser', label: 'メンション', state: { mentionsUser: 'nhk' }, token: '(@nhk)' },
   { platform: 'x', concept: 'domain', label: 'リンク先', state: { domain: 'nhk.or.jp' }, token: 'url:' },
   { platform: 'x', concept: 'xList', label: 'リスト内', state: { xList: '1215911364234924032' }, token: 'list:' },
   { platform: 'x', concept: 'period', label: '期間(以降)', state: { since: '2026-06-01' }, token: 'since:' },

@@ -29,6 +29,7 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 | 低 | `-from:<ユーザー>`(除外ユーザー)(2026-07-05追加) | 除外するユーザー | [x.com/search?q=天気 filter:links -from:zooaqua_5&f=live](https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks%20-from%3Azooaqua_5&f=live) | 指定ユーザーの投稿が結果から消える(from:の否定。ユーザー名は適宜読み替え)。2026-07-05実測(除外前に先頭だったアカウントが消えた) | 2026-07-05 | ✅ |
 | 高 | `min_replies:`(2026-07-06追加) | 最低返信数 | [x.com/search?q=猫 min_replies:200&f=live](https://x.com/search?q=%E7%8C%AB%20min_replies%3A200&f=live) | 全結果が200返信以上。2026-07-06実測(241/739/269/369/2497/209返信) | 2026-07-06 | ✅ |
 | 中 | `list:<リストID>`(2026-07-06追加) | Xのリスト内を検索 | [x.com/search?q=list:1215911364234924032 天気&f=live](https://x.com/search?q=list%3A1215911364234924032%20%E5%A4%A9%E6%B0%97&f=live) | そのリスト(公開のおすすめ「京都」)のメンバーの投稿だけ＋キーワードでAND絞り込み。2026-07-06実測(kyoto_np/nhk_kyoto等・全件「天気」を含む)。リストが消えたら別の公開リストIDに差し替え | 2026-07-06 | ✅ |
+| 中 | `(@nhk)`(メンション)(2026-07-07追加) | このユーザーへのメンションだけ | [x.com/search?q=(@nhk) 天気&f=live](https://x.com/search?q=%28%40nhk%29%20%E5%A4%A9%E6%B0%97&f=live) | 「@nhk」への言及を含む投稿＋キーワードでAND絞り込み(演算子でなくカッコ付きの素の@テキスト)。2026-07-07にx.com/search-advancedのGUI操作で実測(1件=`(@user)`、複数件=`(@user1 OR @user2)`) | 2026-07-07 | ✅ |
 
 ## Bluesky(ログイン不要)
 
