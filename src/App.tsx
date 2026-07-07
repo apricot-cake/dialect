@@ -230,6 +230,20 @@ export default function App() {
     if (def.widget === 'toggle') patchQuery({ [def.field]: true })
     setAdded((a) => [...a, concept])
   }
+  // 家族の「まとめて追加」。未追加のものだけをまとめて足し、トグル系はONにする
+  const addConcepts = (concepts: ConceptId[]) => {
+    setPickerOpen(false)
+    const fresh = concepts.filter((c) => !added.includes(c))
+    if (fresh.length === 0) return
+    const toggles: Partial<QueryState> = {}
+    for (const c of fresh) {
+      if (CONCEPT_MAP[c].widget === 'toggle') {
+        ;(toggles as Record<string, unknown>)[CONCEPT_MAP[c].field] = true
+      }
+    }
+    if (Object.keys(toggles).length > 0) patchQuery(toggles)
+    setAdded((a) => [...a, ...fresh.filter((c) => !a.includes(c))])
+  }
   const removeConcept = (concept: ConceptId) => {
     const def = CONCEPT_MAP[concept]
     // 値も一緒に空へ戻す(残すと次回起動時のバー復元で復活してしまう)
@@ -299,6 +313,7 @@ export default function App() {
         dark={dark}
         lang={lang}
         onAdd={addConcept}
+        onAddMany={addConcepts}
         onRemove={removeConcept}
         onSetFilter={setFilterId}
       />

@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { Search } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
@@ -12,6 +12,12 @@ import {
   type ConceptDef,
 } from '@/core/conceptDefs'
 import { buildSearchIndex, searchConcepts, type MatchTier } from '@/core/conceptSearch'
+import {
+  CATEGORIES,
+  CONCEPT_CATEGORY,
+  FAMILIES,
+  type CategoryId,
+} from '@/core/conceptTags'
 import { t, type Lang } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
 import { CONCEPT_ICONS } from './conceptIcons'
@@ -80,6 +86,7 @@ export function ConditionPicker({
   dark,
   lang,
   onAdd,
+  onAddMany,
   onRemove,
   onSetFilter,
 }: {
@@ -91,11 +98,23 @@ export function ConditionPicker({
   dark: boolean
   lang: Lang
   onAdd: (concept: ConceptId) => void
+  onAddMany: (concepts: ConceptId[]) => void
   onRemove: (concept: ConceptId) => void
   onSetFilter: (id: PlatformId | null) => void
 }) {
   const [hover, setHover] = useState<ConceptId | null>(null)
   const [queryText, setQueryText] = useState('')
+  const [categoryId, setCategoryId] = useState<CategoryId | null>(null)
+  // 閉じたら検索・カテゴリ・ホバーをリセット(次に開いたとき素の状態に戻す)。
+  // 条件追加はプログラム的に閉じる(setPickerOpen(false))ため Dialog の onOpenChange
+  // では拾えない。open の変化を直接見て確実にリセットする
+  useEffect(() => {
+    if (!open) {
+      setHover(null)
+      setQueryText('')
+      setCategoryId(null)
+    }
+  }, [open])
   // ラベル・ヘルプ・値ラベルは言語依存なので、言語が変わったら索引を作り直す
   const index = useMemo(() => buildSearchIndex(lang), [lang])
   const addedSet = new Set(added)
@@ -104,39 +123,89 @@ export function ConditionPicker({
     : null
   const matchesFilter = (id: ConceptId) =>
     !filterPlatform || supportOf(filterPlatform, id).level !== 'none'
+  const matchesCategory = (id: ConceptId) =>
+    !categoryId || CONCEPT_CATEGORY[id] === categoryId
 
-  // 検索中は一致した概念をスコア順で、そうでなければ全概念を対応サイト数の多い順で。
-  // サイトフィルタはどちらでも効く。追加済みの条件は検索していないときだけ残す
-  // (解除操作ができなくなるのを防ぐ。検索中はクエリを消せば戻れる)
   const q = queryText.trim()
   const searching = q !== ''
+
+  // 「関連する条件」= 追加済み条件と同じ意図の家族で、まだ足していないメンバー。
+  // 純粋な閲覧中(検索なし・カテゴリなし)だけ出す。姉妹はサイトフィルタで絞らない
+  // (別サイト版に気づかせるのが目的)。先に計算して本文リストからは重複除外する
+  const relatedFamilies =
+    !searching && !categoryId
+      ? FAMILIES.map((fam) => ({
+          fam,
+          unadded: fam.members.filter((m) => !addedSet.has(m)),
+          hasAdded: fam.members.some((m) => addedSet.has(m)),
+        })).filter((x) => x.hasAdded && x.unadded.length > 0)
+      : []
+  const relatedIds = new Set(relatedFamilies.flatMap((x) => x.unadded))
+
+  // 検索中は一致した概念をスコア順で、そうでなければ全概念を対応サイト数の多い順で。
+  // サイトフィルタ・カテゴリはどちらのモードでも候補を絞る(AND)。追加済みの条件は
+  // 検索も絞り込みもしていないときだけ残す(解除操作ができなくなるのを防ぐ)
   let rows: ConceptDef[]
   let searchTier: MatchTier | null = null
   if (searching) {
     const hits = searchConcepts(index, q).filter(
-      (h) => h.id !== 'keywords' && matchesFilter(h.id),
+      (h) => h.id !== 'keywords' && matchesFilter(h.id) && matchesCategory(h.id),
     )
     searchTier = hits[0]?.tier ?? null
     rows = hits.map((h) => CONCEPT_MAP[h.id])
   } else {
     rows = CONCEPT_DEFS.filter((d) => d.id !== 'keywords')
-      .filter((d) => matchesFilter(d.id) || addedSet.has(d.id))
+      .filter(
+        (d) =>
+          matchesCategory(d.id) &&
+          (matchesFilter(d.id) || addedSet.has(d.id)) &&
+          !relatedIds.has(d.id),
+      )
       .sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
   }
   // fuzzy 段でしか当たらなかったとき(表記ゆれ・タイポ)は「もしかして」として弱く見せる
   const fuzzyMode = searchTier === 'fuzzy'
 
+  // 本文リストと関連セクションで共有する1行(アイコン+ラベル+ヘルプ+対応バッジ+チェック)
+  const renderRow = (def: ConceptDef, dimmed = false) => {
+    const isAdded = addedSet.has(def.id)
+    const Icon = CONCEPT_ICONS[def.id]
+    return (
+      <button
+        key={def.id}
+        type="button"
+        data-noscale
+        style={dimmed ? { opacity: 0.72 } : undefined}
+        className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
+          isAdded
+            ? 'bg-(--picker-added) border-[color:var(--picker-added-border)]'
+            : 'hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]'
+        }`}
+        onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
+        onMouseEnter={() => setHover(def.id)}
+        onMouseLeave={() => setHover(null)}
+      >
+        <Icon size={18} color="var(--faint)" className="shrink-0" />
+        <span className="flex min-w-0 flex-1 flex-col gap-[3px] text-left">
+          <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
+          <span className="text-xs leading-snug text-muted">{t(def.helpKey)}</span>
+        </span>
+        {hover === def.id && <InlineSupport concept={def.id} query={query} dark={dark} />}
+        {isAdded ? (
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        ) : (
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2.2" strokeLinecap="round" className="shrink-0">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        )}
+      </button>
+    )
+  }
+
   return (
-    <Dialog.Root
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) {
-          setHover(null)
-          setQueryText('')
-        }
-        onOpenChange(next)
-      }}
-    >
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className="dl-scrim fixed inset-0 z-[60]" />
         <Dialog.Popup className="dl-sheet fixed top-1/2 left-1/2 z-[61] flex max-h-[84vh] w-[min(760px,94vw)] flex-col overflow-hidden rounded-[18px] bg-card shadow-[0_24px_70px_oklch(0_0_0_/_0.32)] outline-none">
@@ -231,10 +300,64 @@ export function ConditionPicker({
                   ))}
                 </div>
               </div>
+              {/* 条件の種類でしぼるチップ(サイトフィルタとは別軸・非永続) */}
+              <div className="flex flex-col gap-2.5 px-[26px] pb-4">
+                <span className="self-start text-[11.5px] font-medium text-muted">
+                  {t('picker.category.label')}
+                </span>
+                <div className="flex flex-wrap items-center gap-[9px]">
+                  {CATEGORIES.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-pressed={categoryId === c.id}
+                      className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                      style={activeChipStyle(categoryId === c.id)}
+                      onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}
+                    >
+                      {t(c.labelKey)}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* 条件リスト(検索中はスコア順、それ以外は対応サイト数の多い順) */}
+            {/* 関連する条件＋条件リスト(検索中はスコア順、それ以外は対応サイト数の多い順) */}
             <div className="px-[22px] pt-3.5 pb-[26px]">
+              {relatedFamilies.length > 0 && (
+                <div className="mb-4">
+                  <div className="mb-2 px-[13px] text-[11.5px] font-semibold text-faint">
+                    {t('picker.related.heading')}
+                  </div>
+                  {relatedFamilies.map(({ fam, unadded }) => (
+                    <div
+                      key={fam.id}
+                      className="mb-3 rounded-[12px] border border-border p-2"
+                      style={{ background: 'color-mix(in oklch, var(--accent-bright) 5%, transparent)' }}
+                    >
+                      <div className="mb-1 flex items-center gap-2.5 px-[9px] pt-1">
+                        <span className="text-[12px] font-semibold text-muted">
+                          {t(fam.labelKey)}
+                        </span>
+                        {unadded.length >= 2 && (
+                          <button
+                            type="button"
+                            data-noscale
+                            className="ml-auto inline-flex h-[26px] cursor-pointer items-center gap-1 rounded-full bg-accent px-3 text-[11.5px] font-semibold text-white"
+                            onClick={() => onAddMany(unadded)}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                              <path d="M12 5v14M5 12h14" />
+                            </svg>
+                            {t('picker.related.addAll')}
+                          </button>
+                        )}
+                      </div>
+                      {unadded.map((id) => renderRow(CONCEPT_MAP[id]))}
+                    </div>
+                  ))}
+                </div>
+              )}
               {searching && rows.length === 0 && (
                 <div className="py-12 text-center text-[13px] text-muted">
                   {t('picker.search.empty')}
@@ -245,46 +368,7 @@ export function ConditionPicker({
                   {t('picker.search.didYouMean')}
                 </div>
               )}
-              {rows.map((def) => {
-                const isAdded = addedSet.has(def.id)
-                const Icon = CONCEPT_ICONS[def.id]
-                return (
-                  <button
-                    key={def.id}
-                    type="button"
-                    data-noscale
-                    style={fuzzyMode ? { opacity: 0.72 } : undefined}
-                    className={`dl-pick-row relative mb-[7px] flex w-full cursor-pointer items-center gap-[11px] rounded-[10px] border border-transparent px-[13px] py-3 text-left text-fg ${
-                      isAdded
-                        ? 'bg-(--picker-added) border-[color:var(--picker-added-border)]'
-                        : 'hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]'
-                    }`}
-                    onClick={() => (isAdded ? onRemove(def.id) : onAdd(def.id))}
-                    onMouseEnter={() => setHover(def.id)}
-                    onMouseLeave={() => setHover(null)}
-                  >
-                    <Icon size={18} color="var(--faint)" className="shrink-0" />
-                    <span className="flex min-w-0 flex-1 flex-col gap-[3px] text-left">
-                      <span className="text-[14.5px] font-semibold text-label">{t(def.labelKey)}</span>
-                      <span className="text-xs leading-snug text-muted">
-                        {t(def.helpKey)}
-                      </span>
-                    </span>
-                    {hover === def.id && (
-                      <InlineSupport concept={def.id} query={query} dark={dark} />
-                    )}
-                    {isAdded ? (
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                    ) : (
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2.2" strokeLinecap="round" className="shrink-0">
-                        <path d="M12 5v14M5 12h14" />
-                      </svg>
-                    )}
-                  </button>
-                )
-              })}
+              {rows.map((def) => renderRow(def, fuzzyMode))}
             </div>
           </div>
         </Dialog.Popup>

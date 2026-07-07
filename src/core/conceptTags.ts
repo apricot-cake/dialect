@@ -1,3 +1,4 @@
+import type { MessageKey } from '@/i18n'
 import type { ConceptId } from './types'
 
 /**
@@ -237,4 +238,100 @@ export const VALUE_TAGS: Record<string, TagId[]> = {
   'workType:novel': ['word'],
   'videoLength:short': ['size'],
   'videoLength:long': ['size'],
+}
+
+// ---- カテゴリ(粗いタグの閲覧軸) ----
+// ピッカーの「種類でしぼる」チップ。タグは多重所属だが、フィルタ表示は代表カテゴリ1つに
+// 寄せてノイズを避ける(family-map が静的表示に許した「代表タグ1個」の派生ルール)。
+
+export type CategoryId = 'word' | 'person' | 'popular' | 'media' | 'time' | 'age' | 'lang'
+
+export interface CategoryDef {
+  id: CategoryId
+  labelKey: MessageKey
+}
+
+/** チップの表示順。おおむね使用頻度・件数の多い順 */
+export const CATEGORIES: CategoryDef[] = [
+  { id: 'word', labelKey: 'cat.word' },
+  { id: 'person', labelKey: 'cat.person' },
+  { id: 'popular', labelKey: 'cat.popular' },
+  { id: 'media', labelKey: 'cat.media' },
+  { id: 'time', labelKey: 'cat.time' },
+  { id: 'age', labelKey: 'cat.age' },
+  { id: 'lang', labelKey: 'cat.lang' },
+]
+
+/** 各概念の代表カテゴリ(1対1)。全 ConceptId を網羅する */
+export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
+  keywords: 'word',
+  exactPhrase: 'word',
+  exclude: 'word',
+  titleOnly: 'word',
+  exactTag: 'word',
+  hashtag: 'word',
+  fromUser: 'person',
+  excludeUser: 'person',
+  toUser: 'person',
+  mentionsUser: 'person',
+  xList: 'person',
+  verifiedOnly: 'person',
+  subreddit: 'person',
+  excludeReplies: 'person',
+  minLikes: 'popular',
+  minReposts: 'popular',
+  minReplies: 'popular',
+  pixivPopular: 'popular',
+  mediaOnly: 'media',
+  videoLength: 'media',
+  liveOnly: 'media',
+  linksOnly: 'media',
+  domain: 'media',
+  workType: 'media',
+  resultType: 'media',
+  genre: 'media',
+  period: 'time',
+  sortOrder: 'time',
+  ageRating: 'age',
+  excludeAi: 'age',
+  language: 'lang',
+}
+
+// ---- 家族(姉妹提案・まとめて追加) ----
+// 同じ意図の「別サイト版」を束ねる。型(F/S/B)が同じメンバーに限る=まとめて追加は全員追加で
+// よい。型が違う姉妹(例: 期間B と 並び順S)の提案は将来の拡張。現30概念では実のある家族が
+// 少ない(サイト違いは1概念に畳んでいるため)——反応数と宛先・メンションが主。
+
+export type FamilyKind = 'filter' | 'sort' | 'bucket'
+
+export interface FamilyDef {
+  id: string
+  labelKey: MessageKey
+  kind: FamilyKind
+  members: ConceptId[]
+}
+
+export const FAMILIES: FamilyDef[] = [
+  {
+    id: 'reaction',
+    labelKey: 'family.reaction',
+    kind: 'bucket',
+    members: ['minLikes', 'minReposts', 'minReplies', 'pixivPopular'],
+  },
+  {
+    id: 'mention',
+    labelKey: 'family.mention',
+    kind: 'filter',
+    members: ['toUser', 'mentionsUser'],
+  },
+]
+
+/** その概念が属する家族(なければ undefined)。1概念は高々1家族に属する前提 */
+export function familyOf(concept: ConceptId): FamilyDef | undefined {
+  return FAMILIES.find((f) => f.members.includes(concept))
+}
+
+/** 同じ家族の他メンバー(自分を除く)。家族なしなら空配列 */
+export function siblingsOf(concept: ConceptId): ConceptId[] {
+  return familyOf(concept)?.members.filter((m) => m !== concept) ?? []
 }
