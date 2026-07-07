@@ -72,8 +72,11 @@ function buildUrl(state: QueryState): string | null {
 // Reddit の t= は「今から過去Nへの丸め」しか表せず、開始日(since)を起点にする。
 // 終了日(until)だけ指定しても送れる形が無く buildUrl は t= を付けないので、
 // 「近似で適用」と見せず period を非対応に落として食い違いを防ぐ
-const YOUTUBE_TWITCH_RESULT_TYPES: ReadonlySet<string> = new Set([
-  'video', 'short', 'channel', 'playlist',
+// resultType は許可リスト方式(Redditが対応する5値のみ)にする。禁止リスト方式だと
+// 他サイト専用の新しい値(例: Pinterestのボード)を追加するたびここも直す必要があり、
+// 直し忘れると「適用と出るのに送られない」を再発する(実際にPinterestのboard追加時に発覚)
+const REDDIT_RESULT_TYPES: ReadonlySet<string> = new Set([
+  'posts', 'communities', 'comments', 'media', 'people',
 ])
 
 function dynamicSupport(
@@ -83,9 +86,9 @@ function dynamicSupport(
     state.until && !state.since
       ? { period: { level: 'none', noteKey: 'note.reddit.untilOnly' } }
       : {}
-  // YouTube/Twitch専用の値(動画・ショート・チャンネル・再生リスト)が選ばれたら落とす
+  // Reddit非対応の値(他サイト専用)が選ばれたら落とす
   const resultTypeOverride: Partial<Record<ConceptId, ConceptSupport>> =
-    state.resultType && YOUTUBE_TWITCH_RESULT_TYPES.has(state.resultType)
+    state.resultType && !REDDIT_RESULT_TYPES.has(state.resultType)
       ? { resultType: { level: 'none', noteKey: 'note.resultType.otherSite' } }
       : {}
   return {

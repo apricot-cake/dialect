@@ -6,6 +6,7 @@ import {
   siMisskey,
   siNiconico,
   siNote,
+  siPinterest,
   siPixiv,
   siReddit,
   siTumblr,
@@ -31,6 +32,7 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   twitch: siTwitch,
   tumblr: siTumblr,
   mastodon: siMastodon,
+  pinterest: siPinterest,
 }
 
 const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静' }

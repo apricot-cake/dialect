@@ -152,7 +152,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   const rt = params.get('rt')
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
-    rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people'
+    rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people' ||
+    rt === 'board'
   ) {
     state.resultType = rt
   }

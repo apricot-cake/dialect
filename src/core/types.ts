@@ -95,7 +95,10 @@ export type NicoGenre = '' | (typeof NICO_GENRES)[number]
  * playlist=再生リスト(YouTube専用の値。Twitchは動画・チャンネルのみ)。
  * posts=投稿、communities=コミュニティ、comments=コメント、media=メディア、
  * people=プロフィール(Reddit専用の値。2026-07-07にGUI操作で実測した検索結果タブ
- * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)
+ * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)。
+ * board=ボード(Pinterest専用。フィルターパネルの「すべてのピン/動画/ボード/
+ * プロフィール」の4択のうち「ボード」に対応。2026-07-08にGUI操作で実測、peopleはpinterestの
+ * 「プロフィール」とも共用)
  */
 export type ResultType =
   | ''
@@ -108,6 +111,7 @@ export type ResultType =
   | 'comments'
   | 'media'
   | 'people'
+  | 'board'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
@@ -229,6 +233,7 @@ export type PlatformId =
   | 'animanch'
   | 'tumblr'
   | 'mastodon'
+  | 'pinterest'
 
 export interface PlatformDef {
   id: PlatformId

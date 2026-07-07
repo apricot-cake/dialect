@@ -163,6 +163,7 @@ export const ja = {
   'concept.resultType.comments': 'コメント',
   'concept.resultType.media': 'メディア',
   'concept.resultType.people': 'プロフィール',
+  'concept.resultType.board': 'ボード',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -261,6 +262,7 @@ export const ja = {
   'note.tumblr.tagSort': 'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
   'note.mastodon.keywords':
     'ログイン中のインスタンスが把握している投稿（自分の投稿・フォロー先・連合内で見つかった投稿）だけが対象です',
+  'note.pinterest.exclude': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

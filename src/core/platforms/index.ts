@@ -15,6 +15,7 @@ import { fivech } from './fivech'
 import { animanch } from './animanch'
 import { tumblr } from './tumblr'
 import { mastodon } from './mastodon'
+import { pinterest } from './pinterest'
 
 // 並び順はグループ順(SNS→動画→イラスト・画像→ブログ・掲示板)に揃える。
 // この配列順が、起動画面のカード・条件追加モーダルのフィルタ・対応ポップの
@@ -35,6 +36,7 @@ export const PLATFORMS: PlatformDef[] = [
   // イラスト・画像
   pixiv,
   seiga,
+  pinterest,
   // ブログ・掲示板
   note,
   reddit,

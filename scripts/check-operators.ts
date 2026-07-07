@@ -54,6 +54,7 @@ const CHECKLIST_HEADING: Record<PlatformId, string> = {
   animanch: 'あにまん',
   tumblr: 'tumblr',
   mastodon: 'Mastodon',
+  pinterest: 'Pinterest',
 }
 
 /** `## 見出し ... 次の ## まで` を節に切り、見出し断片ごとに本文を返す */
@@ -244,6 +245,11 @@ const PROBES: Probe[] = [
   { platform: 'mastodon', concept: 'linksOnly', label: 'リンク', state: { linksOnly: true }, token: 'has:link' },
   { platform: 'mastodon', concept: 'excludeReplies', label: '返信除外', state: { excludeReplies: true }, token: '-is:reply' },
   { platform: 'mastodon', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'language:' },
+
+  // ---- Pinterest ----
+  { platform: 'pinterest', concept: 'resultType', label: '探す=動画', state: { resultType: 'video' }, token: '/search/videos/' },
+  { platform: 'pinterest', concept: 'resultType', label: '探す=ボード', state: { resultType: 'board' }, token: '/search/boards/' },
+  { platform: 'pinterest', concept: 'resultType', label: '探す=プロフィール', state: { resultType: 'people' }, token: '/search/users/' },
 ]
 
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------

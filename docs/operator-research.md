@@ -409,6 +409,14 @@ https://misskey.io/search?q=<URLエンコード済みクエリ>&type=note[&usern
   - `has:media`/`has:link`: 独立した絞り込みで、それぞれ異なる投稿に変わる(メディア添付 vs リンクカード)
 - 出典: 公式操作ガイド(doc、Luca Hammerの演算子ガイド)＋2026-07-08のGUI操作(ログイン済み)による実測。検索オプションパネル自体はログイン時のみ表示されるため、パネルの網羅性はこのGUI操作で確認済み(has:media/poll/embed・is:reply/sensitive・language・from・before/during/after・in:all/library/publicの一覧を実見)
 
+## Pinterest(2026-07-08実装。GUI操作・未ログイン)
+
+- `pinterest.com/search/pins/?q=` は未ログインでも検索可能(要ログインではない)
+- **フィルターパネル(調整アイコン)は「すべてのピン/動画/ボード/プロフィール」の4択のみ**。期間・並び順・送信者・ハッシュタグの絞り込みは無い。選ぶとパスが `/search/{pins|videos|boards|users}/` に切り替わることを実機確認(適用ボタン押下後のURL遷移で確認)
+- **公式のBoolean演算子は無い**: `-語`(除外)を試したところ、Pinterest自身が「"black cat orange"の検索結果です。"black cat -orange"で検索し直しますか?」という案内を表示し、`-`をそのまま検索語の一部として扱う(除外にならない)ことを実機確認。引用符による完全一致も、"black cat"(quoted)で無関係な結果(Air Jordanのスニーカー)が混ざるなど、信頼できる文字列一致ではなくML/おすすめベースの緩い一致であることを確認
+- 上部の「すべてのピン/自分のピン」切替はログイン後の個人スコープ(自分の投稿)で、Dialectが対象とする一般公開検索とは別軸のため対象外(Mastodonの `in:library` と同種の判断)
+- 実装方針: keywords/exactPhraseは共にpartial(ゆるい一致、note.loose.and/note.loose.exact)、excludeは非対応(none、除外記号がそのまま検索語に混入する実害があるため`note.pinterest.exclude`で明記)、resultTypeはfull(pins=既定/videos/boards/users)。boardはPinterest専用の新しい値としてResultType型に追加(video/peopleは既存値を再利用)
+
 ## Twitch
 
 - `twitch.tv/search?term=`(実ブラウザ実測)。ログイン不要
