@@ -177,6 +177,7 @@ const PROBES: Probe[] = [
   // ---- pixiv ----
   { platform: 'pixiv', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: 's_mode=s_tc' },
   { platform: 'pixiv', concept: 'exactTag', label: 'タグ完全一致', state: { exactTag: true }, token: 's_mode=s_tag_full' },
+  { platform: 'pixiv', concept: 'tagTitleCaption', label: 'タグ・タイトル・キャプション', state: { tagTitleCaption: true }, token: 's_mode=tag_tc' },
   { platform: 'pixiv', concept: 'pixivPopular', label: '人気の目安', state: { pixivPopular: '000users' }, token: 'users入り', emit: '000users' },
   { platform: 'pixiv', concept: 'period', label: '期間(開始)', state: { since: '2026-06-01' }, token: 'scd=' },
   { platform: 'pixiv', concept: 'period', label: '期間(終了)', state: { until: '2026-06-30' }, token: 'ecd=' },

@@ -29,6 +29,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.exactTag) params.set('xtag', '1')
+  if (state.tagTitleCaption) params.set('ttc', '1')
   if (state.fromUser.trim()) params.set('fr', state.fromUser.trim())
   if (state.excludeUser.trim()) params.set('exfr', state.excludeUser.trim())
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
@@ -91,6 +92,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
   state.exactTag = params.get('xtag') === '1'
+  state.tagTitleCaption = params.get('ttc') === '1'
   state.fromUser = params.get('fr') ?? ''
   state.excludeUser = params.get('exfr') ?? ''
   state.toUser = params.get('to') ?? ''

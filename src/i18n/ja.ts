@@ -24,6 +24,9 @@ export const ja = {
   'concept.exactTag.label': 'タグ完全一致',
   'concept.exactTag.help':
     '検索語とぴったり同じタグがついた作品だけを探します（pixivのみ対応）',
+  'concept.tagTitleCaption.label': 'タグ・タイトル・キャプションで探す',
+  'concept.tagTitleCaption.help':
+    'タグだけでなく、タイトルと説明文（キャプション）も対象にして探します。ふつうのタグ検索より広い範囲がヒットします（pixivのみ対応）',
   'concept.fromUser.label': 'このユーザーの投稿だけ',
   'concept.fromUser.placeholder': '例: nhk_news',
   'concept.fromUser.help':

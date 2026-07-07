@@ -9,6 +9,20 @@ import { andTerms, exactPhrases, minusExcludes, stripHash, words } from '../text
 // OR・除外(-)・括弧グループは公式ヘルプに記載あり。引用符の完全一致はなくキーワード扱い。
 // ハッシュタグ=pixivのタグそのものなので、#を外してタグ語として畳み込む。
 // 期間(scd=/ecd=)は非公式なURLパラメータ。人気順(order=popular_d)はプレミアム会員のみ有効。
+//
+// タグ・タイトル・キャプション(s_mode=tag_tc)だけは /tags/{q}/{section} パスでは
+// 「不正なリクエスト」エラーになり、/search?q=…&type=… という別エンドポイントが必要
+// (2026-07-07にGUI操作で実測)。作品の種類のtype値もこのエンドポイント独自:
+// 既定=artwork、manga=manga、novel=novel、illust=illust、ugoira=ugoira
+// (/tagsのillustrationsセクション+type=ugoiraサブ絞り込みと違い、5値がそれぞれ独立)
+const SEARCH_ENDPOINT_TYPE: Record<'' | 'illust' | 'manga' | 'ugoira' | 'novel', string> = {
+  '': 'artwork',
+  illust: 'illust',
+  manga: 'manga',
+  ugoira: 'ugoira',
+  novel: 'novel',
+}
+
 function buildUrl(state: QueryState): string | null {
   // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
   const parts: string[] = [...andTerms(state)]
@@ -17,20 +31,26 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.hashtag).map(stripHash))
   // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
   // 先頭の桁を固定しないので 1000/5000/10000…users入り をまとめて拾える。
-  // 部分一致には s_mode=s_tag が必須。タイトルだけ(s_tc)や完全一致(s_tag_full)が
-  // s_mode 枠を取ると効かないので、そのときは term も足さない(送っても嘘になる)。
-  const usePopular = Boolean(state.pixivPopular) && !state.titleOnly && !state.exactTag
+  // 部分一致には s_mode=s_tag が必須。タイトルだけ(s_tc)・完全一致(s_tag_full)・
+  // タグ・タイトル・キャプション(tag_tc)が s_mode 枠を取ると効かないので、
+  // そのときは term も足さない(送っても嘘になる)。
+  const usePopular =
+    Boolean(state.pixivPopular) && !state.titleOnly && !state.exactTag && !state.tagTitleCaption
   if (usePopular) parts.push(state.pixivPopular)
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
   if (parts.length === 0) return null
   parts.push(...minusExcludes(state))
 
   const params = new URLSearchParams()
-  // s_mode は1枠。優先度 タイトルだけ(s_tc) > タグ完全一致(s_tag_full) > 人気の目安(s_tag)。
+  // s_mode は1枠。優先度 タイトルだけ(s_tc) > タグ完全一致(s_tag_full) >
+  // タグ・タイトル・キャプション(tag_tc) > 人気の目安(s_tag)。
   // タイトルだけ=タイトル・キャプション検索(公式ヘルプ記載)。完全一致=s_tag_full(2026-07-06実測、
-  // 部分732千→完全724千で実際に絞られる)。人気の目安は部分一致が要るので s_tag を明示。
+  // 部分732千→完全724千で実際に絞られる)。タグ・タイトル・キャプションは通常のタグ部分一致より
+  // 広い範囲がヒットする(2026-07-07実測、猫の部分一致24万件→tag_tcで112万件)。
+  // 人気の目安は部分一致が要るので s_tag を明示。
   if (state.titleOnly) params.set('s_mode', 's_tc')
   else if (state.exactTag) params.set('s_mode', 's_tag_full')
+  else if (state.tagTitleCaption) params.set('s_mode', 'tag_tc')
   else if (usePopular) params.set('s_mode', 's_tag')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
@@ -43,6 +63,14 @@ function buildUrl(state: QueryState): string | null {
   // ai_type=1 でAI生成作品を除外(送らなければアカウント既定に従う)。どちらも非会員でも効く
   if (state.ageRating) params.set('mode', state.ageRating)
   if (state.excludeAi) params.set('ai_type', '1')
+
+  if (state.tagTitleCaption) {
+    // タグ・タイトル・キャプションのときだけ /search?q=…&type=… エンドポイントへ
+    params.set('type', SEARCH_ENDPOINT_TYPE[state.workType])
+    const qs = params.toString()
+    return `https://www.pixiv.net/search?q=${encodeURIComponent(parts.join(' '))}&${qs}`
+  }
+
   // うごくイラストは専用パスが無く(/tags/…/ugoira は「不正なリクエスト」)、
   // illustrations カテゴリで type=ugoira を付けて絞る(2026-07-06 実測: 全72万→約7千)。
   if (state.workType === 'ugoira') params.set('type', 'ugoira')
@@ -73,6 +101,7 @@ export const pixiv: PlatformDef = {
     exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
     titleOnly: { level: 'partial', noteKey: 'note.pixiv.titleOnly' },
     exactTag: { level: 'full' },
+    tagTitleCaption: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'none', noteKey: 'note.pixiv.fromUser' },
     hashtag: { level: 'full' },
@@ -87,13 +116,17 @@ export const pixiv: PlatformDef = {
   buildUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
-    // s_mode は1枠。優先度 titleOnly > exactTag > pixivPopular で負けた概念は
-    // 実際には送られないので none に落として正直に(「適用と出るのに効かない」を防ぐ)
+    // s_mode は1枠。優先度 titleOnly > exactTag > tagTitleCaption > pixivPopular で
+    // 負けた概念は実際には送られないので none に落として正直に(「適用と出るのに効かない」を防ぐ)
     const conflict: ConceptSupport = { level: 'none', noteKey: 'note.pixiv.smodeConflict' }
     if (state.titleOnly) {
       if (state.exactTag) overrides.exactTag = conflict
+      if (state.tagTitleCaption) overrides.tagTitleCaption = conflict
       if (state.pixivPopular) overrides.pixivPopular = conflict
-    } else if (state.exactTag && state.pixivPopular) {
+    } else if (state.exactTag) {
+      if (state.tagTitleCaption) overrides.tagTitleCaption = conflict
+      if (state.pixivPopular) overrides.pixivPopular = conflict
+    } else if (state.tagTitleCaption && state.pixivPopular) {
       overrides.pixivPopular = conflict
     }
     return {

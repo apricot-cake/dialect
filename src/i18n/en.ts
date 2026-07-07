@@ -23,6 +23,9 @@ export const en = {
   'concept.exactTag.label': 'Exact tag',
   'concept.exactTag.help':
     'Finds only works tagged with exactly your search term (pixiv only).',
+  'concept.tagTitleCaption.label': 'Search tags, title, and caption',
+  'concept.tagTitleCaption.help':
+    'Searches the title and caption in addition to tags, widening the match beyond a plain tag search (pixiv only).',
   'concept.fromUser.label': 'From this user only',
   'concept.fromUser.placeholder': 'e.g. nhk_news',
   'concept.fromUser.help':

@@ -29,6 +29,7 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'period', field: 'since', widget: 'period', labelKey: 'concept.period.label', helpKey: 'concept.period.help' },
   { id: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label', helpKey: 'concept.titleOnly.help' },
   { id: 'exactTag', field: 'exactTag', widget: 'toggle', labelKey: 'concept.exactTag.label', helpKey: 'concept.exactTag.help' },
+  { id: 'tagTitleCaption', field: 'tagTitleCaption', widget: 'toggle', labelKey: 'concept.tagTitleCaption.label', helpKey: 'concept.tagTitleCaption.help' },
   { id: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label', helpKey: 'concept.mediaOnly.help' },
   { id: 'liveOnly', field: 'liveOnly', widget: 'toggle', labelKey: 'concept.liveOnly.label', helpKey: 'concept.liveOnly.help' },
   { id: 'videoLength', field: 'videoLength', widget: 'select', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },

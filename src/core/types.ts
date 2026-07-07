@@ -7,6 +7,7 @@ export type ConceptId =
   | 'exclude'
   | 'titleOnly'
   | 'exactTag'
+  | 'tagTitleCaption'
   | 'fromUser'
   | 'excludeUser'
   | 'toUser'
@@ -122,6 +123,11 @@ export interface QueryState {
   titleOnly: boolean
   /** pixiv専用。検索語をタグとして完全一致で探す(s_mode=s_tag_full。既定の部分一致を無効化) */
   exactTag: boolean
+  /**
+   * pixiv専用。タグ・タイトル・キャプションをまとめて探す(s_mode=tag_tc)。
+   * 既定のタグ部分一致より広い範囲を対象にする。2026-07-07にGUI操作で実測
+   */
+  tagTitleCaption: boolean
   fromUser: string
   excludeUser: string
   /** スペース区切りで複数可(どれか宛て=OR) */

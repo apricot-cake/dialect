@@ -9,6 +9,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
   if (state.exactTag) active.push('exactTag')
+  if (state.tagTitleCaption) active.push('tagTitleCaption')
   if (state.fromUser.trim()) active.push('fromUser')
   if (state.excludeUser.trim()) active.push('excludeUser')
   if (state.toUser.trim()) active.push('toUser')
@@ -48,6 +49,7 @@ export function defaultState(): QueryState {
     exclude: '',
     titleOnly: false,
     exactTag: false,
+    tagTitleCaption: false,
     fromUser: '',
     excludeUser: '',
     toUser: '',
