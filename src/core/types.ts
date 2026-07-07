@@ -228,6 +228,7 @@ export type PlatformId =
   | 'fivech'
   | 'animanch'
   | 'tumblr'
+  | 'mastodon'
 
 export interface PlatformDef {
   id: PlatformId

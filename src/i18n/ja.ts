@@ -259,6 +259,8 @@ export const ja = {
   'note.seiga.workType': 'ニコニコ静画で探せるのはイラストとマンガだけです',
   'note.seiga.mangaSort': 'マンガを選ぶと、並び順は指定できません',
   'note.tumblr.tagSort': 'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
+  'note.mastodon.keywords':
+    'ログイン中のインスタンスが把握している投稿（自分の投稿・フォロー先・連合内で見つかった投稿）だけが対象です',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

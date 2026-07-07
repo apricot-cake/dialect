@@ -43,6 +43,7 @@ https://apricot-cake.github.io/dialect/
 | 5ちゃんねる | `ff5ch.syoboi.jp`(スレタイ検索) | 不要 | 除外・板指定(公式検索はANDが効かないため外部検索を使用) |
 | あにまん掲示板 | `bbs.animanch.com/searchRes` | 不要 | キーワードのみ(本文/過去ログタイトル切替) |
 | Tumblr | `tumblr.com/search` | 不要 | 豊富(除外・送信者・期間・完全一致・複数タグ・投稿タイプ・並び順) |
+| Mastodon | `mastodon.social/search` | 必要 | 豊富(除外・完全一致・送信者・期間・返信除外・言語・メディア/リンク) |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 

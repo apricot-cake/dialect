@@ -286,6 +286,8 @@ export const en = {
   'note.seiga.workType': 'Niconico Seiga can only search illustrations and manga.',
   'note.seiga.mangaSort': "Sort order can't be set when searching manga.",
   'note.tumblr.tagSort': "Sort order can't be set when searching by hashtag alone (results are by popularity).",
+  'note.mastodon.keywords':
+    'Only covers posts your logged-in instance knows about (your own posts, people you follow, and posts it has seen through federation).',
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',

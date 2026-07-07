@@ -2,6 +2,7 @@ import {
   siBluesky,
   siHatenabookmark,
   siInstagram,
+  siMastodon,
   siMisskey,
   siNiconico,
   siNote,
@@ -29,6 +30,7 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   hatebu: siHatenabookmark,
   twitch: siTwitch,
   tumblr: siTumblr,
+  mastodon: siMastodon,
 }
 
 const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静' }

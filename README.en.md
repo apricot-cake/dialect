@@ -43,6 +43,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | 5channel | `ff5ch.syoboi.jp` (thread-title search) | Not required | Exclusion, board (official search's AND doesn't work, so an external search is used) |
 | Animanch BBS | `bbs.animanch.com/searchRes` | Not required | Keywords only (body / archived-title toggle) |
 | Tumblr | `tumblr.com/search` | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort) |
+| Mastodon | `mastodon.social/search` | Required | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media/link) |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 
