@@ -1,8 +1,9 @@
 name: CI
 
-# main へマージする前のゲート。決定論的なチェック(型・ビルド・lint)だけを必須にする。
-# 外部サイトへ実アクセスする check:urls は不達で赤くなりマージが詰まるため、ここには入れず
-# リリース前に手元/operator-check で回す運用にしている。
+# main へマージする前のゲート。決定論的なチェック(型・ビルド・lint・演算子ドリフト)だけを
+# 必須にする。外部サイトへ実アクセスする check:urls は不達で赤くなりマージが詰まるため、ここには
+# 入れずリリース前に手元/operator-check で回す運用にしている。
+# check:operators はコードと docs/operator-checklist.md を読むだけでネットワーク不要=決定論的。
 on:
   pull_request:
     branches: [main]
@@ -32,3 +33,4 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+      - run: npm run check:operators
