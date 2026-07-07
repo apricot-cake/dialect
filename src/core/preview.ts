@@ -7,6 +7,7 @@ import {
   supportersOf,
 } from './conceptDefs'
 import { t, tf } from '@/i18n'
+import { activeConcepts } from './concepts'
 import { andTerms, exactPhrases, words } from './text'
 
 /** セレクト式の条件で、いま選ばれている値の表示ラベルを引く */
@@ -81,6 +82,21 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
     default:
       return t(CONCEPT_MAP[concept].labelKey)
   }
+}
+
+/**
+ * いま指定されている条件をまとめた短い要約。保存した検索の初期名などに使う。
+ * サイト非依存で、条件バーと同じ CONCEPT_DEFS 順に「・」で連ねる(キーワードが先頭)。
+ */
+export function searchSummary(state: QueryState): string {
+  const active = new Set(activeConcepts(state))
+  const parts: string[] = []
+  for (const def of CONCEPT_DEFS) {
+    if (!active.has(def.id)) continue
+    const s = conceptSummary(def.id, state)
+    if (s) parts.push(s)
+  }
+  return parts.join('・')
 }
 
 /**

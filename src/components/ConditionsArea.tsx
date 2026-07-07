@@ -82,6 +82,7 @@ export function ConditionsArea({
   removeConcept,
   onClear,
   shareUrl,
+  onSave,
   onOpenPicker,
   onGoLinks,
 }: {
@@ -95,6 +96,8 @@ export function ConditionsArea({
   onClear?: () => void
   /** いまの条件を丸ごと表すパーマリンク。条件が1つでもあるときだけ渡る */
   shareUrl?: string
+  /** 保存ダイアログを開く。条件が1つでもあるときだけ渡る */
+  onSave?: () => void
   onOpenPicker: () => void
   onGoLinks: () => void
 }) {
@@ -213,6 +216,21 @@ export function ConditionsArea({
                   </svg>
                 )}
                 {copied ? t('ui.copyLinkDone') : t('ui.copyLink')}
+              </button>
+            )}
+            {onSave && (
+              <button
+                type="button"
+                data-noscale
+                className="dl-clear inline-flex h-11 cursor-pointer items-center gap-[7px] rounded-full border border-border bg-card pr-5 pl-4 text-sm font-semibold text-muted shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
+                onClick={onSave}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  <path d="M9 7h6" />
+                  <path d="M12 4v6" />
+                </svg>
+                {t('ui.save')}
               </button>
             )}
           </motion.div>

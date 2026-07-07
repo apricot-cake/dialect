@@ -1,4 +1,4 @@
-import { Globe, Moon, Sun } from 'lucide-react'
+import { Bookmark, Globe, Moon, Sun } from 'lucide-react'
 import { siGithub } from 'simple-icons'
 import { t } from '@/i18n'
 
@@ -13,10 +13,12 @@ export function AppHeader({
   dark,
   onToggleDark,
   onToggleLang,
+  onOpenSaved,
 }: {
   dark: boolean
   onToggleDark: () => void
   onToggleLang: () => void
+  onOpenSaved: () => void
 }) {
   return (
     <>
@@ -47,6 +49,15 @@ export function AppHeader({
         >
           <Globe className="size-[15px]" />
           {t('app.langSwitch')}
+        </button>
+        <button
+          type="button"
+          onClick={onOpenSaved}
+          title={t('saved.open')}
+          aria-label={t('saved.open')}
+          className={ROUND_BUTTON}
+        >
+          <Bookmark className="size-4" />
         </button>
         <button
           type="button"
