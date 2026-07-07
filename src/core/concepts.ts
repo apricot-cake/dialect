@@ -25,6 +25,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.verifiedOnly) active.push('verifiedOnly')
   if (state.excludeReplies) active.push('excludeReplies')
   if (state.liveOnly) active.push('liveOnly')
+  if (state.fourK) active.push('fourK')
+  if (state.hdOnly) active.push('hdOnly')
+  if (state.captionsOnly) active.push('captionsOnly')
+  if (state.creativeCommons) active.push('creativeCommons')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.minReplies.trim()) active.push('minReplies')
@@ -66,6 +70,10 @@ export function defaultState(): QueryState {
     verifiedOnly: false,
     excludeReplies: false,
     liveOnly: false,
+    fourK: false,
+    hdOnly: false,
+    captionsOnly: false,
+    creativeCommons: false,
     minLikes: '',
     minReposts: '',
     minReplies: '',

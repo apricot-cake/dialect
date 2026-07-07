@@ -23,6 +23,10 @@ export type ConceptId =
   | 'verifiedOnly'
   | 'excludeReplies'
   | 'liveOnly'
+  | 'fourK'
+  | 'hdOnly'
+  | 'captionsOnly'
+  | 'creativeCommons'
   | 'minLikes'
   | 'minReposts'
   | 'minReplies'
@@ -149,6 +153,15 @@ export interface QueryState {
   excludeReplies: boolean
   /** YouTube専用。ライブ配信だけに絞る(sp のfilterサブメッセージ field8=1) */
   liveOnly: boolean
+  /**
+   * YouTube専用。フィルタパネル「特徴」の絞り込み(sp のfilterサブメッセージの各field=1)。
+   * 2026-07-07にGUI操作で実機解析: 4K=field14、HD=field4、字幕=field5、
+   * クリエイティブ・コモンズ=field6(liveOnlyのfield8とは別枠、combine可能)
+   */
+  fourK: boolean
+  hdOnly: boolean
+  captionsOnly: boolean
+  creativeCommons: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */

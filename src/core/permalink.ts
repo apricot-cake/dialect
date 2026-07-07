@@ -46,6 +46,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.verifiedOnly) params.set('ver', '1')
   if (state.excludeReplies) params.set('norep', '1')
   if (state.liveOnly) params.set('live', '1')
+  if (state.fourK) params.set('k4', '1')
+  if (state.hdOnly) params.set('hd', '1')
+  if (state.captionsOnly) params.set('cap', '1')
+  if (state.creativeCommons) params.set('cc', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.minReplies.trim()) params.set('reps', state.minReplies.trim())
@@ -112,6 +116,10 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.verifiedOnly = params.get('ver') === '1'
   state.excludeReplies = params.get('norep') === '1'
   state.liveOnly = params.get('live') === '1'
+  state.fourK = params.get('k4') === '1'
+  state.hdOnly = params.get('hd') === '1'
+  state.captionsOnly = params.get('cap') === '1'
+  state.creativeCommons = params.get('cc') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   state.minReplies = params.get('reps') ?? ''

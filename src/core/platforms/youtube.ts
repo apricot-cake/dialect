@@ -38,9 +38,14 @@ function spParam(state: QueryState): string {
   const typeByte = state.resultType ? TYPE_BYTE[state.resultType] : undefined
   if (typeByte !== undefined) filter.push(0x10, typeByte)
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
-  // 「特徴>ライブ」= filterサブメッセージの field8=1(sp=EgJAAQ%3D%3D を2026-07-05に
-  // フィルタUIから実測)。type/長さと同じサブメッセージに合流する
+  // 「特徴」の各項目はfilterサブメッセージの別フィールドとして合流する(2026-07-07に
+  // フィルタUIから実測、field番号の昇順で並べる): HD=field4(0x20)・字幕=field5(0x28)・
+  // クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・4K=field14(0x70)。組み合わせ可能
+  if (state.hdOnly) filter.push(0x20, 0x01)
+  if (state.captionsOnly) filter.push(0x28, 0x01)
+  if (state.creativeCommons) filter.push(0x30, 0x01)
   if (state.liveOnly) filter.push(0x40, 0x01)
+  if (state.fourK) filter.push(0x70, 0x01)
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
   if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
@@ -91,6 +96,10 @@ function dynamicSupport(
     overrides.videoLength = CHANNEL_CONFLICT
     overrides.resultType = CHANNEL_CONFLICT
     overrides.liveOnly = CHANNEL_CONFLICT
+    overrides.fourK = CHANNEL_CONFLICT
+    overrides.hdOnly = CHANNEL_CONFLICT
+    overrides.captionsOnly = CHANNEL_CONFLICT
+    overrides.creativeCommons = CHANNEL_CONFLICT
   } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
     // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
     overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
@@ -117,6 +126,10 @@ export const youtube: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial' },
     liveOnly: { level: 'partial' },
+    fourK: { level: 'full' },
+    hdOnly: { level: 'full' },
+    captionsOnly: { level: 'full' },
+    creativeCommons: { level: 'full' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
