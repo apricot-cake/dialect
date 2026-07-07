@@ -262,7 +262,8 @@ export const en = {
     'pixiv allows only one match target, so another mode (title only / exact tag) takes priority and this condition is not sent.',
   'note.misskey.keywords':
     'Finds posts that contain all your words. On the page that opens, press the “Search” button to see results.',
-  'note.misskey.exclude': 'Words you exclude may still appear in the results.',
+  'note.misskey.exactPhrase':
+    'Exact phrase matching isn’t available; it’s treated as separate words that must all appear (AND).',
   'note.misskey.fromUser': 'Requires combining with a keyword.',
   'note.youtube.resultType': 'It cannot be combined with a user filter.',
   'note.hatebu.minLikes':

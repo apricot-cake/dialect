@@ -243,7 +243,7 @@ export const ja = {
   'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
   'note.pixiv.smodeConflict': 'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
   'note.misskey.keywords': '入力した言葉をすべて含む投稿を探します。開いたページで「検索」ボタンを押すと結果が出ます',
-  'note.misskey.exclude': '除外した言葉を含む投稿が、結果に残ることがあります',
+  'note.misskey.exactPhrase': '完全一致は使えず、語ごとに含むかどうかの判定（AND）になります',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です',
   'note.youtube.resultType': 'ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
