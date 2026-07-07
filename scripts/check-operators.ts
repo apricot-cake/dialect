@@ -52,6 +52,7 @@ const CHECKLIST_HEADING: Record<PlatformId, string> = {
   twitch: 'Twitch',
   fivech: '5ちゃんねる',
   animanch: 'あにまん',
+  tumblr: 'tumblr',
 }
 
 /** `## 見出し ... 次の ## まで` を節に切り、見出し断片ごとに本文を返す */
@@ -200,6 +201,10 @@ const PROBES: Probe[] = [
   // ---- あにまん掲示板 ----
   { platform: 'animanch', concept: 'keywords', label: 'レス本文', state: {}, token: '/searchRes/' },
   { platform: 'animanch', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: '/search2/' },
+
+  // ---- tumblr ----
+  { platform: 'tumblr', concept: 'sortOrder', label: '最新順', state: { sort: 'new' }, token: '/recent' },
+  { platform: 'tumblr', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('猫'), token: '/tagged/' },
 ]
 
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------

@@ -42,6 +42,7 @@ https://apricot-cake.github.io/dialect/
 | Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |
 | 5ちゃんねる | `ff5ch.syoboi.jp`(スレタイ検索) | 不要 | 除外・板指定(公式検索はANDが効かないため外部検索を使用) |
 | あにまん掲示板 | `bbs.animanch.com/searchRes` | 不要 | キーワードのみ(本文/過去ログタイトル切替) |
+| Tumblr | `tumblr.com/search` | 不要 | キーワード・タグ・並び順(新着/人気) |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 

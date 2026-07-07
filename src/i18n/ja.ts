@@ -225,6 +225,7 @@ export const ja = {
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
   'note.seiga.workType': 'ニコニコ静画で探せるのはイラストとマンガだけです',
   'note.seiga.mangaSort': 'マンガを選ぶと、並び順は指定できません',
+  'note.tumblr.tagSort': 'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

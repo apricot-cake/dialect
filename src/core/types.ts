@@ -176,6 +176,7 @@ export type PlatformId =
   | 'twitch'
   | 'fivech'
   | 'animanch'
+  | 'tumblr'
 
 export interface PlatformDef {
   id: PlatformId

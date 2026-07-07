@@ -42,6 +42,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |
 | 5channel | `ff5ch.syoboi.jp` (thread-title search) | Not required | Exclusion, board (official search's AND doesn't work, so an external search is used) |
 | Animanch BBS | `bbs.animanch.com/searchRes` | Not required | Keywords only (body / archived-title toggle) |
+| Tumblr | `tumblr.com/search` | Not required | Keywords, tags, sort (latest/popular) |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 
