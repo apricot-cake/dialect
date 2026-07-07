@@ -44,6 +44,8 @@ It never fetches or displays results itself. It only opens each site's own real 
 | Animanch BBS | `bbs.animanch.com/searchRes` | Not required | Keywords only (body / archived-title toggle) |
 | Tumblr | `tumblr.com/search` | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort) |
 | Mastodon | `mastodon.social/search` | Required | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media/link) |
+| Pinterest | `pinterest.com/search` | Not required | Result type (pins/videos/boards/profiles) only (no exclusion or sort) |
+| FANBOX | `fanbox.cc/tags` | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.) |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 

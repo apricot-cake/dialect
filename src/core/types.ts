@@ -234,6 +234,7 @@ export type PlatformId =
   | 'tumblr'
   | 'mastodon'
   | 'pinterest'
+  | 'fanbox'
 
 export interface PlatformDef {
   id: PlatformId

@@ -263,6 +263,7 @@ export const ja = {
   'note.mastodon.keywords':
     'ログイン中のインスタンスが把握している投稿（自分の投稿・フォロー先・連合内で見つかった投稿）だけが対象です',
   'note.pinterest.exclude': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
+  'note.fanbox.hashtagOnly': 'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',

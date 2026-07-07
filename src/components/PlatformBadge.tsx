@@ -35,7 +35,7 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   pinterest: siPinterest,
 }
 
-const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静' }
+const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静', fanbox: 'F' }
 
 /**
  * ブランドアイコン1つ。simple-iconsのロゴ、なければ角丸矩形+1文字の吹き出し風。

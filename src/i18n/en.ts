@@ -292,6 +292,8 @@ export const en = {
     'Only covers posts your logged-in instance knows about (your own posts, people you follow, and posts it has seen through federation).',
   'note.pinterest.exclude':
     "The exclusion sign (-) has no effect; it's treated as a literal part of the search term.",
+  'note.fanbox.hashtagOnly':
+    'Only works when exactly one hashtag is given. Keywords and other conditions are not supported.',
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
