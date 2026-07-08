@@ -353,6 +353,8 @@ export const en = {
   'ui.removeCondition': 'Remove this condition',
   'ui.scrollToLinks': 'Scroll to open the searches',
   'ui.scrollToConditions': 'Scroll back to conditions',
+  'ui.tapToLinks': 'Tap to open the searches',
+  'ui.tapToConditions': 'Tap back to conditions',
   'ui.enterToAdd': 'to add',
   'ui.loginRequired': 'Sign-in required',
   'ui.notSearchable': 'Not searchable with these conditions',

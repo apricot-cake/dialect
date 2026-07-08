@@ -77,6 +77,10 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    /* スマホで画面上端から下へ引くとブラウザのpull-to-refreshが誤爆する
+       (画面2→条件へ戻る操作が下スワイプのため)。全面固定レイアウトで
+       ページ自体はスクロールしないので、引っ張り更新・端の連鎖を止める */
+    overscroll-behavior: none;
     }
   html {
     @apply font-sans;

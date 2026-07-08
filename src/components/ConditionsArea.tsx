@@ -63,11 +63,41 @@ function usePillCompact(): boolean {
   return compact
 }
 
+/**
+ * タッチ主体の端末か(マウスでホバーできない)。ピルの案内を「スクロール」から
+ * 「タップ」に切り替えるために使う。CSSの `@media (hover: none)` と同じ判定基準
+ */
+function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(
+    () => typeof matchMedia !== 'undefined' && matchMedia('(hover: none)').matches,
+  )
+  useEffect(() => {
+    if (typeof matchMedia === 'undefined') return
+    const mq = matchMedia('(hover: none)')
+    const onChange = () => setCoarse(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return coarse
+}
+
 function MouseIcon({ up }: { up?: boolean }) {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
       <rect x="6" y="3" width="12" height="18" rx="6" />
       <path d="M12 7v3" style={{ animation: `${up ? 'dl-bob-up' : 'dl-bob'} 1.5s ease-in-out infinite` }} />
+    </svg>
+  )
+}
+
+/** タッチ端末向けの指(タップ)アイコン。マウスの代わりにピルの先頭/末尾へ置く */
+function TapIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2" />
+      <path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1" />
+      <path d="M10 9.5V5a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10" />
+      <path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
     </svg>
   )
 }
@@ -115,7 +145,9 @@ export function ConditionsArea({
     }
   }
   const barDefs = [CONCEPT_MAP.keywords, ...added.map((c) => CONCEPT_MAP[c])]
-  const scrollLabel = t('ui.scrollToLinks')
+  // タッチ端末では上スワイプがブラウザの引っ張り更新と紛らわしいので、ピルはタップで案内する
+  const coarse = useCoarsePointer()
+  const scrollLabel = t(coarse ? 'ui.tapToLinks' : 'ui.scrollToLinks')
 
   return (
     <section
@@ -259,7 +291,7 @@ export function ConditionsArea({
             className="pointer-events-auto inline-flex h-10 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-2.5 pl-4 text-[12.5px] font-semibold text-muted shadow-[0_3px_14px_oklch(0_0_0_/_0.07)]"
             onClick={onGoLinks}
           >
-            <MouseIcon />
+            {coarse ? <TapIcon /> : <MouseIcon />}
             {scrollLabel}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" style={{ animation: 'dl-bob 1.5s ease-in-out infinite' }}>
               <path d="m6 9 6 6 6-6" />
@@ -273,7 +305,8 @@ export function ConditionsArea({
 
 /** 画面2の上端に置く「条件へ戻る」ピル */
 export function ScrollUpPill({ onClick }: { onClick: () => void }) {
-  const label = t('ui.scrollToConditions')
+  const coarse = useCoarsePointer()
+  const label = t(coarse ? 'ui.tapToConditions' : 'ui.scrollToConditions')
   return (
     <div
       data-scroll-up-pill
@@ -288,7 +321,7 @@ export function ScrollUpPill({ onClick }: { onClick: () => void }) {
           <path d="m18 15-6-6-6 6" />
         </svg>
         {label}
-        <MouseIcon up />
+        {coarse ? <TapIcon /> : <MouseIcon up />}
       </button>
     </div>
   )

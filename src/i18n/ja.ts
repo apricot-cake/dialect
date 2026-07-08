@@ -321,6 +321,9 @@ export const ja = {
   'ui.removeCondition': 'この条件を外す',
   'ui.scrollToLinks': 'スクロールで検索を開く',
   'ui.scrollToConditions': 'スクロールで条件へ戻る',
+  // タッチ端末ではスクロール切替が引っ張り更新と紛らわしいので、ピルをタップで案内する
+  'ui.tapToLinks': 'タップで検索を開く',
+  'ui.tapToConditions': 'タップで条件へ戻る',
   // チップ入力のEnterヒント(<kbd>Enter</kbd> の後ろに続ける)
   'ui.enterToAdd': 'で区切る',
   'ui.loginRequired': '要ログイン',
