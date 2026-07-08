@@ -159,7 +159,7 @@ export function ConditionsArea({
         className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-5 pt-24 pb-10"
         style={{ justifyContent: 'safe center' }}
       >
-        <div className="flex w-full max-w-[620px] flex-col items-stretch gap-4">
+        <div data-bars-list className="flex w-full max-w-[620px] flex-col items-stretch gap-4">
           <AnimatePresence initial={false}>
             {barDefs.map((def) => (
               <motion.div

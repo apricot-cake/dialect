@@ -250,14 +250,31 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
 
 /* ---- モバイル / 狭幅 ---- */
 @media (max-width: 560px) {
-  .dl-bar { flex-wrap: wrap !important; row-gap: 10px !important; padding-top: 12px !important; padding-bottom: 12px !important; padding-left: 18px !important; }
-  .dl-bar input { min-width: 0 !important; }
-  /* アイコン+ラベル行はそのまま、入力欄(ウィジェット)は狭幅では自分の行いっぱいに
-     折り返す。1行に収めようと縮めるとplaceholderが見切れるため */
-  .dl-bar-widget { flex-basis: 100% !important; }
+  /* 狭幅でもPCと同じ「アイコン+ラベル+入力欄」の1行構成が基本。
+     バー内部の余白・最小高さを詰める。入力欄のフォントは iOS の
+     フォーカス時ズーム回避のため 16px のまま触らない */
+  .dl-bar { flex-wrap: wrap !important; row-gap: 7px !important; min-height: 52px !important; padding-top: 9px !important; padding-bottom: 9px !important; padding-left: 18px !important; }
+  /* width:0 で入力欄の固有幅(数値inputはsize属性が効かず約150px)を消す。
+     実際の幅は flex-grow が広げるので、見た目は空きスペースいっぱいのまま */
+  .dl-bar input { min-width: 0 !important; width: 0 !important; }
+  .dl-bar-label { font-size: 14px !important; }
+  /* 削除ボタン(右30px)との対称用の左スペーサーは畳み、40px(320px幅の12%)をバーへ返す */
+  .dl-bar-spacer { display: none !important; }
+  /* placeholderは入力例なので、収まらない分は…で切って1行を守る */
+  .dl-bar input::placeholder { text-overflow: ellipsis; }
+  /* 入力欄(ウィジェット)は中身の最小幅より縮まない=縮めて文字を壊す代わりに、
+     収まらないバーだけ2行目へ自然に折り返す(1行が基本のフォールバック)。
+     子(ChipsField等の外枠)にはPC用の min-w-0 が付いていて min-content の伝播を
+     断ち切るため、直下の枠にも同じ指定を通す */
+  .dl-bar-widget, .dl-bar-widget > div { min-width: min-content !important; }
+  /* 期間だけは常に折り返す: 日付ボタン2つは本質的に幅広で、カレンダーの並びも安定させたい */
+  [data-bar="period"] .dl-bar-widget { flex-basis: 100% !important; }
+  /* バー同士の間隔も詰める(条件を何本も立てると縦が伸びるため) */
+  [data-bars-list] { gap: 11px !important; }
   .dl-sup { display: none !important; }
   .dl-tagline { display: none !important; }
-  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
+  /* 固定ヘッダーの下端は約52px。上余白96pxは空きすぎなので詰める */
+  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 74px !important; }
   [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 118px !important; }
   /* 狭幅ではヘッダー(ロゴ+右クラスタ)がほぼ全幅を占め、中央のScrollUpPillと
      同じ高さで重なる(右クラスタにEnglish等の文言があり折り返さないため)。

@@ -236,7 +236,7 @@ function DateButton({
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         data-noscale
-        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card px-3 text-sm font-medium"
+        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card px-3 text-sm font-medium whitespace-nowrap"
         style={{ color: value ? FILLED_INK : 'var(--muted)' }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

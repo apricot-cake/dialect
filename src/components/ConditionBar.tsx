@@ -139,12 +139,13 @@ export function ConditionBar({
 
   return (
     <>
-      <div className="w-[30px] shrink-0" />
+      {/* 削除ボタン(右30px)との対称スペーサー。狭幅では畳んで幅をバーに譲る */}
+      <div className="dl-bar-spacer w-[30px] shrink-0" />
       <div className="dl-bar">
         <Icon size={18} color="var(--faint)" className="shrink-0" />
         <span
           data-tip={t(def.helpKey)}
-          className="shrink-0 cursor-default text-[15px] font-semibold whitespace-nowrap text-muted"
+          className="dl-bar-label shrink-0 cursor-default text-[15px] font-semibold whitespace-nowrap text-muted"
         >
           {t(def.labelKey)}
         </span>

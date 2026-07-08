@@ -33,7 +33,11 @@ export function ChipsField({
       {chips.map((text, i) => (
         <span
           key={`${text}-${i}`}
-          className="inline-flex max-w-full items-center gap-[5px] rounded-[7px] bg-secondary py-[3px] pr-1.5 pl-[9px] text-[14.5px] font-medium text-fg [overflow-wrap:anywhere] [word-break:break-word]"
+          // break-keep: 日本語は標準では任意の文字間で折れるため、狭幅でチップが
+          // squeezeされると「広/告」のように縦割れする。語中の折りを止めて
+          // チップの最小幅を保ち、バー側の折り返し(2行目へ落とす)判定に倒す。
+          // break-words: それでも本当に収まらない長文・URLだけは緊急で折る
+          className="inline-flex max-w-full items-center gap-[5px] rounded-[7px] bg-secondary py-[3px] pr-1.5 pl-[9px] text-[14.5px] font-medium break-words break-keep text-fg"
         >
           {text}
           <button
@@ -52,6 +56,9 @@ export function ChipsField({
         type="text"
         value={raw}
         placeholder={chips.length === 0 ? placeholder : undefined}
+        // size=1: inputの固有幅(既定≈20文字)を消し、実幅はflex-1に任せる。
+        // 固有幅が残ると狭幅の min-content 判定が膨らみ、バーが不要に折り返す
+        size={1}
         className="min-w-[90px] flex-1 border-none bg-transparent py-1 text-[16px] text-fg outline-none"
         onChange={(e) => onRaw(e.target.value)}
         onKeyDown={(e) => {
@@ -93,6 +100,7 @@ export function PlainField({
       min={inputType === 'number' ? 0 : undefined}
       value={value}
       placeholder={placeholder}
+      size={1}
       className="min-w-0 flex-1 border-none bg-transparent py-1 text-[16px] text-fg outline-none"
       onChange={(e) => onChange(e.target.value)}
     />
@@ -152,7 +160,7 @@ export function SelectField({
     <Select.Root value={value} onValueChange={(v) => onChange(v as string)}>
       <Select.Trigger
         data-noscale
-        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card pr-2.5 pl-3 text-sm font-medium"
+        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card pr-2.5 pl-3 text-sm font-medium whitespace-nowrap"
         style={{ color: value !== noneValue ? FILLED_INK : 'var(--muted)' }}
       >
         {t(current.labelKey)}
