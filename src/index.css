@@ -237,14 +237,28 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   background: color-mix(in oklch, var(--faint) 82%, transparent);
 }
 
+/* ホバー概念のないタッチ環境では、ピッカー行の対応バッジオーバーレイを出さない。
+   タップ時の mouseenter で出てしまい説明文に被さるうえ、狭幅ではバッジ列が
+   行の左端からはみ出す */
+@media (hover: none) {
+  .dl-pick-support { display: none; }
+}
+
 /* ---- モバイル / 狭幅 ---- */
 @media (max-width: 560px) {
   .dl-bar { flex-wrap: wrap !important; row-gap: 10px !important; padding-top: 12px !important; padding-bottom: 12px !important; padding-left: 18px !important; }
   .dl-bar input { min-width: 0 !important; }
+  /* アイコン+ラベル行はそのまま、入力欄(ウィジェット)は狭幅では自分の行いっぱいに
+     折り返す。1行に収めようと縮めるとplaceholderが見切れるため */
+  .dl-bar-widget { flex-basis: 100% !important; }
   .dl-sup { display: none !important; }
   .dl-tagline { display: none !important; }
   [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
-  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
+  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 118px !important; }
+  /* 狭幅ではヘッダー(ロゴ+右クラスタ)がほぼ全幅を占め、中央のScrollUpPillと
+     同じ高さで重なる(右クラスタにEnglish等の文言があり折り返さないため)。
+     ヘッダー下端(約54px)より下へ逃がす。ヒント枠側のpadding-topも合わせて広げてある */
+  [data-scroll-up-pill] { top: 60px !important; }
 }
 @media (max-width: 380px) {
   .dl-bar { padding-left: 16px !important; }

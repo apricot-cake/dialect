@@ -227,8 +227,6 @@ export function ConditionsArea({
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                   <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                  <path d="M9 7h6" />
-                  <path d="M12 4v6" />
                 </svg>
                 {t('ui.save')}
               </button>
@@ -277,7 +275,10 @@ export function ConditionsArea({
 export function ScrollUpPill({ onClick }: { onClick: () => void }) {
   const label = t('ui.scrollToConditions')
   return (
-    <div className="pointer-events-none absolute top-4 right-0 left-0 z-20 flex justify-center">
+    <div
+      data-scroll-up-pill
+      className="pointer-events-none absolute top-4 right-0 left-0 z-20 flex justify-center"
+    >
       <button
         type="button"
         className="pointer-events-auto inline-flex h-10 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-4 pl-2.5 text-[12.5px] font-semibold text-muted shadow-[0_3px_14px_oklch(0_0_0_/_0.07)]"

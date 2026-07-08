@@ -148,7 +148,7 @@ export function ConditionBar({
         >
           {t(def.labelKey)}
         </span>
-        {widget}
+        <div className="dl-bar-widget flex min-w-0 flex-1 items-center">{widget}</div>
         <span
           className="dl-sup relative ml-auto inline-flex shrink-0 cursor-default items-center gap-1 text-xs whitespace-nowrap text-faint"
           onMouseEnter={() => setSupHover(true)}

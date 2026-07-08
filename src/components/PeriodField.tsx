@@ -276,7 +276,7 @@ export function PeriodField({
   onChange: (patch: { since?: string; until?: string }) => void
 }) {
   return (
-    <div className="flex shrink-0 items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <DateButton value={since} onChange={(v) => onChange({ since: v })} />
       <span className="text-faint">–</span>
       <DateButton value={until} onChange={(v) => onChange({ until: v })} />
