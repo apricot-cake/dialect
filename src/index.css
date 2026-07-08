@@ -254,6 +254,10 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
      バー内部の余白・最小高さを詰める。入力欄のフォントは iOS の
      フォーカス時ズーム回避のため 16px のまま触らない */
   .dl-bar { flex-wrap: wrap !important; row-gap: 7px !important; min-height: 52px !important; padding-top: 9px !important; padding-bottom: 9px !important; padding-left: 18px !important; }
+  /* 999pxは高さの半分にクランプされるため、折り返して背が高くなったバーほど
+     不自然に丸くなる(団子状)。1行時の丸み(52pxの半分=26px)に固定し、
+     何段に折り返しても丸みの強さを一定に保つ */
+  .dl-bar { border-radius: 26px !important; }
   /* width:0 で入力欄の固有幅(数値inputはsize属性が効かず約150px)を消す。
      実際の幅は flex-grow が広げるので、見た目は空きスペースいっぱいのまま */
   .dl-bar input { min-width: 0 !important; width: 0 !important; }
@@ -269,6 +273,18 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   .dl-bar-widget, .dl-bar-widget > div { min-width: min-content !important; }
   /* 期間だけは常に折り返す: 日付ボタン2つは本質的に幅広で、カレンダーの並びも安定させたい */
   [data-bar="period"] .dl-bar-widget { flex-basis: 100% !important; }
+  /* 折り返した期間バーの中で、日付ボタン2つがさらに縦積みで3段になるのを防ぎ、
+     横並びのまま2段(ラベル+日付)に収める。表記自体もDateButton側で狭幅用の
+     簡潔な数字表記に切り替え済み。それでも収まらない極端なケースの保険として
+     ボタン内テキストはtruncateで省略(min-w-0/truncateはコンポーネント側)。
+     汎用ルール(直下の子はmin-content未満に縮まない)は期間には逆効果なので、
+     widget自体と期間行の両方で縮小を許可してバー幅に収める */
+  [data-bar="period"] .dl-bar-widget, .dl-bar-widget > .dl-period-row { min-width: 0 !important; }
+  .dl-period-row { flex-wrap: nowrap !important; gap: 6px !important; }
+  .dl-date-btn { flex: 0 1 auto; min-width: 0 !important; padding-left: 8px !important; padding-right: 8px !important; }
+  /* カレンダーアイコンはバー自体のラベルアイコンと重複するので、狭幅では省いて
+     日付テキストの取り分を増やす(横並び2列を保つための優先順位) */
+  .dl-date-btn svg { display: none !important; }
   /* バー同士の間隔も詰める(条件を何本も立てると縦が伸びるため) */
   [data-bars-list] { gap: 11px !important; }
   .dl-sup { display: none !important; }
