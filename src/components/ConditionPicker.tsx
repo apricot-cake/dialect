@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { Search } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
@@ -105,6 +105,10 @@ export function ConditionPicker({
   const [hover, setHover] = useState<ConceptId | null>(null)
   const [queryText, setQueryText] = useState('')
   const [categoryId, setCategoryId] = useState<CategoryId | null>(null)
+  // スクロール量が閾値を超えたら「最上部へ戻る」ピルを出す。スクロール本体は
+  // .dl-modal-scroll なので、その要素の scrollTop を直接見る
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [scrolled, setScrolled] = useState(false)
   // 閉じたら検索・カテゴリ・ホバーをリセット(次に開いたとき素の状態に戻す)。
   // 条件追加はプログラム的に閉じる(setPickerOpen(false))ため Dialog の onOpenChange
   // では拾えない。open の変化を直接見て確実にリセットする
@@ -113,6 +117,7 @@ export function ConditionPicker({
       setHover(null)
       setQueryText('')
       setCategoryId(null)
+      setScrolled(false)
     }
   }, [open])
   // ラベル・ヘルプ・値ラベルは言語依存なので、言語が変わったら索引を作り直す
@@ -128,6 +133,13 @@ export function ConditionPicker({
 
   const q = queryText.trim()
   const searching = q !== ''
+
+  // 検索中はフィルタの2ブロックを畳んで、一致結果を検索ボックス直下へ引き上げる
+  // (狭幅では両ブロックが1画面を占め、結果が画面外に押し出されるため)。ただし
+  // 有効な絞り込みは隠さない=filterId(localStorage永続)/categoryId が効いたまま
+  // 見えなくなる「気づけない絞り込み」を防ぐ。解除もそのブロックからできる
+  const showSiteFilter = !searching || filterId !== null
+  const showCategoryFilter = !searching || categoryId !== null
 
   // 「関連する条件」= 追加済み条件と同じ意図の家族で、まだ足していないメンバー。
   // 純粋な閲覧中(検索なし・カテゴリなし)だけ出す。姉妹はサイトフィルタで絞らない
@@ -165,6 +177,13 @@ export function ConditionPicker({
   }
   // fuzzy 段でしか当たらなかったとき(表記ゆれ・タイポ)は「もしかして」として弱く見せる
   const fuzzyMode = searchTier === 'fuzzy'
+
+  // 検索・絞り込みでリストが短くなると scrollTop は自動でクランプされるので、
+  // 行数が変わったらピルの表示要否を測り直す(スクロールイベントに頼らず追従)
+  useEffect(() => {
+    const el = scrollRef.current
+    setScrolled(!!el && el.scrollTop > 220)
+  }, [rows.length])
 
   // 本文リストと関連セクションで共有する1行(アイコン+ラベル+ヘルプ+対応バッジ+チェック)
   const renderRow = (def: ConceptDef, dimmed = false) => {
@@ -205,7 +224,7 @@ export function ConditionPicker({
            行の地色へのグラデーションで説明文の裾を隠して溶け込ませる */}
         {hover === def.id && (
           <span
-            className="absolute inset-y-0 flex items-center"
+            className="dl-pick-support absolute inset-y-0 flex items-center"
             style={{
               right: 41,
               paddingLeft: 22,
@@ -224,9 +243,15 @@ export function ConditionPicker({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className="dl-scrim fixed inset-0 z-[60]" />
-        <Dialog.Popup className="dl-sheet fixed top-1/2 left-1/2 z-[61] flex max-h-[84vh] w-[min(760px,94vw)] flex-col overflow-hidden rounded-[18px] bg-card shadow-[0_24px_70px_oklch(0_0_0_/_0.32)] outline-none">
-          <div className="dl-modal-scroll mx-auto flex min-h-0 w-full max-w-[860px] flex-1 flex-col overflow-y-auto">
-            {/* スティッキーなガラスヘッダー(タイトル+サイトフィルタ) */}
+        <Dialog.Popup className="dl-sheet fixed top-1/2 left-1/2 z-[61] flex max-h-[88vh] w-[min(900px,94vw)] flex-col overflow-hidden rounded-[18px] bg-card shadow-[0_24px_70px_oklch(0_0_0_/_0.32)] outline-none">
+          <div
+            ref={scrollRef}
+            onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 220)}
+            className="dl-modal-scroll mx-auto flex min-h-0 w-full flex-1 flex-col overflow-y-auto"
+          >
+            {/* スティッキーなガラスヘッダー(タイトル+検索ボックスのみ)。サイトフィルタと
+               種類チップは常時見せる必要がない(一度絞ったら用済み)ため通常フローに置き、
+               リスト閲覧中はスクロールで流してモーダル全高をリストに明け渡す */}
             <div
               className="sticky top-0 z-[5]"
               style={{
@@ -284,59 +309,64 @@ export function ConditionPicker({
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
-                <span
-                  data-tip={t('builder.filter.help')}
-                  className="cursor-help self-start text-[11.5px] font-medium text-muted"
+            </div>
+            {/* サイトフィルタ(スティッキーではない=リストと一緒にスクロールで流れる) */}
+            {showSiteFilter && (
+            <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
+              <span
+                data-tip={t('builder.filter.help')}
+                className="cursor-help self-start text-[11.5px] font-medium text-muted"
+              >
+                {t('builder.filter.label')}
+              </span>
+              <div className="flex flex-wrap items-center gap-[9px]">
+                <button
+                  type="button"
+                  className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                  style={activeChipStyle(filterId === null)}
+                  onClick={() => onSetFilter(null)}
                 >
-                  {t('builder.filter.label')}
-                </span>
-                <div className="flex flex-wrap items-center gap-[9px]">
+                  {t('builder.filter.all')}
+                </button>
+                {PLATFORMS.map((p) => (
                   <button
+                    key={p.id}
                     type="button"
-                    className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                    style={activeChipStyle(filterId === null)}
-                    onClick={() => onSetFilter(null)}
+                    data-noscale
+                    data-tip={p.name}
+                    aria-pressed={filterId === p.id}
+                    className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
+                    style={activeChipStyle(filterId === p.id)}
+                    onClick={() => onSetFilter(filterId === p.id ? null : p.id)}
                   >
-                    {t('builder.filter.all')}
+                    <PlatformBadge platform={p} dark={dark} size={17} />
                   </button>
-                  {PLATFORMS.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      data-noscale
-                      data-tip={p.name}
-                      aria-pressed={filterId === p.id}
-                      className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
-                      style={activeChipStyle(filterId === p.id)}
-                      onClick={() => onSetFilter(filterId === p.id ? null : p.id)}
-                    >
-                      <PlatformBadge platform={p} dark={dark} size={17} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {/* 条件の種類でしぼるチップ(サイトフィルタとは別軸・非永続) */}
-              <div className="flex flex-col gap-2.5 px-[26px] pb-4">
-                <span className="self-start text-[11.5px] font-medium text-muted">
-                  {t('picker.category.label')}
-                </span>
-                <div className="flex flex-wrap items-center gap-[9px]">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      aria-pressed={categoryId === c.id}
-                      className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                      style={activeChipStyle(categoryId === c.id)}
-                      onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}
-                    >
-                      {t(c.labelKey)}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
+            )}
+            {/* 条件の種類でしぼるチップ(サイトフィルタとは別軸・非永続) */}
+            {showCategoryFilter && (
+            <div className="flex flex-col gap-2.5 px-[26px] pb-4">
+              <span className="self-start text-[11.5px] font-medium text-muted">
+                {t('picker.category.label')}
+              </span>
+              <div className="flex flex-wrap items-center gap-[9px]">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    aria-pressed={categoryId === c.id}
+                    className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                    style={activeChipStyle(categoryId === c.id)}
+                    onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}
+                  >
+                    {t(c.labelKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            )}
 
             {/* 関連する条件＋条件リスト(検索中はスコア順、それ以外は対応サイト数の多い順) */}
             <div className="px-[22px] pt-3.5 pb-[26px]">
@@ -387,6 +417,27 @@ export function ConditionPicker({
               {rows.map((def) => renderRow(def, fuzzyMode))}
             </div>
           </div>
+          {/* スクロールで下へ潜ったときだけ出す「最上部へ戻る」ピル。スクロール本体の
+             外(Popup直下)に絶対配置し、下端に浮かせたまま流れないようにする */}
+          {scrolled && (
+            <div
+              className="pointer-events-none absolute right-0 bottom-4 left-0 z-10 flex justify-center"
+              style={{ animation: 'dl-fade 160ms ease both' }}
+            >
+              <button
+                type="button"
+                aria-label={t('picker.scrollTop')}
+                title={t('picker.scrollTop')}
+                className="pointer-events-auto inline-flex h-10 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-4 pl-3 text-[12.5px] font-semibold text-muted shadow-[0_3px_14px_oklch(0_0_0_/_0.11)]"
+                onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" style={{ animation: 'dl-bob-up 1.5s ease-in-out infinite' }}>
+                  <path d="m18 15-6-6-6 6" />
+                </svg>
+                {t('picker.scrollTop')}
+              </button>
+            </div>
+          )}
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>

@@ -343,6 +343,7 @@ export const ja = {
   'support.full': '完全対応',
   'support.partial': '一部対応',
   'picker.title': '条件を追加',
+  'picker.scrollTop': '最上部へ戻る',
   'picker.search.placeholder': '条件を検索（例: バズ、画質、宛先）',
   'picker.search.empty': '一致する条件がありません',
   'picker.search.didYouMean': 'もしかして',
