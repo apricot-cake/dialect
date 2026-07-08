@@ -139,7 +139,8 @@ export function ConditionBar({
 
   return (
     <>
-      {/* 削除ボタン(右30px)との対称スペーサー。狭幅では畳んで幅をバーに譲る */}
+      {/* 削除ボタン(右30px)との対称スペーサー。狭幅では畳んで幅をバーに譲る
+          (狭幅では×自体をバー内側へ移すため、外側の×とスペーサーを両方畳む) */}
       <div className="dl-bar-spacer w-[30px] shrink-0" />
       <div className="dl-bar">
         <Icon size={18} color="var(--faint)" className="shrink-0" />
@@ -166,13 +167,27 @@ export function ConditionBar({
             </span>
           )}
         </span>
-      </div>
-      <div className="flex w-[30px] shrink-0 items-center justify-center">
+        {/* 狭幅専用。×を外に逃がす余白が無いのでバー自身の右端に内包し、
+            残りの中身(=バーの見た目)が行の中で中央に来るようにする */}
         {onRemove && (
           <button
             type="button"
             aria-label={t('ui.removeCondition')}
-            className="inline-flex size-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
+            className="dl-remove-inner inline-flex size-[26px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
+            onClick={onRemove}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+      <div className="dl-remove-outer-slot flex w-[30px] shrink-0 items-center justify-center">
+        {onRemove && (
+          <button
+            type="button"
+            aria-label={t('ui.removeCondition')}
+            className="dl-remove-outer inline-flex size-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
             onClick={onRemove}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

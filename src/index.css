@@ -163,6 +163,8 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 18px oklch(0 0 0 / 0.04);
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* ×はPCでは外側(左スペーサーと対称)に置く。バー内側版は狭幅でだけ出す */
+.dl-remove-inner { display: none; }
 /* ホバー時は影で浮かせるだけにする。以前はここで scale(1.014) していたが、
    拡大された祖先の内側に描かれるツールチップ・対応ポップが分数倍で再ラスタライズ
    されて文字が滲むため、スケールはやめて影の変化だけで表現する */
@@ -264,6 +266,11 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   .dl-bar-label { font-size: 14px !important; }
   /* 削除ボタン(右30px)との対称用の左スペーサーは畳み、40px(320px幅の12%)をバーへ返す */
   .dl-bar-spacer { display: none !important; }
+  /* ×を外側の専用スロットからバー内側の右端へ移す。左右非対称(左スペーサー無し+
+     右に×だけの列)だとバー本体が中心からずれるため、外側の列ごと畳んでバーへ幅を
+     返し、×はバーの中身として一緒に中央寄せされるようにする */
+  .dl-remove-outer-slot { display: none !important; }
+  .dl-remove-inner { display: inline-flex !important; }
   /* placeholderは入力例なので、収まらない分は…で切って1行を守る */
   .dl-bar input::placeholder { text-overflow: ellipsis; }
   /* 入力欄(ウィジェット)は中身の最小幅より縮まない=縮めて文字を壊す代わりに、
