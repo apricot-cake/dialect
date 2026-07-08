@@ -25,7 +25,7 @@
 | 言語指定 | ◎ `lang:ja` | ◎ `lang:ja` | ✕(hl/glは不安定) | ✕(日本語サービス) |
 | メディア付きのみ | ◎ `filter:media`等 | ✕(q演算子なし。`media=true`パラメータは2026-06追加だがフィーチャーゲート中) | —(種別=動画はsp `EgIQAQ%3D%3D`) | ✕ |
 | リンク付き | ◎ `filter:links` | △ `domain:`で代用可 | ✕ | ✕ |
-| 最低いいね/RP数 | ○ `min_faves:`/`min_retweets:`(中〜高、公式フォームからは削除済) | ✕ | ✕ | ✕ |
+| 最低いいね/RP数 | ○ `min_faves:`/`min_retweets:`(中〜高、公式「高度な検索」フォームのエンゲージメント欄に実在。2026-07-08 GUI操作で再確認) | ✕ | ✕ | ✕ |
 | リプライ除外 | ◎ `-filter:replies` | ✕(`replies=none`はゲート中) | — | — |
 | 認証済みのみ | ○ `filter:blue_verified`(中) | ✕ | — | — |
 | ソート/タブ指定 | ◎ `f=`(top/live/media/user) | ○ `tab=`(latest/user/feed、未文書化) | ○ sp値(※ソートは2026-01にUI削除、URL直指定はまだ動作) | ◎ `sort=`(popular/hot/new、記事タブのみ) |
@@ -66,13 +66,13 @@ https://x.com/search?q=<URLエンコード済みクエリ>&f=live
 | 言語 | `lang:ja` | 高 | 短文の言語判定は不正確 |
 | メディア | `filter:media` / `filter:images` / `filter:native_video` / `filter:videos` | 高 | |
 | リンク | `filter:links` | 高 | メディアURLも含まれる |
-| 最低いいね/RP | `min_faves:N` / `min_retweets:N` / `min_replies:N` | 中〜高 | Web UIで動作継続中。公式フォームからは削除済=将来リスク高め |
+| 最低いいね/RP | `min_faves:N` / `min_retweets:N` / `min_replies:N` | 高 | 公式「高度な検索」フォームのエンゲージメント欄(返信/いいね/リポストの最小件数)に3つとも実在。2026-07-08 GUI操作で確認(x.com/search-advancedに入力→生成URLでmin_faves:/min_retweets:を確認) |
 | 認証済み | `filter:blue_verified` | 中 | 公式ドキュメントなし |
 | リプライ除外 | `-filter:replies` | 高 | `filter:replies`で逆も可 |
 
 ### 注意点
 
-- 演算子は全て非公式。特に`min_faves`系・`blue_verified`は削除リスク高め → スキーマに信頼度フラグを持たせ定期確認
+- 演算子は全て非公式。特に`blue_verified`(公式フォームから消滅済み)は削除リスク高め → スキーマに信頼度フラグを持たせ定期確認。`min_faves`/`min_retweets`/`min_replies`は公式フォームに実在すると2026-07-08に確認済み(下記追記参照)
 - 演算子は1クエリ約22〜23個が上限
 - シャドウバン中のアカウントは`from:`でも結果ゼロになりうる(結果空≠構文ミス)
 
@@ -655,3 +655,7 @@ URLで指定できる条件はすべて概念化する方針(対応1サイトで
 ### まとめ
 
 X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子を確認、はてなブックマークは漏れなし。採否は機能面の判断を要するため実装は保留し、[[dialect-backlog]] に一覧を追記してユーザー確認待ちとした。
+
+## X `min_faves:`/`min_retweets:`/`min_replies:` の要フォーム再確認(2026-07-08、GUI操作)
+
+2026-07-06に持ち越されていた宿題(「実在すればminLikes/minRepostsをfullへ格上げすべき」)を決着。`x.com/search-advanced` の「エンゲージメント」欄(返信の最小件数/いいねの最小件数/リポストの最小件数)に実際に値を入力して検索し、生成URLで3つとも確認: `min_faves:100`・`min_retweets:50`(min_repliesは2026-07-06に別途実測済み)。**旧記載「公式フォームからは削除済みの非公式演算子」は誤りと判明**(2026-07-07の既存サイト採取監査で「エンゲージメント3種は現行実装と一致」とすでに確認されていたが、support レベルとコード内コメントの追従が漏れていた)。対応: `src/core/platforms/x.ts` の minLikes/minReposts/minReplies を partial→full へ格上げ、誤ったコメントを修正。公式フォームから消滅済みなのは `filter:blue_verified`(認証済みトグル)のみ。

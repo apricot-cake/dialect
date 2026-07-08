@@ -13,12 +13,12 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 
 ## X(要ログイン)
 
-全演算子が非公式。特に min_faves 系と blue_verified は公式の検索フォームから削除済みで、削除リスクが最も高い。
+全演算子が非公式。min_faves/min_retweets/min_repliesは公式「高度な検索」フォームのエンゲージメント欄に実在(2026-07-08 GUI操作で確認)。blue_verifiedは公式フォームから削除済みで、削除リスクが最も高い。
 
 | 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
 |---|---|---|---|---|---|---|
-| 高 | `min_faves:` | 最低いいね数 | [x.com/search?q=台風 min_faves:500&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_faves%3A500&f=live) | 全結果が500いいね以上 | 2026-07-04 | ✅ |
-| 高 | `min_retweets:` | 最低リポスト数 | [x.com/search?q=台風 min_retweets:500&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_retweets%3A500&f=live) | 全結果が500リポスト以上 | 2026-07-04 | ✅ |
+| 高 | `min_faves:` | 最低いいね数 | [x.com/search?q=台風 min_faves:500&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_faves%3A500&f=live) | 全結果が500いいね以上。2026-07-08にx.com/search-advancedのGUI操作でも「いいねの最小件数」欄として実在を再確認 | 2026-07-08 | ✅ |
+| 高 | `min_retweets:` | 最低リポスト数 | [x.com/search?q=台風 min_retweets:500&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_retweets%3A500&f=live) | 全結果が500リポスト以上。2026-07-08にx.com/search-advancedのGUI操作でも「リポストの最小件数」欄として実在を再確認 | 2026-07-08 | ✅ |
 | 高 | `filter:blue_verified` | 認証済みアカウントだけ | [x.com/search?q=台風 filter:blue_verified&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20filter%3Ablue_verified&f=live) | 全結果が認証済み(青バッジ) | 2026-07-04 | ✅ |
 | 中 | `since:`/`until:` | 期間 | [x.com/search?q=台風 since:2026-06-01 until:2026-06-08&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20since%3A2026-06-01%20until%3A2026-06-08&f=live) | 全結果が期間内(untilの日は含まない。境界はUTC基準なのでJST表示だとuntil当日まで見える) | 2026-07-04 | ✅ |
 | 中 | `filter:media` | 画像・動画つきだけ | [x.com/search?q=台風 filter:media&f=live](https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20filter%3Amedia&f=live) | 全結果にメディアつき | 2026-07-04 | ✅ |

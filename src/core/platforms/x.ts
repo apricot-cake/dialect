@@ -5,8 +5,10 @@ import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
 // f=top(既定)はアルゴリズム選別で大半を隠すため、新しい順は f=live。
-// min_faves:/min_retweets:/filter:blue_verified は公式フォームから削除済みの
-// 非公式演算子だが、2026-07-02にWeb UIでの動作を実機確認済み。
+// min_faves:/min_retweets:/min_replies: は「高度な検索」フォームの
+// エンゲージメント欄(返信/いいね/リポストの最小件数)に実在する公式演算子と
+// 2026-07-08にGUI操作で確認済み(x.com/search-advancedで入力→生成URLを確認)。
+// filter:blue_verified(認証済みトグル)は同フォームから消滅済みで非公式のまま。
 // メンション検索(「次のアカウントへの@ツイート」欄)は独自演算子ではなく、
 // (@user) というカッコ付きの生テキストをクエリに混ぜる形。2026-07-07にx.com/search-advanced
 // をGUI操作で実測: 1件=`(@user)`、複数件=`(@user1 OR @user2)`(OR結合)。
@@ -91,9 +93,9 @@ export const x: PlatformDef = {
     linksOnly: { level: 'full' },
     verifiedOnly: { level: 'partial' },
     excludeReplies: { level: 'full' },
-    minLikes: { level: 'partial' },
-    minReposts: { level: 'partial' },
-    minReplies: { level: 'partial' },
+    minLikes: { level: 'full' },
+    minReposts: { level: 'full' },
+    minReplies: { level: 'full' },
     language: { level: 'full' },
     sortOrder: { level: 'full' },
   },
