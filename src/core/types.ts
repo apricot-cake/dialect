@@ -46,6 +46,8 @@ export type ConceptId =
   | 'excludeAi'
   | 'nicoKind'
   | 'paidOnly'
+  | 'fantiaCategory'
+  | 'fantiaAudience'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -97,6 +99,29 @@ export type NicoGenre = '' | (typeof NICO_GENRES)[number]
  * channel=公式チャンネル動画。2026-07-09に検索フィルタモーダルをGUI操作で採取
  */
 export type NicoKind = '' | 'user' | 'channel'
+
+/**
+ * Fantiaの投稿カテゴリ(category=)。Fantia専用。空=指定なし。
+ * 詳細検索パネルの「カテゴリー」チップ群(イラスト・漫画・その他/実写の2グループ、
+ * 計24種)から値を採取(2026-07-09にログイン済みGUI操作で実測)。サイト自体は
+ * category=illust,cosplay のようにカンマ区切りで複数選択できるが、Dialectは他の
+ * 種類系の概念(ジャンル・作品の種類等)と同じ単一選択で対応する
+ */
+export const FANTIA_CATEGORIES = [
+  'illust', 'comic', 'vtuber', 'voice', 'voiceactor', '3d', '2d_anime', 'game',
+  'music', 'novel', 'doll', 'art', 'program', 'handmade', 'history', 'railroad',
+  'shop', 'other', 'fortune', 'cosplay', 'idol', 'youtuber', 'photo_movie', 'other_real',
+] as const
+
+export type FantiaCategory = '' | (typeof FANTIA_CATEGORIES)[number]
+
+/**
+ * Fantiaの対象読者区分(brand_type=)。Fantia専用。空=指定なし(常に3=全年齢を明示送信)、
+ * male=男性向け(R18、brand_type=0)、female=女性向け(R18、brand_type=2)。
+ * 2026-07-09にGUI操作で実測: このパラメータを省略すると、その時点のアカウント/セッションの
+ * 直近の閲覧設定が使われ全年齢に固定されないため、Dialectは常に明示的に送る
+ */
+export type FantiaAudience = '' | 'male' | 'female'
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
@@ -224,6 +249,10 @@ export interface QueryState {
   nicoKind: NicoKind
   /** note専用。有料記事だけに絞る(context=note_for_sale)。false=指定なし(すべての記事) */
   paidOnly: boolean
+  /** Fantia専用。投稿カテゴリ(category=)。空=指定なし */
+  fantiaCategory: FantiaCategory
+  /** Fantia専用。対象読者区分(brand_type=)。空=指定なし(常に全年齢を明示送信) */
+  fantiaAudience: FantiaAudience
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */
@@ -268,6 +297,7 @@ export type PlatformId =
   | 'pinterest'
   | 'fanbox'
   | 'bilibili'
+  | 'fantia'
 
 export interface PlatformDef {
   id: PlatformId

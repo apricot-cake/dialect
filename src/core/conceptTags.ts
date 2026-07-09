@@ -224,6 +224,8 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   genre: ['genre', 'format'],
   nicoKind: ['format', 'person'],
   paidOnly: ['format'],
+  fantiaCategory: ['genre', 'format'],
+  fantiaAudience: ['age'],
   resultType: ['format', 'media'],
   sortOrder: ['order', 'time', 'popular'],
   pixivPopular: ['popular', 'reaction'],
@@ -321,10 +323,12 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   genre: 'media',
   nicoKind: 'media',
   paidOnly: 'media',
+  fantiaCategory: 'media',
   period: 'time',
   sortOrder: 'time',
   ageRating: 'age',
   excludeAi: 'age',
+  fantiaAudience: 'age',
   language: 'lang',
 }
 

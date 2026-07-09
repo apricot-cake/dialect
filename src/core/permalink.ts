@@ -1,5 +1,5 @@
-import type { NicoGenre, PostLanguage, QueryState } from './types'
-import { NICO_GENRES, POST_LANGUAGE_CODES } from './types'
+import type { FantiaCategory, NicoGenre, PostLanguage, QueryState } from './types'
+import { FANTIA_CATEGORIES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -66,6 +66,8 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.genre) params.set('genre', state.genre)
   if (state.nicoKind) params.set('nkind', state.nicoKind)
   if (state.paidOnly) params.set('paid', '1')
+  if (state.fantiaCategory) params.set('fcat', state.fantiaCategory)
+  if (state.fantiaAudience) params.set('faud', state.fantiaAudience)
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
@@ -157,6 +159,12 @@ function paramsToState(params: URLSearchParams): QueryState {
   const nkind = params.get('nkind')
   if (nkind === 'user' || nkind === 'channel') state.nicoKind = nkind
   state.paidOnly = params.get('paid') === '1'
+  const fcat = params.get('fcat')
+  if (fcat && (FANTIA_CATEGORIES as readonly string[]).includes(fcat)) {
+    state.fantiaCategory = fcat as FantiaCategory
+  }
+  const faud = params.get('faud')
+  if (faud === 'male' || faud === 'female') state.fantiaAudience = faud
   const rt = params.get('rt')
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||

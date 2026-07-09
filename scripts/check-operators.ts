@@ -57,6 +57,7 @@ const CHECKLIST_HEADING: Record<PlatformId, string> = {
   pinterest: 'Pinterest',
   fanbox: 'FANBOX',
   bilibili: 'bilibili',
+  fantia: 'Fantia',
 }
 
 /** `## 見出し ... 次の ## まで` を節に切り、見出し断片ごとに本文を返す */
@@ -289,6 +290,15 @@ const PROBES: Probe[] = [
   { platform: 'bilibili', concept: 'resultType', label: '探す=生放送', state: { resultType: 'live' }, token: '/live' },
   { platform: 'bilibili', concept: 'resultType', label: '探す=コラム記事', state: { resultType: 'article' }, token: '/article' },
   { platform: 'bilibili', concept: 'resultType', label: '探す=チャンネル', state: { resultType: 'channel' }, token: '/upuser' },
+
+  // ---- Fantia ----
+  { platform: 'fantia', concept: 'titleOnly', label: 'タイトルと本文', state: { titleOnly: false }, token: 'keyword_type=all' },
+  { platform: 'fantia', concept: 'titleOnly', label: 'タイトルのみ', state: { titleOnly: true }, token: 'keyword_type=title_only' },
+  { platform: 'fantia', concept: 'fantiaCategory', label: 'カテゴリー', state: { fantiaCategory: 'illust' }, token: 'category=illust' },
+  { platform: 'fantia', concept: 'fantiaAudience', label: '対象読者(男性向け)', state: { fantiaAudience: 'male' }, token: 'brand_type=0' },
+  { platform: 'fantia', concept: 'fantiaAudience', label: '対象読者(女性向け)', state: { fantiaAudience: 'female' }, token: 'brand_type=2' },
+  { platform: 'fantia', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'order=newer' },
+  { platform: 'fantia', concept: 'sortOrder', label: 'お気に入り数順', state: { sort: 'top' }, token: 'order=popular' },
 ]
 
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------
