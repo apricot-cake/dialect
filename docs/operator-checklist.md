@@ -10,6 +10,7 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 - **優先度**: 表は上ほど壊れやすい(非公式・公式フォーム削除済み・未文書化)。時間がなければ「優先」欄が「高」の行だけでも確認する
 - 検証URLのキーワード(台風・天気など)は時事性があるため、結果が少なすぎる場合は適当な頻出語に読み替えてよい
 - **確認手段の使い分け**: はてブ・ff5ch・find.5ch.io・あにまんはサーバーレンダリングのHTML/JSONなので `curl`+grep でも確定判定できる(速い)。X・Misskey・Instagram・Bluesky・Twitch・YouTube・pixiv・note・niconico はクライアント描画のSPA(要ログインを含む)で、curlはガワしか取れないためブラウザで開く
+- **出所と監査候補**: 各サイトの所見が doc / URL叩き / GUI操作 のどれで得られたか、まだフォーム/フィルタのGUI採取が済んでいない「監査候補」がどれかは [operator-research.md](operator-research.md) の「出所タグ台帳」を参照。現時点の監査候補は Bluesky・note・niconico動画(並び順/期間/長さ)の3件
 
 ## X(要ログイン)
 
