@@ -175,7 +175,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   const sort = params.get('sort')
   if (
     sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments' ||
-    sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'auto'
+    sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'commentDate' ||
+    sort === 'auto'
   ) {
     state.sort = sort
   } else if (version < 4) {

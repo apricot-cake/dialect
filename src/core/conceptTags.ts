@@ -248,6 +248,7 @@ export const VALUE_TAGS: Record<string, TagId[]> = {
   'sortOrder:danmaku': ['popular', 'reaction'],
   'sortOrder:favorites': ['popular', 'reaction'],
   'sortOrder:likes': ['popular', 'reaction'],
+  'sortOrder:commentDate': ['time', 'reaction'],
   'resultType:short': ['size', 'media'],
   'resultType:video': ['media'],
   'workType:manga': ['media'],

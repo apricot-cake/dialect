@@ -133,10 +133,21 @@ export type ResultType =
  * Reddit(注目順=sort=hot)。comments は Reddit専用(sort=comments、2026-07-07にGUI操作で実測)。
  * danmaku=弾幕数順、favorites=収蔵(お気に入り登録)数順、likes=いいね数順は
  * いずれもbilibili専用(2026-07-08にGUI操作で実測。動画検索はorder=dm/stow、
- * コラム検索はorder=attention)。対応しないサイトでは dynamicSupport(limitSort)で
+ * コラム検索はorder=attention)。commentDate=最新コメント順はniconico専用
+ * (sort=lastCommentTime、2026-07-09にGUI操作で実測。コメント数順(comments概念とは別)とは
+ * 異なり「直近にコメントが付いた順」)。対応しないサイトでは dynamicSupport(limitSort)で
  * non-対応に落とす
  */
-export type SortOrder = 'new' | 'top' | 'hot' | 'comments' | 'auto' | 'danmaku' | 'favorites' | 'likes'
+export type SortOrder =
+  | 'new'
+  | 'top'
+  | 'hot'
+  | 'comments'
+  | 'auto'
+  | 'danmaku'
+  | 'favorites'
+  | 'likes'
+  | 'commentDate'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {

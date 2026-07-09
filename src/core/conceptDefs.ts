@@ -222,4 +222,5 @@ export const SORT_OPTIONS: Array<{ value: QueryState['sort']; labelKey: MessageK
   { value: 'danmaku', labelKey: 'concept.sortOrder.danmaku' },
   { value: 'favorites', labelKey: 'concept.sortOrder.favorites' },
   { value: 'likes', labelKey: 'concept.sortOrder.likes' },
+  { value: 'commentDate', labelKey: 'concept.sortOrder.commentDate' },
 ]

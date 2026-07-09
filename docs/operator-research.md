@@ -706,7 +706,7 @@ X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子
 
 ### niconico動画(nicovideo.jp、GUI操作・ログイン済み)
 
-**並び順ドロップダウン(全9値をGUI操作で採取)**。現行サイトが生成する並び順パラメータは `sort=<名前>&order=desc` 形式:
+**並び順ドロップダウン(全8値をGUI操作で採取)**。現行サイトが生成する並び順パラメータは `sort=<名前>&order=desc` 形式:
 
 | ドロップダウン表示 | 生成パラメータ | Dialect概念 |
 |---|---|---|
@@ -714,11 +714,12 @@ X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子
 | あなたへのおすすめ | (パーソナライズ) | 非対応(アカウント履歴依存で共有リンク化に不適) |
 | 投稿日時 | `sort=registeredAt&order=desc` | new |
 | 再生数 | `sort=viewCount&order=desc` | top(=bilibili top=click/最多播放と揃う「再生数=人気」) |
-| コメント日時 | (未採取・要再採取) | (概念なし) |
+| コメント日時 | `sort=lastCommentTime&order=desc` | **commentDate(新規)**。直近にコメントが付いた順(コメント数=commentCountとは別概念)。2026-07-09にドロップダウンを実クリックして生成URLで確認 |
 | いいね！数 | `sort=likeCount&order=desc` | likes |
 | コメント数 | `sort=commentCount&order=desc` | comments |
 | マイリスト登録数 | `sort=mylistCount&order=desc` | favorites |
-| 再生時間 | (未採取・要再採取) | (概念なし) |
+
+**「再生時間」は並び順ドロップダウンに存在しない(2026-07-09再点検で訂正)**: 当初この節は「再生時間ソートが未採取」と記載していたが、実機でドロップダウンを開き直すと選択肢は上表の8個のみで、再生時間に相当する並び順は無い。「再生時間」という名前が付くのは下記の**検索フィルタモーダル**(`l_range=`)の方で、これは並び順ではなく既存のvideoLength概念(5分以内/20分以上)としてすでに実装済み。以前の記載は両者を混同していた。
 
 - **旧コードは今も有効なエイリアス**: `sort=h` を開くと並び順ラベルが「ニコニコで人気」・人気順の結果、`sort=f&order=d` を開くと「投稿日時」・新着結果になることを確認。現行実装の new/top は壊れていない。ただしサイトが今生成するのは modern 形式なので実装も modern へ揃える([[feedback-migration-full-consistency]]の「実プロダクトがどうなっているかで判定」)。
 - **URLに並び順が無いと状態が永続化される**: `/search/{q}`(パラメータ無し)を開くと直前に選んだ並び順(例:マイリスト登録数)が保持された=既定ソートはサイト/アカウント任せという既存コメントの裏付け。実装が常に sort を明示するのは正しい。
@@ -750,4 +751,4 @@ X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子
 2. **niconico 動画種別**(`kind=user`/`channel`): 新概念。
 3. **note 有料のみ**(`context=note_for_sale`): 新概念。
 4. **Bluesky 言語**: `lang:` 演算子 → `&lang=` パラメータ。
-5. **残(未採取)**: niconicoの コメント日時 / 再生時間 ソートの正確なパラメータ。概念不在のため優先度低、実装時に再採取。
+5. **niconico コメント日時**(`sort=lastCommentTime`): 2026-07-09に並び順ドロップダウンを再度GUI操作で開き `sort=lastCommentTime&order=desc` を採取、新概念commentDateとして実装完了(「再生時間ソート」は上記の通り並び順に存在しないと判明したため対象外)。

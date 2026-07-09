@@ -191,6 +191,7 @@ export const ja = {
   'concept.sortOrder.danmaku': '弾幕数順',
   'concept.sortOrder.favorites': '収蔵数順',
   'concept.sortOrder.likes': 'いいね順',
+  'concept.sortOrder.commentDate': 'コメント日時順',
   'concept.sortOrder.auto': '指定なし',
   'concept.sortOrder.help':
     '検索結果の並び順を指定します。「指定なし」は、そのサイトの標準の並び（多くは関連度ベース）のまま開きます',

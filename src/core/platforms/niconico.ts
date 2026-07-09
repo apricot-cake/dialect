@@ -18,6 +18,7 @@ const SORT_PARAM: Partial<Record<SortOrder, string>> = {
   comments: 'commentCount', // コメント数
   likes: 'likeCount', // いいね！数
   favorites: 'mylistCount', // マイリスト登録数
+  commentDate: 'lastCommentTime', // コメント日時(直近にコメントが付いた順、2026-07-09 GUI採取)
 }
 
 function buildUrl(state: QueryState): string | null {
@@ -84,7 +85,11 @@ export const niconico: PlatformDef = {
   // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
   // short/long は l_range=1/2 で実際に送れるので partial のまま
   dynamicSupport: (state) => ({
-    ...limitSort(state.sort, ['new', 'top', 'comments', 'likes', 'favorites'], 'note.sortOrder.otherSite'),
+    ...limitSort(
+      state.sort,
+      ['new', 'top', 'comments', 'likes', 'favorites', 'commentDate'],
+      'note.sortOrder.otherSite',
+    ),
     ...(state.videoLength === 'medium'
       ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
       : {}),

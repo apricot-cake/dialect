@@ -189,6 +189,7 @@ export const en = {
   'concept.sortOrder.danmaku': 'Danmaku count',
   'concept.sortOrder.favorites': 'Favorite count',
   'concept.sortOrder.likes': 'Like count',
+  'concept.sortOrder.commentDate': 'Latest comment',
   'concept.sortOrder.auto': 'Default',
   'concept.sortOrder.help':
     "Sets the result order. \"Default\" keeps each site's own ordering (usually relevance-based).",
