@@ -127,7 +127,7 @@ const PROBES: Probe[] = [
   { platform: 'bluesky', concept: 'domain', label: 'リンク先', state: { domain: 'nhk.or.jp' }, token: 'domain:' },
   { platform: 'bluesky', concept: 'period', label: '期間(以降)', state: { since: '2026-06-01' }, token: 'since:' },
   { platform: 'bluesky', concept: 'period', label: '期間(以前)', state: { until: '2026-06-08' }, token: 'until:' },
-  { platform: 'bluesky', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'lang:' },
+  { platform: 'bluesky', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'lang=ja' },
   { platform: 'bluesky', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'tab=latest' },
 
   // ---- YouTube (sp= は protobuf base64。チェックリストの sp 値の本体を照合キーにする) ----
@@ -160,8 +160,11 @@ const PROBES: Probe[] = [
   { platform: 'note', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('読書記録'), token: '/hashtag/' },
 
   // ---- niconico ----
-  { platform: 'niconico', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=f' },
-  { platform: 'niconico', concept: 'sortOrder', label: '人気順', state: { sort: 'top' }, token: 'sort=h' },
+  { platform: 'niconico', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=registeredAt' },
+  { platform: 'niconico', concept: 'sortOrder', label: '人気順(再生数)', state: { sort: 'top' }, token: 'sort=viewCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: 'コメント数順', state: { sort: 'comments' }, token: 'sort=commentCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: 'いいね数順', state: { sort: 'likes' }, token: 'sort=likeCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: 'マイリスト数順', state: { sort: 'favorites' }, token: 'sort=mylistCount' },
   { platform: 'niconico', concept: 'period', label: '期間(開始)', state: { since: '2026-06-01' }, token: 'start=' },
   { platform: 'niconico', concept: 'period', label: '期間(終了)', state: { until: '2026-06-30' }, token: 'end=' },
   { platform: 'niconico', concept: 'videoLength', label: '長さ(短)', state: { videoLength: 'short' }, token: 'l_range=1' },

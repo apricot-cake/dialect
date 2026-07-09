@@ -21,11 +21,14 @@ function buildUrl(state: QueryState): string | null {
   parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
   if (state.since) parts.push(`since:${state.since}`)
   if (state.until) parts.push(`until:${state.until}`)
-  if (state.language) parts.push(`lang:${state.language}`)
 
   // tab=latest=新しい順。人気順・指定なしは既定のTopタブのまま開く
   const tab = state.sort === 'new' ? '&tab=latest' : ''
-  return `https://bsky.app/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
+  // 言語は &lang= のURLパラメータで送る(2026-07-09 GUI採取: 検索ページの言語ドロップダウンが
+  // 生成する形。lang: 演算子もAPIレベルでは効くが、UIは lang: をクエリ文字扱いする=実プロダクトの
+  // 生成形に揃える)。クエリ本体とは別枠なので他演算子と自由に合成できる
+  const lang = state.language ? `&lang=${state.language}` : ''
+  return `https://bsky.app/search?q=${encodeURIComponent(parts.join(' '))}${tab}${lang}`
 }
 
 export const bluesky: PlatformDef = {

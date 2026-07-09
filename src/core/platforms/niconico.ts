@@ -1,24 +1,36 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { PlatformDef, QueryState, SortOrder } from '../types'
 import { limitSort } from '../types'
 import { minusExcludes, quotedTerms, stripHash, words } from '../text'
 
-// 出典: docs/operator-research.md(2026-07-02追加調査、27パターン実測済み)
-// ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/新着順が全てURLで効く。
-// デフォルトソートはABテストで変わり得るため sort は常に明示する。
+// 出典: docs/operator-research.md(2026-07-02追加調査27パターン+2026-07-09ログイン済みGUI操作)
+// ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/並び順が全てURLで効く。
+// デフォルトソートはABテスト+アカウント永続で変わり得るため sort は常に明示する。
 // タグ単独なら /tag/(タグ一致検索)、ことばと併用時はキーワード検索に畳み込む。
+//
+// 並び順は 2026-07-09 に検索フォームのドロップダウンをGUI操作で採取した現行形式
+// sort=<名前>&order=desc に揃える(旧 sort=f&order=d / sort=h も有効なエイリアスだが、
+// 実プロダクトが今生成するのはこの形)。top=再生数(viewCount)は bilibili の
+// top=click(最多播放)と同じ「動画サイトの人気=再生数」の扱い。ニコニコで人気
+// (hotLikeAndMylist)はサイト既定なので指定なし(auto)が事実上これに当たる。
+const SORT_PARAM: Partial<Record<SortOrder, string>> = {
+  new: 'registeredAt', // 投稿日時
+  top: 'viewCount', // 再生数
+  comments: 'commentCount', // コメント数
+  likes: 'likeCount', // いいね！数
+  favorites: 'mylistCount', // マイリスト登録数
+}
+
 function buildUrl(state: QueryState): string | null {
   const textParts = quotedTerms(state)
   const tagNames = words(state.hashtag).map(stripHash)
   const excludes = minusExcludes(state)
 
   const params = new URLSearchParams()
-  // sort=f&order=d=投稿が新しい順、sort=h=人気(注目度)順。
-  // 指定なしは何も送らない(デフォルトソートはABテスト依存でサイト任せになる)
-  if (state.sort === 'new') {
-    params.set('sort', 'f')
-    params.set('order', 'd')
-  } else if (state.sort === 'top') {
-    params.set('sort', 'h')
+  // 指定なし(auto)は何も送らない(既定の並び=ニコニコで人気/永続状態にサイト任せ)
+  const sortVal = SORT_PARAM[state.sort]
+  if (sortVal) {
+    params.set('sort', sortVal)
+    params.set('order', 'desc')
   }
   if (state.since) params.set('start', state.since)
   if (state.until) params.set('end', state.until)
@@ -69,7 +81,7 @@ export const niconico: PlatformDef = {
   // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
   // short/long は l_range=1/2 で実際に送れるので partial のまま
   dynamicSupport: (state) => ({
-    ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+    ...limitSort(state.sort, ['new', 'top', 'comments', 'likes', 'favorites'], 'note.sortOrder.otherSite'),
     ...(state.videoLength === 'medium'
       ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
       : {}),
