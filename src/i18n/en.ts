@@ -215,6 +215,7 @@ export const en = {
   'concept.resultType.pgc': 'Movies & shows',
   'concept.resultType.live': 'Live streams',
   'concept.resultType.article': 'Articles',
+  'concept.resultType.series': 'Series',
   'concept.resultType.help':
     'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
@@ -271,8 +272,12 @@ export const en = {
     'Couldn’t read the List from that input. Paste the URL of the List’s page.',
   'note.niconico.videoLength':
     '“Medium (4–20 min)” cannot be set and is ignored.',
+  'note.niconico.resultTypeConflict':
+    'This filter has no effect on series, mylist, or user search.',
+  'note.niconico.hashtagAsKeyword':
+    'There’s no dedicated tag page for this result type, so it’s searched as a plain keyword.',
   'note.bluesky.fromUser': 'The username is in the form “user.bsky.social”.',
-  'note.bluesky.mediaOnly': 'Bluesky has no way to filter by image/video.',
+  'note.bluesky.peopleConflict': 'This filter has no effect on account search.',
   'note.youtube.exactPhrase':
     'Searches for the exact phrase, but many results may have the words scattered apart.',
   'note.youtube.exclude': 'Words you exclude may still appear in the results.',
@@ -295,6 +300,7 @@ export const en = {
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
   'note.note.paidOnly.tagPage': "A single tag's tag page can't be limited to paid articles.",
+  'note.note.resultTypeConflict': 'This filter has no effect on creator or magazine search.',
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',

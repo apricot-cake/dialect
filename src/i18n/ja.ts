@@ -217,6 +217,7 @@ export const ja = {
   'concept.resultType.pgc': '映画・ドラマ',
   'concept.resultType.live': '生放送',
   'concept.resultType.article': 'コラム記事',
+  'concept.resultType.series': 'シリーズ',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -266,8 +267,10 @@ export const ja = {
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
   'note.x.listInvalid': 'リストを読み取れませんでした。リストのページのURLを貼り付けてください',
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
+  'note.niconico.resultTypeConflict': 'シリーズ・マイリスト・ユーザー検索では、この絞り込みは使えません',
+  'note.niconico.hashtagAsKeyword': 'タグ専用ページが無いため、ふつうのキーワードとして検索されます',
   'note.bluesky.fromUser': 'ユーザー名は「user.bsky.social」の形式です',
-  'note.bluesky.mediaOnly': 'Bluesky には画像・動画で絞る機能がありません',
+  'note.bluesky.peopleConflict': 'アカウント検索では、この絞り込みは使えません',
   'note.youtube.exactPhrase': '完全一致で探しますが、言葉がバラバラに含まれる投稿も多く混ざります',
   'note.youtube.exclude': '除外した言葉を含む投稿が、結果に残ることがあります',
   'note.youtube.fromUser': 'チャンネル内検索ページを開きます',
@@ -285,6 +288,7 @@ export const ja = {
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
   'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
+  'note.note.resultTypeConflict': 'クリエイター・マガジン検索では、この絞り込みは使えません',
 
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',

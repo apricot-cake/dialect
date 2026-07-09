@@ -130,6 +130,8 @@ const PROBES: Probe[] = [
   { platform: 'bluesky', concept: 'period', label: '期間(以前)', state: { until: '2026-06-08' }, token: 'until:' },
   { platform: 'bluesky', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'lang=ja' },
   { platform: 'bluesky', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'tab=latest' },
+  { platform: 'bluesky', concept: 'mediaOnly', label: 'メディア', state: { mediaOnly: true }, token: 'media=true' },
+  { platform: 'bluesky', concept: 'resultType', label: '探す=プロフィール', state: { resultType: 'people' }, token: 'tab=user' },
 
   // ---- YouTube (sp= は protobuf base64。チェックリストの sp 値の本体を照合キーにする) ----
   { platform: 'youtube', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: 'intitle:' },
@@ -160,6 +162,8 @@ const PROBES: Probe[] = [
   { platform: 'note', concept: 'sortOrder', label: '急上昇', state: { sort: 'hot' }, token: 'sort=hot' },
   { platform: 'note', concept: 'paidOnly', label: '有料のみ', state: { paidOnly: true }, token: 'context=note_for_sale' },
   { platform: 'note', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('読書記録'), token: '/hashtag/' },
+  { platform: 'note', concept: 'resultType', label: '探す=クリエイター', state: { resultType: 'people' }, token: 'context=user' },
+  { platform: 'note', concept: 'resultType', label: '探す=マガジン', state: { resultType: 'series' }, token: 'context=magazine' },
 
   // ---- niconico ----
   { platform: 'niconico', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=registeredAt' },
@@ -175,6 +179,10 @@ const PROBES: Probe[] = [
   { platform: 'niconico', concept: 'genre', label: 'ジャンル', state: { genre: 'game' }, token: 'genre=' },
   { platform: 'niconico', concept: 'nicoKind', label: '動画種別(ユーザー)', state: { nicoKind: 'user' }, token: 'kind=user' },
   { platform: 'niconico', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('ゲーム'), token: '/tag/' },
+  { platform: 'niconico', concept: 'resultType', label: '探す=ショート', state: { resultType: 'short' }, token: '/search_shorts/' },
+  { platform: 'niconico', concept: 'resultType', label: '探す=シリーズ', state: { resultType: 'series' }, token: '/series_search/' },
+  { platform: 'niconico', concept: 'resultType', label: '探す=マイリスト', state: { resultType: 'playlist' }, token: '/mylist_search/' },
+  { platform: 'niconico', concept: 'resultType', label: '探す=ユーザー', state: { resultType: 'people' }, token: '/user_search/' },
 
   // ---- ニコニコ静画 ----
   { platform: 'seiga', concept: 'sortOrder', label: '新着順', state: { sort: 'new' }, token: 'sort=image_created' },

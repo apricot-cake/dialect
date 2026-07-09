@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
 
@@ -22,12 +22,29 @@ function isTagPath(state: QueryState): boolean {
   return tagNames.length === 1 && !stripAt(state.fromUser) && textCount === 0
 }
 
+// 検索結果タブ「記事/マガジン/クリエイター/メンバーシップ」のうち、クリエイター(探す=プロフィール)・
+// マガジン(探す=シリーズ。記事をまとめた企画という点でniconicoのシリーズと同種)は
+// context=user/magazine への切り替えで実現できる(2026-07-09 GUI操作で確認)。どちらも記事本文の
+// 検索とは別対象で、並び順チップ・from:演算子・タグページ分岐を持たない(GUI操作で確認)。
+// メンバーシップ(有料コミュニティ)は独自の対象で今回は未実装(実装コストの分割は許容する方針)
+const NOTE_RESULT_TYPE_CONTEXT: Partial<Record<QueryState['resultType'], string>> = {
+  people: 'user',
+  series: 'magazine',
+}
+
 function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
   // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
   const textParts = [...andTerms(state)]
   textParts.push(...exactPhrases(state))
   const tagNames = words(state.hashtag).map(stripHash)
+
+  const altContext = NOTE_RESULT_TYPE_CONTEXT[state.resultType]
+  if (altContext) {
+    const parts = [...textParts, ...tagNames]
+    if (parts.length === 0) return null
+    return `https://note.com/search?context=${altContext}&q=${encodeURIComponent(parts.join(' '))}`
+  }
 
   if (isTagPath(state)) {
     return `https://note.com/hashtag/${encodeURIComponent(tagNames[0])}`
@@ -42,6 +59,40 @@ function buildUrl(state: QueryState): string | null {
   // 有料のみ(paidOnly)は context を note_for_sale に切り替えて表現(2026-07-09 GUI採取)
   const context = state.paidOnly ? 'note_for_sale' : 'note'
   return `https://note.com/search?context=${context}&q=${encodeURIComponent(parts.join(' '))}${sort}`
+}
+
+// note が対応する値のみ(他サイト専用の値はここに含めない)
+const NOTE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set(['', 'people', 'series'])
+
+// クリエイター・マガジン検索では効かない演算子(2026-07-09 GUI操作で確認: 並び順チップ・
+// from:演算子・有料フィルタのいずれも存在しない)
+const NOTE_RESULT_TYPE_CONFLICT: ConceptSupport = {
+  level: 'none',
+  noteKey: 'note.note.resultTypeConflict',
+}
+
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
+  const resultTypeOverride: Partial<Record<ConceptId, ConceptSupport>> =
+    state.resultType && !NOTE_RESULT_TYPES.has(state.resultType)
+      ? { resultType: { level: 'none', noteKey: 'note.resultType.otherSite' } }
+      : {}
+  if (state.resultType === 'people' || state.resultType === 'series') {
+    return {
+      ...resultTypeOverride,
+      fromUser: NOTE_RESULT_TYPE_CONFLICT,
+      sortOrder: NOTE_RESULT_TYPE_CONFLICT,
+      paidOnly: NOTE_RESULT_TYPE_CONFLICT,
+    }
+  }
+  return {
+    ...resultTypeOverride,
+    // note に無い並び順(コメント数順など)を選んだとき「適用」に見せない
+    ...limitSort(state.sort, ['new', 'top', 'hot'], 'note.sortOrder.otherSite'),
+    // 単一タグのタグページには有料フィルタが無い。そのときは paidOnly を落とす
+    ...(state.paidOnly && isTagPath(state)
+      ? { paidOnly: { level: 'none', noteKey: 'note.note.paidOnly.tagPage' } }
+      : {}),
+  }
 }
 
 export const note: PlatformDef = {
@@ -59,16 +110,10 @@ export const note: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.note.hashtag' },
     period: { level: 'none', noteKey: 'note.note.period' },
     mediaOnly: { level: 'none', noteKey: 'note.note.mediaOnly' },
+    resultType: { level: 'full' },
     sortOrder: { level: 'full' },
     paidOnly: { level: 'full' },
   },
   buildUrl,
-  dynamicSupport: (state) => ({
-    // note に無い並び順(コメント数順など)を選んだとき「適用」に見せない
-    ...limitSort(state.sort, ['new', 'top', 'hot'], 'note.sortOrder.otherSite'),
-    // 単一タグのタグページには有料フィルタが無い。そのときは paidOnly を落とす
-    ...(state.paidOnly && isTagPath(state)
-      ? { paidOnly: { level: 'none', noteKey: 'note.note.paidOnly.tagPage' } }
-      : {}),
-  }),
+  dynamicSupport,
 }

@@ -158,6 +158,7 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'pgc', labelKey: 'concept.resultType.pgc' },
     { value: 'live', labelKey: 'concept.resultType.live' },
     { value: 'article', labelKey: 'concept.resultType.article' },
+    { value: 'series', labelKey: 'concept.resultType.series' },
   ],
   language: [
     { value: '', labelKey: 'concept.language.none' },

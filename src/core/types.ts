@@ -134,7 +134,10 @@ export type FantiaAudience = '' | 'male' | 'female'
  * プロフィール」の4択のうち「ボード」に対応。2026-07-08にGUI操作で実測、peopleはpinterestの
  * 「プロフィール」とも共用)。bangumi=アニメ番組、pgc=映画・ドラマなどの制作コンテンツ、
  * live=生放送中のルーム、article=コラム記事(いずれもbilibili専用。トップの「综合/视频/
- * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)
+ * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)。
+ * series=シリーズ(niconico専用。検索結果タブ「動画/ショート/シリーズ/マイリスト/
+ * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
+ * ユーザー」とも共用。2026-07-09にGUI操作で実測)
  */
 export type ResultType =
   | ''
@@ -152,6 +155,7 @@ export type ResultType =
   | 'pgc'
   | 'live'
   | 'article'
+  | 'series'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
