@@ -48,6 +48,7 @@ export type ConceptId =
   | 'paidOnly'
   | 'fantiaCategory'
   | 'fantiaAudience'
+  | 'safeSearchOff'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -253,6 +254,11 @@ export interface QueryState {
   fantiaCategory: FantiaCategory
   /** Fantia専用。対象読者区分(brand_type=)。空=指定なし(常に全年齢を明示送信) */
   fantiaAudience: FantiaAudience
+  /**
+   * はてなブックマーク専用。セーフサーチを解除する(safe=off)。false=指定なし(既定=on、
+   * 未ログインでも同じ既定と2026-07-09にWebFetchで確認)
+   */
+  safeSearchOff: boolean
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */

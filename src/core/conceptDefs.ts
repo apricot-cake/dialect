@@ -49,6 +49,7 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'paidOnly', field: 'paidOnly', widget: 'toggle', labelKey: 'concept.paidOnly.label', helpKey: 'concept.paidOnly.help' },
   { id: 'fantiaCategory', field: 'fantiaCategory', widget: 'select', labelKey: 'concept.fantiaCategory.label', helpKey: 'concept.fantiaCategory.help' },
   { id: 'fantiaAudience', field: 'fantiaAudience', widget: 'select', labelKey: 'concept.fantiaAudience.label', helpKey: 'concept.fantiaAudience.help' },
+  { id: 'safeSearchOff', field: 'safeSearchOff', widget: 'toggle', labelKey: 'concept.safeSearchOff.label', helpKey: 'concept.safeSearchOff.help' },
   { id: 'pixivPopular', field: 'pixivPopular', widget: 'select', labelKey: 'concept.pixivPopular.label', helpKey: 'concept.pixivPopular.help' },
   { id: 'ageRating', field: 'ageRating', widget: 'select', labelKey: 'concept.ageRating.label', helpKey: 'concept.ageRating.help' },
   { id: 'excludeAi', field: 'excludeAi', widget: 'toggle', labelKey: 'concept.excludeAi.label', helpKey: 'concept.excludeAi.help' },

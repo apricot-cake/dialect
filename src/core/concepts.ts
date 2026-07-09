@@ -45,6 +45,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.paidOnly) active.push('paidOnly')
   if (state.fantiaCategory) active.push('fantiaCategory')
   if (state.fantiaAudience) active.push('fantiaAudience')
+  if (state.safeSearchOff) active.push('safeSearchOff')
   if (state.resultType) active.push('resultType')
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
@@ -100,6 +101,7 @@ export function defaultState(): QueryState {
     paidOnly: false,
     fantiaCategory: '',
     fantiaAudience: '',
+    safeSearchOff: false,
     resultType: '',
     sort: 'auto',
     pixivPopular: '',

@@ -98,6 +98,7 @@ export const CONCEPT_ICONS: Record<ConceptId, LucideIcon> = {
   paidOnly: BadgeJapaneseYen,
   fantiaCategory: LayoutGrid,
   fantiaAudience: Users,
+  safeSearchOff: ShieldAlert,
   pixivPopular: Star,
   ageRating: ShieldAlert,
   excludeAi: Sparkles,

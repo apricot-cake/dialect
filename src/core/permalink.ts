@@ -68,6 +68,7 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.paidOnly) params.set('paid', '1')
   if (state.fantiaCategory) params.set('fcat', state.fantiaCategory)
   if (state.fantiaAudience) params.set('faud', state.fantiaAudience)
+  if (state.safeSearchOff) params.set('nsafe', '1')
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
@@ -165,6 +166,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   }
   const faud = params.get('faud')
   if (faud === 'male' || faud === 'female') state.fantiaAudience = faud
+  state.safeSearchOff = params.get('nsafe') === '1'
   const rt = params.get('rt')
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||

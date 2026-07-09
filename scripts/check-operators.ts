@@ -230,6 +230,7 @@ const PROBES: Probe[] = [
   { platform: 'hatebu', concept: 'sortOrder', label: '新着順', state: { sort: 'new' }, token: 'sort=recent' },
   { platform: 'hatebu', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: '/search/title' },
   { platform: 'hatebu', concept: 'hashtag', label: 'タグ検索', state: TAG_ONLY('python'), token: '/search/tag' },
+  { platform: 'hatebu', concept: 'safeSearchOff', label: 'セーフサーチ解除', state: { safeSearchOff: true }, token: 'safe=off' },
 
   // ---- Twitch ----
   { platform: 'twitch', concept: 'resultType', label: '探す=動画', state: { resultType: 'video' }, token: 'type=videos' },

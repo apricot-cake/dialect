@@ -196,6 +196,9 @@ export const en = {
   'concept.fantiaAudience.female': 'For women (R-18)',
   'concept.fantiaAudience.help':
     'Chooses which audience section to search: all ages, for men (R-18), or for women (R-18) (Fantia only; unset means all ages).',
+  'concept.safeSearchOff.label': 'Turn off safe search',
+  'concept.safeSearchOff.help':
+    "Turns off Hatena Bookmark's safe search (on by default) for this search (Hatena Bookmark only).",
   'concept.resultType.label': 'Result type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
@@ -327,7 +330,7 @@ export const en = {
   'note.hatebu.titleTagConflict':
     'When searching by hashtag alone, the title-only filter has no effect.',
   'note.hatebu.fromUser':
-    'Keyword search within a user’s bookmarks requires a Hatena login, so it is not supported.',
+    "Bookmark search only covers your own bookmarks — there's no way to search a specific other user's bookmarks.",
   'note.twitch.resultType': 'Twitch can only search videos and channels.',
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.resultType.otherSite': 'This type is not available on this site.',

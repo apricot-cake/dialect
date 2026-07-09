@@ -198,6 +198,9 @@ export const ja = {
   'concept.fantiaAudience.female': '女性向け（R18）',
   'concept.fantiaAudience.help':
     '全年齢・男性向け（R18）・女性向け（R18）のどの区分を検索するか指定します（Fantiaのみ対応。指定なしは全年齢）',
+  'concept.safeSearchOff.label': 'セーフサーチを解除',
+  'concept.safeSearchOff.help':
+    'はてなブックマークのセーフサーチ（既定でオン）を解除して検索します（はてなブックマークのみ対応）',
   'concept.resultType.label': '探すものの種類',
   'concept.resultType.none': '指定なし',
   'concept.resultType.video': '動画',
@@ -304,7 +307,7 @@ export const ja = {
   'note.youtube.resultType': 'ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
   'note.hatebu.titleTagConflict': 'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
-  'note.hatebu.fromUser': 'ユーザーのブックマークの中のキーワード検索は、はてなへのログインが必要なため対応していません',
+  'note.hatebu.fromUser': 'ブックマーク内検索は自分自身のブックマークだけが対象で、他のユーザーの投稿を指定して探すことはできません',
   'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.resultType.otherSite': 'この種類は、このサイトでは指定できません',

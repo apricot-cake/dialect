@@ -226,6 +226,7 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   paidOnly: ['format'],
   fantiaCategory: ['genre', 'format'],
   fantiaAudience: ['age'],
+  safeSearchOff: ['age'],
   resultType: ['format', 'media'],
   sortOrder: ['order', 'time', 'popular'],
   pixivPopular: ['popular', 'reaction'],
@@ -329,6 +330,7 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   ageRating: 'age',
   excludeAi: 'age',
   fantiaAudience: 'age',
+  safeSearchOff: 'age',
   language: 'lang',
 }
 
