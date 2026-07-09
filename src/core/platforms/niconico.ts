@@ -39,6 +39,8 @@ function buildUrl(state: QueryState): string | null {
   if (state.videoLength === 'long') params.set('l_range', '2')
   // ジャンル。/search・/tag の両方で有効(2026-07-06 実測: ゲーム2万≪音楽29万<無し38万)
   if (state.genre) params.set('genre', state.genre)
+  // 動画種別(kind=user:ユーザー投稿 / channel:公式チャンネル)。2026-07-09 GUI採取
+  if (state.nicoKind) params.set('kind', state.nicoKind)
   const qs = params.toString()
   const query = qs ? `?${qs}` : ''
 
@@ -74,6 +76,7 @@ export const niconico: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
     genre: { level: 'full' },
+    nicoKind: { level: 'full' },
     sortOrder: { level: 'full' },
   },
   buildUrl,

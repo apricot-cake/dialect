@@ -45,6 +45,8 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'videoLength', field: 'videoLength', widget: 'select', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },
   { id: 'workType', field: 'workType', widget: 'select', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help' },
   { id: 'genre', field: 'genre', widget: 'select', labelKey: 'concept.genre.label', helpKey: 'concept.genre.help' },
+  { id: 'nicoKind', field: 'nicoKind', widget: 'select', labelKey: 'concept.nicoKind.label', helpKey: 'concept.nicoKind.help' },
+  { id: 'paidOnly', field: 'paidOnly', widget: 'toggle', labelKey: 'concept.paidOnly.label', helpKey: 'concept.paidOnly.help' },
   { id: 'pixivPopular', field: 'pixivPopular', widget: 'select', labelKey: 'concept.pixivPopular.label', helpKey: 'concept.pixivPopular.help' },
   { id: 'ageRating', field: 'ageRating', widget: 'select', labelKey: 'concept.ageRating.label', helpKey: 'concept.ageRating.help' },
   { id: 'excludeAi', field: 'excludeAi', widget: 'toggle', labelKey: 'concept.excludeAi.label', helpKey: 'concept.excludeAi.help' },
@@ -201,6 +203,11 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'society_politics_news', labelKey: 'concept.genre.society_politics_news' },
     { value: 'sports', labelKey: 'concept.genre.sports' },
     { value: 'r18', labelKey: 'concept.genre.r18' },
+  ],
+  nicoKind: [
+    { value: '', labelKey: 'concept.nicoKind.none' },
+    { value: 'user', labelKey: 'concept.nicoKind.user' },
+    { value: 'channel', labelKey: 'concept.nicoKind.channel' },
   ],
 }
 

@@ -44,6 +44,8 @@ export type ConceptId =
   | 'pixivPopular'
   | 'ageRating'
   | 'excludeAi'
+  | 'nicoKind'
+  | 'paidOnly'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -89,6 +91,12 @@ export const NICO_GENRES = [
 ] as const
 
 export type NicoGenre = '' | (typeof NICO_GENRES)[number]
+
+/**
+ * niconico動画の動画種別(kind=)。niconico専用。空=指定なし、user=ユーザー投稿動画、
+ * channel=公式チャンネル動画。2026-07-09に検索フィルタモーダルをGUI操作で採取
+ */
+export type NicoKind = '' | 'user' | 'channel'
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
@@ -201,6 +209,10 @@ export interface QueryState {
   workType: WorkType
   /** niconico専用。ジャンル(genre=)。空=指定なし */
   genre: NicoGenre
+  /** niconico専用。動画種別(kind=user/channel)。空=指定なし */
+  nicoKind: NicoKind
+  /** note専用。有料記事だけに絞る(context=note_for_sale)。false=指定なし(すべての記事) */
+  paidOnly: boolean
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */

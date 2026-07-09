@@ -64,6 +64,8 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.language) params.set('lang', state.language)
   if (state.workType) params.set('wt', state.workType)
   if (state.genre) params.set('genre', state.genre)
+  if (state.nicoKind) params.set('nkind', state.nicoKind)
+  if (state.paidOnly) params.set('paid', '1')
   if (state.resultType) params.set('rt', state.resultType)
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
@@ -152,6 +154,9 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (genre && (NICO_GENRES as readonly string[]).includes(genre)) {
     state.genre = genre as NicoGenre
   }
+  const nkind = params.get('nkind')
+  if (nkind === 'user' || nkind === 'channel') state.nicoKind = nkind
+  state.paidOnly = params.get('paid') === '1'
   const rt = params.get('rt')
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||

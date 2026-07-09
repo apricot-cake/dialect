@@ -157,6 +157,14 @@ export const ja = {
   'concept.genre.r18': '例のソレ（アダルト向け）',
   'concept.genre.other': 'その他',
   'concept.genre.help': '動画のジャンルで絞り込みます（niconicoのみ対応）',
+  'concept.nicoKind.label': '動画の種別',
+  'concept.nicoKind.none': '指定なし',
+  'concept.nicoKind.user': 'ユーザー投稿',
+  'concept.nicoKind.channel': '公式チャンネル',
+  'concept.nicoKind.help':
+    'ユーザーが投稿した動画か、公式チャンネルの動画かで絞り込みます（niconicoのみ対応）',
+  'concept.paidOnly.label': '有料の記事だけ',
+  'concept.paidOnly.help': '有料記事だけに絞り込みます（noteのみ対応）',
   'concept.resultType.label': '探すものの種類',
   'concept.resultType.none': '指定なし',
   'concept.resultType.video': '動画',
@@ -239,6 +247,7 @@ export const ja = {
   'note.note.hashtag': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
+  'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
 
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',

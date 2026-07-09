@@ -32,8 +32,8 @@ https://apricot-cake.github.io/dialect/
 | Bluesky | `bsky.app/search` | 不要 | 豊富(公式ドキュメントあり) |
 | Instagram | `instagram.com/explore/search` | 必要 | キーワードのみ |
 | YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さなど |
-| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順) |
-| note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
+| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別) |
+| note | `note.com/search` | 不要 | ユーザー指定・並び順・有料絞り込み |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
 | pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索) |
 | ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替 |

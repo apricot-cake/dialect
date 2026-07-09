@@ -32,8 +32,8 @@ It never fetches or displays results itself. It only opens each site's own real 
 | Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
 | Instagram | `instagram.com/explore/search` | Required | Keywords only |
 | YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, etc. |
-| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort) |
-| note | `note.com/search` | Not required | User / sort only |
+| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source) |
+| note | `note.com/search` | Not required | User / sort / paid-only |
 | Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators) |
 | pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search) |
 | Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch |

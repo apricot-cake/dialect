@@ -157,6 +157,7 @@ const PROBES: Probe[] = [
   { platform: 'note', concept: 'fromUser', label: '送信者', state: { fromUser: 'info' }, token: 'from:@' },
   { platform: 'note', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=new' },
   { platform: 'note', concept: 'sortOrder', label: '急上昇', state: { sort: 'hot' }, token: 'sort=hot' },
+  { platform: 'note', concept: 'paidOnly', label: '有料のみ', state: { paidOnly: true }, token: 'context=note_for_sale' },
   { platform: 'note', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('読書記録'), token: '/hashtag/' },
 
   // ---- niconico ----
@@ -170,6 +171,7 @@ const PROBES: Probe[] = [
   { platform: 'niconico', concept: 'videoLength', label: '長さ(短)', state: { videoLength: 'short' }, token: 'l_range=1' },
   { platform: 'niconico', concept: 'videoLength', label: '長さ(長)', state: { videoLength: 'long' }, token: 'l_range=2' },
   { platform: 'niconico', concept: 'genre', label: 'ジャンル', state: { genre: 'game' }, token: 'genre=' },
+  { platform: 'niconico', concept: 'nicoKind', label: '動画種別(ユーザー)', state: { nicoKind: 'user' }, token: 'kind=user' },
   { platform: 'niconico', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('ゲーム'), token: '/tag/' },
 
   // ---- ニコニコ静画 ----

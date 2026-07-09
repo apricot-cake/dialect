@@ -155,6 +155,14 @@ export const en = {
   'concept.genre.r18': 'Adult content',
   'concept.genre.other': 'Other',
   'concept.genre.help': 'Filters videos by genre (niconico only).',
+  'concept.nicoKind.label': 'Video source',
+  'concept.nicoKind.none': 'Any',
+  'concept.nicoKind.user': 'User uploads',
+  'concept.nicoKind.channel': 'Official channels',
+  'concept.nicoKind.help':
+    'Filters by whether the video is a user upload or from an official channel (niconico only).',
+  'concept.paidOnly.label': 'Paid articles only',
+  'concept.paidOnly.help': 'Limits results to paid articles (note only).',
   'concept.resultType.label': 'Result type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
@@ -249,6 +257,7 @@ export const en = {
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
+  'note.note.paidOnly.tagPage': "A single tag's tag page can't be limited to paid articles.",
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',

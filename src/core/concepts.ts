@@ -41,6 +41,8 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.language) active.push('language')
   if (state.workType) active.push('workType')
   if (state.genre) active.push('genre')
+  if (state.nicoKind) active.push('nicoKind')
+  if (state.paidOnly) active.push('paidOnly')
   if (state.resultType) active.push('resultType')
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
@@ -92,6 +94,8 @@ export function defaultState(): QueryState {
     language: '',
     workType: '',
     genre: '',
+    nicoKind: '',
+    paidOnly: false,
     resultType: '',
     sort: 'auto',
     pixivPopular: '',
