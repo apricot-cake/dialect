@@ -26,11 +26,19 @@ function isTagPath(state: QueryState): boolean {
 // マガジン(探す=シリーズ。記事をまとめた企画という点でniconicoのシリーズと同種)は
 // context=user/magazine への切り替えで実現できる(2026-07-09 GUI操作で確認)。どちらも記事本文の
 // 検索とは別対象で、並び順チップ・from:演算子・タグページ分岐を持たない(GUI操作で確認)。
-// メンバーシップ(有料コミュニティ)は独自の対象で今回は未実装(実装コストの分割は許容する方針)
+// メンバーシップ(有料コミュニティ、探す=メンバーシップ)は context=circle で実現できる
+// (2026-07-09 GUI操作で確認)。クリエイター・マガジンと異なり並び順チップは「人気(既定)/新着」の
+// 2値だけ持つ(急上昇は無い)。from:演算子は0件になり効かない(fromUserは他2タブ同様none)。
+// 有料のみは全件がそもそも有料のため意味を持たない(paidOnlyはnone)
 const NOTE_RESULT_TYPE_CONTEXT: Partial<Record<QueryState['resultType'], string>> = {
   people: 'user',
   series: 'magazine',
+  circle: 'circle',
 }
+
+// メンバーシップ検索の並び順は人気(popular)・新着(new)の2値のみ(2026-07-09 GUI採取、SORT_PARAMの
+// 部分集合)。急上昇(hot)を選んでいてもここでは送らない(未確認のため落とす)
+const CIRCLE_SORT_VALUES: ReadonlySet<QueryState['sort']> = new Set(['new', 'top'])
 
 function buildUrl(state: QueryState): string | null {
   const handle = stripAt(state.fromUser)
@@ -43,7 +51,11 @@ function buildUrl(state: QueryState): string | null {
   if (altContext) {
     const parts = [...textParts, ...tagNames]
     if (parts.length === 0) return null
-    return `https://note.com/search?context=${altContext}&q=${encodeURIComponent(parts.join(' '))}`
+    const url = `https://note.com/search?context=${altContext}&q=${encodeURIComponent(parts.join(' '))}`
+    if (state.resultType === 'circle' && CIRCLE_SORT_VALUES.has(state.sort)) {
+      return `${url}&sort=${SORT_PARAM[state.sort]}`
+    }
+    return url
   }
 
   if (isTagPath(state)) {
@@ -62,13 +74,21 @@ function buildUrl(state: QueryState): string | null {
 }
 
 // note が対応する値のみ(他サイト専用の値はここに含めない)
-const NOTE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set(['', 'people', 'series'])
+const NOTE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
+  '', 'people', 'series', 'circle',
+])
 
-// クリエイター・マガジン検索では効かない演算子(2026-07-09 GUI操作で確認: 並び順チップ・
-// from:演算子・有料フィルタのいずれも存在しない)
+// クリエイター・マガジン・メンバーシップ検索では効かない演算子(2026-07-09 GUI操作で確認:
+// from:演算子はいずれのタブでも存在しない)
 const NOTE_RESULT_TYPE_CONFLICT: ConceptSupport = {
   level: 'none',
   noteKey: 'note.note.resultTypeConflict',
+}
+
+// メンバーシップは全件がそもそも有料のため、有料のみフィルタは意味を持たない
+const NOTE_CIRCLE_PAID_ONLY: ConceptSupport = {
+  level: 'none',
+  noteKey: 'note.note.paidOnly.circle',
 }
 
 function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
@@ -82,6 +102,15 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
       fromUser: NOTE_RESULT_TYPE_CONFLICT,
       sortOrder: NOTE_RESULT_TYPE_CONFLICT,
       paidOnly: NOTE_RESULT_TYPE_CONFLICT,
+    }
+  }
+  if (state.resultType === 'circle') {
+    return {
+      ...resultTypeOverride,
+      fromUser: NOTE_RESULT_TYPE_CONFLICT,
+      paidOnly: NOTE_CIRCLE_PAID_ONLY,
+      // メンバーシップ検索の並び順は人気(popular)・新着(new)の2値のみ(急上昇は無い)
+      ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
     }
   }
   return {

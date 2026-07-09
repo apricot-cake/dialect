@@ -137,7 +137,8 @@ export type FantiaAudience = '' | 'male' | 'female'
  * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)。
  * series=シリーズ(niconico専用。検索結果タブ「動画/ショート/シリーズ/マイリスト/
  * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
- * ユーザー」とも共用。2026-07-09にGUI操作で実測)
+ * ユーザー」とも共用。2026-07-09にGUI操作で実測)。circle=メンバーシップ(note専用。検索結果タブ
+ * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)
  */
 export type ResultType =
   | ''
@@ -156,6 +157,7 @@ export type ResultType =
   | 'live'
   | 'article'
   | 'series'
+  | 'circle'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、

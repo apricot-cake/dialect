@@ -218,6 +218,7 @@ export const ja = {
   'concept.resultType.live': '生放送',
   'concept.resultType.article': 'コラム記事',
   'concept.resultType.series': 'シリーズ',
+  'concept.resultType.circle': 'メンバーシップ',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -288,7 +289,8 @@ export const ja = {
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
   'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
-  'note.note.resultTypeConflict': 'クリエイター・マガジン検索では、この絞り込みは使えません',
+  'note.note.resultTypeConflict': 'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
+  'note.note.paidOnly.circle': 'メンバーシップはすべて有料のため、この絞り込みは意味を持ちません',
 
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',

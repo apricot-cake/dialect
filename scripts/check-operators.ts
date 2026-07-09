@@ -164,6 +164,9 @@ const PROBES: Probe[] = [
   { platform: 'note', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('読書記録'), token: '/hashtag/' },
   { platform: 'note', concept: 'resultType', label: '探す=クリエイター', state: { resultType: 'people' }, token: 'context=user' },
   { platform: 'note', concept: 'resultType', label: '探す=マガジン', state: { resultType: 'series' }, token: 'context=magazine' },
+  { platform: 'note', concept: 'resultType', label: '探す=メンバーシップ', state: { resultType: 'circle' }, token: 'context=circle' },
+  { platform: 'note', concept: 'sortOrder', label: 'メンバーシップの新着順', state: { resultType: 'circle', sort: 'new' }, token: 'sort=new' },
+  { platform: 'note', concept: 'sortOrder', label: 'メンバーシップの人気順', state: { resultType: 'circle', sort: 'top' }, token: 'sort=popular' },
 
   // ---- niconico ----
   { platform: 'niconico', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'sort=registeredAt' },

@@ -216,6 +216,7 @@ export const en = {
   'concept.resultType.live': 'Live streams',
   'concept.resultType.article': 'Articles',
   'concept.resultType.series': 'Series',
+  'concept.resultType.circle': 'Membership',
   'concept.resultType.help':
     'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
@@ -300,7 +301,10 @@ export const en = {
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
   'note.note.paidOnly.tagPage': "A single tag's tag page can't be limited to paid articles.",
-  'note.note.resultTypeConflict': 'This filter has no effect on creator or magazine search.',
+  'note.note.resultTypeConflict':
+    'This filter has no effect on creator, magazine, or membership search.',
+  'note.note.paidOnly.circle':
+    'Every membership is already paid, so this filter has no meaning.',
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
