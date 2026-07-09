@@ -171,7 +171,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (
     rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
     rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people' ||
-    rt === 'board' || rt === 'bangumi' || rt === 'pgc' || rt === 'live' || rt === 'article'
+    rt === 'board' || rt === 'bangumi' || rt === 'pgc' || rt === 'live' || rt === 'article' ||
+    rt === 'series' || rt === 'circle'
   ) {
     state.resultType = rt
   }
@@ -186,6 +187,7 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (
     sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments' ||
     sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'commentDate' ||
+    sort === 'videoCount' || sort === 'videoAdded' || sort === 'followerCount' || sort === 'liveCount' ||
     sort === 'auto'
   ) {
     state.sort = sort

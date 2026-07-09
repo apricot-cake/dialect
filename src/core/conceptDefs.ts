@@ -260,4 +260,8 @@ export const SORT_OPTIONS: Array<{ value: QueryState['sort']; labelKey: MessageK
   { value: 'favorites', labelKey: 'concept.sortOrder.favorites' },
   { value: 'likes', labelKey: 'concept.sortOrder.likes' },
   { value: 'commentDate', labelKey: 'concept.sortOrder.commentDate' },
+  { value: 'videoCount', labelKey: 'concept.sortOrder.videoCount' },
+  { value: 'videoAdded', labelKey: 'concept.sortOrder.videoAdded' },
+  { value: 'followerCount', labelKey: 'concept.sortOrder.followerCount' },
+  { value: 'liveCount', labelKey: 'concept.sortOrder.liveCount' },
 ]

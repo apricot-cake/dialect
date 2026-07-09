@@ -186,6 +186,13 @@ const PROBES: Probe[] = [
   { platform: 'niconico', concept: 'resultType', label: '探す=シリーズ', state: { resultType: 'series' }, token: '/series_search/' },
   { platform: 'niconico', concept: 'resultType', label: '探す=マイリスト', state: { resultType: 'playlist' }, token: '/mylist_search/' },
   { platform: 'niconico', concept: 'resultType', label: '探す=ユーザー', state: { resultType: 'people' }, token: '/user_search/' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=シリーズの並び順(作成日)', state: { resultType: 'series', sort: 'new' }, token: 'sort=startTime' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=シリーズの並び順(登録動画数)', state: { resultType: 'series', sort: 'videoCount' }, token: 'sort=videoCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=シリーズの並び順(動画追加日時)', state: { resultType: 'series', sort: 'videoAdded' }, token: 'sort=lastAddedTime' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=マイリストの並び順(動画追加日時)', state: { resultType: 'playlist', sort: 'videoAdded' }, token: 'sort=lastAddedTime' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=ユーザーの並び順(投稿動画数)', state: { resultType: 'people', sort: 'videoCount' }, token: 'sort=videoCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=ユーザーの並び順(フォロワー数)', state: { resultType: 'people', sort: 'followerCount' }, token: 'sort=followerCount' },
+  { platform: 'niconico', concept: 'sortOrder', label: '探す=ユーザーの並び順(生放送番組数)', state: { resultType: 'people', sort: 'liveCount' }, token: 'sort=liveCount' },
 
   // ---- ニコニコ静画 ----
   { platform: 'seiga', concept: 'sortOrder', label: '新着順', state: { sort: 'new' }, token: 'sort=image_created' },

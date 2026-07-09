@@ -21,6 +21,27 @@ const SORT_PARAM: Partial<Record<SortOrder, string>> = {
   commentDate: 'lastCommentTime', // コメント日時(直近にコメントが付いた順、2026-07-09 GUI採取)
 }
 
+// シリーズ・マイリスト検索専用の並び順(2026-07-09 GUI操作で採取、シリーズ・マイリスト双方で
+// 同一パラメータ名と確認済み)。既定「ニコニコで人気」は明示選択でも sort=_hotTotalScore という
+// 特殊値を送るだけで無指定時の既定と一致するため、動画側の「ニコニコで人気」と同様に
+// 指定なし(auto=無送信)へ畳み込む。newは「作成日」に流用(投稿日時を新しい順に見る動画のnewと
+// 同型)、videoCountは収録動画数、videoAddedは動画が最後に追加された日時
+const SERIES_SORT_PARAM: Partial<Record<SortOrder, string>> = {
+  new: 'startTime',
+  videoCount: 'videoCount',
+  videoAdded: 'lastAddedTime',
+}
+
+// ユーザー検索専用の並び順(2026-07-09 GUI操作で採取)。既定「あなたへのおすすめ」は
+// sort=_personalized というログイン依存の特殊値で、無指定時の既定と一致することを
+// 未訪問のクエリで確認したためauto(無送信)へ畳み込む。videoCountはこのユーザーの
+// 投稿動画数(シリーズ/マイリストの収録動画数と同じ「動画の数」という意味で概念を共用)
+const PEOPLE_SORT_PARAM: Partial<Record<SortOrder, string>> = {
+  videoCount: 'videoCount',
+  followerCount: 'followerCount',
+  liveCount: 'liveCount',
+}
+
 // 検索結果タブ「動画/ショート/シリーズ/マイリスト/ユーザー」のパス切り替え(2026-07-09 GUI採取)。
 // 動画(既定・''値、明示的な'video'値も同じ)は /search/ のためここには含めない
 const RESULT_TYPE_PATH: Partial<Record<QueryState['resultType'], string>> = {
@@ -38,11 +59,16 @@ const NICONICO_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
 // 動画と同じ検索基盤(ジャンル/動画種別/再生時間/期間/並び順=sort・order・genre・kind・
 // l_range・start・end)を共有するのは動画本体(既定/明示'video')とショートのみ(2026-07-09 GUI操作:
 // ショートのフィルタパネル・並び順ドロップダウンが動画と同じ選択肢・生成パラメータを持つことを確認)。
-// シリーズ(登録動画数/作成日/動画追加日時)・ユーザー(フォロワー数/投稿動画数/生放送番組数)は
-// それぞれ専用の並び順を持ち、フィルタパネル自体が無い(GUI操作で確認)。専用並び順は今回未実装
-// (採否選定はしないが実装コストの分割は許容する方針に沿い、後続作業とする)
+// シリーズ(登録動画数/作成日/動画追加日時)・マイリスト(同3値)・ユーザー(フォロワー数/
+// 投稿動画数/生放送番組数)はそれぞれ専用の並び順を持ち、フィルタパネル自体が無い(GUI操作で確認)。
+// 専用並び順は 2026-07-09 に SERIES_SORT_PARAM/PEOPLE_SORT_PARAM として実装
 const VIDEO_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
   '', 'video', 'short',
+])
+
+// シリーズ・マイリストは同一の並び順パラメータを共有する(2026-07-09 GUI操作で確認)
+const SERIES_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
+  'series', 'playlist',
 ])
 
 function buildUrl(state: QueryState): string | null {
@@ -50,6 +76,8 @@ function buildUrl(state: QueryState): string | null {
   const tagNames = words(state.hashtag).map(stripHash)
   const excludes = minusExcludes(state)
   const isVideoLike = VIDEO_LIKE_RESULT_TYPES.has(state.resultType)
+  const isSeriesLike = SERIES_LIKE_RESULT_TYPES.has(state.resultType)
+  const isPeopleLike = state.resultType === 'people'
 
   const params = new URLSearchParams()
   if (isVideoLike) {
@@ -68,6 +96,18 @@ function buildUrl(state: QueryState): string | null {
     if (state.genre) params.set('genre', state.genre)
     // 動画種別(kind=user:ユーザー投稿 / channel:公式チャンネル)。2026-07-09 GUI採取
     if (state.nicoKind) params.set('kind', state.nicoKind)
+  } else if (isSeriesLike) {
+    const sortVal = SERIES_SORT_PARAM[state.sort]
+    if (sortVal) {
+      params.set('sort', sortVal)
+      params.set('order', 'desc')
+    }
+  } else if (isPeopleLike) {
+    const sortVal = PEOPLE_SORT_PARAM[state.sort]
+    if (sortVal) {
+      params.set('sort', sortVal)
+      params.set('order', 'desc')
+    }
   }
   const qs = params.toString()
   const query = qs ? `?${qs}` : ''
@@ -90,7 +130,8 @@ function buildUrl(state: QueryState): string | null {
 }
 
 // シリーズ/マイリスト/ユーザー検索にはフィルタパネルが無く、ジャンル・動画種別・
-// 再生時間・期間・(動画の)並び順のいずれも効かない(2026-07-09 GUI操作で確認)
+// 再生時間・期間のいずれも効かない(2026-07-09 GUI操作で確認)。並び順は専用の値を持つので
+// ここには含めず、各分岐で limitSort により許容値を絞る
 const NOT_VIDEO_LIKE: ConceptSupport = {
   level: 'none',
   noteKey: 'note.niconico.resultTypeConflict',
@@ -101,32 +142,49 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     state.resultType && !NICONICO_RESULT_TYPES.has(state.resultType)
       ? { resultType: { level: 'none', noteKey: 'note.resultType.otherSite' } }
       : {}
-  if (!VIDEO_LIKE_RESULT_TYPES.has(state.resultType)) {
+  if (VIDEO_LIKE_RESULT_TYPES.has(state.resultType)) {
     return {
       ...resultTypeOverride,
-      genre: NOT_VIDEO_LIKE,
-      nicoKind: NOT_VIDEO_LIKE,
-      videoLength: NOT_VIDEO_LIKE,
-      period: NOT_VIDEO_LIKE,
-      sortOrder: NOT_VIDEO_LIKE,
-      // タグページが無いため、タグ語も「厳密一致」ではなくキーワードとして扱われる
-      hashtag: { level: 'partial', noteKey: 'note.niconico.hashtagAsKeyword' },
+      ...limitSort(
+        state.sort,
+        ['new', 'top', 'comments', 'likes', 'favorites', 'commentDate'],
+        'note.sortOrder.otherSite',
+      ),
+      // 「ふつう(4〜20分)」に当たる値は niconico に無く l_range で送れない(buildUrl も出さない)。
+      // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
+      // short/long は l_range=1/2 で実際に送れるので partial のまま
+      ...(state.videoLength === 'medium'
+        ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
+        : {}),
     }
   }
-  return {
+  const nonVideoOverride: Partial<Record<ConceptId, ConceptSupport>> = {
     ...resultTypeOverride,
-    ...limitSort(
-      state.sort,
-      ['new', 'top', 'comments', 'likes', 'favorites', 'commentDate'],
-      'note.sortOrder.otherSite',
-    ),
-    // 「ふつう(4〜20分)」に当たる値は niconico に無く l_range で送れない(buildUrl も出さない)。
-    // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
-    // short/long は l_range=1/2 で実際に送れるので partial のまま
-    ...(state.videoLength === 'medium'
-      ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
-      : {}),
+    genre: NOT_VIDEO_LIKE,
+    nicoKind: NOT_VIDEO_LIKE,
+    videoLength: NOT_VIDEO_LIKE,
+    period: NOT_VIDEO_LIKE,
+    // タグページが無いため、タグ語も「厳密一致」ではなくキーワードとして扱われる
+    hashtag: { level: 'partial', noteKey: 'note.niconico.hashtagAsKeyword' },
   }
+  if (SERIES_LIKE_RESULT_TYPES.has(state.resultType)) {
+    return {
+      ...nonVideoOverride,
+      ...limitSort(state.sort, ['new', 'videoCount', 'videoAdded'], 'note.sortOrder.otherSite'),
+    }
+  }
+  if (state.resultType === 'people') {
+    return {
+      ...nonVideoOverride,
+      ...limitSort(
+        state.sort,
+        ['videoCount', 'followerCount', 'liveCount'],
+        'note.sortOrder.otherSite',
+      ),
+    }
+  }
+  // 他サイト専用の resultType 値(resultTypeOverride で既にnone判定済み)。並び順も持たない
+  return { ...nonVideoOverride, sortOrder: NOT_VIDEO_LIKE }
 }
 
 export const niconico: PlatformDef = {

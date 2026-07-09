@@ -228,6 +228,10 @@ export const en = {
   'concept.sortOrder.favorites': 'Favorite count',
   'concept.sortOrder.likes': 'Like count',
   'concept.sortOrder.commentDate': 'Latest comment',
+  'concept.sortOrder.videoCount': 'Video count',
+  'concept.sortOrder.videoAdded': 'Video last added',
+  'concept.sortOrder.followerCount': 'Follower count',
+  'concept.sortOrder.liveCount': 'Live count',
   'concept.sortOrder.auto': 'Default',
   'concept.sortOrder.help':
     "Sets the result order. \"Default\" keeps each site's own ordering (usually relevance-based).",

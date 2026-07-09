@@ -167,8 +167,12 @@ export type ResultType =
  * いずれもbilibili専用(2026-07-08にGUI操作で実測。動画検索はorder=dm/stow、
  * コラム検索はorder=attention)。commentDate=最新コメント順はniconico専用
  * (sort=lastCommentTime、2026-07-09にGUI操作で実測。コメント数順(comments概念とは別)とは
- * 異なり「直近にコメントが付いた順」)。対応しないサイトでは dynamicSupport(limitSort)で
- * non-対応に落とす
+ * 異なり「直近にコメントが付いた順」)。videoCount=収録動画数順・videoAdded=動画追加日時順は
+ * niconicoのシリーズ・マイリスト検索専用(2026-07-09にGUI操作で実測。newを収録動画数系の
+ * 「作成日」に流用し、videoCountで登録動画数、videoAddedで最後に動画が追加された日時を表す)。
+ * followerCount=フォロワー数順・liveCount=生放送番組数順はniconicoのユーザー検索専用
+ * (2026-07-09にGUI操作で実測。videoCountはユーザー検索では投稿動画数の意味で共用)。
+ * 対応しないサイトでは dynamicSupport(limitSort)でnon-対応に落とす
  */
 export type SortOrder =
   | 'new'
@@ -180,6 +184,10 @@ export type SortOrder =
   | 'favorites'
   | 'likes'
   | 'commentDate'
+  | 'videoCount'
+  | 'videoAdded'
+  | 'followerCount'
+  | 'liveCount'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {

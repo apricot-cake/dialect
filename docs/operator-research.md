@@ -22,7 +22,7 @@
 | Bluesky | doc(公式検索ブログ=唯一) + GUI操作 | ✅ 済 | — | 2026-07-09 ログイン済みで検索フォーム(言語ドロップダウン=`&lang=`)・トップ/最新/ユーザータブを実操作採取。**同日2回目の監査で追加発見**: `media=true`は実際にはもうゲート中ではなく機能する(GUIトグルは無いがURLで効く)、`tab=user`(アカウント検索=探す種類「プロフィール」)をタブ操作で確認・実装 |
 | YouTube | doc(公式ヘルプ) + URL叩き(sp protobuf) + GUI操作 | ✅ 済 | — | 2026-07-07/08 フィルタパネルの「特徴」10項目・タイプ・並び順を実操作採取(未ログイン) |
 | note | GUI操作 + doc(公式) | ✅ 済 | — | 2026-07-09 検索フォーム(並び順チップ人気/急上昇/新着=`sort=popular/hot/new`・有料フィルタ=`context=note_for_sale`)を実操作採取(未ログイン)。**同日2回目の監査で追加発見**: 検索結果タブ「クリエイター」(`context=user`)・「マガジン」(`context=magazine`)を探す種類「プロフィール」「シリーズ」として実装。「メンバーシップ」(`context=circle`、人気/新着の並び順を持つ)は未実装のまま残す |
-| niconico(動画) | doc(snapshot API) + GUI操作 | ✅ 済 | — | 2026-07-08 ジャンル17値、2026-07-09 ログイン済みで並び順ドロップダウン(9値)・検索フィルタモーダル(動画種別`kind=`/再生時間`l_range=`/任意期間`start=/end=`)を実操作採取。並び順の現行パラメータは`sort=<名前>&order=desc`形式(旧`sort=h`/`sort=f&order=d`も有効なエイリアス)。**同日2回目の監査で追加発見**: 検索結果タブ「ショート」(`/search_shorts/`)・「シリーズ」(`/series_search/`)・「マイリスト」(`/mylist_search/`)・「ユーザー」(`/user_search/`)を発見。ショートは動画本体と同じフィルタ基盤を共有するため実装、シリーズ/マイリスト/ユーザーは基本のキーワード検索のみ実装(各自の専用並び順は未実装) |
+| niconico(動画) | doc(snapshot API) + GUI操作 | ✅ 済 | — | 2026-07-08 ジャンル17値、2026-07-09 ログイン済みで並び順ドロップダウン(9値)・検索フィルタモーダル(動画種別`kind=`/再生時間`l_range=`/任意期間`start=/end=`)を実操作採取。並び順の現行パラメータは`sort=<名前>&order=desc`形式(旧`sort=h`/`sort=f&order=d`も有効なエイリアス)。**同日2回目の監査で追加発見**: 検索結果タブ「ショート」(`/search_shorts/`)・「シリーズ」(`/series_search/`)・「マイリスト」(`/mylist_search/`)・「ユーザー」(`/user_search/`)を発見。ショートは動画本体と同じフィルタ基盤を共有するため実装。シリーズ/マイリスト/ユーザーの専用並び順(登録動画数/作成日/動画追加日時、フォロワー数/投稿動画数/生放送番組数)も同日中にドロップダウンを実操作して採取・実装 |
 | niconico静画 | GUI操作 | ✅ 済 | — | 2026-07-07 検索フォーム送信・並び順セレクトを実操作採取(未ログイン) |
 | Instagram | URL叩き(未ログイン即リダイレクト実測) + ログイン済み確認 | —(採取対象なし) | — | 2026-07-04/05 ログイン済みで確認、演算子・フィルタが実質ゼロ(Recentタブ廃止)＝採取対象自体が無いため穴なしと確定 |
 | Reddit | doc(公式ヘルプ Boolean) + GUI操作 | ✅ 済 | — | 2026-07-07 検索の結果タブ(`type=`)・並び順・期間プリセットを実操作採取(未ログイン) |
@@ -806,10 +806,16 @@ X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子
 | タブ | パス | 実装 |
 |---|---|---|
 | ショート | `/search_shorts/{q}` | `resultType: 'short'`。並び順ドロップダウン(`sort=viewCount&order=desc`等)・フィルタパネルが動画本体と完全に同じ選択肢・パラメータを生成することを確認したため、genre/kind/videoLength/period/sortOrderを丸ごと共有 |
-| シリーズ | `/series_search/{q}` | `resultType: 'series'`。専用の並び順(登録動画数/作成日/動画追加日時)を持つがフィルタパネルは無い。専用並び順は未実装 |
-| マイリスト | `/mylist_search/{q}` | `resultType: 'playlist'`(YouTubeの再生リストと共用)。専用の並び順を持つが未実装 |
-| ユーザー | `/user_search/{q}` | `resultType: 'people'`。並び順は`sort=followerCount`/`videoCount`/`liveCount`(各`&order=desc`、フォロワー数/投稿動画数/生放送番組数)を確認したが未実装 |
+| シリーズ | `/series_search/{q}` | `resultType: 'series'`。専用の並び順(登録動画数/作成日/動画追加日時)を持つがフィルタパネルは無い |
+| マイリスト | `/mylist_search/{q}` | `resultType: 'playlist'`(YouTubeの再生リストと共用)。シリーズと同じ並び順パラメータを共有(GUI操作で確認) |
+| ユーザー | `/user_search/{q}` | `resultType: 'people'`。並び順は`sort=followerCount`/`videoCount`/`liveCount`(各`&order=desc`、フォロワー数/投稿動画数/生放送番組数) |
 
-シリーズ/マイリスト/ユーザーはいずれもフィルタパネルが無く、ジャンル・動画種別・再生時間・期間・(動画の)並び順のいずれも効かない(選ぶと「使えない」に落とす)。タグページ(`/tag/`)も動画本体専用なので、これらのタブではハッシュタグ語もただのキーワードとして扱われる。
+シリーズ/マイリスト/ユーザーはいずれもフィルタパネルが無く、ジャンル・動画種別・再生時間・期間のいずれも効かない(選ぶと「使えない」に落とす)。タグページ(`/tag/`)も動画本体専用なので、これらのタブではハッシュタグ語もただのキーワードとして扱われる。
 
-niconicoのシリーズ/マイリスト/ユーザーが持つ専用並び順(登録動画数/作成日/フォロワー数など)は未実装のまま残る。既存の[[field-mechanism-redesign]]同様、「採否選定はしない」方針のもと見送りではなく実装コストの分割として記録する。noteのメンバーシップは2026-07-09に`resultType: 'circle'`として実装済み(上記参照)。
+**シリーズ/マイリスト/ユーザーの専用並び順は2026-07-09にGUI操作で採取・実装完了**(残タスクとして記録していたものを同日中に着手・解消)。ドロップダウンを実操作して以下を確認:
+
+- **シリーズ**(`/series_search/{q}`。ドロップダウン4値): 「ニコニコで人気」(既定・明示選択でも`sort=_hotTotalScore&order=desc`という特殊値を送るだけで無指定時と一致するため指定なし(auto)に畳み込み)/「登録動画数」(`sort=videoCount`)/「作成日」(`sort=startTime`。新概念を増やさずSortOrderの`new`=新しい順に流用)/「動画追加日時」(`sort=lastAddedTime`。新概念`videoAdded`)。asc/desc切替アイコンもあるが既存の他サイトと同様descのみ実装(Dialectに昇順選択肢は無い)
+- **マイリスト**(`/mylist_search/{q}`): シリーズと同一UIコンポーネントで、`videoCount`/`startTime`をGUI操作で個別に再確認(同一パラメータ名と確定)。`lastAddedTime`も個別に確認
+- **ユーザー**(`/user_search/{q}`。ドロップダウン4値): 「あなたへのおすすめ」(`sort=_personalized`。ログイン依存の個人化並び順だが、未訪問のクエリで無指定時の既定と一致することを確認したため指定なし(auto)に畳み込み)/「フォロワー数」(`sort=followerCount`。新概念`followerCount`)/「投稿動画数」(`sort=videoCount`。シリーズ/マイリストの「動画の数」と同じ概念を共用)/「生放送番組数」(`sort=liveCount`。新概念`liveCount`)
+
+新規追加したSortOrder値は`videoCount`/`videoAdded`/`followerCount`/`liveCount`の4つ(`new`は既存概念を流用)。niconico専用でありlimitSortにより他サイト・他resultType(動画/ショート)では非対応に落とす。lint/build/check:operators/check:urls通過、Dialect実機(dev server)で各生成URLを実際に開いて並び順ドロップダウンの表示・結果順が一致することを確認。noteのメンバーシップは2026-07-09に`resultType: 'circle'`として実装済み(上記参照)。
