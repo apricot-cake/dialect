@@ -307,7 +307,7 @@ export const ja = {
   'note.pixiv.keywords': 'タグから検索します。タグにない言葉は、本文にあっても見つかりません',
   'note.pixiv.titleOnly': 'タグではなく、タイトルと説明文から探します',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
-  'note.pixiv.sort': 'pixivでは人気順はプレミアム会員のみ有効です',
+  'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
   'note.pixiv.popular': '「◯◯users入り」タグで擬似的に人気作を絞り込みます。ファンが手動で付けるタグのため、付いていない人気作は漏れることがあります',
   'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
   'note.pixiv.smodeConflict': 'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
