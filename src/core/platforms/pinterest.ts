@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases } from '../text'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import { andTerms, exactPhrases, words } from '../text'
+import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-08 実機確認(未ログイン、GUI操作)。pinterest.com/search/pins/?q= はログイン不要。
 // フィルターパネル(調整アイコン)には「すべてのピン/動画/ボード/プロフィール」の4択のみで、
@@ -18,6 +19,30 @@ function buildUrl(state: QueryState): string | null {
     : state.resultType === 'people' ? 'users'
     : 'pins'
   return `https://www.pinterest.com/search/${path}/?q=${q}`
+}
+
+// 逆翻訳: /search/{pins|videos|boards|users}/?q=…。日本の pinterest.jp も受ける
+const SEARCH_PATH_RESULT_TYPE: Record<string, QueryState['resultType']> = {
+  pins: '',
+  videos: 'video',
+  boards: 'board',
+  users: 'people',
+}
+
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'pinterest.com', 'pinterest.jp')) return null
+  const segs = pathSegments(url)
+  if (segs[0] !== 'search' || !(segs[1] in SEARCH_PATH_RESULT_TYPE)) return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  if (SEARCH_PATH_RESULT_TYPE[segs[1]]) patch.resultType = SEARCH_PATH_RESULT_TYPE[segs[1]]
+  const terms = words(q)
+  if (terms.length > 0) patch.terms = terms
+  leftoverParams(url, new Set(['q']), ignored)
+  return { patch, ignored }
 }
 
 const PINTEREST_RESULT_TYPES: ReadonlySet<string> = new Set(['video', 'board', 'people'])
@@ -46,5 +71,6 @@ export const pinterest: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

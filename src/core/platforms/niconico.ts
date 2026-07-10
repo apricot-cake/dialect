@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState, SortOrder } from '../types'
-import { limitSort } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, SortOrder } from '../types'
+import { limitSort, NICO_GENRES } from '../types'
 import { minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査27パターン+2026-07-09ログイン済みGUI操作)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/並び順が全てURLで効く。
@@ -187,6 +188,104 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   return { ...nonVideoOverride, sortOrder: NOT_VIDEO_LIKE }
 }
 
+/** sort= の値 → SortOrder の逆引き表を作る */
+function invertSort(map: Partial<Record<SortOrder, string>>): Record<string, SortOrder> {
+  const out: Record<string, SortOrder> = {}
+  for (const [k, v] of Object.entries(map)) out[v] = k as SortOrder
+  return out
+}
+const VIDEO_SORT_REVERSE = invertSort(SORT_PARAM)
+const SERIES_SORT_REVERSE = invertSort(SERIES_SORT_PARAM)
+const PEOPLE_SORT_REVERSE = invertSort(PEOPLE_SORT_PARAM)
+
+/** 検索結果タブのパス → resultType(動画/タグは既定='') */
+const PATH_RESULT_TYPE: Record<string, QueryState['resultType']> = {
+  search: '',
+  tag: '',
+  search_shorts: 'short',
+  series_search: 'series',
+  mylist_search: 'playlist',
+  user_search: 'people',
+}
+
+// 逆翻訳: nicovideo.jp/{search|tag|search_shorts|series_search|mylist_search|user_search}/{q}。
+// seiga/manga サブドメインは別サイト(seiga.ts)なのでホスト完全一致で見る。
+// 旧形式の並び順(sort=f&order=d / sort=h)や既定値の明示(_hotTotalScore/_personalized)も受ける
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'nicovideo.jp', 'sp.nicovideo.jp')) return null
+  const segs = pathSegments(url)
+  if (segs.length < 2) return null
+  const [head, rawQuery] = segs
+  if (!(head in PATH_RESULT_TYPE)) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const resultType = PATH_RESULT_TYPE[head]
+  if (resultType) patch.resultType = resultType
+
+  const bins = emptyBins()
+  for (const token of tokenize(rawQuery)) {
+    if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (head === 'tag') bins.hashtags.push(token)
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+
+  const consumed = new Set(['sort', 'order'])
+  const isVideoLike = head === 'search' || head === 'tag' || head === 'search_shorts'
+  if (isVideoLike) {
+    for (const key of ['start', 'end', 'l_range', 'genre', 'kind']) consumed.add(key)
+    const start = url.searchParams.get('start')
+    if (start !== null) {
+      if (isIsoDate(start)) patch.since = start
+      else ignored.push(`start=${start}`)
+    }
+    const end = url.searchParams.get('end')
+    if (end !== null) {
+      if (isIsoDate(end)) patch.until = end
+      else ignored.push(`end=${end}`)
+    }
+    const lRange = url.searchParams.get('l_range')
+    if (lRange === '1') patch.videoLength = 'short'
+    else if (lRange === '2') patch.videoLength = 'long'
+    else if (lRange !== null) ignored.push(`l_range=${lRange}`)
+    const genre = url.searchParams.get('genre')
+    if (genre !== null) {
+      if ((NICO_GENRES as readonly string[]).includes(genre)) patch.genre = genre as QueryState['genre']
+      else ignored.push(`genre=${genre}`)
+    }
+    const kind = url.searchParams.get('kind')
+    if (kind === 'user' || kind === 'channel') patch.nicoKind = kind
+    else if (kind !== null) ignored.push(`kind=${kind}`)
+  }
+
+  const sort = url.searchParams.get('sort')
+  const order = url.searchParams.get('order')
+  if (sort !== null) {
+    // 既定値の明示(ニコニコで人気/あなたへのおすすめ)は「指定なし」と同じ。
+    // 旧形式 sort=h も「ニコニコで人気」=既定なので同様に畳む
+    if (sort === '_hotTotalScore' || sort === '_personalized' || sort === 'h') {
+      // 指定なし(auto)のまま
+    } else if (order !== null && order !== 'desc' && order !== 'd') {
+      // 昇順(古い順など)はDialectに無いので、並び順ごと読めない扱いにする
+      ignored.push(`sort=${sort}`, `order=${order}`)
+    } else {
+      const table = isVideoLike
+        ? VIDEO_SORT_REVERSE
+        : head === 'user_search'
+          ? PEOPLE_SORT_REVERSE
+          : SERIES_SORT_REVERSE
+      // 旧形式 sort=f&order=d(投稿日時の新しい順)
+      const mapped = sort === 'f' && isVideoLike ? 'new' : table[sort]
+      if (mapped) patch.sort = mapped
+      else ignored.push(`sort=${sort}`)
+    }
+  }
+  leftoverParams(url, consumed, ignored)
+  return { patch, ignored }
+}
+
 export const niconico: PlatformDef = {
   id: 'niconico',
   name: 'niconico',
@@ -209,5 +308,6 @@ export const niconico: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

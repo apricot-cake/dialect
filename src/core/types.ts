@@ -319,6 +319,16 @@ export type PlatformId =
   | 'bilibili'
   | 'fantia'
 
+/**
+ * 検索URLから読み取れた条件(逆翻訳)。patch は defaultState への上書き差分。
+ * ignored は認識できず無視した部分(パラメータや演算子)で、黙って捨てずに
+ * ユーザーへ正直に見せるために残す
+ */
+export interface ParsedSearch {
+  patch: Partial<QueryState>
+  ignored: string[]
+}
+
 export interface PlatformDef {
   id: PlatformId
   name: string
@@ -337,6 +347,13 @@ export interface PlatformDef {
   support: Partial<Record<ConceptId, ConceptSupport>>
   /** 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null */
   buildUrl(state: QueryState): string | null
+  /**
+   * このサイトの検索URLをDialectの条件へ逆翻訳する(buildUrlの逆方向)。
+   * このサイトの検索URLでなければ null。buildUrl が出すURLは必ず読めること
+   * (check:reverse が往復一致を機械検査する)。サイトが実際に生成する形の
+   * バリエーション(旧ドメイン・別パラメータ等)もできる範囲で受ける
+   */
+  parseUrl(url: URL): ParsedSearch | null
   /**
    * state に応じて support を上書きする(任意)。同じ概念でも入力の組み合わせ次第で
    * 実際にはURLへ送れないことがある(例: YouTubeはユーザー指定を入れると

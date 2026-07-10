@@ -113,6 +113,7 @@ export function ConditionsArea({
   onClear,
   shareUrl,
   onSave,
+  onOpenReverse,
   onOpenPicker,
   onGoLinks,
 }: {
@@ -128,6 +129,8 @@ export function ConditionsArea({
   shareUrl?: string
   /** 保存ダイアログを開く。条件が1つでもあるときだけ渡る */
   onSave?: () => void
+  /** 検索URLの読み込みダイアログを開く(常時表示。空の状態からの入口にもなる) */
+  onOpenReverse: () => void
   onOpenPicker: () => void
   onGoLinks: () => void
 }) {
@@ -214,6 +217,19 @@ export function ConditionsArea({
                 </svg>
               </span>
               {t('ui.addCondition')}
+            </button>
+            <button
+              type="button"
+              data-noscale
+              className="dl-clear inline-flex h-11 cursor-pointer items-center gap-[7px] rounded-full border border-border bg-card pr-5 pl-4 text-sm font-semibold text-muted shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
+              onClick={onOpenReverse}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M12 15V3" />
+              </svg>
+              {t('reverse.button')}
             </button>
             {onClear && (
               <button

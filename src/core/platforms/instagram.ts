@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { hostMatches, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
@@ -30,6 +31,33 @@ function dynamicSupport(
   return {}
 }
 
+// 逆翻訳: /explore/search/keyword/?q=… と /explore/tags/{tag}/
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'instagram.com')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs[0] === 'explore' && segs[1] === 'tags' && segs[2]) {
+    patch.hashtag = segs[2]
+    leftoverParams(url, new Set(), ignored)
+    return { patch, ignored }
+  }
+  if (segs[0] !== 'explore' || segs[1] !== 'search' || segs[2] !== 'keyword') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+  const terms: string[] = []
+  const hashtags: string[] = []
+  for (const token of tokenize(q)) {
+    if (token.startsWith('#') && token.length > 1) hashtags.push(token.slice(1))
+    else terms.push(token)
+  }
+  if (terms.length > 0) patch.terms = terms
+  if (hashtags.length > 0) patch.hashtag = hashtags.join(' ')
+  leftoverParams(url, new Set(['q']), ignored)
+  return { patch, ignored }
+}
+
 export const instagram: PlatformDef = {
   id: 'instagram',
   name: 'Instagram',
@@ -49,5 +77,6 @@ export const instagram: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

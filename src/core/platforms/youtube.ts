@@ -1,6 +1,17 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState, ResultType, VideoLength } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, VideoLength } from '../types'
 import { limitSort } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import {
+  applyBins,
+  daysAgoIso,
+  emptyBins,
+  hostMatches,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md
 // search_query は検索ボックスと等価。before:/after: は非公式だが実機確認済み(2026-07-02)。
@@ -92,6 +103,202 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${spParam(state)}`
 }
 
+// 逆翻訳ここから。検索語のトークン(intitle:/after:/before:/#/-/"…")を概念へ戻す
+function parseQueryTokens(q: string, patch: Partial<QueryState>, ignored: string[]): void {
+  const bins = emptyBins()
+  let titleOnly = false
+  for (let token of tokenize(q)) {
+    if (token.startsWith('intitle:')) {
+      titleOnly = true
+      token = token.slice('intitle:'.length)
+    }
+    if (token.startsWith('after:')) {
+      const v = token.slice('after:'.length)
+      if (isIsoDate(v)) patch.since = v
+      else ignored.push(token)
+    } else if (token.startsWith('before:')) {
+      const v = token.slice('before:'.length)
+      if (isIsoDate(v)) patch.until = v
+      else ignored.push(token)
+    } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else if (token) bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+  if (titleOnly) patch.titleOnly = true
+}
+
+/** protobufのvarintを読む。[値, 次の位置] を返し、壊れていれば null */
+function readVarint(bytes: number[], at: number): [number, number] | null {
+  let value = 0
+  let shift = 0
+  let i = at
+  while (i < bytes.length) {
+    const b = bytes[i]
+    value |= (b & 0x7f) << shift
+    i++
+    if ((b & 0x80) === 0) return [value, i]
+    shift += 7
+    if (shift > 28) return null
+  }
+  return null
+}
+
+// sp のfilterサブメッセージを読む(spParamの逆方向)。field1=アップロード日バケット
+// (1時間/今日/今週/今月/今年)はDialectでは期間の開始日への近似として読む。
+// 知らないフィールドは ignored に残して読める分だけ拾う
+function parseSpFilter(bytes: number[], patch: Partial<QueryState>, ignored: string[]): void {
+  const UPLOAD_DAYS: Record<number, number> = { 1: 0, 2: 0, 3: 7, 4: 31, 5: 365 }
+  let i = 0
+  while (i < bytes.length) {
+    const tag = readVarint(bytes, i)
+    if (!tag) {
+      ignored.push('sp:(filter)')
+      return
+    }
+    const field = tag[0] >> 3
+    const wire = tag[0] & 7
+    if (wire === 2) {
+      // 長さ付きの未知サブメッセージは読み飛ばす
+      const len = readVarint(bytes, tag[1])
+      if (!len) {
+        ignored.push('sp:(filter)')
+        return
+      }
+      i = len[1] + len[0]
+      ignored.push(`sp:field${field}`)
+      continue
+    }
+    if (wire !== 0) {
+      ignored.push(`sp:field${field}`)
+      return
+    }
+    const v = readVarint(bytes, tag[1])
+    if (!v) {
+      ignored.push('sp:(filter)')
+      return
+    }
+    const value = v[0]
+    i = v[1]
+    if (field === 1) {
+      const days = UPLOAD_DAYS[value]
+      if (days !== undefined) patch.since = daysAgoIso(days)
+      else ignored.push(`sp:date${value}`)
+    } else if (field === 2) {
+      const rt = Object.entries(TYPE_BYTE).find(([, b]) => b === value)?.[0]
+      if (rt) patch.resultType = rt as ResultType
+      else ignored.push(`sp:type${value}`)
+    } else if (field === 3) {
+      const vl = Object.entries(LENGTH_BYTE).find(([, b]) => b === value)?.[0]
+      if (vl) patch.videoLength = vl as VideoLength
+      else ignored.push(`sp:duration${value}`)
+    } else if (field === 4) patch.hdOnly = true
+    else if (field === 5) patch.captionsOnly = true
+    else if (field === 6) patch.creativeCommons = true
+    else if (field === 7) patch.threeD = true
+    else if (field === 8) patch.liveOnly = true
+    else if (field === 9) patch.purchased = true
+    else if (field === 14) patch.fourK = true
+    else if (field === 15) patch.threeSixty = true
+    else if (field === 23) patch.locationOnly = true
+    else if (field === 25) patch.hdr = true
+    else if (field === 26) patch.vr180 = true
+    else ignored.push(`sp:field${field}`)
+  }
+}
+
+// sp= 全体を読む(spParamの逆方向)。field1=並び順、field2=filterサブメッセージ。
+// base64が壊れているときは sp を丸ごと ignored に残す
+function parseSp(sp: string, patch: Partial<QueryState>, ignored: string[]): void {
+  let bytes: number[]
+  try {
+    bytes = Array.from(atob(sp), (c) => c.charCodeAt(0))
+  } catch {
+    ignored.push(`sp=${sp}`)
+    return
+  }
+  let i = 0
+  while (i < bytes.length) {
+    const tag = readVarint(bytes, i)
+    if (!tag) {
+      ignored.push(`sp=${sp}`)
+      return
+    }
+    const field = tag[0] >> 3
+    const wire = tag[0] & 7
+    if (field === 1 && wire === 0) {
+      const v = readVarint(bytes, tag[1])
+      if (!v) {
+        ignored.push(`sp=${sp}`)
+        return
+      }
+      i = v[1]
+      if (v[0] === SORT_BYTE.new) patch.sort = 'new'
+      else if (v[0] === SORT_BYTE.top) patch.sort = 'top'
+      else if (v[0] === 0) {
+        // 関連度順(既定)。明示されていても「指定なし」と同じ
+      } else ignored.push(`sp:sort${v[0]}`)
+    } else if (field === 2 && wire === 2) {
+      const len = readVarint(bytes, tag[1])
+      if (!len) {
+        ignored.push(`sp=${sp}`)
+        return
+      }
+      parseSpFilter(bytes.slice(len[1], len[1] + len[0]), patch, ignored)
+      i = len[1] + len[0]
+    } else if (wire === 2) {
+      const len = readVarint(bytes, tag[1])
+      if (!len) {
+        ignored.push(`sp=${sp}`)
+        return
+      }
+      i = len[1] + len[0]
+      ignored.push(`sp:field${field}`)
+    } else if (wire === 0) {
+      const v = readVarint(bytes, tag[1])
+      if (!v) {
+        ignored.push(`sp=${sp}`)
+        return
+      }
+      i = v[1]
+      ignored.push(`sp:field${field}`)
+    } else {
+      ignored.push(`sp=${sp}`)
+      return
+    }
+  }
+}
+
+// 逆翻訳: /results?search_query=…(&sp=…) と /@handle/search?query=…(チャンネル内)。
+// m.youtube.com などのサブドメインも受ける
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'youtube.com')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs.length === 2 && segs[0].startsWith('@') && segs[1] === 'search') {
+    const q = url.searchParams.get('query')
+    if (q === null) return null
+    patch.fromUser = segs[0].slice(1)
+    parseQueryTokens(q, patch, ignored)
+    leftoverParams(url, new Set(['query']), ignored)
+    return { patch, ignored }
+  }
+
+  if (segs[0] === 'results') {
+    const q = url.searchParams.get('search_query')
+    if (!q) return null
+    parseQueryTokens(q, patch, ignored)
+    const sp = url.searchParams.get('sp')
+    if (sp) parseSp(sp, patch, ignored)
+    leftoverParams(url, new Set(['search_query', 'sp']), ignored)
+    return { patch, ignored }
+  }
+  return null
+}
+
 // ユーザー指定時はチャンネル内検索URL(/@handle/search)に切り替わり、sp= を送れない。
 // このとき並び順・動画の長さ・探すものは実際には効かないので「使えない」に落とす
 const CHANNEL_CONFLICT: ConceptSupport = {
@@ -157,5 +364,6 @@ export const youtube: PlatformDef = {
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

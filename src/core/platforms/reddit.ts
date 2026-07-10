@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, quoteIfPhrase, stripAt, words } from '../text'
+import { applyBins, daysAgoIso, emptyBins, hostMatches, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
@@ -69,6 +70,101 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.reddit.com/search/?${params.toString()}`
 }
 
+// 逆翻訳: reddit.com/search/?q=… と /r/{sub}/search(コミュニティ内検索)。
+// qはBoolean構文(AND連結・NOT (a OR b)・title:/author:/subreddit:)を戻す。
+// t=(期間プリセット)は「今からN日前」を開始日にした近似として読む
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'reddit.com')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const subs: string[] = []
+
+  if (segs[0] === 'r' && segs[1] && segs[2] === 'search') {
+    // コミュニティ内検索。restrict_sr が立っているときだけ板の絞り込みとして読む
+    const restrict = url.searchParams.get('restrict_sr')
+    if (restrict === '1' || restrict === 'true' || restrict === 'on') subs.push(segs[1])
+    else ignored.push(`r/${segs[1]}`)
+  } else if (segs[0] !== 'search') return null
+
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const bins = emptyBins()
+  let titleOnly = false
+  const tokens = tokenize(q)
+  for (let i = 0; i < tokens.length; i++) {
+    let token = tokens[i]
+    if (/^AND$/i.test(token)) continue
+    if (/^OR$/i.test(token)) {
+      // 語どうしのORはDialectに無い(全AND)。ANDとして読み込んだと正直に残す
+      ignored.push('OR')
+      continue
+    }
+    if (/^NOT$/i.test(token)) {
+      const next = tokens[i + 1]
+      if (next) {
+        i++
+        if (next.startsWith('(') && next.endsWith(')')) {
+          for (const w of next.slice(1, -1).split(/\s+/).filter(Boolean)) {
+            if (!/^OR$/i.test(w)) bins.excludes.push(unquote(w))
+          }
+        } else bins.excludes.push(unquote(next))
+      }
+      continue
+    }
+    if (token.startsWith('(') && token.endsWith(')')) {
+      const inner = token
+        .slice(1, -1)
+        .split(/\s+OR\s+/i)
+        .map((s) => s.trim())
+        .filter(Boolean)
+      if (inner.length > 0 && inner.every((p) => p.startsWith('subreddit:'))) {
+        subs.push(...inner.map((p) => p.slice('subreddit:'.length)))
+      } else ignored.push(token)
+      continue
+    }
+    if (token.startsWith('title:')) {
+      titleOnly = true
+      token = token.slice('title:'.length)
+    }
+    if (token.startsWith('author:')) {
+      patch.fromUser = token.slice('author:'.length).replace(/^u\//, '')
+      continue
+    }
+    if (token.startsWith('subreddit:')) {
+      subs.push(token.slice('subreddit:'.length))
+      continue
+    }
+    if (/^(self|flair|flair_name|url|site|nsfw):/.test(token)) {
+      ignored.push(token)
+      continue
+    }
+    if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else if (token) bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+  if (titleOnly) patch.titleOnly = true
+  if (subs.length > 0) patch.subreddit = subs.join(' ')
+
+  const sort = url.searchParams.get('sort')
+  if (sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments') patch.sort = sort
+  else if (sort !== null && sort !== 'relevance') ignored.push(`sort=${sort}`)
+  const t = url.searchParams.get('t')
+  // 開始日は tParam(丸め)がそのまま同じプリセットへ戻す日数にする(往復一致)
+  const T_DAYS: Record<string, number> = { hour: 0, day: 0, week: 6, month: 30, year: 365 }
+  if (t !== null && t in T_DAYS) patch.since = daysAgoIso(T_DAYS[t])
+  else if (t !== null && t !== 'all') ignored.push(`t=${t}`)
+  const type = url.searchParams.get('type')
+  if (type !== null) {
+    if (REDDIT_RESULT_TYPES.has(type)) patch.resultType = type as QueryState['resultType']
+    else ignored.push(`type=${type}`)
+  }
+  leftoverParams(url, new Set(['q', 'sort', 't', 'type', 'restrict_sr']), ignored)
+  return { patch, ignored }
+}
+
 // Reddit の t= は「今から過去Nへの丸め」しか表せず、開始日(since)を起点にする。
 // 終了日(until)だけ指定しても送れる形が無く buildUrl は t= を付けないので、
 // 「近似で適用」と見せず period を非対応に落として食い違いを防ぐ
@@ -119,5 +215,6 @@ export const reddit: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

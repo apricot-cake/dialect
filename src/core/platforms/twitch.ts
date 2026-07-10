@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases } from '../text'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import { andTerms, exactPhrases, words } from '../text'
+import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実ブラウザ実測)
 // 検索は /search?term=(あいまい一致)。引用符・除外などの演算子は一切効かない。
@@ -15,6 +16,25 @@ function buildUrl(state: QueryState): string | null {
   if (state.resultType === 'video') params.set('type', 'videos')
   else if (state.resultType === 'channel') params.set('type', 'channels')
   return `https://www.twitch.tv/search?${params.toString()}`
+}
+
+// 逆翻訳: twitch.tv/search?term=…(&type=videos|channels)
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'twitch.tv')) return null
+  if (pathSegments(url)[0] !== 'search') return null
+  const term = url.searchParams.get('term')
+  if (!term) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const terms = words(term)
+  if (terms.length > 0) patch.terms = terms
+  const type = url.searchParams.get('type')
+  if (type === 'videos') patch.resultType = 'video'
+  else if (type === 'channels') patch.resultType = 'channel'
+  else if (type !== null) ignored.push(`type=${type}`)
+  leftoverParams(url, new Set(['term', 'type']), ignored)
+  return { patch, ignored }
 }
 
 // Twitchで探せるのは動画とチャンネルだけ。それ以外(ショート/再生リスト/Reddit専用の値)が
@@ -43,5 +63,6 @@ export const twitch: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }
