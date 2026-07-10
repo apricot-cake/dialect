@@ -29,6 +29,7 @@ import { PLATFORMS } from '@/core/platforms'
 import { defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
 import { supportOf } from '@/core/types'
+import { buildUrl } from '@/core/urlParts'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 
 // ---- チェックリストの読み込みとサイト節への分割 --------------------------------
@@ -453,7 +454,7 @@ function surfacesOf(url: string): Set<string> {
 function buildFor(platform: PlatformId, state: Partial<QueryState>): string | null {
   const p = PLATFORMS.find((x) => x.id === platform)!
   try {
-    return p.buildUrl({ ...BASE, ...state })
+    return buildUrl(p, { ...BASE, ...state })
   } catch {
     return null
   }
@@ -508,7 +509,7 @@ for (const platform of PLATFORMS) {
 // 3) support 整合(静かな嘘の検知): support=full/partial の各概念が buildUrl の出力を実際に変えるか
 function tryBuild(platform: (typeof PLATFORMS)[number], state: QueryState): string | null {
   try {
-    return platform.buildUrl(state)
+    return buildUrl(platform, state)
   } catch {
     return null
   }

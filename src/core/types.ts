@@ -320,6 +320,17 @@ export type PlatformId =
   | 'fantia'
 
 /**
+ * 検索URLの1断片。全パーツの text をそのまま連結したものが最終URLになる。
+ * concepts はこの断片を生んだ条件(概念)で、空=無帰属(URLの土台・区切り)。
+ * 複数概念の複合断片(YouTubeのsp=は並び順・種類・特徴が1つのbase64に合成される等)は
+ * 概念を複数持つ。翻訳プレビューの「条件⇄URL部分の同色対応」と check:parts が使う
+ */
+export interface UrlPart {
+  text: string
+  concepts: ConceptId[]
+}
+
+/**
  * 検索URLから読み取れた条件(逆翻訳)。patch は defaultState への上書き差分。
  * ignored は認識できず無視した部分(パラメータや演算子)で、黙って捨てずに
  * ユーザーへ正直に見せるために残す
@@ -345,11 +356,17 @@ export interface PlatformDef {
   googleSite: string
   /** 対応する概念のみ記載。未記載の概念は非対応(none)として扱う */
   support: Partial<Record<ConceptId, ConceptSupport>>
-  /** 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null */
-  buildUrl(state: QueryState): string | null
   /**
-   * このサイトの検索URLをDialectの条件へ逆翻訳する(buildUrlの逆方向)。
-   * このサイトの検索URLでなければ null。buildUrl が出すURLは必ず読めること
+   * 対応している概念だけを検索URLへ翻訳する。検索として成立しない場合は null。
+   * URLは不透明な文字列ではなく UrlPart 列(どの断片がどの概念由来か)として組み立て、
+   * 連結(joinParts)が最終URLになる。帰属の物差し=概念が「指定あり」でその断片を
+   * 変えたときだけ帰属させる(指定なしでも常に送る固定既定値は無帰属。
+   * check:parts が applied∪approximated との整合を機械検査する)
+   */
+  buildParts(state: QueryState): UrlPart[] | null
+  /**
+   * このサイトの検索URLをDialectの条件へ逆翻訳する(buildPartsの逆方向)。
+   * このサイトの検索URLでなければ null。buildParts が出すURLは必ず読めること
    * (check:reverse が往復一致を機械検査する)。サイトが実際に生成する形の
    * バリエーション(旧ドメイン・別パラメータ等)もできる範囲で受ける
    */
@@ -391,6 +408,8 @@ export function limitSort(
 /** ある条件セットをあるSNSへ翻訳した結果 */
 export interface Resolution {
   url: string | null
+  /** url の断片列(概念への帰属つき)。url === joinParts(parts)。成立しないとき null */
+  parts: UrlPart[] | null
   applied: ConceptId[]
   approximated: Array<{ concept: ConceptId; noteKey?: MessageKey }>
   dropped: Array<{ concept: ConceptId; noteKey?: MessageKey }>

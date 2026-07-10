@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -32,38 +33,47 @@ function singleTagOnly(state: QueryState): string | null {
   return !hasOtherConditions && tagNames.length === 1 ? tagNames[0] : null
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const singleTag = singleTagOnly(state)
   // 単一タグのみ(他の条件が何もない)ならタグページ。並び順・投稿タイプ等はURLで指定できない(人気順固定)
   if (singleTag) {
-    return `https://www.tumblr.com/tagged/${encodeURIComponent(singleTag)}`
+    return [
+      lit('https://www.tumblr.com/tagged/'),
+      part(encodeURIComponent(singleTag), 'hashtag'),
+    ]
   }
-
-  const textParts = quotedTerms(state)
-  const excludeParts = minusExcludes(state)
-  const tagNames = words(state.hashtag).map(stripHash)
-  const hasFromUser = state.fromUser.trim().length > 0
 
   if (!hasPositiveTerm(state)) return null
 
   // それ以外はコンテンツ検索へまとめる(複数タグは #tag で本物のタグ演算子として送る)
-  const parts = [...textParts, ...excludeParts]
-  if (hasFromUser) parts.push(`from:${stripAt(state.fromUser)}`)
-  parts.push(...tagNames.map((t) => `#${t}`))
-  if (state.since) parts.push(`since:${state.since}`)
-  if (state.until) parts.push(`before:${state.until}`)
-  const path = encodeURIComponent(parts.join(' '))
+  const toks: Token[] = [...quotedTermTokens(state), ...minusExcludeTokens(state)]
+  if (state.fromUser.trim()) toks.push(tok(`from:${stripAt(state.fromUser)}`, 'fromUser'))
+  toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
+  if (state.since) toks.push(tok(`since:${state.since}`, 'period'))
+  if (state.until) toks.push(tok(`before:${state.until}`, 'period'))
+
+  const parts: UrlPart[] = [lit('https://www.tumblr.com/search/'), ...encodeTokens(toks)]
 
   // 最新順だけ /recent を付ける。人気順(既定)・指定なしは何も付けない
-  const suffix = state.sort === 'new' ? '/recent' : ''
+  if (state.sort === 'new') parts.push(part('/recent', 'sortOrder'))
 
   // 投稿タイプ。画像・動画つきだけ/リンクだけを postTypes= の値集合で絞る
+  // (両方ONなら1断片が mediaOnly と linksOnly の複合になる)
   const postTypes: string[] = []
-  if (state.mediaOnly) postTypes.push('photo', 'gif', 'video')
-  if (state.linksOnly) postTypes.push('link')
-  const query = postTypes.length > 0 ? `?postTypes=${postTypes.join(',')}` : ''
+  const postTypeConcepts: ConceptId[] = []
+  if (state.mediaOnly) {
+    postTypes.push('photo', 'gif', 'video')
+    postTypeConcepts.push('mediaOnly')
+  }
+  if (state.linksOnly) {
+    postTypes.push('link')
+    postTypeConcepts.push('linksOnly')
+  }
+  if (postTypes.length > 0) {
+    parts.push(part(`?postTypes=${postTypes.join(',')}`, ...postTypeConcepts))
+  }
 
-  return `https://www.tumblr.com/search/${path}${suffix}${query}`
+  return parts
 }
 
 // 逆翻訳: /search/{q}(/recent)?postTypes=… と /tagged/{tag}。q内の from:/since:/
@@ -131,7 +141,7 @@ export const tumblr: PlatformDef = {
     linksOnly: { level: 'full' },
     sortOrder: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {

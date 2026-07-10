@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, SortOrder } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, SortOrder, UrlPart } from '../types'
 import { andTerms, exactPhrases, words } from '../text'
+import { lit, ParamParts, part } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-08 実機確認(未ログイン、GUI操作+URL叩き)。search.bilibili.com はログイン不要で
@@ -43,25 +44,37 @@ function cstEpoch(date: string, endOfDay: boolean): number {
   return Date.UTC(y, m - 1, d) / 1000 - 8 * 3600 + (endOfDay ? 86399 : 0)
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   // 引用符の完全一致は効かないので、語句をそのままキーワードとして扱う(近似)
-  const terms = [...andTerms(state), ...exactPhrases(state)]
+  const kw = andTerms(state)
+  const phrases = exactPhrases(state)
+  const terms = [...kw, ...phrases]
   if (terms.length === 0) return null
 
   const tab = tabOf(state)
-  const params = new URLSearchParams()
-  params.set('keyword', terms.join(' '))
+  const params = new ParamParts()
+  // keyword= は1ペアにAND語と完全一致語句が合流する複合断片
+  const kwConcepts: ConceptId[] = []
+  if (kw.length > 0) kwConcepts.push('keywords')
+  if (phrases.length > 0) kwConcepts.push('exactPhrase')
+  params.set('keyword', terms.join(' '), ...kwConcepts)
   const order = ORDER_PARAM[tab][state.sort]
-  if (order) params.set('order', order)
+  if (order) params.set('order', order, 'sortOrder')
   // 日付範囲と動画の長さは動画系タブ(総合・动画)だけが受け付ける
   if (tab === 'all' || tab === 'video') {
-    if (state.videoLength === 'short') params.set('duration', '1')
-    else if (state.videoLength === 'medium') params.set('duration', '2')
-    else if (state.videoLength === 'long') params.set('duration', '4')
-    if (state.since) params.set('pubtime_begin_s', String(cstEpoch(state.since, false)))
-    if (state.until) params.set('pubtime_end_s', String(cstEpoch(state.until, true)))
+    if (state.videoLength === 'short') params.set('duration', '1', 'videoLength')
+    else if (state.videoLength === 'medium') params.set('duration', '2', 'videoLength')
+    else if (state.videoLength === 'long') params.set('duration', '4', 'videoLength')
+    if (state.since) params.set('pubtime_begin_s', String(cstEpoch(state.since, false)), 'period')
+    if (state.until) params.set('pubtime_end_s', String(cstEpoch(state.until, true)), 'period')
   }
-  return `https://search.bilibili.com/${tab}?${params.toString()}`
+  return [
+    lit('https://search.bilibili.com/'),
+    // タブ切り替えのパスは「探すもの」の指定が生む断片(既定の all は無帰属。
+    // 未対応の値で all に落ちたときも既定のままなので帰属させない)
+    state.resultType && TAB_PATH[state.resultType] ? part(tab, 'resultType') : lit(tab),
+    ...params.parts('?'),
+  ]
 }
 
 function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
@@ -160,7 +173,7 @@ export const bilibili: PlatformDef = {
     videoLength: { level: 'partial', noteKey: 'note.bilibili.videoLength' },
     period: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

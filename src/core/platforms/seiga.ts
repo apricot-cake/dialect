@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
-import { minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
 import { applyBins, emptyBins, hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md + 2026-07-07 実機再確認(件数比較)。ログイン不要。
@@ -10,38 +11,50 @@ import { applyBins, emptyBins, hostIs, leftoverParams, pathSegments, tokenize, u
 // 並び順はイラストのみ: image_created(新着)/image_view(閲覧数=人気の代用)。既定は
 // comment_created(コメント新着)なので、新着順・人気順は必ず明示する。
 // マンガは並び順パラメータを送ると結果集合が変わる癖があるため送らない(既定=関連度)。
-function buildUrl(state: QueryState): string | null {
-  const textParts = quotedTerms(state)
-  const tagNames = words(state.hashtag).map(stripHash)
-  const excludes = minusExcludes(state)
+function buildParts(state: QueryState): UrlPart[] | null {
+  const textToks = quotedTermTokens(state)
+  const tagToks = words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag'))
+  const excludeToks = minusExcludeTokens(state)
 
   // マンガ(ニコニコ漫画)。別ドメイン・別エンジンで、並び順は送らない
   if (state.workType === 'manga') {
-    const positive = [...textParts, ...tagNames]
+    const positive = [...textToks, ...tagToks]
     if (positive.length === 0) return null
-    const params = new URLSearchParams()
-    params.set('q', [...positive, ...excludes].join(' '))
-    return `https://manga.nicovideo.jp/search?${params.toString()}`
+    // 別ドメインへの切り替えは「マンガ」の指定が生む断片なので、URL土台を workType に帰属。
+    // q= は1ペアに全トークンが畳み込まれるため、含まれる概念すべての複合断片になる
+    const toks = [...positive, ...excludeToks]
+    const params = new ParamParts()
+    params.set('q', toks.map((t) => t.text).join(' '), ...new Set(toks.flatMap((t) => t.concepts)))
+    return [
+      part('https://manga.nicovideo.jp/search', 'workType'),
+      ...params.parts('?'),
+    ]
   }
 
-  // イラスト(既定)。target=illust を明示し、新着/閲覧数のときだけ sort を送る
-  const params = new URLSearchParams()
-  params.set('target', 'illust')
-  if (state.sort === 'new') params.set('sort', 'image_created')
-  else if (state.sort === 'top') params.set('sort', 'image_view')
-  const qs = `?${params.toString()}`
+  // イラスト(既定)。target=illust を明示し、新着/閲覧数のときだけ sort を送る。
+  // target=illust は指定なしでも常に送る固定値なので、「イラスト」を明示したときだけ帰属させる
+  const params = new ParamParts()
+  params.set('target', 'illust', ...(state.workType === 'illust' ? (['workType'] as const) : []))
+  if (state.sort === 'new') params.set('sort', 'image_created', 'sortOrder')
+  else if (state.sort === 'top') params.set('sort', 'image_view', 'sortOrder')
 
   // タグ単独(+除外)ならタグ一致検索。除外・並び順はタグページでも有効(実測)
-  if (tagNames.length > 0 && textParts.length === 0) {
-    const path = [...tagNames, ...excludes].join(' ')
-    return `https://seiga.nicovideo.jp/tag/${encodeURIComponent(path)}${qs}`
+  if (tagToks.length > 0 && textToks.length === 0) {
+    return [
+      lit('https://seiga.nicovideo.jp/tag/'),
+      ...encodeTokens([...tagToks, ...excludeToks]),
+      ...params.parts('?'),
+    ]
   }
 
   // 除外語は正の条件に数えない(「足す=絞る」原則。他サイトと揃える)
-  const positive = [...textParts, ...tagNames]
+  const positive = [...textToks, ...tagToks]
   if (positive.length === 0) return null
-  const parts = [...positive, ...excludes]
-  return `https://seiga.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}${qs}`
+  return [
+    lit('https://seiga.nicovideo.jp/search/'),
+    ...encodeTokens([...positive, ...excludeToks]),
+    ...params.parts('?'),
+  ]
 }
 
 // 逆翻訳: seiga.nicovideo.jp/{search|tag}/{q} と manga.nicovideo.jp/search?q=(マンガ)。
@@ -109,7 +122,7 @@ export const seiga: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.imageOnly' },
     sortOrder: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {

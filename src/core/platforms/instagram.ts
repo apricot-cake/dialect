@@ -1,24 +1,32 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
 // タグ単独ならタグページ(人気投稿のみ)、それ以外はキーワードSERP。
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   // 完全一致は近似のキーワード扱い
-  const textParts = [...andTerms(state)]
-  textParts.push(...exactPhrases(state))
+  const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
+  textToks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   const tagNames = words(state.hashtag).map(stripHash)
 
-  if (tagNames.length === 1 && textParts.length === 0) {
-    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tagNames[0])}/`
+  if (tagNames.length === 1 && textToks.length === 0) {
+    return [
+      lit('https://www.instagram.com/explore/tags/'),
+      part(encodeURIComponent(tagNames[0]), 'hashtag'),
+      lit('/'),
+    ]
   }
 
-  const parts = [...textParts, ...tagNames.map((t) => `#${t}`)]
-  if (parts.length === 0) return null
+  const toks = [...textToks, ...tagNames.map((t) => tok(`#${t}`, 'hashtag'))]
+  if (toks.length === 0) return null
 
-  return `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(parts.join(' '))}`
+  return [
+    lit('https://www.instagram.com/explore/search/keyword/?q='),
+    ...encodeTokens(toks),
+  ]
 }
 
 // タグ1つならタグページ(厳密)だが、2つ以上はキーワードSERPに落ちてAND保証がなくなる
@@ -76,7 +84,7 @@ export const instagram: PlatformDef = {
     mediaOnly: { level: 'none' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

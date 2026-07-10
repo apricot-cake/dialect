@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md
@@ -41,37 +42,50 @@ const NOTE_RESULT_TYPE_CONTEXT: Partial<Record<QueryState['resultType'], string>
 // 部分集合)。急上昇(hot)を選んでいてもここでは送らない(未確認のため落とす)
 const CIRCLE_SORT_VALUES: ReadonlySet<QueryState['sort']> = new Set(['new', 'top'])
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const handle = stripAt(state.fromUser)
   // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
-  const textParts = [...andTerms(state)]
-  textParts.push(...exactPhrases(state))
+  const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
+  textToks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   const tagNames = words(state.hashtag).map(stripHash)
+  const tagToks = tagNames.map((t) => tok(t, 'hashtag'))
 
   const altContext = NOTE_RESULT_TYPE_CONTEXT[state.resultType]
   if (altContext) {
-    const parts = [...textParts, ...tagNames]
-    if (parts.length === 0) return null
-    const url = `https://note.com/search?context=${altContext}&q=${encodeURIComponent(parts.join(' '))}`
+    const toks = [...textToks, ...tagToks]
+    if (toks.length === 0) return null
+    // クリエイター・マガジン・メンバーシップへの context 切替は「探すもの」の指定が生む断片
+    const parts: UrlPart[] = [
+      lit('https://note.com/search?context='),
+      part(altContext, 'resultType'),
+      lit('&q='),
+      ...encodeTokens(toks),
+    ]
     if (state.resultType === 'circle' && CIRCLE_SORT_VALUES.has(state.sort)) {
-      return `${url}&sort=${SORT_PARAM[state.sort]}`
+      parts.push(part(`&sort=${SORT_PARAM[state.sort]}`, 'sortOrder'))
     }
-    return url
+    return parts
   }
 
   if (isTagPath(state)) {
-    return `https://note.com/hashtag/${encodeURIComponent(tagNames[0])}`
+    return [lit('https://note.com/hashtag/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
   }
 
-  const parts = [...textParts, ...tagNames]
-  if (handle) parts.push(`from:@${handle}`)
-  if (parts.length === 0) return null
+  const toks = [...textToks, ...tagToks]
+  if (handle) toks.push(tok(`from:@${handle}`, 'fromUser'))
+  if (toks.length === 0) return null
 
   const sortVal = SORT_PARAM[state.sort]
-  const sort = sortVal ? `&sort=${sortVal}` : ''
-  // 有料のみ(paidOnly)は context を note_for_sale に切り替えて表現(2026-07-09 GUI採取)
-  const context = state.paidOnly ? 'note_for_sale' : 'note'
-  return `https://note.com/search?context=${context}&q=${encodeURIComponent(parts.join(' '))}${sort}`
+  // 有料のみ(paidOnly)は context を note_for_sale に切り替えて表現(2026-07-09 GUI採取)。
+  // 指定なしの context=note は常に送る既定値なので無帰属
+  const parts: UrlPart[] = [
+    lit('https://note.com/search?context='),
+    state.paidOnly ? part('note_for_sale', 'paidOnly') : lit('note'),
+    lit('&q='),
+    ...encodeTokens(toks),
+  ]
+  if (sortVal) parts.push(part(`&sort=${sortVal}`, 'sortOrder'))
+  return parts
 }
 
 // note が対応する値のみ(他サイト専用の値はここに含めない)
@@ -121,6 +135,11 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     // 単一タグのタグページには有料フィルタが無い。そのときは paidOnly を落とす
     ...(state.paidOnly && isTagPath(state)
       ? { paidOnly: { level: 'none', noteKey: 'note.note.paidOnly.tagPage' } }
+      : {}),
+    // タグページには並び順も無い(sort= を送れない)ので、指定されていたら落とす
+    // (check:parts が検出した食い違い)
+    ...(state.sort !== 'auto' && isTagPath(state)
+      ? { sortOrder: { level: 'none', noteKey: 'note.note.sort.tagPage' } }
       : {}),
   }
 }
@@ -185,7 +204,7 @@ export const note: PlatformDef = {
     sortOrder: { level: 'full' },
     paidOnly: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

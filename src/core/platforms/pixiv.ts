@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, minusExcludes, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, tok, type Token } from '../urlParts'
 import { hostMatches, isIsoDate, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
@@ -24,12 +25,12 @@ const SEARCH_ENDPOINT_TYPE: Record<'' | 'illust' | 'manga' | 'ugoira' | 'novel',
   novel: 'novel',
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
-  const parts: string[] = [...andTerms(state)]
+  const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
-  parts.push(...exactPhrases(state))
-  parts.push(...words(state.hashtag).map(stripHash))
+  toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
+  toks.push(...words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag')))
   // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
   // 先頭の桁を固定しないので 1000/5000/10000…users入り をまとめて拾える。
   // 部分一致には s_mode=s_tag が必須。タイトルだけ(s_tc)・完全一致(s_tag_full)・
@@ -37,45 +38,48 @@ function buildUrl(state: QueryState): string | null {
   // そのときは term も足さない(送っても嘘になる)。
   const usePopular =
     Boolean(state.pixivPopular) && !state.titleOnly && !state.exactTag && !state.tagTitleCaption
-  if (usePopular) parts.push(state.pixivPopular)
+  if (usePopular) toks.push(tok(state.pixivPopular, 'pixivPopular'))
   // 正の条件がなければ検索として成立しない(除外だけでは開けない)
-  if (parts.length === 0) return null
-  parts.push(...minusExcludes(state))
+  if (toks.length === 0) return null
+  toks.push(...minusExcludeTokens(state))
 
-  const params = new URLSearchParams()
+  const params = new ParamParts()
   // s_mode は1枠。優先度 タイトルだけ(s_tc) > タグ完全一致(s_tag_full) >
   // タグ・タイトル・キャプション(tag_tc) > 人気の目安(s_tag)。
   // タイトルだけ=タイトル・キャプション検索(公式ヘルプ記載)。完全一致=s_tag_full(2026-07-06実測、
   // 部分732千→完全724千で実際に絞られる)。タグ・タイトル・キャプションは通常のタグ部分一致より
   // 広い範囲がヒットする(2026-07-07実測、猫の部分一致24万件→tag_tcで112万件)。
   // 人気の目安は部分一致が要るので s_tag を明示。
-  if (state.titleOnly) params.set('s_mode', 's_tc')
-  else if (state.exactTag) params.set('s_mode', 's_tag_full')
-  else if (state.tagTitleCaption) params.set('s_mode', 'tag_tc')
-  else if (usePopular) params.set('s_mode', 's_tag')
+  if (state.titleOnly) params.set('s_mode', 's_tc', 'titleOnly')
+  else if (state.exactTag) params.set('s_mode', 's_tag_full', 'exactTag')
+  else if (state.tagTitleCaption) params.set('s_mode', 'tag_tc', 'tagTitleCaption')
+  else if (usePopular) params.set('s_mode', 's_tag', 'pixivPopular')
   // 新着は既定なので order を付けない。order=date_d は scd/ecd と併用すると
   // pixiv がエラーページを返すため明示しない(2026-07-04 実測)。
   // popular_d=人気(プレミアム限定)のときだけ order を指定する。指定なしも何も送らない
-  if (state.sort === 'top') params.set('order', 'popular_d')
-  if (state.since) params.set('scd', state.since)
-  if (state.until) params.set('ecd', state.until)
+  if (state.sort === 'top') params.set('order', 'popular_d', 'sortOrder')
+  if (state.since) params.set('scd', state.since, 'period')
+  if (state.until) params.set('ecd', state.until, 'period')
   // 年齢制限とAI生成は /tags エンドポイントでも有効(2026-07-05実機確認)。
   // mode=safe(全年齢)/r18(R18のみ)。空(すべて)はアカウント既定なので送らない。
   // ai_type=1 でAI生成作品を除外(送らなければアカウント既定に従う)。どちらも非会員でも効く
-  if (state.ageRating) params.set('mode', state.ageRating)
-  if (state.excludeAi) params.set('ai_type', '1')
+  if (state.ageRating) params.set('mode', state.ageRating, 'ageRating')
+  if (state.excludeAi) params.set('ai_type', '1', 'excludeAi')
 
   if (state.tagTitleCaption) {
-    // タグ・タイトル・キャプションのときだけ /search?q=…&type=… エンドポイントへ
-    params.set('type', SEARCH_ENDPOINT_TYPE[state.workType])
-    const qs = params.toString()
-    return `https://www.pixiv.net/search?q=${encodeURIComponent(parts.join(' '))}&${qs}`
+    // タグ・タイトル・キャプションのときだけ /search?q=…&type=… エンドポイントへ。
+    // type= は作品の種類が指定なし(artwork)でも常に送るので、そのときは無帰属
+    params.set('type', SEARCH_ENDPOINT_TYPE[state.workType], ...(state.workType ? (['workType'] as const) : []))
+    return [
+      lit('https://www.pixiv.net/search?q='),
+      ...encodeTokens(toks),
+      ...params.parts('&'),
+    ]
   }
 
   // うごくイラストは専用パスが無く(/tags/…/ugoira は「不正なリクエスト」)、
   // illustrations カテゴリで type=ugoira を付けて絞る(2026-07-06 実測: 全72万→約7千)。
-  if (state.workType === 'ugoira') params.set('type', 'ugoira')
-  const qs = params.toString()
+  if (state.workType === 'ugoira') params.set('type', 'ugoira', 'workType')
 
   // イラスト・うごくイラストは illustrations、マンガは manga、小説は novels、
   // 指定なしは全作品(artworks)。うごくは上の type=ugoira で更に絞る
@@ -87,7 +91,13 @@ function buildUrl(state: QueryState): string | null {
         : state.workType === 'illust' || state.workType === 'ugoira'
           ? 'illustrations'
           : 'artworks'
-  return `https://www.pixiv.net/tags/${encodeURIComponent(parts.join(' '))}/${section}${qs ? `?${qs}` : ''}`
+  return [
+    lit('https://www.pixiv.net/tags/'),
+    ...encodeTokens(toks),
+    lit('/'),
+    state.workType ? part(section, 'workType') : lit(section),
+    ...params.parts('?'),
+  ]
 }
 
 // 逆翻訳: /tags/{q}/{section} と /search?q=…&type=…(タグ・タイトル・キャプション)。
@@ -190,7 +200,7 @@ export const pixiv: PlatformDef = {
     ageRating: { level: 'full' },
     excludeAi: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}

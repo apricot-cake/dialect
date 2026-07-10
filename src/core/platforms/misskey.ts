@@ -1,5 +1,6 @@
-import type { ParsedSearch, PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases, minusExcludes, stripAt, stripHash, words } from '../text'
+import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、2026-07-08にログイン済みGUI操作で除外・完全一致を再検証)
@@ -11,34 +12,49 @@ import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../pars
 // 完全一致(2026-07-08 ログイン済みGUI操作で再検証): "..." で括っても隣接一致にならず、実在の投稿本文を
 // そのまま引用符で括ってすら0件になる(引用符が文字として扱われ、クエリ全体を壊す)。さらに他のAND語と
 // 組み合わせると検索全体が0件になる実害を確認したため、引用符は送らず語ごとのAND(keywordsと同じ扱い)へ畳み込む。
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   // 完全一致は機能しないため、語を分解してAND語として畳み込む(note.misskey.exactPhrase)
-  const textParts = [...andTerms(state), ...exactPhrases(state).flatMap(words)]
+  const textToks: Token[] = [
+    ...andTerms(state).map((t) => tok(t, 'keywords')),
+    ...exactPhrases(state).flatMap((p) => words(p).map((w) => tok(w, 'exactPhrase'))),
+  ]
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
+  const excludeToks = minusExcludeTokens(state)
 
-  // タグ単独ならタグページ(ログアウトでも見られる唯一の経路)
-  if (tagNames.length === 1 && textParts.length === 0 && !handle) {
-    return `https://misskey.io/tags/${encodeURIComponent(tagNames[0])}`
+  // タグ単独ならタグページ(ログアウトでも見られる唯一の経路)。
+  // 除外の指定があるときはタグページでは表現できない(URLに載らず黙って捨てることになる)ので、
+  // mastodon/tumblr と同じく検索ページへ回して #タグ+除外 として送る(2026-07-10 修正。
+  // それまでタグ+除外の組み合わせで除外が黙って落ちていた=check:parts が検出)
+  if (tagNames.length === 1 && textToks.length === 0 && !handle && excludeToks.length === 0) {
+    return [
+      lit('https://misskey.io/tags/'),
+      part(encodeURIComponent(tagNames[0]), 'hashtag'),
+    ]
   }
 
   // ノート本文にはタグが「#タグ」の文字列で含まれるため、部分一致検索に畳み込める
-  const parts = [...textParts, ...tagNames.map((t) => `#${t}`)]
+  const toks = [...textToks, ...tagNames.map((t) => tok(`#${t}`, 'hashtag'))]
   // ユーザー指定だけでは検索が実行されないため、検索語を必須にする
-  if (parts.length === 0) return null
+  if (toks.length === 0) return null
   // 除外は先頭に - をつける(Meilisearchのマイナス検索。非公式)
-  parts.push(...minusExcludes(state))
+  toks.push(...excludeToks)
 
   // URLSearchParamsはスペースを「+」にするが、Misskey側が「+」を
-  // スペースへ戻す保証がないため、%20になるencodeURIComponentで組む
-  const query = [`q=${encodeURIComponent(parts.join(' '))}`, 'type=note']
+  // スペースへ戻す保証がないため、%20になるencodeURIComponentで組む。
+  // type=note は指定の有無によらず常に送る固定値なので無帰属
+  const parts: UrlPart[] = [
+    lit('https://misskey.io/search?q='),
+    ...encodeTokens(toks),
+    lit('&type=note'),
+  ]
   if (handle) {
     // リモートユーザー(@user@host)は username と host に分ける
     const [user, host] = handle.split('@')
-    query.push(`username=${encodeURIComponent(user)}`)
-    if (host) query.push(`host=${encodeURIComponent(host)}`)
+    parts.push(part(`&username=${encodeURIComponent(user)}`, 'fromUser'))
+    if (host) parts.push(part(`&host=${encodeURIComponent(host)}`, 'fromUser'))
   }
-  return `https://misskey.io/search?${query.join('&')}`
+  return parts
 }
 
 // 逆翻訳: misskey.io/search?q=…&type=note(&username=&host=) と /tags/{tag}。
@@ -100,6 +116,6 @@ export const misskey: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
 }

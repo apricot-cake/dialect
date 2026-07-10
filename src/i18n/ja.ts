@@ -262,6 +262,7 @@ export const ja = {
   // 複数プラットフォーム共通の注記
   'note.loose.and': '入力した言葉の一部だけを含む投稿も混ざることがあります',
   'note.loose.exact': '完全一致は効かず、ふつうのキーワードとして検索されます',
+  'note.titleOnly.needsWords': 'キーワードか完全一致のことばと組み合わせたときだけ使えます',
   'note.exact.unreliable': '完全一致で探しますが、言葉がバラバラに含まれる投稿も混ざることがあります',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.nosort': '並び順は指定できません',
@@ -293,6 +294,7 @@ export const ja = {
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
   'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
+  'note.note.sort.tagPage': '単一タグのタグページでは並び順を指定できません',
   'note.note.resultTypeConflict': 'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
   'note.note.paidOnly.circle': 'メンバーシップはすべて有料のため、この絞り込みは意味を持ちません',
 
@@ -346,6 +348,7 @@ export const ja = {
   'launch.droppedHeading': '使えない',
   'launch.specialtyHeading': '他サイト専用',
   'launch.specialtyOnly': '{name}専用',
+  'launch.urlHeading': '開くURL（条件と同じ色の部分が対応）',
 
   // 起動カードの翻訳プレビュー(効く条件を読みやすいラベルに畳む)。{v}に値が入る
   'sum.exclude': '{v}を除く',

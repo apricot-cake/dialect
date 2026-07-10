@@ -12,6 +12,7 @@
     "check:operators": "npx --no-install esbuild scripts/check-operators.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-operators.mjs && node node_modules/.cache/check-operators.mjs",
     "check:readings": "npx --no-install esbuild scripts/check-readings.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-readings.mjs && node node_modules/.cache/check-readings.mjs",
     "check:reverse": "npx --no-install esbuild scripts/check-reverse.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-reverse.mjs && node node_modules/.cache/check-reverse.mjs",
+    "check:parts": "npx --no-install esbuild scripts/check-parts.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-parts.mjs && node node_modules/.cache/check-parts.mjs",
     "gen:readings": "npx --no-install esbuild scripts/gen-readings.ts --bundle --platform=node --format=esm --alias:@=./src --external:kuromoji --log-level=warning --outfile=node_modules/.cache/gen-readings.mjs && node node_modules/.cache/gen-readings.mjs"
   },
   "dependencies": {

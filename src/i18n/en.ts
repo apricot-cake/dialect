@@ -261,6 +261,8 @@ export const en = {
   'note.loose.and': 'Some results may contain only some of your words.',
   'note.loose.exact':
     'Exact phrase does not work; it is searched as ordinary keywords.',
+  'note.titleOnly.needsWords':
+    'Works only when combined with keywords or an exact phrase.',
   'note.exact.unreliable':
     'Searches for the exact phrase, but some results may have the words scattered apart.',
   'note.tagPage.combined':
@@ -305,6 +307,7 @@ export const en = {
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
   'note.note.paidOnly.tagPage': "A single tag's tag page can't be limited to paid articles.",
+  'note.note.sort.tagPage': "A single tag's tag page can't be sorted.",
   'note.note.resultTypeConflict':
     'This filter has no effect on creator, magazine, or membership search.',
   'note.note.paidOnly.circle':
@@ -383,6 +386,7 @@ export const en = {
   'launch.droppedHeading': 'Not available',
   'launch.specialtyHeading': 'Only on other sites',
   'launch.specialtyOnly': '{name} only',
+  'launch.urlHeading': 'URL to open (colors match the conditions)',
 
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
   'sum.exclude': 'excluding {v}',
