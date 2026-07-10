@@ -188,18 +188,6 @@ export function ConditionsArea({
                     onRemove={def.id === 'keywords' ? undefined : () => removeConcept(def.id)}
                   />
                 </div>
-                {/* 人気順を選んだその場で出す注記。pixivでは人気順がプレミアム限定のため、
-                    画面2へ行かなくても選択時点で気づけるようにする */}
-                {def.id === 'sortOrder' && query.sort === 'top' && (
-                  <div className="flex items-start gap-1.5 pr-10 pl-[42px] text-[12px] leading-[1.45] text-muted">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e0a63a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-[2px] shrink-0">
-                      <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
-                      <path d="M12 8.2v5.2" />
-                      <path d="M12 17.6h.01" />
-                    </svg>
-                    <span>{t('note.pixiv.sort')}</span>
-                  </div>
-                )}
               </motion.div>
             ))}
           </AnimatePresence>
