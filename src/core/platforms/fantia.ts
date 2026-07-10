@@ -100,7 +100,7 @@ export const fantia: PlatformDef = {
   googleSite: 'fantia.jp',
   support: {
     keywords: { level: 'full' },
-    exactPhrase: { level: 'none', noteKey: 'note.fantia.exactLiteral' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'none', noteKey: 'note.exclude.literal' },
     titleOnly: { level: 'full' },
     fantiaCategory: { level: 'full' },

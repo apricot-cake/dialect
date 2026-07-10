@@ -54,7 +54,7 @@ export const fivech: PlatformDef = {
   googleSite: '5ch.io',
   support: {
     keywords: { level: 'partial', noteKey: 'note.fivech.keywords' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'partial', noteKey: 'note.exact.substring' },
     exclude: { level: 'full' },
     // ff5chは元々スレタイのみ検索。トグルは何も変えない(常にタイトル対象)ので注記で伝える
     titleOnly: { level: 'partial', noteKey: 'note.fivech.titleOnly' },

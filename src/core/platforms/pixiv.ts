@@ -28,7 +28,7 @@ const SEARCH_ENDPOINT_TYPE: Record<'' | 'illust' | 'manga' | 'ugoira' | 'novel',
 function buildParts(state: QueryState): UrlPart[] | null {
   // 引用符構文がないため、スペースを含む語もそのまま埋め込む(タグの部分一致)
   const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
-  // 完全一致は効かないため、語句をそのままキーワード(タグ語)として扱う(近似)
+  // 引用符構文は無いが、語句はつながったままタグへの部分一致で効く(スペース入りは語ごとに分かれる)
   toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   toks.push(...words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag')))
   // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
@@ -185,7 +185,7 @@ export const pixiv: PlatformDef = {
   googleSite: 'pixiv.net',
   support: {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'partial', noteKey: 'note.pixiv.exactPhrase' },
     titleOnly: { level: 'partial', noteKey: 'note.pixiv.titleOnly' },
     exactTag: { level: 'full' },
     tagTitleCaption: { level: 'full' },

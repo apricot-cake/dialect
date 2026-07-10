@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
-import { andTerms, exactPhrases, words } from '../text'
+import { andTerms, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
@@ -11,11 +11,8 @@ import { hostMatches, leftoverParams, pathSegments } from '../parse'
 // `-語`(除外)を試したところ、Pinterest自身が「"猫 -犬"の検索結果です。"猫 -犬"で検索し
 // 直しますか?」と表示し、`-`をそのまま検索語の一部として扱う(除外にならない)ことを実機確認。
 function buildParts(state: QueryState): UrlPart[] | null {
-  // 引用符構文がないため、完全一致の語句もそのままキーワードとして埋め込む(ゆるい一致)
-  const toks: Token[] = [
-    ...andTerms(state).map((t) => tok(t, 'keywords')),
-    ...exactPhrases(state).map((p) => tok(p, 'exactPhrase')),
-  ]
+  // 完全一致は引用符が効かず(実機確認)ゆるい一致に化けるだけなので送らない(非対応)
+  const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   if (toks.length === 0) return null
   // フィルターの4択はパスの切り替え。既定(すべてのピン=pins)は無帰属
   const path =
@@ -75,7 +72,7 @@ export const pinterest: PlatformDef = {
   googleSite: 'pinterest.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'none', noteKey: 'note.exclude.literal' },
     resultType: { level: 'full' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },

@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
-import { andTerms, exactPhrases, words } from '../text'
+import { andTerms, words } from '../text'
 import { lit, ParamParts } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
@@ -8,18 +8,13 @@ import { hostMatches, leftoverParams, pathSegments } from '../parse'
 // type= で検索対象を切り替えられる(channels/categories/videos。実測で有効)。
 // 「配信中のみ」のtypeは存在しない。言語絞り込みはURL不可(UIの内部状態のみ)。
 function buildParts(state: QueryState): UrlPart[] | null {
+  // 完全一致は引用符構文が無く、送っても素のワード検索に化けるだけ。
+  // 意図を別の意味(ワード検索)に付け替えて送ることはしない=非対応として送らない
   const kw = andTerms(state)
-  // 演算子がないため語句もそのままキーワードとして埋め込む
-  const phrases = exactPhrases(state)
-  const terms = [...kw, ...phrases]
-  if (terms.length === 0) return null
+  if (kw.length === 0) return null
 
   const params = new ParamParts()
-  // term= は1ペアにAND語と完全一致語句が合流する複合断片
-  const termConcepts: ConceptId[] = []
-  if (kw.length > 0) termConcepts.push('keywords')
-  if (phrases.length > 0) termConcepts.push('exactPhrase')
-  params.set('term', terms.join(' '), ...termConcepts)
+  params.set('term', kw.join(' '), 'keywords')
   if (state.resultType === 'video') params.set('type', 'videos', 'resultType')
   else if (state.resultType === 'channel') params.set('type', 'channels', 'resultType')
   return [lit('https://www.twitch.tv/search'), ...params.parts('?')]
@@ -64,7 +59,7 @@ export const twitch: PlatformDef = {
   googleSite: 'twitch.tv',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     resultType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },

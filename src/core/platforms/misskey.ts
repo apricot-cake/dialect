@@ -1,5 +1,5 @@
 import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
-import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { andTerms, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
@@ -11,13 +11,10 @@ import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../pars
 // 「検索」ボタンの手動クリックが要る(q欄は埋まる)。その旨は note.misskey.keywords で告知する。
 // 完全一致(2026-07-08 ログイン済みGUI操作で再検証): "..." で括っても隣接一致にならず、実在の投稿本文を
 // そのまま引用符で括ってすら0件になる(引用符が文字として扱われ、クエリ全体を壊す)。さらに他のAND語と
-// 組み合わせると検索全体が0件になる実害を確認したため、引用符は送らず語ごとのAND(keywordsと同じ扱い)へ畳み込む。
+// 組み合わせると検索全体が0件になる実害を確認した。機能しない条件を語のANDに
+// 付け替えて送ることはしない(意味を変える畳み込み禁止)ため、非対応として送らない。
 function buildParts(state: QueryState): UrlPart[] | null {
-  // 完全一致は機能しないため、語を分解してAND語として畳み込む(note.misskey.exactPhrase)
-  const textToks: Token[] = [
-    ...andTerms(state).map((t) => tok(t, 'keywords')),
-    ...exactPhrases(state).flatMap((p) => words(p).map((w) => tok(w, 'exactPhrase'))),
-  ]
+  const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
   const excludeToks = minusExcludeTokens(state)
@@ -110,7 +107,7 @@ export const misskey: PlatformDef = {
   googleSite: 'misskey.io',
   support: {
     keywords: { level: 'partial', noteKey: 'note.misskey.keywords' },
-    exactPhrase: { level: 'partial', noteKey: 'note.misskey.exactPhrase' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'full' },
     fromUser: { level: 'partial', noteKey: 'note.misskey.fromUser' },
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
