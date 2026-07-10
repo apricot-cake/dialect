@@ -18,8 +18,8 @@ import { PlatformBadge } from './PlatformBadge'
 import { ScrollUpPill } from './ConditionsArea'
 
 /**
- * 概念色の下線。複数概念の複合断片(YouTubeのsp=等)は等分のストライプで
- * 「複数の条件がここに合成されている」ことを正直に見せる。
+ * 概念色の下線。ホバーポップの生URL全文でのみ使う。複数概念の複合断片
+ * (YouTubeのsp=等)は等分のストライプで「複数の条件がここに合成されている」ことを正直に見せる。
  * dashed=近似(弱まって効く)条件の印。破線にして、そのまま効く条件と見分ける
  */
 function underlineStyle(colors: string[], dashed = false): CSSProperties {
@@ -220,14 +220,19 @@ function LaunchCard({
       {enabled && (parts.length > 0 || droppedReal.length > 0) && (
         <div className="mt-[7px] px-1">
           {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す。
-              下線の色はホバーポップの生URL断片と対応(同じ概念=同じ色)。丸ごと落ちる
-              条件は行に出ない代わりに、「使えない {n}」の文字バッジで件数を明示する */}
+              文字色はホバーポップの生URL断片と対応(同じ概念=同じ色)。近似(弱まって効く)
+              条件は斜体にして、そのまま効く条件と見分ける。丸ごと落ちる条件は行に出ない
+              代わりに、「使えない {n}」の文字バッジで件数を明示する */}
           <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
             {parts.map((p, i) => {
               const color = colors.get(p.concept)
+              const approx = approxConcepts.has(p.concept)
               return (
                 <span key={i} className="whitespace-nowrap">
-                  <span style={color ? underlineStyle([color], approxConcepts.has(p.concept)) : undefined}>
+                  <span
+                    className={approx ? 'italic' : undefined}
+                    style={color ? { color } : undefined}
+                  >
                     {p.label}
                   </span>
                   {i < parts.length - 1 && <span className="text-faint">・</span>}
