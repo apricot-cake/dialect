@@ -326,7 +326,7 @@ export const en = {
   'note.pixiv.titleOnly':
     'Searches titles and descriptions, not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
-  'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
+  'note.pixiv.sort': 'On pixiv, popular order works only for Premium members.',
   'note.pixiv.popular':
     'Filters to popular works via the “N users入り” tags. These are added by fans by hand, so some popular works may be missed.',
   'note.pixiv.r18Login':
