@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
-import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { andTerms, stripHash, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments, tokenize } from '../parse'
 
@@ -7,9 +7,8 @@ import { hostMatches, leftoverParams, pathSegments, tokenize } from '../parse'
 // 検索・タグページともログイン必須(未ログインは即ログイン画面)。演算子は実質ゼロ。
 // タグ単独ならタグページ(人気投稿のみ)、それ以外はキーワードSERP。
 function buildParts(state: QueryState): UrlPart[] | null {
-  // 完全一致は近似のキーワード扱い
+  // 完全一致はゆるい一致に化けるだけなので送らない(非対応)
   const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
-  textToks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   const tagNames = words(state.hashtag).map(stripHash)
 
   if (tagNames.length === 1 && textToks.length === 0) {
@@ -76,7 +75,7 @@ export const instagram: PlatformDef = {
   googleSite: 'instagram.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'none' },
     fromUser: { level: 'none' },
     hashtag: { level: 'full', noteKey: 'note.instagram.hashtag' },

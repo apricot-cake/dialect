@@ -2,7 +2,6 @@ import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, PostLanguage
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
 import {
   andTerms,
-  exactPhrases,
   hasPositiveTerm,
   stripAt,
   stripHash,
@@ -32,12 +31,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // ユーザー検索(tab=user)はアカウント名/ハンドルへのゆるい一致で、本文演算子が効かない。
   // 2026-07-09 GUI操作で確認: 「猫 -犬」で検索しても「犬猫」を含むアカウントが普通に
   // 返る(除外が効かない)、引用符も無視して同じ結果になる(完全一致にならない)。
-  // よって語句はそのまま連結するだけにし、他の演算子は使わない
+  // よって語だけをそのまま連結し、完全一致は送らない(非対応)・他の演算子も使わない
   if (state.resultType === 'people') {
-    const toks = [
-      ...andTerms(state).map((t) => tok(t, 'keywords')),
-      ...exactPhrases(state).map((p) => tok(p, 'exactPhrase')),
-    ]
+    const toks = andTerms(state).map((t) => tok(t, 'keywords'))
     if (toks.length === 0) return null
     return [
       lit('https://bsky.app/search?q='),
@@ -85,9 +81,8 @@ function dynamicSupport(
   if (state.resultType === 'people') {
     // 語句どうしのANDも保証されない、ふつうの部分一致(note.loose.and)
     overrides.keywords = { level: 'partial', noteKey: 'note.loose.and' }
-    // 完全一致は引用符が無視されるが、語句自体はゆるい一致の検索語として送られる
-    // (buildParts が実際に送っている)ので「使えない」ではなく「ゆるく畳む」近似
-    overrides.exactPhrase = { level: 'partial', noteKey: 'note.loose.exact' }
+    // アカウント検索は引用符を無視し完全一致が成立しないため、送らない(非対応)
+    overrides.exactPhrase = { level: 'none', noteKey: 'note.exactPhrase.dropped' }
     overrides.exclude = PEOPLE_CONFLICT
     overrides.fromUser = PEOPLE_CONFLICT
     overrides.mentionsUser = PEOPLE_CONFLICT

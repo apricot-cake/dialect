@@ -11,7 +11,7 @@ import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 // 演算子(除外・引用符)や並び順・期間のパラメータは存在しない。
 function buildParts(state: QueryState): UrlPart[] | null {
   const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
-  // 引用符構文がないため語句もそのままキーワードとして埋め込む
+  // 部分文字列マッチ型(2026-07-10 URL叩きで確認)なので、語句はそのまま埋め込めば繋がったまま効く
   toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   if (toks.length === 0) return null
 
@@ -53,7 +53,7 @@ export const animanch: PlatformDef = {
   googleSite: 'bbs.animanch.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.animanch.keywords' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'partial', noteKey: 'note.exact.substring' },
     titleOnly: { level: 'partial', noteKey: 'note.animanch.titleOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },

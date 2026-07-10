@@ -261,7 +261,8 @@ export const ja = {
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': '入力した言葉の一部だけを含む投稿も混ざることがあります',
-  'note.loose.exact': '完全一致は効かず、ふつうのキーワードとして検索されます',
+  'note.exactPhrase.dropped': '完全一致では探せません。ことばで探したいときは、キーワードに入れてください',
+  'note.exact.substring': 'つながった文字列のまま探します。スペースを含む語句は、語ごとの絞り込みに分かれます',
   'note.titleOnly.needsWords': 'キーワードか完全一致のことばと組み合わせたときだけ使えます',
   'note.exact.unreliable': '完全一致で探しますが、言葉がバラバラに含まれる投稿も混ざることがあります',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
@@ -287,7 +288,6 @@ export const ja = {
   'note.youtube.channelConflict':
     'ユーザー指定(チャンネル内検索)と組み合わせると、この絞り込みは効きません',
   'note.note.keywords': '入力した言葉の一部だけを含む記事も混ざることがあります',
-  'note.note.exactPhrase': '完全一致は効かず、ふつうのキーワードとして検索されます',
   'note.note.exclude': 'note には除外検索がありません',
   'note.note.fromUser': 'ユーザー名は @ のあとの部分です',
   'note.note.hashtag': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
@@ -307,6 +307,7 @@ export const ja = {
   'note.instagram.multiTag':
     'ハッシュタグを2つ以上指定すると、タグページではなくゆるい検索になり、一部のタグだけの投稿も混ざります',
   'note.pixiv.keywords': 'タグから検索します。タグにない言葉は、本文にあっても見つかりません',
+  'note.pixiv.exactPhrase': 'タグへの部分一致として、つながったまま探します。スペースを含む語句は語ごとに分かれます',
   'note.pixiv.titleOnly': 'タグではなく、タイトルと説明文から探します',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
@@ -314,7 +315,6 @@ export const ja = {
   'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
   'note.pixiv.smodeConflict': 'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
   'note.misskey.keywords': '入力した言葉をすべて含む投稿を探します。開いたページで「検索」ボタンを押すと結果が出ます',
-  'note.misskey.exactPhrase': '完全一致は使えず、語ごとに含むかどうかの判定（AND）になります',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です',
   'note.youtube.resultType': 'ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
@@ -337,7 +337,6 @@ export const ja = {
   'note.fanbox.hashtagOnly': 'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
   'note.bilibili.videoLength': '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
   'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
-  'note.fantia.exactLiteral': '完全一致の引用符（"…"）は効かず、そのまま検索語の一部として扱われます',
   'note.fantia.sort': 'この並び順は、新しい順・お気に入り数順のみ対応しています（Fantiaのみ対応）',
   'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
 
@@ -346,6 +345,7 @@ export const ja = {
   'launch.bgHint': 'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
+  'launch.droppedBadge': '使えない {n}',
   'launch.specialtyHeading': '他サイト専用',
   'launch.specialtyOnly': '{name}専用',
   'launch.urlHeading': '開くURL（条件と同じ色の部分が対応）',

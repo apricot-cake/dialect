@@ -19,15 +19,18 @@ import { ScrollUpPill } from './ConditionsArea'
 
 /**
  * 概念色の下線。複数概念の複合断片(YouTubeのsp=等)は等分のストライプで
- * 「複数の条件がここに合成されている」ことを正直に見せる
+ * 「複数の条件がここに合成されている」ことを正直に見せる。
+ * dashed=近似(弱まって効く)条件の印。破線にして、そのまま効く条件と見分ける
  */
-function underlineStyle(colors: string[]): CSSProperties {
+function underlineStyle(colors: string[], dashed = false): CSSProperties {
   const n = colors.length
   const stops = colors
     .map((c, i) => `${c} ${(i / n) * 100}% ${((i + 1) / n) * 100}%`)
     .join(', ')
   return {
-    backgroundImage: `linear-gradient(90deg, ${stops})`,
+    backgroundImage: dashed
+      ? `repeating-linear-gradient(90deg, ${colors[0]} 0 4px, transparent 4px 7px)`
+      : `linear-gradient(90deg, ${stops})`,
     backgroundSize: '100% 2px',
     backgroundPosition: '0 100%',
     backgroundRepeat: 'no-repeat',
@@ -169,16 +172,8 @@ function LaunchCard({
 
   // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルで常時表示する。
   const parts = enabled ? translationParts(resolution, query) : []
-  // 先頭ドットは翻訳完全度の濃淡。applied=満点/近似=半分/使えない(droppedReal)=0 で 0〜1 を出す。
-  // 専用フィールドの落ち(droppedSpecialty)は守備範囲外なので分母に数えない
-  const relevant =
-    resolution.applied.length + resolution.approximated.length + droppedReal.length
-  const score = resolution.applied.length + resolution.approximated.length * 0.5
-  const ratio = relevant > 0 ? score / relevant : 1
-  // 完全度を色相＋濃淡で。効くほど明るい緑、落ちるほど琥珀→赤黒(「ダメ」と分かるよう低域を暗い赤に)。
-  // oklchの短い弧で緑152→赤25が琥珀を通る。低域を効かせるため ratio を軽く指数で寝かせる
-  const pct = Math.round(Math.pow(ratio, 1.3) * 100)
-  const dotColor = `color-mix(in oklch, oklch(0.74 0.17 152) ${pct}%, oklch(0.38 0.17 25))`
+  // 近似(弱まって効く)条件は下線を破線にして、そのまま効く条件と見分ける
+  const approxConcepts = new Set(resolution.approximated.map((a) => a.concept))
 
   return (
     <div
@@ -213,25 +208,32 @@ function LaunchCard({
         />
         {tf('launch.search', { name: platform.name })}
       </a>
-      {enabled && parts.length > 0 && (
-        <div className="mt-[7px] flex items-start gap-1.5 px-1">
-          <span
-            aria-hidden
-            className="mt-[5px] inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-            style={{ background: dotColor }}
-          />
+      {enabled && (parts.length > 0 || droppedReal.length > 0) && (
+        <div className="mt-[7px] px-1">
           {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す。
-              下線の色はホバーポップの生URL断片と対応(同じ概念=同じ色) */}
-          <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
+              下線の色はホバーポップの生URL断片と対応(同じ概念=同じ色)。丸ごと落ちる
+              条件は行に出ない代わりに、「使えない {n}」の文字バッジで件数を明示する */}
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
             {parts.map((p, i) => {
               const color = colors.get(p.concept)
               return (
                 <span key={i} className="whitespace-nowrap">
-                  <span style={color ? underlineStyle([color]) : undefined}>{p.label}</span>
+                  <span style={color ? underlineStyle([color], approxConcepts.has(p.concept)) : undefined}>
+                    {p.label}
+                  </span>
                   {i < parts.length - 1 && <span className="text-faint">・</span>}
                 </span>
               )
             })}
+            {droppedReal.length > 0 && (
+              <span
+                className="inline-flex items-center gap-1 whitespace-nowrap font-medium"
+                style={{ color: dark ? 'oklch(0.76 0.11 75)' : 'oklch(0.54 0.11 70)' }}
+              >
+                <BanIcon />
+                {tf('launch.droppedBadge', { n: String(droppedReal.length) })}
+              </span>
+            )}
           </div>
         </div>
       )}

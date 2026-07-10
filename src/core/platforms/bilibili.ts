@@ -1,5 +1,5 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, SortOrder, UrlPart } from '../types'
-import { andTerms, exactPhrases, words } from '../text'
+import { andTerms, words } from '../text'
 import { lit, ParamParts, part } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments } from '../parse'
 
@@ -45,19 +45,13 @@ function cstEpoch(date: string, endOfDay: boolean): number {
 }
 
 function buildParts(state: QueryState): UrlPart[] | null {
-  // 引用符の完全一致は効かないので、語句をそのままキーワードとして扱う(近似)
+  // 引用符の完全一致は効かず(実測)、緩い一致に化けるだけなので送らない(非対応)
   const kw = andTerms(state)
-  const phrases = exactPhrases(state)
-  const terms = [...kw, ...phrases]
-  if (terms.length === 0) return null
+  if (kw.length === 0) return null
 
   const tab = tabOf(state)
   const params = new ParamParts()
-  // keyword= は1ペアにAND語と完全一致語句が合流する複合断片
-  const kwConcepts: ConceptId[] = []
-  if (kw.length > 0) kwConcepts.push('keywords')
-  if (phrases.length > 0) kwConcepts.push('exactPhrase')
-  params.set('keyword', terms.join(' '), ...kwConcepts)
+  params.set('keyword', kw.join(' '), 'keywords')
   const order = ORDER_PARAM[tab][state.sort]
   if (order) params.set('order', order, 'sortOrder')
   // 日付範囲と動画の長さは動画系タブ(総合・动画)だけが受け付ける
@@ -166,7 +160,7 @@ export const bilibili: PlatformDef = {
   googleSite: 'bilibili.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
-    exactPhrase: { level: 'partial', noteKey: 'note.loose.exact' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'none', noteKey: 'note.exclude.literal' },
     resultType: { level: 'full' },
     sortOrder: { level: 'full' },

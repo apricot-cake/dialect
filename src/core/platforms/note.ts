@@ -1,6 +1,6 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { andTerms, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize } from '../parse'
 
@@ -19,7 +19,7 @@ const SORT_PARAM: Partial<Record<QueryState['sort'], string>> = {
  * タグページには並び順・有料などの検索フィルタが無いので、その概念を落とす判定に使う
  */
 function isTagPath(state: QueryState): boolean {
-  const textCount = andTerms(state).length + exactPhrases(state).length
+  const textCount = andTerms(state).length
   const tagNames = words(state.hashtag).map(stripHash)
   return tagNames.length === 1 && !stripAt(state.fromUser) && textCount === 0
 }
@@ -44,9 +44,8 @@ const CIRCLE_SORT_VALUES: ReadonlySet<QueryState['sort']> = new Set(['new', 'top
 
 function buildParts(state: QueryState): UrlPart[] | null {
   const handle = stripAt(state.fromUser)
-  // 完全一致・引用符は効かないため、語句をそのままキーワードとして扱う(近似)
+  // 完全一致・引用符は効かない(実測で非対応)ため送らない
   const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
-  textToks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
   const tagNames = words(state.hashtag).map(stripHash)
   const tagToks = tagNames.map((t) => tok(t, 'hashtag'))
 
@@ -194,7 +193,7 @@ export const note: PlatformDef = {
   googleSite: 'note.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.note.keywords' },
-    exactPhrase: { level: 'partial', noteKey: 'note.note.exactPhrase' },
+    exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
     exclude: { level: 'none', noteKey: 'note.note.exclude' },
     fromUser: { level: 'full', noteKey: 'note.note.fromUser' },
     hashtag: { level: 'full', noteKey: 'note.note.hashtag' },

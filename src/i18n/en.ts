@@ -259,8 +259,10 @@ export const en = {
 
   // Notes shared across platforms
   'note.loose.and': 'Some results may contain only some of your words.',
-  'note.loose.exact':
-    'Exact phrase does not work; it is searched as ordinary keywords.',
+  'note.exactPhrase.dropped':
+    'Exact-phrase search is not available here. To match the words, add them to Keywords.',
+  'note.exact.substring':
+    'Searches for the text as one continuous string. Phrases with spaces are split into separate words.',
   'note.titleOnly.needsWords':
     'Works only when combined with keywords or an exact phrase.',
   'note.exact.unreliable':
@@ -298,8 +300,6 @@ export const en = {
     'This filter has no effect when combined with a user filter (in-channel search).',
   'note.note.keywords':
     'Some articles may contain only some of your words.',
-  'note.note.exactPhrase':
-    'Exact phrase does not work; it is searched as ordinary keywords.',
   'note.note.exclude': 'note has no exclusion search.',
   'note.note.fromUser': 'The username is the part after @.',
   'note.note.hashtag':
@@ -326,6 +326,8 @@ export const en = {
     'With two or more hashtags this becomes a loose search rather than a tag page, and some results may include only some of the tags.',
   'note.pixiv.keywords':
     'Searches by tags. Words not in the tags won’t be found even if they’re in the body.',
+  'note.pixiv.exactPhrase':
+    'Matched against tags as one continuous string. Phrases with spaces are split into separate words.',
   'note.pixiv.titleOnly':
     'Searches titles and descriptions, not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
@@ -338,8 +340,6 @@ export const en = {
     'pixiv allows only one match target, so another mode (title only / exact tag) takes priority and this condition is not sent.',
   'note.misskey.keywords':
     'Finds posts that contain all your words. On the page that opens, press the “Search” button to see results.',
-  'note.misskey.exactPhrase':
-    'Exact phrase matching isn’t available; it’s treated as separate words that must all appear (AND).',
   'note.misskey.fromUser': 'Requires combining with a keyword.',
   'note.youtube.resultType': 'It cannot be combined with a user filter.',
   'note.hatebu.minLikes':
@@ -374,8 +374,6 @@ export const en = {
     'Length buckets differ slightly (short = under 10 min, medium = 10–30 min, long = over 60 min).',
   'note.bilibili.tabSort': "This sort order isn't available for the selected result type.",
   'note.bilibili.tabOnly': 'Only available when the result type is videos (or unspecified).',
-  'note.fantia.exactLiteral':
-    'The exact-match quotes ("...") have no effect; they\'re treated as a literal part of the search term.',
   'note.fantia.sort': 'Only newest and most-favorited sort orders are supported (Fantia only).',
 
   // Launch panel. {name} is filled with the site name
@@ -384,6 +382,7 @@ export const en = {
     'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
   'launch.approxHeading': 'Partially works',
   'launch.droppedHeading': 'Not available',
+  'launch.droppedBadge': '{n} not available',
   'launch.specialtyHeading': 'Only on other sites',
   'launch.specialtyOnly': '{name} only',
   'launch.urlHeading': 'URL to open (colors match the conditions)',

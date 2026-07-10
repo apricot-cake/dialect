@@ -239,13 +239,6 @@ const PROBES: Probe[] = [
   { platform: 'misskey', concept: 'fromUser', label: '送信者', state: { fromUser: 'syuilo' }, token: 'username=' },
   { platform: 'misskey', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('天気'), token: '/tags/' },
   { platform: 'misskey', concept: 'exclude', label: '除外', state: { exclude: 'dog' }, token: '-dog' },
-  {
-    platform: 'misskey',
-    concept: 'exactPhrase',
-    label: '完全一致(語ごとAND)',
-    state: { exactPhrase: ['good boy'] },
-    token: 'good boy',
-  },
 
   // ---- はてなブックマーク ----
   { platform: 'hatebu', concept: 'period', label: '期間(開始)', state: { since: '2024-01-01' }, token: 'date_begin=' },
