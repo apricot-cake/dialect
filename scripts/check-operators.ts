@@ -14,7 +14,11 @@
  *      本当に現れるか自己検証する(表がコードとズレていないことの担保)。
  *   2. 追跡対象(tracked)の演算子が operator-checklist.md の該当サイト節に載っているか照合し、
  *      載っていなければドリフトとして落とす(= フェーズ0 の自動化)。
- *   3. 生成した網羅サンプルを全サイトの buildUrl に通し、宣言表にも許可リストにも無い
+ *   3. support 表が「対応(full/partial)」と宣言する各概念について、その概念を入れると
+ *      実際に buildUrl の出力が変わる入力が最低1つ在ることを確かめる(=support が「効く」と
+ *      言うのにコードが送らない「静かな嘘」の再発をCIで止める。適用と出るのに実際は落ちる、
+ *      という食い違いは2026-07-04監査で手作業で見つけて直した=それの機械化)。
+ *   4. 生成した網羅サンプルを全サイトの buildUrl に通し、宣言表にも許可リストにも無い
  *      未登録の演算子キーが出ていないかを安全網として警告する(将来の追加漏れ検知)。
  *
  * 実行: npm run check:operators   (esbuild でバンドルして node で実行)
@@ -23,7 +27,8 @@ import { readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
 import { PLATFORMS } from '@/core/platforms'
 import { defaultState } from '@/core/concepts'
-import { CONCEPT_DEFS, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
+import { CONCEPT_DEFS, CONCEPT_MAP, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
+import { supportOf } from '@/core/types'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 
 // ---- チェックリストの読み込みとサイト節への分割 --------------------------------
@@ -320,6 +325,70 @@ const PROBES: Probe[] = [
   { platform: 'fantia', concept: 'sortOrder', label: 'お気に入り数順', state: { sort: 'top' }, token: 'order=popular' },
 ]
 
+// ---- support 整合(静かな嘘の検知): support が「効く」と言う概念が実際に効くか ----------
+//
+// resolve は support 表(＋dynamicSupport)だけを見て「適用/近似/非対応」を決め、buildUrl が
+// 本当にその概念を送ったかは照合していない。つまり support[c]=full/partial のまま buildUrl が
+// その概念を握りつぶすと、画面は「適用」と緑で出すのに実際は何も送られない(=静かな嘘)。
+// これは2026-07-04監査で見つけて手で直した食い違いそのもので、再発を止める機械チェックが無かった。
+//
+// 方式=差分。ある概念 c を「指定あり」にした state と、そこから c だけを既定へ戻した state で
+// buildUrl の出力を比べ、変われば「c は実際に効いている」と実証できる。support が full/partial と
+// 言う (サイト×概念) すべてに、実証できる入力が最低1つ在ることを要求する(なければ静かな嘘の疑い)。
+
+const DEFAULTS = defaultState()
+
+/**
+ * 差分チェックの例外: 「URLは変わらないが、そのサイトの固定挙動で意図が満たされる」概念。
+ * `${platform}::${concept}` をキーに列挙する。ここに載る = 静かな嘘の検知を免除する代わりに、
+ * 「なぜ URL 差分が無くても support=partial/full が正当か」を人が説明する責任を負う。
+ * 濫用すると静かな嘘の隠れ場所になるので、①support は必ず partial 以下＋注記つき ②理由を明記、
+ * を満たすものだけに絞る。免除分も出力に必ず表示して後から監査できるようにする。
+ *
+ * - fivech::titleOnly: ff5ch(スレタイ検索)は常にタイトルだけが対象。トグルは送る演算子を持たず
+ *   URLを変えないが、ユーザーの意図(タイトルのみ検索)は既定挙動で満たされる。support=partial＋
+ *   note.fivech.titleOnly「切り替えに関わらず常にタイトルを検索」で正直に伝えている(嘘ではない)。
+ */
+const SATISFIED_BY_DEFAULT: ReadonlySet<string> = new Set(['fivech::titleOnly'])
+
+/** 概念 c の入力フィールドを既定値へ戻した state(差分チェックで c だけを消す)。period は since/until の2値 */
+function clearConcept(state: QueryState, concept: ConceptId): QueryState {
+  if (concept === 'period') return { ...state, since: DEFAULTS.since, until: DEFAULTS.until }
+  const field = CONCEPT_MAP[concept].field
+  return { ...state, [field]: DEFAULTS[field] }
+}
+
+/**
+ * 概念 c を「指定あり」にする代表 state 群(BASE=terms:['猫'] に重ねた完全な state)。
+ * select/sort は各選択肢を、それ以外は widget 種別ごとの代表値を入れる。PROBE の state と併せて
+ * coverage の証拠候補にする(どれか1つでも buildUrl 出力を変えれば実証)
+ */
+function coverageStatesFor(concept: ConceptId): QueryState[] {
+  const def = CONCEPT_MAP[concept]
+  const f = def.field
+  const mk = (over: Partial<QueryState>): QueryState => ({ ...BASE, ...over })
+  if (concept === 'keywords') return [BASE] // BASE が既に terms:['猫']=指定あり
+  if (concept === 'exactPhrase') return [mk({ exactPhrase: ['冷蔵庫で富士山'] })]
+  if (concept === 'period') return [mk({ since: '2026-06-01', until: '2026-06-30' })]
+  if (def.widget === 'toggle') return [mk({ [f]: true })]
+  if (def.widget === 'sort') return SORT_OPTIONS.filter((o) => o.value !== 'auto').map((o) => mk({ sort: o.value }))
+  if (def.widget === 'select') return (SELECT_OPTIONS[concept] ?? []).filter((o) => o.value).map((o) => mk({ [f]: o.value }))
+  // plain / chips: サイトごとに現実的なサンプル値を入れる(sampleStates と同じ選び方)
+  const sentinel =
+    f === 'domain'
+      ? 'nhk.or.jp'
+      : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
+        ? '500'
+        : f === 'subreddit'
+          ? 'japan'
+          : f === 'xList'
+            ? '1215911364234924032'
+            : f === 'hashtag'
+              ? 'ゲーム'
+              : 'nhk'
+  return [mk({ [f]: sentinel })]
+}
+
 // ---- 演算子面の抽出(安全網用): URLから param キーと word: 演算子を拾う -------------
 
 /** 生成した網羅サンプル(安全網で全サイトに通す) */
@@ -334,9 +403,10 @@ function sampleStates(): QueryState[] {
     }
     if (def.widget === 'toggle') out.push({ ...BASE, [f]: true })
     else if (def.widget === 'sort') for (const o of SORT_OPTIONS) out.push({ ...BASE, sort: o.value })
-    else if (def.widget === 'select')
+    else if (def.widget === 'select') {
+      // 波括弧が要る: 内側の if(o.value) に後続の else が結合する「ぶら下がり else」を防ぐ
       for (const o of SELECT_OPTIONS[def.id] ?? []) if (o.value) out.push({ ...BASE, [f]: o.value })
-    else if (def.widget === 'period') out.push({ ...BASE, since: '2026-06-01', until: '2026-06-30' })
+    } else if (def.widget === 'period') out.push({ ...BASE, since: '2026-06-01', until: '2026-06-30' })
     else {
       const sentinel =
         f === 'domain'
@@ -363,7 +433,9 @@ function surfacesOf(url: string): Set<string> {
   } catch {
     return set
   }
-  const IGNORE_KEYS = new Set(['q', 'term', 'search_query', 'keyword', 'context', 'host', 'sp'])
+  // 検索テキストを載せる param 名(演算子ではない)。query は YouTube のチャンネル内検索
+  // (/@handle/search?query=) が使う検索語欄で、q/search_query と等価
+  const IGNORE_KEYS = new Set(['q', 'term', 'search_query', 'query', 'keyword', 'context', 'host', 'sp'])
   for (const key of u.searchParams.keys()) {
     if (!IGNORE_KEYS.has(key)) set.add(`${key}=`)
   }
@@ -388,12 +460,14 @@ function buildFor(platform: PlatformId, state: Partial<QueryState>): string | nu
 }
 
 interface Fail {
-  kind: 'self' | 'drift' | 'orphan'
+  kind: 'self' | 'drift' | 'silent' | 'orphan'
   platform: PlatformId
   detail: string
 }
 const fails: Fail[] = []
 const lines: string[] = []
+const silentLines: string[] = []
+const exemptLines: string[] = []
 
 // 1) 自己検証 + 2) チェックリスト照合
 for (const platform of PLATFORMS) {
@@ -431,7 +505,58 @@ for (const platform of PLATFORMS) {
   }
 }
 
-// 3) 安全網: 宣言表にも無い未登録の演算子キーが出ていないか
+// 3) support 整合(静かな嘘の検知): support=full/partial の各概念が buildUrl の出力を実際に変えるか
+function tryBuild(platform: (typeof PLATFORMS)[number], state: QueryState): string | null {
+  try {
+    return platform.buildUrl(state)
+  } catch {
+    return null
+  }
+}
+for (const platform of PLATFORMS) {
+  for (const def of CONCEPT_DEFS) {
+    const concept = def.id
+    const level = supportOf(platform, concept).level
+    if (level === 'none') continue // 非対応の概念は「効くと言っていない」ので対象外
+
+    // 証拠候補 = この (サイト×概念) の PROBE state ＋ 概念定義から導いた代表 state
+    const probeStates = PROBES.filter(
+      (pr) => pr.platform === platform.id && pr.concept === concept,
+    ).map((pr): QueryState => ({ ...BASE, ...pr.state }))
+    const candidates = [...probeStates, ...coverageStatesFor(concept)]
+
+    let demonstrated = false
+    for (const setState of candidates) {
+      // この入力で dynamicSupport が c を none に落とすなら、静的 support の主張の実証にはならない
+      if (platform.dynamicSupport?.(setState)[concept]?.level === 'none') continue
+      const urlSet = tryBuild(platform, setState)
+      if (urlSet == null) continue // 概念単独では検索が成立しない入力(実証に使えない)
+      const urlClear = tryBuild(platform, clearConcept(setState, concept))
+      if (urlSet !== urlClear) {
+        demonstrated = true
+        break
+      }
+    }
+
+    if (!demonstrated) {
+      if (SATISFIED_BY_DEFAULT.has(`${platform.id}::${concept}`)) {
+        // 免除(サイトの固定挙動で意図が満たされる)。監査できるよう必ず表示するが失敗にはしない
+        exemptLines.push(`  ⚪ ${platform.name.padEnd(14)} ${concept} (support=${level}) — 既定挙動で充足(URL差分なしを承知)`)
+        continue
+      }
+      silentLines.push(
+        `  🟥 ${platform.name.padEnd(14)} ${concept} (support=${level}) — 指定しても buildUrl 出力が変わらない`,
+      )
+      fails.push({
+        kind: 'silent',
+        platform: platform.id,
+        detail: `${concept} は support=${level}(効く)と宣言されているが buildUrl が送っていない`,
+      })
+    }
+  }
+}
+
+// 4) 安全網: 宣言表にも無い未登録の演算子キーが出ていないか
 const known = new Set<string>()
 for (const pr of PROBES) {
   const url = buildFor(pr.platform, pr.state)
@@ -458,6 +583,11 @@ for (const platform of PLATFORMS) {
 // ---- 出力 --------------------------------------------------------------------
 console.log('演算子ドリフト検査 (コードが送る演算子 ⇄ operator-checklist.md)')
 console.log(lines.join('\n'))
+if (silentLines.length || exemptLines.length) {
+  console.log('\n## support 整合(静かな嘘の検知)')
+  if (silentLines.length) console.log(silentLines.join('\n'))
+  if (exemptLines.length) console.log(exemptLines.join('\n'))
+}
 if (orphanLines.length) {
   console.log('\n## 安全網(未登録の演算子)')
   console.log(orphanLines.join('\n'))
@@ -465,9 +595,10 @@ if (orphanLines.length) {
 
 const self = fails.filter((f) => f.kind === 'self')
 const drift = fails.filter((f) => f.kind === 'drift')
+const silent = fails.filter((f) => f.kind === 'silent')
 const orphan = fails.filter((f) => f.kind === 'orphan')
 console.log(
-  `\nSummary: 🟥 自己検証NG ${self.length} / 🟥 チェックリスト未収録 ${drift.length} / 🟨 未登録演算子 ${orphan.length}`,
+  `\nSummary: 🟥 自己検証NG ${self.length} / 🟥 チェックリスト未収録 ${drift.length} / 🟥 静かな嘘 ${silent.length} / 🟨 未登録演算子 ${orphan.length}`,
 )
 if (drift.length) {
   console.log('\n🟥 チェックリスト未収録(operator-checklist.md に行を足すか、PROBES で tracked:false にする):')
@@ -476,6 +607,12 @@ if (drift.length) {
 if (self.length) {
   console.log('\n🟥 自己検証NG(PROBES の token/state が buildUrl とズレている。表を実態に合わせる):')
   for (const f of self) console.log(`  ${f.platform}: ${f.detail}`)
+}
+if (silent.length) {
+  console.log(
+    '\n🟥 静かな嘘(support は「効く」と言うのに buildUrl が送っていない。buildUrl を直すか、support を落とす):',
+  )
+  for (const f of silent) console.log(`  ${f.platform}: ${f.detail}`)
 }
 console.log(
   '\n凡例: ✅=送信かつ確認リスト収録 / ⚪=送信するが確認リスト対象外(公式・安定) / 🟥=要修正 / 🟨=表に未登録。',
