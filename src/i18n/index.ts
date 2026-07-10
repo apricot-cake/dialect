@@ -36,8 +36,13 @@ export function setLang(lang: Lang): void {
   document.documentElement.lang = lang
 }
 
+/** 明示した言語で翻訳する(現在言語に依存しない)。言語別に索引を作るときなどに使う */
+export function translate(lang: Lang, key: MessageKey): string {
+  return DICTS[lang][key] ?? ja[key]
+}
+
 export function t(key: MessageKey): string {
-  return DICTS[currentLang][key] ?? ja[key]
+  return translate(currentLang, key)
 }
 
 /**

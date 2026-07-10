@@ -29,11 +29,27 @@ export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'period', field: 'since', widget: 'period', labelKey: 'concept.period.label', helpKey: 'concept.period.help' },
   { id: 'titleOnly', field: 'titleOnly', widget: 'toggle', labelKey: 'concept.titleOnly.label', helpKey: 'concept.titleOnly.help' },
   { id: 'exactTag', field: 'exactTag', widget: 'toggle', labelKey: 'concept.exactTag.label', helpKey: 'concept.exactTag.help' },
+  { id: 'tagTitleCaption', field: 'tagTitleCaption', widget: 'toggle', labelKey: 'concept.tagTitleCaption.label', helpKey: 'concept.tagTitleCaption.help' },
   { id: 'mediaOnly', field: 'mediaOnly', widget: 'toggle', labelKey: 'concept.mediaOnly.label', helpKey: 'concept.mediaOnly.help' },
   { id: 'liveOnly', field: 'liveOnly', widget: 'toggle', labelKey: 'concept.liveOnly.label', helpKey: 'concept.liveOnly.help' },
+  { id: 'fourK', field: 'fourK', widget: 'toggle', labelKey: 'concept.fourK.label', helpKey: 'concept.fourK.help' },
+  { id: 'hdOnly', field: 'hdOnly', widget: 'toggle', labelKey: 'concept.hdOnly.label', helpKey: 'concept.hdOnly.help' },
+  { id: 'captionsOnly', field: 'captionsOnly', widget: 'toggle', labelKey: 'concept.captionsOnly.label', helpKey: 'concept.captionsOnly.help' },
+  { id: 'creativeCommons', field: 'creativeCommons', widget: 'toggle', labelKey: 'concept.creativeCommons.label', helpKey: 'concept.creativeCommons.help' },
+  { id: 'threeSixty', field: 'threeSixty', widget: 'toggle', labelKey: 'concept.threeSixty.label', helpKey: 'concept.threeSixty.help' },
+  { id: 'vr180', field: 'vr180', widget: 'toggle', labelKey: 'concept.vr180.label', helpKey: 'concept.vr180.help' },
+  { id: 'threeD', field: 'threeD', widget: 'toggle', labelKey: 'concept.threeD.label', helpKey: 'concept.threeD.help' },
+  { id: 'hdr', field: 'hdr', widget: 'toggle', labelKey: 'concept.hdr.label', helpKey: 'concept.hdr.help' },
+  { id: 'locationOnly', field: 'locationOnly', widget: 'toggle', labelKey: 'concept.locationOnly.label', helpKey: 'concept.locationOnly.help' },
+  { id: 'purchased', field: 'purchased', widget: 'toggle', labelKey: 'concept.purchased.label', helpKey: 'concept.purchased.help' },
   { id: 'videoLength', field: 'videoLength', widget: 'select', labelKey: 'concept.videoLength.label', helpKey: 'concept.videoLength.help' },
   { id: 'workType', field: 'workType', widget: 'select', labelKey: 'concept.workType.label', helpKey: 'concept.workType.help' },
   { id: 'genre', field: 'genre', widget: 'select', labelKey: 'concept.genre.label', helpKey: 'concept.genre.help' },
+  { id: 'nicoKind', field: 'nicoKind', widget: 'select', labelKey: 'concept.nicoKind.label', helpKey: 'concept.nicoKind.help' },
+  { id: 'paidOnly', field: 'paidOnly', widget: 'toggle', labelKey: 'concept.paidOnly.label', helpKey: 'concept.paidOnly.help' },
+  { id: 'fantiaCategory', field: 'fantiaCategory', widget: 'select', labelKey: 'concept.fantiaCategory.label', helpKey: 'concept.fantiaCategory.help' },
+  { id: 'fantiaAudience', field: 'fantiaAudience', widget: 'select', labelKey: 'concept.fantiaAudience.label', helpKey: 'concept.fantiaAudience.help' },
+  { id: 'safeSearchOff', field: 'safeSearchOff', widget: 'toggle', labelKey: 'concept.safeSearchOff.label', helpKey: 'concept.safeSearchOff.help' },
   { id: 'pixivPopular', field: 'pixivPopular', widget: 'select', labelKey: 'concept.pixivPopular.label', helpKey: 'concept.pixivPopular.help' },
   { id: 'ageRating', field: 'ageRating', widget: 'select', labelKey: 'concept.ageRating.label', helpKey: 'concept.ageRating.help' },
   { id: 'excludeAi', field: 'excludeAi', widget: 'toggle', labelKey: 'concept.excludeAi.label', helpKey: 'concept.excludeAi.help' },
@@ -82,6 +98,14 @@ export function effectiveLevel(
 }
 
 /**
+ * 現在の入力まで踏まえた実対応サイト。選んだ値によって dynamicSupport で落ちるサイト
+ * (急上昇を持たないサイト等)を除いて数える。「対応 N」バッジと選択肢ごとの対応数に使う
+ */
+export function activeSupportersOf(concept: ConceptId, state: QueryState): PlatformDef[] {
+  return supportersOf(concept).filter((p) => effectiveLevel(p, concept, state).level !== 'none')
+}
+
+/**
  * 対応ポップオーバー用: 対応サイトを「完全」と「それ以外(一部・今の入力では不可)」に
  * 振り分ける。入力次第で none に落ちたサイトも「一部対応」側に出す(デザイン準拠)
  */
@@ -124,6 +148,18 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'short', labelKey: 'concept.resultType.short' },
     { value: 'channel', labelKey: 'concept.resultType.channel' },
     { value: 'playlist', labelKey: 'concept.resultType.playlist' },
+    { value: 'posts', labelKey: 'concept.resultType.posts' },
+    { value: 'communities', labelKey: 'concept.resultType.communities' },
+    { value: 'comments', labelKey: 'concept.resultType.comments' },
+    { value: 'media', labelKey: 'concept.resultType.media' },
+    { value: 'people', labelKey: 'concept.resultType.people' },
+    { value: 'board', labelKey: 'concept.resultType.board' },
+    { value: 'bangumi', labelKey: 'concept.resultType.bangumi' },
+    { value: 'pgc', labelKey: 'concept.resultType.pgc' },
+    { value: 'live', labelKey: 'concept.resultType.live' },
+    { value: 'article', labelKey: 'concept.resultType.article' },
+    { value: 'series', labelKey: 'concept.resultType.series' },
+    { value: 'circle', labelKey: 'concept.resultType.circle' },
   ],
   language: [
     { value: '', labelKey: 'concept.language.none' },
@@ -155,24 +191,77 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
   ],
   genre: [
     { value: '', labelKey: 'concept.genre.none' },
-    { value: 'music_sound', labelKey: 'concept.genre.music_sound' },
     { value: 'game', labelKey: 'concept.genre.game' },
+    { value: 'animal', labelKey: 'concept.genre.animal' },
+    { value: 'music_sound', labelKey: 'concept.genre.music_sound' },
     { value: 'entertainment', labelKey: 'concept.genre.entertainment' },
+    { value: 'other', labelKey: 'concept.genre.other' },
     { value: 'anime', labelKey: 'concept.genre.anime' },
     { value: 'dance', labelKey: 'concept.genre.dance' },
-    { value: 'technology_craft', labelKey: 'concept.genre.technology_craft' },
-    { value: 'commentary_lecture', labelKey: 'concept.genre.commentary_lecture' },
-    { value: 'sports', labelKey: 'concept.genre.sports' },
     { value: 'radio', labelKey: 'concept.genre.radio' },
-    { value: 'vehicle', labelKey: 'concept.genre.vehicle' },
     { value: 'traveling_outdoor', labelKey: 'concept.genre.traveling_outdoor' },
-    { value: 'other', labelKey: 'concept.genre.other' },
+    { value: 'commentary_lecture', labelKey: 'concept.genre.commentary_lecture' },
+    { value: 'cooking', labelKey: 'concept.genre.cooking' },
+    { value: 'technology_craft', labelKey: 'concept.genre.technology_craft' },
+    { value: 'vehicle', labelKey: 'concept.genre.vehicle' },
+    { value: 'nature', labelKey: 'concept.genre.nature' },
+    { value: 'society_politics_news', labelKey: 'concept.genre.society_politics_news' },
+    { value: 'sports', labelKey: 'concept.genre.sports' },
+    { value: 'r18', labelKey: 'concept.genre.r18' },
+  ],
+  nicoKind: [
+    { value: '', labelKey: 'concept.nicoKind.none' },
+    { value: 'user', labelKey: 'concept.nicoKind.user' },
+    { value: 'channel', labelKey: 'concept.nicoKind.channel' },
+  ],
+  fantiaCategory: [
+    { value: '', labelKey: 'concept.fantiaCategory.none' },
+    { value: 'illust', labelKey: 'concept.fantiaCategory.illust' },
+    { value: 'comic', labelKey: 'concept.fantiaCategory.comic' },
+    { value: 'vtuber', labelKey: 'concept.fantiaCategory.vtuber' },
+    { value: 'voice', labelKey: 'concept.fantiaCategory.voice' },
+    { value: 'voiceactor', labelKey: 'concept.fantiaCategory.voiceactor' },
+    { value: '3d', labelKey: 'concept.fantiaCategory.3d' },
+    { value: '2d_anime', labelKey: 'concept.fantiaCategory.2d_anime' },
+    { value: 'game', labelKey: 'concept.fantiaCategory.game' },
+    { value: 'music', labelKey: 'concept.fantiaCategory.music' },
+    { value: 'novel', labelKey: 'concept.fantiaCategory.novel' },
+    { value: 'doll', labelKey: 'concept.fantiaCategory.doll' },
+    { value: 'art', labelKey: 'concept.fantiaCategory.art' },
+    { value: 'program', labelKey: 'concept.fantiaCategory.program' },
+    { value: 'handmade', labelKey: 'concept.fantiaCategory.handmade' },
+    { value: 'history', labelKey: 'concept.fantiaCategory.history' },
+    { value: 'railroad', labelKey: 'concept.fantiaCategory.railroad' },
+    { value: 'shop', labelKey: 'concept.fantiaCategory.shop' },
+    { value: 'other', labelKey: 'concept.fantiaCategory.other' },
+    { value: 'fortune', labelKey: 'concept.fantiaCategory.fortune' },
+    { value: 'cosplay', labelKey: 'concept.fantiaCategory.cosplay' },
+    { value: 'idol', labelKey: 'concept.fantiaCategory.idol' },
+    { value: 'youtuber', labelKey: 'concept.fantiaCategory.youtuber' },
+    { value: 'photo_movie', labelKey: 'concept.fantiaCategory.photo_movie' },
+    { value: 'other_real', labelKey: 'concept.fantiaCategory.other_real' },
+  ],
+  fantiaAudience: [
+    { value: '', labelKey: 'concept.fantiaAudience.none' },
+    { value: 'male', labelKey: 'concept.fantiaAudience.male' },
+    { value: 'female', labelKey: 'concept.fantiaAudience.female' },
   ],
 }
 
+// 「指定なし(auto)」を先頭に置くのは他のセレクト(探すものの種類など)の「指定なし」と
+// 同じ作法。以降は対応サイト数の多い順(新しい順・人気順が大半、急上昇以下は少数サイト専用)
 export const SORT_OPTIONS: Array<{ value: QueryState['sort']; labelKey: MessageKey }> = [
+  { value: 'auto', labelKey: 'concept.sortOrder.auto' },
   { value: 'new', labelKey: 'concept.sortOrder.new' },
   { value: 'top', labelKey: 'concept.sortOrder.top' },
   { value: 'hot', labelKey: 'concept.sortOrder.hot' },
-  { value: 'auto', labelKey: 'concept.sortOrder.auto' },
+  { value: 'comments', labelKey: 'concept.sortOrder.comments' },
+  { value: 'danmaku', labelKey: 'concept.sortOrder.danmaku' },
+  { value: 'favorites', labelKey: 'concept.sortOrder.favorites' },
+  { value: 'likes', labelKey: 'concept.sortOrder.likes' },
+  { value: 'commentDate', labelKey: 'concept.sortOrder.commentDate' },
+  { value: 'videoCount', labelKey: 'concept.sortOrder.videoCount' },
+  { value: 'videoAdded', labelKey: 'concept.sortOrder.videoAdded' },
+  { value: 'followerCount', labelKey: 'concept.sortOrder.followerCount' },
+  { value: 'liveCount', labelKey: 'concept.sortOrder.liveCount' },
 ]

@@ -17,7 +17,8 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.twitch.tv/search?${params.toString()}`
 }
 
-// Twitchで探せるのは動画とチャンネルだけ。ショート/再生リストが選ばれたら落とす
+// Twitchで探せるのは動画とチャンネルだけ。それ以外(ショート/再生リスト/Reddit専用の値)が
+// 選ばれたら落とす
 function dynamicSupport(
   state: QueryState,
 ): Partial<Record<ConceptId, ConceptSupport>> {

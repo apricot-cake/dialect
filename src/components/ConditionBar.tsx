@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { PlatformDef, QueryState } from '@/core/types'
-import { splitSupporters, supportersOf, type ConceptDef } from '@/core/conceptDefs'
+import type { PlatformDef, QueryState, SortOrder } from '@/core/types'
+import { activeSupportersOf, SORT_OPTIONS, splitSupporters, type ConceptDef } from '@/core/conceptDefs'
 import { t } from '@/i18n'
 import { PlatformBadgeTile } from './PlatformBadge'
-import { ChipsField, PlainField, SelectField, SortField, ToggleField } from './widgets'
+import { ChipsField, PlainField, SelectField, ToggleField } from './widgets'
 import { PeriodField } from './PeriodField'
 import { CONCEPT_ICONS } from './conceptIcons'
 
@@ -109,12 +109,22 @@ export function ConditionBar({
         <SelectField
           concept={def.id}
           value={query[def.field] as string}
+          query={query}
           onChange={(value) => patch({ [def.field]: value } as Partial<QueryState>)}
         />
       )
       break
     case 'sort':
-      widget = <SortField value={query.sort} onChange={(sort) => patch({ sort })} />
+      widget = (
+        <SelectField
+          concept="sortOrder"
+          value={query.sort}
+          query={query}
+          options={SORT_OPTIONS}
+          noneValue="auto"
+          onChange={(value) => patch({ sort: value as SortOrder })}
+        />
+      )
       break
     case 'period':
       widget = <PeriodField since={query.since} until={query.until} onChange={patch} />
@@ -129,22 +139,24 @@ export function ConditionBar({
 
   return (
     <>
-      <div className="w-[30px] shrink-0" />
+      {/* 削除ボタン(右30px)との対称スペーサー。狭幅では畳んで幅をバーに譲る
+          (狭幅では×自体をバー内側へ移すため、外側の×とスペーサーを両方畳む) */}
+      <div className="dl-bar-spacer w-[30px] shrink-0" />
       <div className="dl-bar">
         <Icon size={18} color="var(--faint)" className="shrink-0" />
         <span
           data-tip={t(def.helpKey)}
-          className="shrink-0 cursor-default text-[15px] font-semibold whitespace-nowrap text-muted"
+          className="dl-bar-label shrink-0 cursor-default text-[15px] font-semibold whitespace-nowrap text-muted"
         >
           {t(def.labelKey)}
         </span>
-        {widget}
+        <div className="dl-bar-widget flex min-w-0 flex-1 items-center">{widget}</div>
         <span
           className="dl-sup relative ml-auto inline-flex shrink-0 cursor-default items-center gap-1 text-xs whitespace-nowrap text-faint"
           onMouseEnter={() => setSupHover(true)}
           onMouseLeave={() => setSupHover(false)}
         >
-          {t('builder.support.label')} {supportersOf(def.id).length}
+          {t('builder.support.label')} {activeSupportersOf(def.id, query).length}
           {supHover && (
             <span
               className="dl-glass pointer-events-none absolute top-[calc(100%+10px)] right-0 z-50 flex w-[250px] flex-col gap-[11px] rounded-[14px] p-[13px]"
@@ -155,13 +167,27 @@ export function ConditionBar({
             </span>
           )}
         </span>
-      </div>
-      <div className="flex w-[30px] shrink-0 items-center justify-center">
+        {/* 狭幅専用。×を外に逃がす余白が無いのでバー自身の右端に内包し、
+            残りの中身(=バーの見た目)が行の中で中央に来るようにする */}
         {onRemove && (
           <button
             type="button"
             aria-label={t('ui.removeCondition')}
-            className="inline-flex size-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
+            className="dl-remove-inner inline-flex size-[26px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
+            onClick={onRemove}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+      <div className="dl-remove-outer-slot flex w-[30px] shrink-0 items-center justify-center">
+        {onRemove && (
+          <button
+            type="button"
+            aria-label={t('ui.removeCondition')}
+            className="dl-remove-outer inline-flex size-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
             onClick={onRemove}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

@@ -3,8 +3,16 @@ import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 import { NICO_GENRES, POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, type ConceptDef } from '@/core/conceptDefs'
-import { paramsToQuery, stateToParams } from '@/core/permalink'
+import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import { PLATFORMS } from '@/core/platforms'
+import { searchSummary } from '@/core/preview'
+import {
+  deleteSaved,
+  loadSaved,
+  saveSearch,
+  toQuery,
+  type StoredQuery,
+} from '@/core/storage'
 import { andTerms, exactPhrases, words } from '@/core/text'
 import { getLang, setLang, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
@@ -12,6 +20,7 @@ import { DotsCanvas } from '@/components/DotsCanvas'
 import { ConditionsArea, type ChipsApi } from '@/components/ConditionsArea'
 import { LinksArea } from '@/components/LinksArea'
 import { ConditionPicker } from '@/components/ConditionPicker'
+import { SaveSearchDialog, SavedListDialog } from '@/components/SavedSearches'
 import { useSnapAreas, type AreaId } from '@/hooks/useSnapAreas'
 
 const QUERY_KEY = 'dialect.v2.query'
@@ -138,6 +147,10 @@ export default function App() {
   )
   const [area, setArea] = useState<AreaId>('conditions')
   const [pickerOpen, setPickerOpen] = useState(false)
+  // 名前付きで保存した検索(この端末のlocalStorage)。保存ダイアログ・一覧ダイアログ
+  const [saved, setSaved] = useState<StoredQuery[]>(loadSaved)
+  const [saveOpen, setSaveOpen] = useState(false)
+  const [savedListOpen, setSavedListOpen] = useState(false)
 
   const patchQuery = (patch: Partial<QueryState>) =>
     setQuery((q) => ({ ...q, ...patch }))
@@ -230,12 +243,26 @@ export default function App() {
     if (def.widget === 'toggle') patchQuery({ [def.field]: true })
     setAdded((a) => [...a, concept])
   }
+  // 家族の「まとめて追加」。未追加のものだけをまとめて足し、トグル系はONにする
+  const addConcepts = (concepts: ConceptId[]) => {
+    setPickerOpen(false)
+    const fresh = concepts.filter((c) => !added.includes(c))
+    if (fresh.length === 0) return
+    const toggles: Partial<QueryState> = {}
+    for (const c of fresh) {
+      if (CONCEPT_MAP[c].widget === 'toggle') {
+        ;(toggles as Record<string, unknown>)[CONCEPT_MAP[c].field] = true
+      }
+    }
+    if (Object.keys(toggles).length > 0) patchQuery(toggles)
+    setAdded((a) => [...a, ...fresh.filter((c) => !a.includes(c))])
+  }
   const removeConcept = (concept: ConceptId) => {
     const def = CONCEPT_MAP[concept]
     // 値も一緒に空へ戻す(残すと次回起動時のバー復元で復活してしまう)
     if (concept === 'exactPhrase') patchQuery({ exactPhrase: [''] })
     else if (concept === 'period') patchQuery({ since: '', until: '' })
-    else if (concept === 'sortOrder') patchQuery({ sort: 'new' })
+    else if (concept === 'sortOrder') patchQuery({ sort: 'auto' })
     else if (def.widget === 'toggle') patchQuery({ [def.field]: false })
     else patchQuery({ [def.field]: '' })
     setAdded((a) => a.filter((c) => c !== concept))
@@ -257,6 +284,24 @@ export default function App() {
   // 入力中テキストも emitChips で query に即反映されるため activeConcepts で拾える
   const canClear = added.length > 0 || activeConcepts(query).length > 0
 
+  // ---- 検索の保存・復元 ----
+  const handleSave = (name: string) => {
+    setSaved(saveSearch(name, query, Date.now()))
+    setSaveOpen(false)
+  }
+  const handleDelete = (params: string) => setSaved(deleteSaved(params))
+  // 保存した検索を復元。バー構成・チップも条件から組み直す(起動時の復元と同じ手順)
+  const restoreSaved = (entry: StoredQuery) => {
+    const restored = toQuery(entry)
+    setQuery(restored)
+    setAdded([
+      ...new Set(activeConcepts(restored).filter((c) => c !== 'keywords')),
+    ])
+    setChips(seedChips(restored))
+    setRaw({})
+    setSavedListOpen(false)
+  }
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-bg text-fg">
       <DotsCanvas dark={dark} />
@@ -264,6 +309,7 @@ export default function App() {
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}
         onToggleLang={toggleLang}
+        onOpenSaved={() => setSavedListOpen(true)}
       />
       {/* 2画面を縦に重ねたトラック。切り替えはトラックごと1画面分持ち上げる */}
       <div
@@ -281,6 +327,8 @@ export default function App() {
           patch={patchQuery}
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
+          shareUrl={canClear ? permalinkUrl(query) : undefined}
+          onSave={canClear ? () => setSaveOpen(true) : undefined}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
         />
@@ -297,9 +345,24 @@ export default function App() {
         filterId={filterId}
         query={query}
         dark={dark}
+        lang={lang}
         onAdd={addConcept}
+        onAddMany={addConcepts}
         onRemove={removeConcept}
         onSetFilter={setFilterId}
+      />
+      <SaveSearchDialog
+        open={saveOpen}
+        onOpenChange={setSaveOpen}
+        defaultName={searchSummary(query)}
+        onSave={handleSave}
+      />
+      <SavedListDialog
+        open={savedListOpen}
+        onOpenChange={setSavedListOpen}
+        saved={saved}
+        onRestore={restoreSaved}
+        onDelete={handleDelete}
       />
     </div>
   )

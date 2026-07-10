@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# モバイル実機/エミュレーション確認用の一時スクリプト置き場(追跡しない)
+.scratch-mobile-check/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

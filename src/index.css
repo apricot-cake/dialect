@@ -77,6 +77,10 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    /* スマホで画面上端から下へ引くとブラウザのpull-to-refreshが誤爆する
+       (画面2→条件へ戻る操作が下スワイプのため)。全面固定レイアウトで
+       ページ自体はスクロールしないので、引っ張り更新・端の連鎖を止める */
+    overscroll-behavior: none;
     }
   html {
     @apply font-sans;
@@ -159,6 +163,8 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 18px oklch(0 0 0 / 0.04);
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* ×はPCでは外側(左スペーサーと対称)に置く。バー内側版は狭幅でだけ出す */
+.dl-remove-inner { display: none; }
 /* ホバー時は影で浮かせるだけにする。以前はここで scale(1.014) していたが、
    拡大された祖先の内側に描かれるツールチップ・対応ポップが分数倍で再ラスタライズ
    されて文字が滲むため、スケールはやめて影の変化だけで表現する */
@@ -237,14 +243,66 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   background: color-mix(in oklch, var(--faint) 82%, transparent);
 }
 
+/* ホバー概念のないタッチ環境では、ピッカー行の対応バッジオーバーレイを出さない。
+   タップ時の mouseenter で出てしまい説明文に被さるうえ、狭幅ではバッジ列が
+   行の左端からはみ出す */
+@media (hover: none) {
+  .dl-pick-support { display: none; }
+}
+
 /* ---- モバイル / 狭幅 ---- */
 @media (max-width: 560px) {
-  .dl-bar { flex-wrap: wrap !important; row-gap: 10px !important; padding-top: 12px !important; padding-bottom: 12px !important; padding-left: 18px !important; }
-  .dl-bar input { min-width: 0 !important; }
+  /* 狭幅でもPCと同じ「アイコン+ラベル+入力欄」の1行構成が基本。
+     バー内部の余白・最小高さを詰める。入力欄のフォントは iOS の
+     フォーカス時ズーム回避のため 16px のまま触らない */
+  .dl-bar { flex-wrap: wrap !important; row-gap: 7px !important; min-height: 52px !important; padding-top: 9px !important; padding-bottom: 9px !important; padding-left: 18px !important; }
+  /* 999pxは高さの半分にクランプされるため、折り返して背が高くなったバーほど
+     不自然に丸くなる(団子状)。1行時の丸み(52pxの半分=26px)に固定し、
+     何段に折り返しても丸みの強さを一定に保つ */
+  .dl-bar { border-radius: 26px !important; }
+  /* width:0 で入力欄の固有幅(数値inputはsize属性が効かず約150px)を消す。
+     実際の幅は flex-grow が広げるので、見た目は空きスペースいっぱいのまま */
+  .dl-bar input { min-width: 0 !important; width: 0 !important; }
+  .dl-bar-label { font-size: 14px !important; }
+  /* 削除ボタン(右30px)との対称用の左スペーサーは畳み、40px(320px幅の12%)をバーへ返す */
+  .dl-bar-spacer { display: none !important; }
+  /* ×を外側の専用スロットからバー内側の右端へ移す。左右非対称(左スペーサー無し+
+     右に×だけの列)だとバー本体が中心からずれるため、外側の列ごと畳んでバーへ幅を
+     返し、×はバーの中身として一緒に中央寄せされるようにする */
+  .dl-remove-outer-slot { display: none !important; }
+  .dl-remove-inner { display: inline-flex !important; }
+  /* placeholderは入力例なので、収まらない分は…で切って1行を守る */
+  .dl-bar input::placeholder { text-overflow: ellipsis; }
+  /* 入力欄(ウィジェット)は中身の最小幅より縮まない=縮めて文字を壊す代わりに、
+     収まらないバーだけ2行目へ自然に折り返す(1行が基本のフォールバック)。
+     子(ChipsField等の外枠)にはPC用の min-w-0 が付いていて min-content の伝播を
+     断ち切るため、直下の枠にも同じ指定を通す */
+  .dl-bar-widget, .dl-bar-widget > div { min-width: min-content !important; }
+  /* 期間だけは常に折り返す: 日付ボタン2つは本質的に幅広で、カレンダーの並びも安定させたい */
+  [data-bar="period"] .dl-bar-widget { flex-basis: 100% !important; }
+  /* 折り返した期間バーの中で、日付ボタン2つがさらに縦積みで3段になるのを防ぎ、
+     横並びのまま2段(ラベル+日付)に収める。表記自体もDateButton側で狭幅用の
+     簡潔な数字表記に切り替え済み。それでも収まらない極端なケースの保険として
+     ボタン内テキストはtruncateで省略(min-w-0/truncateはコンポーネント側)。
+     汎用ルール(直下の子はmin-content未満に縮まない)は期間には逆効果なので、
+     widget自体と期間行の両方で縮小を許可してバー幅に収める */
+  [data-bar="period"] .dl-bar-widget, .dl-bar-widget > .dl-period-row { min-width: 0 !important; }
+  .dl-period-row { flex-wrap: nowrap !important; gap: 6px !important; }
+  .dl-date-btn { flex: 0 1 auto; min-width: 0 !important; padding-left: 8px !important; padding-right: 8px !important; }
+  /* カレンダーアイコンはバー自体のラベルアイコンと重複するので、狭幅では省いて
+     日付テキストの取り分を増やす(横並び2列を保つための優先順位) */
+  .dl-date-btn svg { display: none !important; }
+  /* バー同士の間隔も詰める(条件を何本も立てると縦が伸びるため) */
+  [data-bars-list] { gap: 11px !important; }
   .dl-sup { display: none !important; }
   .dl-tagline { display: none !important; }
-  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
-  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; }
+  /* 固定ヘッダーの下端は約52px。上余白96pxは空きすぎなので詰める */
+  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 74px !important; }
+  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 118px !important; }
+  /* 狭幅ではヘッダー(ロゴ+右クラスタ)がほぼ全幅を占め、中央のScrollUpPillと
+     同じ高さで重なる(右クラスタにEnglish等の文言があり折り返さないため)。
+     ヘッダー下端(約54px)より下へ逃がす。ヒント枠側のpadding-topも合わせて広げてある */
+  [data-scroll-up-pill] { top: 60px !important; }
 }
 @media (max-width: 380px) {
   .dl-bar { padding-left: 16px !important; }

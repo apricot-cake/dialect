@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Popover } from '@base-ui/react/popover'
 import { getLang, t } from '@/i18n'
@@ -20,11 +20,31 @@ function toDateStr(y: number, m: number, d: number): string {
   return `${y}-${pad2(m + 1)}-${pad2(d)}`
 }
 
-function fmtDisplay(value: string, ja: boolean): string {
+// 狭幅では日付ボタン2つを横並びのまま収めるため、漢字表記より詰まる数字表記にする
+function fmtDisplay(value: string, ja: boolean, compact: boolean): string {
   if (!value) return t('cal.pickDate')
   const d = new Date(`${value}T00:00:00`)
+  if (compact) {
+    if (ja) return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })
+  }
   if (ja) return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+// CSSの @media (max-width:560px) と同じ基準。日付ボタンの表記幅をこれに合わせて切り替える
+function useNarrow(): boolean {
+  const [narrow, setNarrow] = useState(
+    () => typeof matchMedia !== 'undefined' && matchMedia('(max-width: 560px)').matches,
+  )
+  useEffect(() => {
+    if (typeof matchMedia === 'undefined') return
+    const mq = matchMedia('(max-width: 560px)')
+    const onChange = () => setNarrow(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return narrow
 }
 
 type CalMode = 'days' | 'months' | 'years'
@@ -232,17 +252,18 @@ function DateButton({
 }) {
   const [open, setOpen] = useState(false)
   const ja = getLang() === 'ja'
+  const narrow = useNarrow()
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         data-noscale
-        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card px-3 text-sm font-medium"
+        className="dl-date-btn inline-flex h-[34px] min-w-0 cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card px-3 text-sm font-medium whitespace-nowrap"
         style={{ color: value ? FILLED_INK : 'var(--muted)' }}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
           <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
         </svg>
-        {fmtDisplay(value, ja)}
+        <span className="min-w-0 truncate">{fmtDisplay(value, ja, narrow)}</span>
       </Popover.Trigger>
       <Popover.Portal>
         {/* 画面下端で開くときは Positioner が自動で上側にフリップする */}
@@ -276,9 +297,9 @@ export function PeriodField({
   onChange: (patch: { since?: string; until?: string }) => void
 }) {
   return (
-    <div className="flex shrink-0 items-center gap-2">
+    <div className="dl-period-row flex flex-wrap items-center gap-2">
       <DateButton value={since} onChange={(v) => onChange({ since: v })} />
-      <span className="text-faint">–</span>
+      <span className="shrink-0 text-faint">–</span>
       <DateButton value={until} onChange={(v) => onChange({ until: v })} />
     </div>
   )

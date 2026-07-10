@@ -32,15 +32,22 @@ It never fetches or displays results itself. It only opens each site's own real 
 | Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
 | Instagram | `instagram.com/explore/search` | Required | Keywords only |
 | YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, etc. |
-| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort) |
-| note | `note.com/search` | Not required | User / sort only |
+| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source) |
+| note | `note.com/search` | Not required | User / sort / paid-only |
 | Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators) |
 | pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search) |
+| Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch |
 | Misskey.io | `misskey.io/search` | Required | Keywords / user only |
 | Hatena Bookmark | `b.hatena.ne.jp/search` | Not required | Rich (exclusion, date, bookmark count, sort, title/tag) |
 | Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |
 | 5channel | `ff5ch.syoboi.jp` (thread-title search) | Not required | Exclusion, board (official search's AND doesn't work, so an external search is used) |
 | Animanch BBS | `bbs.animanch.com/searchRes` | Not required | Keywords only (body / archived-title toggle) |
+| Tumblr | `tumblr.com/search` | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort) |
+| Mastodon | `mastodon.social/search` | Required | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media/link) |
+| Pinterest | `pinterest.com/search` | Not required | Result type (pins/videos/boards/profiles) only (no exclusion or sort) |
+| FANBOX | `fanbox.cc/tags` | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.) |
+| bilibili | `search.bilibili.com` | Not required | Rich (arbitrary date, length, tab switch, danmaku/favorite-count sorts) |
+| Fantia | `fantia.jp/posts` | Required | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported) |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 

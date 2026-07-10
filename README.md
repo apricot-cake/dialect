@@ -32,15 +32,22 @@ https://apricot-cake.github.io/dialect/
 | Bluesky | `bsky.app/search` | 不要 | 豊富(公式ドキュメントあり) |
 | Instagram | `instagram.com/explore/search` | 必要 | キーワードのみ |
 | YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さなど |
-| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順) |
-| note | `note.com/search` | 不要 | ユーザー指定・並び順のみ |
+| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別) |
+| note | `note.com/search` | 不要 | ユーザー指定・並び順・有料絞り込み |
 | Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
 | pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索) |
+| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替 |
 | Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
 | はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
 | Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |
 | 5ちゃんねる | `ff5ch.syoboi.jp`(スレタイ検索) | 不要 | 除外・板指定(公式検索はANDが効かないため外部検索を使用) |
 | あにまん掲示板 | `bbs.animanch.com/searchRes` | 不要 | キーワードのみ(本文/過去ログタイトル切替) |
+| Tumblr | `tumblr.com/search` | 不要 | 豊富(除外・送信者・期間・完全一致・複数タグ・投稿タイプ・並び順) |
+| Mastodon | `mastodon.social/search` | 必要 | 豊富(除外・完全一致・送信者・期間・返信除外・言語・メディア/リンク) |
+| Pinterest | `pinterest.com/search` | 不要 | 探すもの(ピン/動画/ボード/プロフィール)のみ(除外・並び順は非対応) |
+| FANBOX | `fanbox.cc/tags` | 不要 | 単一タグのみ(全文検索・並び順・除外等は非対応) |
+| bilibili | `search.bilibili.com` | 不要 | 豊富(任意期間・長さ・タブ切替・弾幕数/収蔵数などの並び順) |
+| Fantia | `fantia.jp/posts` | 必要 | カテゴリー・対象読者・タイトル/本文切替・並び順(除外・完全一致は非対応) |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 

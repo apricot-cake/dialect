@@ -9,6 +9,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
   if (state.exactTag) active.push('exactTag')
+  if (state.tagTitleCaption) active.push('tagTitleCaption')
   if (state.fromUser.trim()) active.push('fromUser')
   if (state.excludeUser.trim()) active.push('excludeUser')
   if (state.toUser.trim()) active.push('toUser')
@@ -24,20 +25,35 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.verifiedOnly) active.push('verifiedOnly')
   if (state.excludeReplies) active.push('excludeReplies')
   if (state.liveOnly) active.push('liveOnly')
+  if (state.fourK) active.push('fourK')
+  if (state.hdOnly) active.push('hdOnly')
+  if (state.captionsOnly) active.push('captionsOnly')
+  if (state.creativeCommons) active.push('creativeCommons')
+  if (state.threeSixty) active.push('threeSixty')
+  if (state.vr180) active.push('vr180')
+  if (state.threeD) active.push('threeD')
+  if (state.hdr) active.push('hdr')
+  if (state.locationOnly) active.push('locationOnly')
+  if (state.purchased) active.push('purchased')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.minReplies.trim()) active.push('minReplies')
   if (state.language) active.push('language')
   if (state.workType) active.push('workType')
   if (state.genre) active.push('genre')
+  if (state.nicoKind) active.push('nicoKind')
+  if (state.paidOnly) active.push('paidOnly')
+  if (state.fantiaCategory) active.push('fantiaCategory')
+  if (state.fantiaAudience) active.push('fantiaAudience')
+  if (state.safeSearchOff) active.push('safeSearchOff')
   if (state.resultType) active.push('resultType')
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
   if (state.excludeAi) active.push('excludeAi')
-  // 並び順は初期値(新しい順)のままなら条件として数えない(未入力でも注記が
-  // 出てしまうため)。「おまかせ」も条件を課さない選択なので数えない。
-  // ユーザーが意図的に選んだ並び順(人気順・急上昇など)だけを注記・件数の対象にする
-  if (state.sort !== 'new' && state.sort !== 'auto') active.push('sortOrder')
+  // 並び順は既定の「指定なし(auto)」のままなら条件として数えない(サイトの標準の
+  // 並びのまま=何も課していないため)。ユーザーが意図的に選んだ並び順
+  // (新しい順・人気順など)だけを注記・件数の対象にする
+  if (state.sort !== 'auto') active.push('sortOrder')
   return active
 }
 
@@ -48,6 +64,7 @@ export function defaultState(): QueryState {
     exclude: '',
     titleOnly: false,
     exactTag: false,
+    tagTitleCaption: false,
     fromUser: '',
     excludeUser: '',
     toUser: '',
@@ -64,14 +81,29 @@ export function defaultState(): QueryState {
     verifiedOnly: false,
     excludeReplies: false,
     liveOnly: false,
+    fourK: false,
+    hdOnly: false,
+    captionsOnly: false,
+    creativeCommons: false,
+    threeSixty: false,
+    vr180: false,
+    threeD: false,
+    hdr: false,
+    locationOnly: false,
+    purchased: false,
     minLikes: '',
     minReposts: '',
     minReplies: '',
     language: '',
     workType: '',
     genre: '',
+    nicoKind: '',
+    paidOnly: false,
+    fantiaCategory: '',
+    fantiaAudience: '',
+    safeSearchOff: false,
     resultType: '',
-    sort: 'new',
+    sort: 'auto',
     pixivPopular: '',
     ageRating: '',
     excludeAi: false,

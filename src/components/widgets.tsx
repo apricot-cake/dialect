@@ -1,8 +1,9 @@
 import { ChevronDown } from 'lucide-react'
 import { Select } from '@base-ui/react/select'
 import { Switch } from '@base-ui/react/switch'
-import type { ConceptId, SortOrder } from '@/core/types'
-import { SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
+import type { ConceptId, QueryState } from '@/core/types'
+import { activeSupportersOf, CONCEPT_MAP, SELECT_OPTIONS } from '@/core/conceptDefs'
+import type { MessageKey } from '@/i18n'
 import { t } from '@/i18n'
 
 /** 値が入っているときの文字色(未入力のmutedより一段濃い) */
@@ -32,7 +33,11 @@ export function ChipsField({
       {chips.map((text, i) => (
         <span
           key={`${text}-${i}`}
-          className="inline-flex max-w-full items-center gap-[5px] rounded-[7px] bg-secondary py-[3px] pr-1.5 pl-[9px] text-[14.5px] font-medium text-fg [overflow-wrap:anywhere] [word-break:break-word]"
+          // break-keep: 日本語は標準では任意の文字間で折れるため、狭幅でチップが
+          // squeezeされると「広/告」のように縦割れする。語中の折りを止めて
+          // チップの最小幅を保ち、バー側の折り返し(2行目へ落とす)判定に倒す。
+          // break-words: それでも本当に収まらない長文・URLだけは緊急で折る
+          className="inline-flex max-w-full items-center gap-[5px] rounded-[7px] bg-secondary py-[3px] pr-1.5 pl-[9px] text-[14.5px] font-medium break-words break-keep text-fg"
         >
           {text}
           <button
@@ -51,6 +56,9 @@ export function ChipsField({
         type="text"
         value={raw}
         placeholder={chips.length === 0 ? placeholder : undefined}
+        // size=1: inputの固有幅(既定≈20文字)を消し、実幅はflex-1に任せる。
+        // 固有幅が残ると狭幅の min-content 判定が膨らみ、バーが不要に折り返す
+        size={1}
         className="min-w-[90px] flex-1 border-none bg-transparent py-1 text-[16px] text-fg outline-none"
         onChange={(e) => onRaw(e.target.value)}
         onKeyDown={(e) => {
@@ -92,6 +100,7 @@ export function PlainField({
       min={inputType === 'number' ? 0 : undefined}
       value={value}
       placeholder={placeholder}
+      size={1}
       className="min-w-0 flex-1 border-none bg-transparent py-1 text-[16px] text-fg outline-none"
       onChange={(e) => onChange(e.target.value)}
     />
@@ -116,52 +125,43 @@ export function ToggleField({
   )
 }
 
-export function SortField({
-  value,
-  onChange,
-}: {
-  value: SortOrder
-  onChange: (value: SortOrder) => void
-}) {
-  return (
-    <div className="inline-flex gap-[2px] rounded-[9px] border border-border bg-card p-[3px]">
-      {SORT_OPTIONS.map((opt) => {
-        const on = value === opt.value
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            aria-pressed={on}
-            onClick={() => onChange(opt.value)}
-            className={`h-[30px] cursor-pointer rounded-[7px] border-none px-[13px] text-[12.5px] font-semibold transition-all duration-[160ms] ${
-              on ? 'bg-accent text-white' : 'bg-transparent text-muted'
-            }`}
-          >
-            {t(opt.labelKey)}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
 export function SelectField({
   concept,
   value,
   onChange,
+  query,
+  options: optionsProp,
+  noneValue = '',
 }: {
   concept: ConceptId
   value: string
   onChange: (value: string) => void
+  query: QueryState
+  /** 省略時は SELECT_OPTIONS[concept]。並び順のように別テーブルの選択肢を使うとき渡す */
+  options?: ReadonlyArray<{ value: string; labelKey: MessageKey }>
+  /** 「指定なし」を表す値。並び順だけ ''でなく 'auto' */
+  noneValue?: string
 }) {
-  const options = SELECT_OPTIONS[concept] ?? []
+  const options = optionsProp ?? SELECT_OPTIONS[concept] ?? []
   const current = options.find((o) => o.value === value) ?? options[0]
+  const field = CONCEPT_MAP[concept].field
+  // 値によって実対応サイトが変わる概念(並び順・探すもの等)だけ、選択肢ごとに対応数を添える。
+  // 全選択肢で同数(言語など)なら、どれを選んでも変わらない情報なので出さない
+  const counts = new Map(
+    options
+      .filter((o) => o.value !== noneValue)
+      .map((o) => [
+        o.value,
+        activeSupportersOf(concept, { ...query, [field]: o.value } as QueryState).length,
+      ]),
+  )
+  const showCounts = new Set(counts.values()).size > 1
   return (
     <Select.Root value={value} onValueChange={(v) => onChange(v as string)}>
       <Select.Trigger
         data-noscale
-        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card pr-2.5 pl-3 text-sm font-medium"
-        style={{ color: value ? FILLED_INK : 'var(--muted)' }}
+        className="inline-flex h-[34px] cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card pr-2.5 pl-3 text-sm font-medium whitespace-nowrap"
+        style={{ color: value !== noneValue ? FILLED_INK : 'var(--muted)' }}
       >
         {t(current.labelKey)}
         <ChevronDown className="size-[15px] text-faint" />
@@ -178,7 +178,12 @@ export function SelectField({
                 style={{ color: FILLED_INK }}
               >
                 <Select.ItemText>{t(o.labelKey)}</Select.ItemText>
-                <Select.ItemIndicator className="ml-auto">
+                {showCounts && o.value !== noneValue && (
+                  <span className="ml-auto pl-3 text-xs whitespace-nowrap text-faint">
+                    {t('builder.support.label')} {counts.get(o.value)}
+                  </span>
+                )}
+                <Select.ItemIndicator className={showCounts && o.value !== noneValue ? '' : 'ml-auto'}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>

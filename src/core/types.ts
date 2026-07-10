@@ -7,6 +7,7 @@ export type ConceptId =
   | 'exclude'
   | 'titleOnly'
   | 'exactTag'
+  | 'tagTitleCaption'
   | 'fromUser'
   | 'excludeUser'
   | 'toUser'
@@ -22,6 +23,16 @@ export type ConceptId =
   | 'verifiedOnly'
   | 'excludeReplies'
   | 'liveOnly'
+  | 'fourK'
+  | 'hdOnly'
+  | 'captionsOnly'
+  | 'creativeCommons'
+  | 'threeSixty'
+  | 'vr180'
+  | 'threeD'
+  | 'hdr'
+  | 'locationOnly'
+  | 'purchased'
   | 'minLikes'
   | 'minReposts'
   | 'minReplies'
@@ -33,6 +44,11 @@ export type ConceptId =
   | 'pixivPopular'
   | 'ageRating'
   | 'excludeAi'
+  | 'nicoKind'
+  | 'paidOnly'
+  | 'fantiaCategory'
+  | 'fantiaAudience'
+  | 'safeSearchOff'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -80,17 +96,98 @@ export const NICO_GENRES = [
 export type NicoGenre = '' | (typeof NICO_GENRES)[number]
 
 /**
- * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
- * playlist=再生リスト。ショート/再生リストはYouTube専用(Twitchは動画・チャンネルのみ)
+ * niconico動画の動画種別(kind=)。niconico専用。空=指定なし、user=ユーザー投稿動画、
+ * channel=公式チャンネル動画。2026-07-09に検索フィルタモーダルをGUI操作で採取
  */
-export type ResultType = '' | 'video' | 'short' | 'channel' | 'playlist'
+export type NicoKind = '' | 'user' | 'channel'
 
 /**
- * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、auto=サイトにおまかせ(指定しない)。
- * hot に対応するのは note(急上昇)と Reddit(注目順=sort=hot)。対応しないサイトでは
- * dynamicSupport(limitSort)で non-対応に落とす
+ * Fantiaの投稿カテゴリ(category=)。Fantia専用。空=指定なし。
+ * 詳細検索パネルの「カテゴリー」チップ群(イラスト・漫画・その他/実写の2グループ、
+ * 計24種)から値を採取(2026-07-09にログイン済みGUI操作で実測)。サイト自体は
+ * category=illust,cosplay のようにカンマ区切りで複数選択できるが、Dialectは他の
+ * 種類系の概念(ジャンル・作品の種類等)と同じ単一選択で対応する
  */
-export type SortOrder = 'new' | 'top' | 'hot' | 'auto'
+export const FANTIA_CATEGORIES = [
+  'illust', 'comic', 'vtuber', 'voice', 'voiceactor', '3d', '2d_anime', 'game',
+  'music', 'novel', 'doll', 'art', 'program', 'handmade', 'history', 'railroad',
+  'shop', 'other', 'fortune', 'cosplay', 'idol', 'youtuber', 'photo_movie', 'other_real',
+] as const
+
+export type FantiaCategory = '' | (typeof FANTIA_CATEGORIES)[number]
+
+/**
+ * Fantiaの対象読者区分(brand_type=)。Fantia専用。空=指定なし(常に3=全年齢を明示送信)、
+ * male=男性向け(R18、brand_type=0)、female=女性向け(R18、brand_type=2)。
+ * 2026-07-09にGUI操作で実測: このパラメータを省略すると、その時点のアカウント/セッションの
+ * 直近の閲覧設定が使われ全年齢に固定されないため、Dialectは常に明示的に送る
+ */
+export type FantiaAudience = '' | 'male' | 'female'
+
+/**
+ * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
+ * playlist=再生リスト(YouTube専用の値。Twitchは動画・チャンネルのみ)。
+ * posts=投稿、communities=コミュニティ、comments=コメント、media=メディア、
+ * people=プロフィール(Reddit専用の値。2026-07-07にGUI操作で実測した検索結果タブ
+ * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)。
+ * board=ボード(Pinterest専用。フィルターパネルの「すべてのピン/動画/ボード/
+ * プロフィール」の4択のうち「ボード」に対応。2026-07-08にGUI操作で実測、peopleはpinterestの
+ * 「プロフィール」とも共用)。bangumi=アニメ番組、pgc=映画・ドラマなどの制作コンテンツ、
+ * live=生放送中のルーム、article=コラム記事(いずれもbilibili専用。トップの「综合/视频/
+ * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)。
+ * series=シリーズ(niconico専用。検索結果タブ「動画/ショート/シリーズ/マイリスト/
+ * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
+ * ユーザー」とも共用。2026-07-09にGUI操作で実測)。circle=メンバーシップ(note専用。検索結果タブ
+ * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)
+ */
+export type ResultType =
+  | ''
+  | 'video'
+  | 'short'
+  | 'channel'
+  | 'playlist'
+  | 'posts'
+  | 'communities'
+  | 'comments'
+  | 'media'
+  | 'people'
+  | 'board'
+  | 'bangumi'
+  | 'pgc'
+  | 'live'
+  | 'article'
+  | 'series'
+  | 'circle'
+
+/**
+ * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
+ * auto=指定なし(サイトの標準の並びのまま=既定)。hot に対応するのは note(急上昇)と
+ * Reddit(注目順=sort=hot)。comments は Reddit専用(sort=comments、2026-07-07にGUI操作で実測)。
+ * danmaku=弾幕数順、favorites=収蔵(お気に入り登録)数順、likes=いいね数順は
+ * いずれもbilibili専用(2026-07-08にGUI操作で実測。動画検索はorder=dm/stow、
+ * コラム検索はorder=attention)。commentDate=最新コメント順はniconico専用
+ * (sort=lastCommentTime、2026-07-09にGUI操作で実測。コメント数順(comments概念とは別)とは
+ * 異なり「直近にコメントが付いた順」)。videoCount=収録動画数順・videoAdded=動画追加日時順は
+ * niconicoのシリーズ・マイリスト検索専用(2026-07-09にGUI操作で実測。newを収録動画数系の
+ * 「作成日」に流用し、videoCountで登録動画数、videoAddedで最後に動画が追加された日時を表す)。
+ * followerCount=フォロワー数順・liveCount=生放送番組数順はniconicoのユーザー検索専用
+ * (2026-07-09にGUI操作で実測。videoCountはユーザー検索では投稿動画数の意味で共用)。
+ * 対応しないサイトでは dynamicSupport(limitSort)でnon-対応に落とす
+ */
+export type SortOrder =
+  | 'new'
+  | 'top'
+  | 'hot'
+  | 'comments'
+  | 'auto'
+  | 'danmaku'
+  | 'favorites'
+  | 'likes'
+  | 'commentDate'
+  | 'videoCount'
+  | 'videoAdded'
+  | 'followerCount'
+  | 'liveCount'
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {
@@ -108,6 +205,11 @@ export interface QueryState {
   titleOnly: boolean
   /** pixiv専用。検索語をタグとして完全一致で探す(s_mode=s_tag_full。既定の部分一致を無効化) */
   exactTag: boolean
+  /**
+   * pixiv専用。タグ・タイトル・キャプションをまとめて探す(s_mode=tag_tc)。
+   * 既定のタグ部分一致より広い範囲を対象にする。2026-07-07にGUI操作で実測
+   */
+  tagTitleCaption: boolean
   fromUser: string
   excludeUser: string
   /** スペース区切りで複数可(どれか宛て=OR) */
@@ -129,6 +231,27 @@ export interface QueryState {
   excludeReplies: boolean
   /** YouTube専用。ライブ配信だけに絞る(sp のfilterサブメッセージ field8=1) */
   liveOnly: boolean
+  /**
+   * YouTube専用。フィルタパネル「特徴」の絞り込み(sp のfilterサブメッセージの各field=1)。
+   * 2026-07-07にGUI操作で実機解析: 4K=field14、HD=field4、字幕=field5、
+   * クリエイティブ・コモンズ=field6(liveOnlyのfield8とは別枠、combine可能)
+   */
+  fourK: boolean
+  hdOnly: boolean
+  captionsOnly: boolean
+  creativeCommons: boolean
+  /**
+   * YouTube専用。「特徴」の残り6項目(2026-07-08にGUI操作で実機解析、いずれも
+   * 他の特徴・タイプ・並び順と自由に組み合わせ可能): 360°=field15、VR180=field26、
+   * 3D=field7、HDR=field25、場所(撮影地の位置情報つき動画に絞る)=field23、
+   * 購入済み(自分が購入した映画・番組)=field9
+   */
+  threeSixty: boolean
+  vr180: boolean
+  threeD: boolean
+  hdr: boolean
+  locationOnly: boolean
+  purchased: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */
@@ -137,6 +260,19 @@ export interface QueryState {
   workType: WorkType
   /** niconico専用。ジャンル(genre=)。空=指定なし */
   genre: NicoGenre
+  /** niconico専用。動画種別(kind=user/channel)。空=指定なし */
+  nicoKind: NicoKind
+  /** note専用。有料記事だけに絞る(context=note_for_sale)。false=指定なし(すべての記事) */
+  paidOnly: boolean
+  /** Fantia専用。投稿カテゴリ(category=)。空=指定なし */
+  fantiaCategory: FantiaCategory
+  /** Fantia専用。対象読者区分(brand_type=)。空=指定なし(常に全年齢を明示送信) */
+  fantiaAudience: FantiaAudience
+  /**
+   * はてなブックマーク専用。セーフサーチを解除する(safe=off)。false=指定なし(既定=on、
+   * 未ログインでも同じ既定と2026-07-09にWebFetchで確認)
+   */
+  safeSearchOff: boolean
   resultType: ResultType
   sort: SortOrder
   /** pixiv専用。「{N}users入り」タグの部分パターンで擬似人気順にする(空=指定なし) */
@@ -167,6 +303,7 @@ export type PlatformId =
   | 'youtube'
   | 'note'
   | 'niconico'
+  | 'seiga'
   | 'instagram'
   | 'reddit'
   | 'pixiv'
@@ -175,6 +312,12 @@ export type PlatformId =
   | 'twitch'
   | 'fivech'
   | 'animanch'
+  | 'tumblr'
+  | 'mastodon'
+  | 'pinterest'
+  | 'fanbox'
+  | 'bilibili'
+  | 'fantia'
 
 export interface PlatformDef {
   id: PlatformId

@@ -16,8 +16,10 @@ import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words 
 // ユーザー指定はチャンネル内検索ページ(/@handle/search)への切り替えで近似する。
 const SORT_BYTE: Record<'new' | 'top', number> = { new: 0x02, top: 0x03 }
 // 種別(タイプ)のバイト。video=1/channel=2/playlist=3 は既存調査値、short=9 は
-// 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用
-const TYPE_BYTE: Record<Exclude<ResultType, ''>, number> = {
+// 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用。
+// posts/communities/comments/media/people はReddit専用の値でYouTubeには無いため未収録
+// (dynamicSupportでYouTube側は選択時にresultTypeをnoneへ落とす)
+const TYPE_BYTE: Partial<Record<Exclude<ResultType, ''>, number>> = {
   video: 0x01,
   short: 0x09,
   channel: 0x02,
@@ -33,11 +35,28 @@ function spParam(state: QueryState): string {
   // spで表せるのは新着/視聴回数(=人気)順のみ。hot等はYouTubeにないので送らない
   const sort = state.sort === 'new' || state.sort === 'top' ? state.sort : null
   const filter: number[] = []
-  if (state.resultType) filter.push(0x10, TYPE_BYTE[state.resultType])
+  const typeByte = state.resultType ? TYPE_BYTE[state.resultType] : undefined
+  if (typeByte !== undefined) filter.push(0x10, typeByte)
   if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
-  // 「特徴>ライブ」= filterサブメッセージの field8=1(sp=EgJAAQ%3D%3D を2026-07-05に
-  // フィルタUIから実測)。type/長さと同じサブメッセージに合流する
+  // 「特徴」の各項目はfilterサブメッセージの別フィールドとして合流する(2026-07-07に
+  // フィルタUIから実測、field番号の昇順で並べる): 3D=field7(0x38)・HD=field4(0x20)・
+  // 字幕=field5(0x28)・クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・
+  // 購入済み=field9(0x48)・4K=field14(0x70)・360°=field15(0x78)・場所=field23(0xb8,0x01)・
+  // HDR=field25(0xc8,0x01)・VR180=field26(0xd0,0x01)。field23以降は2バイトのvarintタグ
+  // (fieldが16以上でタグが128を超えるため)。いずれも組み合わせ可能(2026-07-08に
+  // 360°/VR180/3D/HDR/場所は実際に絞り込みが効くことをブラウザ実測、購入済みは
+  // このアカウントに購入履歴が無く未検証だがバイト値自体はUIから採取)
+  if (state.hdOnly) filter.push(0x20, 0x01)
+  if (state.captionsOnly) filter.push(0x28, 0x01)
+  if (state.creativeCommons) filter.push(0x30, 0x01)
+  if (state.threeD) filter.push(0x38, 0x01)
   if (state.liveOnly) filter.push(0x40, 0x01)
+  if (state.purchased) filter.push(0x48, 0x01)
+  if (state.fourK) filter.push(0x70, 0x01)
+  if (state.threeSixty) filter.push(0x78, 0x01)
+  if (state.locationOnly) filter.push(0xb8, 0x01, 0x01)
+  if (state.hdr) filter.push(0xc8, 0x01, 0x01)
+  if (state.vr180) filter.push(0xd0, 0x01, 0x01)
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
   if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
@@ -88,8 +107,21 @@ function dynamicSupport(
     overrides.videoLength = CHANNEL_CONFLICT
     overrides.resultType = CHANNEL_CONFLICT
     overrides.liveOnly = CHANNEL_CONFLICT
+    overrides.fourK = CHANNEL_CONFLICT
+    overrides.hdOnly = CHANNEL_CONFLICT
+    overrides.captionsOnly = CHANNEL_CONFLICT
+    overrides.creativeCommons = CHANNEL_CONFLICT
+    overrides.threeSixty = CHANNEL_CONFLICT
+    overrides.vr180 = CHANNEL_CONFLICT
+    overrides.threeD = CHANNEL_CONFLICT
+    overrides.hdr = CHANNEL_CONFLICT
+    overrides.locationOnly = CHANNEL_CONFLICT
+    overrides.purchased = CHANNEL_CONFLICT
+  } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
+    // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
+    overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
   }
-  // 急上昇(hot)はnote専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
+  // 急上昇・コメント数順はnote/Reddit専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
   return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
 
@@ -111,6 +143,16 @@ export const youtube: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
     videoLength: { level: 'partial' },
     liveOnly: { level: 'partial' },
+    fourK: { level: 'full' },
+    hdOnly: { level: 'full' },
+    captionsOnly: { level: 'full' },
+    creativeCommons: { level: 'full' },
+    threeSixty: { level: 'full' },
+    vr180: { level: 'full' },
+    threeD: { level: 'full' },
+    hdr: { level: 'full' },
+    locationOnly: { level: 'full' },
+    purchased: { level: 'full' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },

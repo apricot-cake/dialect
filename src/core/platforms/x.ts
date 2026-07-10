@@ -5,8 +5,13 @@ import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
 // f=top(既定)はアルゴリズム選別で大半を隠すため、新しい順は f=live。
-// min_faves:/min_retweets:/filter:blue_verified は公式フォームから削除済みの
-// 非公式演算子だが、2026-07-02にWeb UIでの動作を実機確認済み。
+// min_faves:/min_retweets:/min_replies: は「高度な検索」フォームの
+// エンゲージメント欄(返信/いいね/リポストの最小件数)に実在する公式演算子と
+// 2026-07-08にGUI操作で確認済み(x.com/search-advancedで入力→生成URLを確認)。
+// filter:blue_verified(認証済みトグル)は同フォームから消滅済みで非公式のまま。
+// メンション検索(「次のアカウントへの@ツイート」欄)は独自演算子ではなく、
+// (@user) というカッコ付きの生テキストをクエリに混ぜる形。2026-07-07にx.com/search-advanced
+// をGUI操作で実測: 1件=`(@user)`、複数件=`(@user1 OR @user2)`(OR結合)。
 // リストのURL(例 https://x.com/i/lists/123)またはIDから数値のリストIDを取り出す。
 // list: 演算子は非公式だが実機確認済み(2026-07-06、リストのメンバー投稿に絞られる)。取れなければ null
 function listId(raw: string): string | null {
@@ -19,8 +24,14 @@ function listId(raw: string): string | null {
 
 function buildUrl(state: QueryState): string | null {
   const list = listId(state.xList)
-  // 宛先・リンク先・リスト内だけの検索もXでは成立するので、正の条件に数える
-  if (!hasPositiveTerm(state) && !state.toUser.trim() && !state.domain.trim() && !list) {
+  // 宛先・メンション・リンク先・リスト内だけの検索もXでは成立するので、正の条件に数える
+  if (
+    !hasPositiveTerm(state) &&
+    !state.toUser.trim() &&
+    !state.mentionsUser.trim() &&
+    !state.domain.trim() &&
+    !list
+  ) {
     return null
   }
 
@@ -33,6 +44,10 @@ function buildUrl(state: QueryState): string | null {
   const tos = words(state.toUser).map((u) => `to:${stripAt(u)}`)
   if (tos.length >= 2) parts.push(`(${tos.join(' OR ')})`)
   else parts.push(...tos)
+  // メンション。to: と違い演算子ではなく素の@テキストなので、1件でも公式フォーム同様
+  // 常にカッコで囲む(実機確認: 1件でも`(@user)`、複数件は`(@user1 OR @user2)`)
+  const mentions = words(state.mentionsUser).map((u) => `@${stripAt(u)}`)
+  if (mentions.length > 0) parts.push(`(${mentions.join(' OR ')})`)
   // リンク先ドメインは url: で絞る(部分一致)
   if (state.domain.trim()) parts.push(`url:${state.domain.trim()}`)
   // リスト内検索。list:<id> でそのリストのメンバーの投稿だけに絞る(他条件とAND可)
@@ -49,7 +64,7 @@ function buildUrl(state: QueryState): string | null {
   if (state.minReplies.trim()) parts.push(`min_replies:${state.minReplies.trim()}`)
   if (state.language) parts.push(`lang:${state.language}`)
 
-  // f=live=新しい順、f=top=人気順(話題)。おまかせは指定しない(Xの既定はtop)
+  // f=live=新しい順、f=top=人気順(話題)。指定なしは何も送らない(Xの既定はtop)
   const tab =
     state.sort === 'new' ? '&f=live' : state.sort === 'top' ? '&f=top' : ''
   return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
@@ -69,6 +84,7 @@ export const x: PlatformDef = {
     fromUser: { level: 'full' },
     excludeUser: { level: 'full' },
     toUser: { level: 'full' },
+    mentionsUser: { level: 'full' },
     domain: { level: 'full' },
     xList: { level: 'partial' },
     hashtag: { level: 'full' },
@@ -77,9 +93,9 @@ export const x: PlatformDef = {
     linksOnly: { level: 'full' },
     verifiedOnly: { level: 'partial' },
     excludeReplies: { level: 'full' },
-    minLikes: { level: 'partial' },
-    minReposts: { level: 'partial' },
-    minReplies: { level: 'partial' },
+    minLikes: { level: 'full' },
+    minReposts: { level: 'full' },
+    minReplies: { level: 'full' },
     language: { level: 'full' },
     sortOrder: { level: 'full' },
   },

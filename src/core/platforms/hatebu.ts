@@ -8,6 +8,17 @@ import { andTerms, exactPhrases, minusExcludes, quotedTerms, stripHash, words } 
 // 最低ブックマーク数(users=)が全てURLで効く。ログイン不要。
 // 引用符のフレーズ一致は絞り込み効果を実測したが公式ヘルプに記載なし(中信頼)。
 // 注意: 期間を指定しないと、はてブ側の標準で「直近5年・3users以上」に絞られる。
+//
+// セーフサーチ(safe=on/off、既定on)は2026-07-09にログイン済みGUI操作で発見(サイドバーの
+// 「セーフサーチ」オン/オフリンク)。WebFetch(Cookie無し)でも同じサイドバーが出ることを
+// 確認済みで、未ログインでも既定・挙動は同じ
+//
+// ユーザー指定検索(fromUser)は2026-07-09にログイン済みで再検証: `/{username}/search?q=`という
+// パスは存在するが、**自分自身のアカウント以外は403 Forbidden**(ブックマーク一覧自体は
+// 公開・閲覧できる他ユーザーで確認)。未ログインだとログインページへリダイレクト(WebFetch確認)。
+// つまり「ログインすれば他人のブックマークを検索できる」わけではなく、この検索は
+// 常に「自分自身のブックマークの中だけ」を対象にした個人用機能であり、Dialectの
+// fromUser(指定した任意ユーザーの投稿を探す)とは性質が異なるため引き続き非対応(none)
 function buildUrl(state: QueryState): string | null {
   const textParts = quotedTerms(state)
   const tagNames = words(state.hashtag).map(stripHash)
@@ -20,12 +31,14 @@ function buildUrl(state: QueryState): string | null {
   if (textParts.length === 0 && tagNames.length === 0) return null
 
   const params = new URLSearchParams({ q: parts.join(' ') })
-  // sort=recent=新着、popular=人気(サイト既定)。おまかせは指定しない
+  // sort=recent=新着、popular=人気(サイト既定)。指定なしは何も送らない
   if (state.sort === 'new') params.set('sort', 'recent')
   else if (state.sort === 'top') params.set('sort', 'popular')
   if (state.since) params.set('date_begin', state.since)
   if (state.until) params.set('date_end', state.until)
   if (state.minLikes.trim()) params.set('users', state.minLikes.trim())
+  // セーフサーチ(既定=on)を解除。未ログインでも既定は同じ(2026-07-09にWebFetchで確認)
+  if (state.safeSearchOff) params.set('safe', 'off')
 
   return `https://b.hatena.ne.jp/search/${path}?${params.toString()}`
 }
@@ -63,6 +76,7 @@ export const hatebu: PlatformDef = {
     period: { level: 'full' },
     minLikes: { level: 'partial', noteKey: 'note.hatebu.minLikes' },
     sortOrder: { level: 'full' },
+    safeSearchOff: { level: 'full' },
   },
   buildUrl,
   dynamicSupport,

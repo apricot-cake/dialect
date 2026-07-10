@@ -1,12 +1,16 @@
 import {
+  siBilibili,
   siBluesky,
   siHatenabookmark,
   siInstagram,
+  siMastodon,
   siMisskey,
   siNiconico,
   siNote,
+  siPinterest,
   siPixiv,
   siReddit,
+  siTumblr,
   siTwitch,
   siX,
   siYoutube,
@@ -27,9 +31,13 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   misskey: siMisskey,
   hatebu: siHatenabookmark,
   twitch: siTwitch,
+  tumblr: siTumblr,
+  mastodon: siMastodon,
+  pinterest: siPinterest,
+  bilibili: siBilibili,
 }
 
-const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ' }
+const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静', fanbox: 'F', fantia: 'フ' }
 
 /**
  * ブランドアイコン1つ。simple-iconsのロゴ、なければ角丸矩形+1文字の吹き出し風。

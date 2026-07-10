@@ -4,6 +4,7 @@ import { bluesky } from './bluesky'
 import { youtube } from './youtube'
 import { note } from './note'
 import { niconico } from './niconico'
+import { seiga } from './seiga'
 import { instagram } from './instagram'
 import { reddit } from './reddit'
 import { pixiv } from './pixiv'
@@ -12,6 +13,12 @@ import { hatebu } from './hatebu'
 import { twitch } from './twitch'
 import { fivech } from './fivech'
 import { animanch } from './animanch'
+import { tumblr } from './tumblr'
+import { mastodon } from './mastodon'
+import { pinterest } from './pinterest'
+import { fanbox } from './fanbox'
+import { bilibili } from './bilibili'
+import { fantia } from './fantia'
 
 // 並び順はグループ順(SNS→動画→イラスト・画像→ブログ・掲示板)に揃える。
 // この配列順が、起動画面のカード・条件追加モーダルのフィルタ・対応ポップの
@@ -23,12 +30,19 @@ export const PLATFORMS: PlatformDef[] = [
   bluesky,
   instagram,
   misskey,
+  tumblr,
+  mastodon,
   // 動画
   youtube,
   niconico,
   twitch,
+  bilibili,
   // イラスト・画像
   pixiv,
+  seiga,
+  pinterest,
+  fanbox,
+  fantia,
   // ブログ・掲示板
   note,
   reddit,
