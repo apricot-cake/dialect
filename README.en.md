@@ -22,6 +22,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 - **Filter conditions by site** — When adding a condition, narrow the list to just the conditions a given site supports (this changes what is listed, not which sites you search).
 - **Clear support status** — Conditions a site can't handle are automatically dropped on launch, and what is "not available / partially works" is shown above the button. Buttons never become unclickable.
 - **Share via URL** — Assembled conditions are reflected in the URL, so bookmarking or sharing the browser URL reopens the same conditions.
+- **Load a search URL (reverse translation)** — Paste a search page URL from any supported site into "Load URL" and it is translated back into conditions, so a search built on one site can be carried to another. Anything that can't be read is shown, not silently dropped.
 - **Dark mode / English & Japanese** — Toggle the theme and display language from the buttons at the top right.
 
 ## Supported sites
