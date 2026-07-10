@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useMemo, useRef, useState, type CSSProperties } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { activeConcepts } from '@/core/concepts'
@@ -147,6 +147,8 @@ function LaunchCard({
   colors: Map<ConceptId, string>
 }) {
   const [hover, setHover] = useState(false)
+  const [openUpward, setOpenUpward] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
   const enabled = Boolean(resolution.url)
   const ink = platform.ink ?? readableInk(platform.brandColor)
   const showLogin = platform.requiresLogin && enabled
@@ -177,9 +179,16 @@ function LaunchCard({
 
   return (
     <div
+      ref={cardRef}
       className="relative"
       style={{ zIndex: showMeta ? 40 : 1 }}
-      onMouseEnter={() => setHover(true)}
+      onMouseEnter={() => {
+        // 下に十分な余白が無ければ上向きに開く。下端でポップアップが
+        // スクロール領域をホバーのたびに押し広げてガクつくのを防ぐ
+        const rect = cardRef.current?.getBoundingClientRect()
+        if (rect) setOpenUpward(window.innerHeight - rect.bottom < 280)
+        setHover(true)
+      }}
       onMouseLeave={() => setHover(false)}
     >
       <a
@@ -239,7 +248,9 @@ function LaunchCard({
       )}
       {showMeta && (
         <div
-          className="dl-glass pointer-events-none absolute top-[calc(100%+8px)] right-2 left-2 z-30 flex flex-col gap-[11px] rounded-[14px] p-[13px]"
+          className={`dl-glass pointer-events-none absolute right-2 left-2 z-30 flex flex-col gap-[11px] rounded-[14px] p-[13px] ${
+            openUpward ? 'bottom-[calc(100%+8px)]' : 'top-[calc(100%+8px)]'
+          }`}
           style={{ animation: 'dl-fade 160ms ease both' }}
         >
           {!enabled && (
