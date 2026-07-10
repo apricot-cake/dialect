@@ -1,15 +1,14 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
 import {
   andTerms,
   exactPhrases,
   hasPositiveTerm,
-  minusExcludes,
-  quotedTerms,
   stripAt,
   stripHash,
   words,
 } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -29,15 +28,22 @@ import {
 // URLへ付けると実際に絞り込まれ、ユーザー/フィードタブも隠れる(サーバー側が認識する
 // 挙動)ことを確認できたため採用する。GUI上に対応するトグルはまだ無いため
 // 出所は「URL叩き」(フォーム操作での採取ではない)
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   // ユーザー検索(tab=user)はアカウント名/ハンドルへのゆるい一致で、本文演算子が効かない。
   // 2026-07-09 GUI操作で確認: 「猫 -犬」で検索しても「犬猫」を含むアカウントが普通に
   // 返る(除外が効かない)、引用符も無視して同じ結果になる(完全一致にならない)。
   // よって語句はそのまま連結するだけにし、他の演算子は使わない
   if (state.resultType === 'people') {
-    const terms = [...andTerms(state), ...exactPhrases(state)]
-    if (terms.length === 0) return null
-    return `https://bsky.app/search?q=${encodeURIComponent(terms.join(' '))}&tab=user`
+    const toks = [
+      ...andTerms(state).map((t) => tok(t, 'keywords')),
+      ...exactPhrases(state).map((p) => tok(p, 'exactPhrase')),
+    ]
+    if (toks.length === 0) return null
+    return [
+      lit('https://bsky.app/search?q='),
+      ...encodeTokens(toks),
+      part('&tab=user', 'resultType'),
+    ]
   }
 
   // メンション先・リンク先だけの検索もBlueskyでは成立するので、正の条件に数える
@@ -45,24 +51,25 @@ function buildUrl(state: QueryState): string | null {
     return null
   }
 
-  const parts: string[] = []
-  parts.push(...quotedTerms(state))
-  parts.push(...minusExcludes(state))
-  if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
-  if (state.mentionsUser.trim()) parts.push(`mentions:${stripAt(state.mentionsUser)}`)
-  if (state.domain.trim()) parts.push(`domain:${state.domain.trim()}`)
-  parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
-  if (state.since) parts.push(`since:${state.since}`)
-  if (state.until) parts.push(`until:${state.until}`)
+  const toks: Token[] = []
+  toks.push(...quotedTermTokens(state))
+  toks.push(...minusExcludeTokens(state))
+  if (state.fromUser.trim()) toks.push(tok(`from:${stripAt(state.fromUser)}`, 'fromUser'))
+  if (state.mentionsUser.trim()) toks.push(tok(`mentions:${stripAt(state.mentionsUser)}`, 'mentionsUser'))
+  if (state.domain.trim()) toks.push(tok(`domain:${state.domain.trim()}`, 'domain'))
+  toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
+  if (state.since) toks.push(tok(`since:${state.since}`, 'period'))
+  if (state.until) toks.push(tok(`until:${state.until}`, 'period'))
 
+  const parts: UrlPart[] = [lit('https://bsky.app/search?q='), ...encodeTokens(toks)]
   // tab=latest=新しい順。人気順・指定なしは既定のTopタブのまま開く
-  const tab = state.sort === 'new' ? '&tab=latest' : ''
+  if (state.sort === 'new') parts.push(part('&tab=latest', 'sortOrder'))
   // 言語は &lang= のURLパラメータで送る(2026-07-09 GUI採取: 検索ページの言語ドロップダウンが
   // 生成する形。lang: 演算子もAPIレベルでは効くが、UIは lang: をクエリ文字扱いする=実プロダクトの
   // 生成形に揃える)。クエリ本体とは別枠なので他演算子と自由に合成できる
-  const lang = state.language ? `&lang=${state.language}` : ''
-  const media = state.mediaOnly ? '&media=true' : ''
-  return `https://bsky.app/search?q=${encodeURIComponent(parts.join(' '))}${tab}${lang}${media}`
+  if (state.language) parts.push(part(`&lang=${state.language}`, 'language'))
+  if (state.mediaOnly) parts.push(part('&media=true', 'mediaOnly'))
+  return parts
 }
 
 // resultType=people(アカウント検索)は許可リスト方式(Blueskyが対応する1値のみ)。
@@ -78,7 +85,9 @@ function dynamicSupport(
   if (state.resultType === 'people') {
     // 語句どうしのANDも保証されない、ふつうの部分一致(note.loose.and)
     overrides.keywords = { level: 'partial', noteKey: 'note.loose.and' }
-    overrides.exactPhrase = PEOPLE_CONFLICT
+    // 完全一致は引用符が無視されるが、語句自体はゆるい一致の検索語として送られる
+    // (buildParts が実際に送っている)ので「使えない」ではなく「ゆるく畳む」近似
+    overrides.exactPhrase = { level: 'partial', noteKey: 'note.loose.exact' }
     overrides.exclude = PEOPLE_CONFLICT
     overrides.fromUser = PEOPLE_CONFLICT
     overrides.mentionsUser = PEOPLE_CONFLICT
@@ -183,7 +192,7 @@ export const bluesky: PlatformDef = {
     resultType: { level: 'full' },
     sortOrder: { level: 'partial' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

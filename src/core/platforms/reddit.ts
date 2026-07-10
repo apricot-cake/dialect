@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, quoteIfPhrase, stripAt, words } from '../text'
+import { formEncode, lit, ParamParts, part, tok, type Token } from '../urlParts'
 import { applyBins, daysAgoIso, emptyBins, hostMatches, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
@@ -18,7 +19,7 @@ function tParam(since: string): string {
   return 'all'
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   if (
     !(
       andTerms(state).length > 0 ||
@@ -31,29 +32,40 @@ function buildUrl(state: QueryState): string | null {
     return null
   }
 
-  const clauses: string[] = []
+  const clauses: Token[] = []
+  // 「タイトルだけ」は語ごとの title: 接頭辞として現れるため、語の断片へ複合で帰属させる
   const field = state.titleOnly ? 'title:' : ''
-  clauses.push(...andTerms(state).map((w) => `${field}${quoteIfPhrase(w)}`))
-  clauses.push(...exactPhrases(state).map((p) => `${field}"${p}"`))
-  if (state.fromUser.trim()) clauses.push(`author:${stripAt(state.fromUser)}`)
+  const fieldConcepts: ConceptId[] = state.titleOnly ? ['titleOnly'] : []
+  clauses.push(...andTerms(state).map((w) => tok(`${field}${quoteIfPhrase(w)}`, 'keywords', ...fieldConcepts)))
+  clauses.push(...exactPhrases(state).map((p) => tok(`${field}"${p}"`, 'exactPhrase', ...fieldConcepts)))
+  if (state.fromUser.trim()) clauses.push(tok(`author:${stripAt(state.fromUser)}`, 'fromUser'))
   // コミュニティは複数指定で「どれか」(OR)
   const subs = words(state.subreddit).map(
     (s) => `subreddit:${s.replace(/^\/?r\//, '')}`,
   )
-  if (subs.length >= 2) clauses.push(`(${subs.join(' OR ')})`)
-  else clauses.push(...subs)
-  let q = clauses.join(' AND ')
-  const excludes = words(state.exclude)
-  if (excludes.length > 0) q += ` NOT (${excludes.join(' OR ')})`
+  if (subs.length >= 2) clauses.push(tok(`(${subs.join(' OR ')})`, 'subreddit'))
+  else clauses.push(...subs.map((s) => tok(s, 'subreddit')))
 
-  const params = new URLSearchParams({ q })
+  // q はキーワード・投稿者・コミュニティ・除外が1つの値に合成される。
+  // AND 連結の区切りは無帰属、各節は由来の概念へ帰属させる
+  const parts: UrlPart[] = [lit('https://www.reddit.com/search/?q=')]
+  clauses.forEach((c, i) => {
+    if (i > 0) parts.push(lit(formEncode(' AND ')))
+    parts.push(part(formEncode(c.text), ...c.concepts))
+  })
+  const excludes = words(state.exclude)
+  if (excludes.length > 0) {
+    parts.push(part(formEncode(` NOT (${excludes.join(' OR ')})`), 'exclude'))
+  }
+
+  const params = new ParamParts()
   // sort=new=新着、top=人気、hot=注目順(急上昇に相当)、comments=コメント数順(2026-07-07実測)。
   // 指定なしは何も送らない(既定は関連度順)
-  if (state.sort === 'new') params.set('sort', 'new')
-  if (state.sort === 'top') params.set('sort', 'top')
-  if (state.sort === 'hot') params.set('sort', 'hot')
-  if (state.sort === 'comments') params.set('sort', 'comments')
-  if (state.since) params.set('t', tParam(state.since))
+  if (state.sort === 'new') params.set('sort', 'new', 'sortOrder')
+  if (state.sort === 'top') params.set('sort', 'top', 'sortOrder')
+  if (state.sort === 'hot') params.set('sort', 'hot', 'sortOrder')
+  if (state.sort === 'comments') params.set('sort', 'comments', 'sortOrder')
+  if (state.since) params.set('t', tParam(state.since), 'period')
   // 結果タブ(type=)。すべて/投稿/コミュニティ/コメント/メディア/プロフィールの6タブが
   // それぞれ 無指定/posts/communities/comments/media/people に対応(2026-07-07実測)。
   // 指定なしは「すべて」タブ(投稿+コミュニティ+コメント+メディア+プロフィールが混在)
@@ -64,10 +76,10 @@ function buildUrl(state: QueryState): string | null {
     state.resultType === 'media' ||
     state.resultType === 'people'
   ) {
-    params.set('type', state.resultType)
+    params.set('type', state.resultType, 'resultType')
   }
 
-  return `https://www.reddit.com/search/?${params.toString()}`
+  return [...parts, ...params.parts('&')]
 }
 
 // 逆翻訳: reddit.com/search/?q=… と /r/{sub}/search(コミュニティ内検索)。
@@ -191,6 +203,11 @@ function dynamicSupport(
     ...overrides,
     ...resultTypeOverride,
     ...limitSort(state.sort, ['new', 'top', 'hot', 'comments'], 'note.sortOrder.otherSite'),
+    // title: 接頭辞はキーワード・完全一致の語にだけ付く。語が無い(投稿者やコミュニティ
+    // だけの)検索では何も送られないので、「適用」に見せない(check:parts が検出した食い違い)
+    ...(state.titleOnly && andTerms(state).length === 0 && exactPhrases(state).length === 0
+      ? { titleOnly: { level: 'none', noteKey: 'note.titleOnly.needsWords' } }
+      : {}),
   }
 }
 
@@ -214,7 +231,7 @@ export const reddit: PlatformDef = {
     resultType: { level: 'full' },
     sortOrder: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

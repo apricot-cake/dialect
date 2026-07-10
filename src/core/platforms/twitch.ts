@@ -1,21 +1,28 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { andTerms, exactPhrases, words } from '../text'
+import { lit, ParamParts } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実ブラウザ実測)
 // 検索は /search?term=(あいまい一致)。引用符・除外などの演算子は一切効かない。
 // type= で検索対象を切り替えられる(channels/categories/videos。実測で有効)。
 // 「配信中のみ」のtypeは存在しない。言語絞り込みはURL不可(UIの内部状態のみ)。
-function buildUrl(state: QueryState): string | null {
-  const parts = [...andTerms(state)]
+function buildParts(state: QueryState): UrlPart[] | null {
+  const kw = andTerms(state)
   // 演算子がないため語句もそのままキーワードとして埋め込む
-  parts.push(...exactPhrases(state))
-  if (parts.length === 0) return null
+  const phrases = exactPhrases(state)
+  const terms = [...kw, ...phrases]
+  if (terms.length === 0) return null
 
-  const params = new URLSearchParams({ term: parts.join(' ') })
-  if (state.resultType === 'video') params.set('type', 'videos')
-  else if (state.resultType === 'channel') params.set('type', 'channels')
-  return `https://www.twitch.tv/search?${params.toString()}`
+  const params = new ParamParts()
+  // term= は1ペアにAND語と完全一致語句が合流する複合断片
+  const termConcepts: ConceptId[] = []
+  if (kw.length > 0) termConcepts.push('keywords')
+  if (phrases.length > 0) termConcepts.push('exactPhrase')
+  params.set('term', terms.join(' '), ...termConcepts)
+  if (state.resultType === 'video') params.set('type', 'videos', 'resultType')
+  else if (state.resultType === 'channel') params.set('type', 'channels', 'resultType')
+  return [lit('https://www.twitch.tv/search'), ...params.parts('?')]
 }
 
 // 逆翻訳: twitch.tv/search?term=…(&type=videos|channels)
@@ -62,7 +69,7 @@ export const twitch: PlatformDef = {
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

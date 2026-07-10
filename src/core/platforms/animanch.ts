@@ -1,6 +1,7 @@
-import type { ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { andTerms, exactPhrases, words } from '../text'
 import { hostIs, leftoverParams, pathSegments } from '../parse'
+import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索はパスにキーワードを埋め込む形式。スペース区切りのANDが効く(実測)。
@@ -8,14 +9,19 @@ import { hostIs, leftoverParams, pathSegments } from '../parse'
 // /search2/=全期間の過去ログのスレタイトル検索、/search/=現行スレのみ(直近約2か月)。
 // 既定はレス本文(searchRes)、「タイトルだけ」ONで過去ログタイトル(search2)へ切り替える。
 // 演算子(除外・引用符)や並び順・期間のパラメータは存在しない。
-function buildUrl(state: QueryState): string | null {
-  const parts = [...andTerms(state)]
+function buildParts(state: QueryState): UrlPart[] | null {
+  const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   // 引用符構文がないため語句もそのままキーワードとして埋め込む
-  parts.push(...exactPhrases(state))
-  if (parts.length === 0) return null
+  toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
+  if (toks.length === 0) return null
 
-  const path = state.titleOnly ? 'search2' : 'searchRes'
-  return `https://bbs.animanch.com/${path}/${encodeURIComponent(parts.join(' '))}`
+  return [
+    lit('https://bbs.animanch.com/'),
+    // 過去ログタイトル検索への切り替えは「タイトルだけ」が生む断片(既定の searchRes は無帰属)
+    state.titleOnly ? part('search2', 'titleOnly') : lit('searchRes'),
+    lit('/'),
+    ...encodeTokens(toks),
+  ]
 }
 
 // 逆翻訳: /searchRes/{q}(レス本文)・/search2/{q}(過去ログタイトル=タイトルだけ)・
@@ -51,6 +57,6 @@ export const animanch: PlatformDef = {
     titleOnly: { level: 'partial', noteKey: 'note.animanch.titleOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
 }

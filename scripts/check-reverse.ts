@@ -20,6 +20,7 @@ import { PLATFORMS } from '@/core/platforms'
 import { parseSearchUrl } from '@/core/reverse'
 import { defaultState } from '@/core/concepts'
 import { daysAgoIso } from '@/core/parse'
+import { buildUrl } from '@/core/urlParts'
 import type { PlatformId, QueryState } from '@/core/types'
 
 let failures = 0
@@ -299,7 +300,7 @@ const CASES: Record<PlatformId, Patch[]> = {
 for (const platform of PLATFORMS) {
   for (const patch of CASES[platform.id]) {
     const state: QueryState = { ...defaultState(), ...patch }
-    const url = platform.buildUrl(state)
+    const url = buildUrl(platform, state)
     if (!url) {
       fail(`${platform.id}: buildUrl が null(検査ケース自体が不成立): ${JSON.stringify(patch)}`)
       continue
@@ -316,7 +317,7 @@ for (const platform of PLATFORMS) {
     if (result.ignored.length > 0) {
       fail(`${platform.id}: 自分のURLに読み残し ${JSON.stringify(result.ignored)}: ${url}`)
     }
-    const rebuilt = platform.buildUrl(result.state)
+    const rebuilt = buildUrl(platform, result.state)
     if (rebuilt !== url) {
       fail(`${platform.id}: 往復不一致\n    元: ${url}\n    再: ${rebuilt}`)
     }

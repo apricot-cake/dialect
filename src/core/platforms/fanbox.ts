@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { stripHash, words } from '../text'
+import { lit, part } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-08 実機確認(未ログイン、GUI操作)。fanbox.cc の検索欄は「クリエイター・タグを検索」
@@ -9,10 +10,13 @@ import { hostMatches, leftoverParams, pathSegments } from '../parse'
 // 機能するのは単一タグのページ /tags/{タグ} のみで、並び順・除外・期間・送信者などの絞り込みは
 // 一切無い(操作可能な要素は検索ボックスのみ)。タグページ自体は未ログインで閲覧可能(投稿の中身は
 // 支援額に応じてロックされるが、これは検索機能とは別のコンテンツ課金)。
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const tagNames = words(state.hashtag).map(stripHash)
   if (tagNames.length !== 1) return null
-  return `https://www.fanbox.cc/tags/${encodeURIComponent(tagNames[0])}`
+  return [
+    lit('https://www.fanbox.cc/tags/'),
+    part(encodeURIComponent(tagNames[0]), 'hashtag'),
+  ]
 }
 
 // 逆翻訳: fanbox.cc/tags/{タグ}(唯一の投稿一覧ページ)
@@ -36,7 +40,7 @@ export const fanbox: PlatformDef = {
   support: {
     hashtag: { level: 'partial', noteKey: 'note.fanbox.hashtagOnly' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state): Partial<Record<ConceptId, ConceptSupport>> => {
     const tagNames = words(state.hashtag).map(stripHash)

@@ -12,6 +12,7 @@
  */
 import { PLATFORMS } from '@/core/platforms'
 import { defaultState } from '@/core/concepts'
+import { buildUrl } from '@/core/urlParts'
 import type { PlatformDef, QueryState } from '@/core/types'
 
 const UA =
@@ -101,7 +102,7 @@ for (const platform of PLATFORMS) {
   for (const sample of SAMPLES) {
     let url: string | null = null
     try {
-      url = platform.buildUrl(sample.state)
+      url = buildUrl(platform, sample.state)
     } catch {
       url = null
     }

@@ -1,6 +1,7 @@
-import type { ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { FANTIA_CATEGORIES, limitSort } from '../types'
 import { andTerms, words } from '../text'
+import { lit, ParamParts } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-09 実機確認(ログイン済み、GUI操作)。年齢確認ゲート通過後、
@@ -34,17 +35,27 @@ const ORDER_PARAM: Partial<Record<QueryState['sort'], string>> = {
   top: 'popular',
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const terms = andTerms(state)
   if (terms.length === 0) return null
 
-  const params = new URLSearchParams()
-  params.set('brand_type', state.fantiaAudience === 'male' ? '0' : state.fantiaAudience === 'female' ? '2' : '3')
-  if (state.fantiaCategory) params.set('category', state.fantiaCategory)
-  params.set('order', ORDER_PARAM[state.sort] ?? 'newer')
-  params.set('keyword_type', state.titleOnly ? 'title_only' : 'all')
-  params.set('keyword', terms.join(' '))
-  return `https://fantia.jp/posts?${params.toString()}`
+  const params = new ParamParts()
+  // brand_type= は対象読者が未指定でも常に3(全年齢)を明示送信する(冒頭コメント参照)ので、
+  // 指定があるときだけ帰属させる
+  params.set(
+    'brand_type',
+    state.fantiaAudience === 'male' ? '0' : state.fantiaAudience === 'female' ? '2' : '3',
+    ...(state.fantiaAudience ? (['fantiaAudience'] as const) : []),
+  )
+  if (state.fantiaCategory) params.set('category', state.fantiaCategory, 'fantiaCategory')
+  // order= も常に送る(既定=newer)。並び順の指定が値を決めたとき(new/top)だけ帰属させる
+  const order = ORDER_PARAM[state.sort]
+  params.set('order', order ?? 'newer', ...(order ? (['sortOrder'] as const) : []))
+  // keyword_type= も常に送る(既定=all。Fantia側の既定title_onlyを外す固定値)。
+  // 「タイトルだけ」ONのときだけ帰属させる
+  params.set('keyword_type', state.titleOnly ? 'title_only' : 'all', ...(state.titleOnly ? (['titleOnly'] as const) : []))
+  params.set('keyword', terms.join(' '), 'keywords')
+  return [lit('https://fantia.jp/posts'), ...params.parts('?')]
 }
 
 // 逆翻訳: fantia.jp/posts?keyword=…。order=newer と brand_type=3 と keyword_type=all は
@@ -96,7 +107,7 @@ export const fantia: PlatformDef = {
     fantiaAudience: { level: 'full' },
     sortOrder: { level: 'partial', noteKey: 'note.fantia.sort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

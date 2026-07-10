@@ -1,6 +1,7 @@
-import type { ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
 import { POST_LANGUAGE_CODES } from '../types'
-import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok } from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -21,13 +22,15 @@ import {
 // from:は投稿者で絞り込む、before:/after:は日付の前後で正しく絞られる、-is:replyでリプライが
 // 除外される、language:で言語が絞られる、has:media/has:linkはそれぞれ独立に結果を変える、
 // をすべて実際の投稿の増減で確認済み。
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
+  const textToks = quotedTermTokens(state)
+  const excludeToks = minusExcludeTokens(state)
 
   const hasOtherConditions =
-    quotedTerms(state).length > 0 ||
-    minusExcludes(state).length > 0 ||
+    textToks.length > 0 ||
+    excludeToks.length > 0 ||
     Boolean(handle) ||
     Boolean(state.since) ||
     Boolean(state.until) ||
@@ -37,26 +40,33 @@ function buildUrl(state: QueryState): string | null {
     Boolean(state.language)
   // 単一タグのみ(他の条件が何もない)ならタグページ(ログアウトでも見られる唯一の経路)
   if (tagNames.length === 1 && !hasOtherConditions) {
-    return `https://mastodon.social/tags/${encodeURIComponent(tagNames[0])}`
+    return [
+      lit('https://mastodon.social/tags/'),
+      part(encodeURIComponent(tagNames[0]), 'hashtag'),
+    ]
   }
 
   if (!hasPositiveTerm(state)) return null
 
-  const parts = [...quotedTerms(state), ...tagNames.map((t) => `#${t}`)]
-  parts.push(...minusExcludes(state))
+  const toks = [...textToks, ...tagNames.map((t) => tok(`#${t}`, 'hashtag'))]
+  toks.push(...excludeToks)
   if (handle) {
     // リモートユーザー(@user@host)は from:user@host の形でそのまま送れる(実機確認済み)
-    parts.push(`from:${handle}`)
+    toks.push(tok(`from:${handle}`, 'fromUser'))
   }
-  if (state.since) parts.push(`after:${state.since}`)
-  if (state.until) parts.push(`before:${state.until}`)
-  if (state.mediaOnly) parts.push('has:media')
-  if (state.linksOnly) parts.push('has:link')
-  if (state.excludeReplies) parts.push('-is:reply')
-  if (state.language) parts.push(`language:${state.language}`)
+  if (state.since) toks.push(tok(`after:${state.since}`, 'period'))
+  if (state.until) toks.push(tok(`before:${state.until}`, 'period'))
+  if (state.mediaOnly) toks.push(tok('has:media', 'mediaOnly'))
+  if (state.linksOnly) toks.push(tok('has:link', 'linksOnly'))
+  if (state.excludeReplies) toks.push(tok('-is:reply', 'excludeReplies'))
+  if (state.language) toks.push(tok(`language:${state.language}`, 'language'))
 
-  const query = encodeURIComponent(parts.join(' '))
-  return `https://mastodon.social/search?q=${query}&type=statuses`
+  // type=statuses は指定の有無によらず常に送る固定値なので無帰属
+  return [
+    lit('https://mastodon.social/search?q='),
+    ...encodeTokens(toks),
+    lit('&type=statuses'),
+  ]
 }
 
 // 逆翻訳: mastodon.social/search?q=…&type=statuses と /tags/{tag}。他インスタンスの
@@ -126,6 +136,6 @@ export const mastodon: PlatformDef = {
     language: { level: 'full' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
 }

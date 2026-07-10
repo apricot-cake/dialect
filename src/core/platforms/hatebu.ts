@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { andTerms, exactPhrases, stripHash, words } from '../text'
+import { formEncode, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
 import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
@@ -20,28 +21,42 @@ import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, 
 // つまり「ログインすれば他人のブックマークを検索できる」わけではなく、この検索は
 // 常に「自分自身のブックマークの中だけ」を対象にした個人用機能であり、Dialectの
 // fromUser(指定した任意ユーザーの投稿を探す)とは性質が異なるため引き続き非対応(none)
-function buildUrl(state: QueryState): string | null {
-  const textParts = quotedTerms(state)
-  const tagNames = words(state.hashtag).map(stripHash)
-  const excludes = minusExcludes(state)
+function buildParts(state: QueryState): UrlPart[] | null {
+  const textToks = quotedTermTokens(state)
+  const tagToks = words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag'))
+  const excludeToks = minusExcludeTokens(state)
 
   // タグ単独ならタグ検索(タグの完全一致でAND)。キーワード併用時は本文検索へ畳み込む
-  const tagOnly = tagNames.length > 0 && textParts.length === 0
-  const path = tagOnly ? 'tag' : state.titleOnly ? 'title' : 'text'
-  const parts = tagOnly ? [...tagNames, ...excludes] : [...textParts, ...tagNames, ...excludes]
-  if (textParts.length === 0 && tagNames.length === 0) return null
+  const tagOnly = tagToks.length > 0 && textToks.length === 0
+  const toks = tagOnly ? [...tagToks, ...excludeToks] : [...textToks, ...tagToks, ...excludeToks]
+  if (textToks.length === 0 && tagToks.length === 0) return null
 
-  const params = new URLSearchParams({ q: parts.join(' ') })
+  // q は語・タグ・除外が1つの値に合成されるため、URLSearchParams と同一の
+  // form エンコードで語ごとに符号化する(語の区切りのスペースは + になる)
+  const qParts: UrlPart[] = []
+  toks.forEach((t, i) => {
+    if (i > 0) qParts.push(lit(formEncode(' ')))
+    qParts.push(part(formEncode(t.text), ...t.concepts))
+  })
+
+  const params = new ParamParts()
   // sort=recent=新着、popular=人気(サイト既定)。指定なしは何も送らない
-  if (state.sort === 'new') params.set('sort', 'recent')
-  else if (state.sort === 'top') params.set('sort', 'popular')
-  if (state.since) params.set('date_begin', state.since)
-  if (state.until) params.set('date_end', state.until)
-  if (state.minLikes.trim()) params.set('users', state.minLikes.trim())
+  if (state.sort === 'new') params.set('sort', 'recent', 'sortOrder')
+  else if (state.sort === 'top') params.set('sort', 'popular', 'sortOrder')
+  if (state.since) params.set('date_begin', state.since, 'period')
+  if (state.until) params.set('date_end', state.until, 'period')
+  if (state.minLikes.trim()) params.set('users', state.minLikes.trim(), 'minLikes')
   // セーフサーチ(既定=on)を解除。未ログインでも既定は同じ(2026-07-09にWebFetchで確認)
-  if (state.safeSearchOff) params.set('safe', 'off')
+  if (state.safeSearchOff) params.set('safe', 'off', 'safeSearchOff')
 
-  return `https://b.hatena.ne.jp/search/${path}?${params.toString()}`
+  return [
+    lit('https://b.hatena.ne.jp/search/'),
+    // 検索対象のパス切替はそれを選んだ条件が生む断片(既定の text は無帰属)
+    tagOnly ? part('tag', 'hashtag') : state.titleOnly ? part('title', 'titleOnly') : lit('text'),
+    lit('?q='),
+    ...qParts,
+    ...params.parts('&'),
+  ]
 }
 
 // 逆翻訳: b.hatena.ne.jp/search/{text|title|tag}?q=…。title=タイトルだけ、
@@ -128,7 +143,7 @@ export const hatebu: PlatformDef = {
     sortOrder: { level: 'full' },
     safeSearchOff: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

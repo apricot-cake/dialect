@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, SortOrder } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, SortOrder, UrlPart } from '../types'
 import { limitSort, NICO_GENRES } from '../types'
-import { minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
 import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査27パターン+2026-07-09ログイン済みGUI操作)
@@ -72,62 +73,73 @@ const SERIES_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set(
   'series', 'playlist',
 ])
 
-function buildUrl(state: QueryState): string | null {
-  const textParts = quotedTerms(state)
-  const tagNames = words(state.hashtag).map(stripHash)
-  const excludes = minusExcludes(state)
+function buildParts(state: QueryState): UrlPart[] | null {
+  const textToks = quotedTermTokens(state)
+  const tagToks = words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag'))
+  const excludeToks = minusExcludeTokens(state)
   const isVideoLike = VIDEO_LIKE_RESULT_TYPES.has(state.resultType)
   const isSeriesLike = SERIES_LIKE_RESULT_TYPES.has(state.resultType)
   const isPeopleLike = state.resultType === 'people'
 
-  const params = new URLSearchParams()
+  const params = new ParamParts()
   if (isVideoLike) {
     // 指定なし(auto)は何も送らない(既定の並び=ニコニコで人気/永続状態にサイト任せ)
     const sortVal = SORT_PARAM[state.sort]
     if (sortVal) {
-      params.set('sort', sortVal)
-      params.set('order', 'desc')
+      params.set('sort', sortVal, 'sortOrder')
+      params.set('order', 'desc', 'sortOrder')
     }
-    if (state.since) params.set('start', state.since)
-    if (state.until) params.set('end', state.until)
+    if (state.since) params.set('start', state.since, 'period')
+    if (state.until) params.set('end', state.until, 'period')
     // 「ふつう(4〜20分)」に相当する値はniconicoに存在しないため指定しない
-    if (state.videoLength === 'short') params.set('l_range', '1')
-    if (state.videoLength === 'long') params.set('l_range', '2')
+    if (state.videoLength === 'short') params.set('l_range', '1', 'videoLength')
+    if (state.videoLength === 'long') params.set('l_range', '2', 'videoLength')
     // ジャンル。/search・/tag の両方で有効(2026-07-06 実測: ゲーム2万≪音楽29万<無し38万)
-    if (state.genre) params.set('genre', state.genre)
+    if (state.genre) params.set('genre', state.genre, 'genre')
     // 動画種別(kind=user:ユーザー投稿 / channel:公式チャンネル)。2026-07-09 GUI採取
-    if (state.nicoKind) params.set('kind', state.nicoKind)
+    if (state.nicoKind) params.set('kind', state.nicoKind, 'nicoKind')
   } else if (isSeriesLike) {
     const sortVal = SERIES_SORT_PARAM[state.sort]
     if (sortVal) {
-      params.set('sort', sortVal)
-      params.set('order', 'desc')
+      params.set('sort', sortVal, 'sortOrder')
+      params.set('order', 'desc', 'sortOrder')
     }
   } else if (isPeopleLike) {
     const sortVal = PEOPLE_SORT_PARAM[state.sort]
     if (sortVal) {
-      params.set('sort', sortVal)
-      params.set('order', 'desc')
+      params.set('sort', sortVal, 'sortOrder')
+      params.set('order', 'desc', 'sortOrder')
     }
   }
-  const qs = params.toString()
-  const query = qs ? `?${qs}` : ''
 
   // タグ単独(+除外)ならタグ検索。動画(既定)のときだけ(シリーズ等にタグページは無い)。
   // 除外はタグページでも有効(実測)
-  if (state.resultType === '' && tagNames.length > 0 && textParts.length === 0) {
-    const path = [...tagNames, ...excludes].join(' ')
-    return `https://www.nicovideo.jp/tag/${encodeURIComponent(path)}${query}`
+  if (state.resultType === '' && tagToks.length > 0 && textToks.length === 0) {
+    return [
+      lit('https://www.nicovideo.jp/tag/'),
+      ...encodeTokens([...tagToks, ...excludeToks]),
+      ...params.parts('?'),
+    ]
   }
 
   // 除外語は正の条件に数えない。キーワード/完全一致/タグが空で除外だけの入力では
   // 検索として成立しない(「足す=絞る」原則。他サイトと揃える)
-  const positive = [...textParts, ...tagNames]
+  const positive = [...textToks, ...tagToks]
   if (positive.length === 0) return null
-  const parts = [...positive, ...excludes]
 
+  // タブ切り替えのパスは「探すもの」の指定が生む断片(既定の /search/ は無帰属。
+  // 他サイト専用の値で /search/ へ落ちたときも既定のままなので帰属させない=そのとき
+  // resultType は dynamicSupport で「使えない」になっている)
   const basePath = RESULT_TYPE_PATH[state.resultType] ?? 'search'
-  return `https://www.nicovideo.jp/${basePath}/${encodeURIComponent(parts.join(' '))}${query}`
+  return [
+    lit('https://www.nicovideo.jp/'),
+    state.resultType && NICONICO_RESULT_TYPES.has(state.resultType)
+      ? part(basePath, 'resultType')
+      : lit(basePath),
+    lit('/'),
+    ...encodeTokens([...positive, ...excludeToks]),
+    ...params.parts('?'),
+  ]
 }
 
 // シリーズ/マイリスト/ユーザー検索にはフィルタパネルが無く、ジャンル・動画種別・
@@ -307,7 +319,7 @@ export const niconico: PlatformDef = {
     resultType: { level: 'full' },
     sortOrder: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

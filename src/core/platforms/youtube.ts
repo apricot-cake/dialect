@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, VideoLength } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, UrlPart, VideoLength } from '../types'
 import { limitSort } from '../types'
-import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import { andTerms, exactPhrases, hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
 import {
   applyBins,
   daysAgoIso,
@@ -42,13 +43,23 @@ const LENGTH_BYTE: Record<Exclude<VideoLength, ''>, number> = {
   long: 0x02,
 }
 
-function spParam(state: QueryState): string {
+// sp= は1つのbase64に並び順・種類・長さ・特徴が合成される複合断片なので、
+// 寄与した概念を全部持つ1つの UrlPart として返す(分割不能=base64は3バイト/4文字境界)
+function spPart(state: QueryState): UrlPart | null {
+  const concepts: ConceptId[] = []
   // spで表せるのは新着/視聴回数(=人気)順のみ。hot等はYouTubeにないので送らない
   const sort = state.sort === 'new' || state.sort === 'top' ? state.sort : null
+  if (sort) concepts.push('sortOrder')
   const filter: number[] = []
   const typeByte = state.resultType ? TYPE_BYTE[state.resultType] : undefined
-  if (typeByte !== undefined) filter.push(0x10, typeByte)
-  if (state.videoLength) filter.push(0x18, LENGTH_BYTE[state.videoLength])
+  if (typeByte !== undefined) {
+    filter.push(0x10, typeByte)
+    concepts.push('resultType')
+  }
+  if (state.videoLength) {
+    filter.push(0x18, LENGTH_BYTE[state.videoLength])
+    concepts.push('videoLength')
+  }
   // 「特徴」の各項目はfilterサブメッセージの別フィールドとして合流する(2026-07-07に
   // フィルタUIから実測、field番号の昇順で並べる): 3D=field7(0x38)・HD=field4(0x20)・
   // 字幕=field5(0x28)・クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・
@@ -57,50 +68,94 @@ function spParam(state: QueryState): string {
   // (fieldが16以上でタグが128を超えるため)。いずれも組み合わせ可能(2026-07-08に
   // 360°/VR180/3D/HDR/場所は実際に絞り込みが効くことをブラウザ実測、購入済みは
   // このアカウントに購入履歴が無く未検証だがバイト値自体はUIから採取)
-  if (state.hdOnly) filter.push(0x20, 0x01)
-  if (state.captionsOnly) filter.push(0x28, 0x01)
-  if (state.creativeCommons) filter.push(0x30, 0x01)
-  if (state.threeD) filter.push(0x38, 0x01)
-  if (state.liveOnly) filter.push(0x40, 0x01)
-  if (state.purchased) filter.push(0x48, 0x01)
-  if (state.fourK) filter.push(0x70, 0x01)
-  if (state.threeSixty) filter.push(0x78, 0x01)
-  if (state.locationOnly) filter.push(0xb8, 0x01, 0x01)
-  if (state.hdr) filter.push(0xc8, 0x01, 0x01)
-  if (state.vr180) filter.push(0xd0, 0x01, 0x01)
+  if (state.hdOnly) {
+    filter.push(0x20, 0x01)
+    concepts.push('hdOnly')
+  }
+  if (state.captionsOnly) {
+    filter.push(0x28, 0x01)
+    concepts.push('captionsOnly')
+  }
+  if (state.creativeCommons) {
+    filter.push(0x30, 0x01)
+    concepts.push('creativeCommons')
+  }
+  if (state.threeD) {
+    filter.push(0x38, 0x01)
+    concepts.push('threeD')
+  }
+  if (state.liveOnly) {
+    filter.push(0x40, 0x01)
+    concepts.push('liveOnly')
+  }
+  if (state.purchased) {
+    filter.push(0x48, 0x01)
+    concepts.push('purchased')
+  }
+  if (state.fourK) {
+    filter.push(0x70, 0x01)
+    concepts.push('fourK')
+  }
+  if (state.threeSixty) {
+    filter.push(0x78, 0x01)
+    concepts.push('threeSixty')
+  }
+  if (state.locationOnly) {
+    filter.push(0xb8, 0x01, 0x01)
+    concepts.push('locationOnly')
+  }
+  if (state.hdr) {
+    filter.push(0xc8, 0x01, 0x01)
+    concepts.push('hdr')
+  }
+  if (state.vr180) {
+    filter.push(0xd0, 0x01, 0x01)
+    concepts.push('vr180')
+  }
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
   if (filter.length > 0) bytes.push(0x12, filter.length, ...filter)
-  if (bytes.length === 0) return ''
-  return `&sp=${encodeURIComponent(btoa(String.fromCharCode(...bytes)))}`
+  if (bytes.length === 0) return null
+  return { text: `&sp=${encodeURIComponent(btoa(String.fromCharCode(...bytes)))}`, concepts }
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   if (!hasPositiveTerm(state)) return null
 
-  const parts: string[] = []
-  parts.push(...quotedTerms(state))
-  parts.push(...minusExcludes(state))
+  const toks: Token[] = []
+  toks.push(...quotedTermTokens(state))
+  toks.push(...minusExcludeTokens(state))
   if (state.titleOnly) {
-    // intitle: は語ごとに付ける(非公式)
-    for (let i = 0; i < parts.length; i++) {
-      if (!parts[i].startsWith('-') && !parts[i].startsWith('(')) {
-        parts[i] = `intitle:${parts[i]}`
+    // intitle: は語ごとに付ける(非公式)。前置された語は元の概念+titleOnlyの複合になる
+    for (const t of toks) {
+      if (!t.text.startsWith('-') && !t.text.startsWith('(')) {
+        t.text = `intitle:${t.text}`
+        t.concepts = [...t.concepts, 'titleOnly']
       }
     }
   }
-  parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
-  if (state.since) parts.push(`after:${state.since}`)
-  if (state.until) parts.push(`before:${state.until}`)
-  const query = parts.join(' ')
+  toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
+  if (state.since) toks.push(tok(`after:${state.since}`, 'period'))
+  if (state.until) toks.push(tok(`before:${state.until}`, 'period'))
 
   const handle = stripAt(state.fromUser)
   if (handle) {
     // チャンネル内検索。sp(並び順・長さ)は適用できない
-    return `https://www.youtube.com/@${encodeURIComponent(handle)}/search?query=${encodeURIComponent(query)}`
+    return [
+      lit('https://www.youtube.com/@'),
+      part(encodeURIComponent(handle), 'fromUser'),
+      lit('/search?query='),
+      ...encodeTokens(toks),
+    ]
   }
 
-  return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${spParam(state)}`
+  const parts: UrlPart[] = [
+    lit('https://www.youtube.com/results?search_query='),
+    ...encodeTokens(toks),
+  ]
+  const sp = spPart(state)
+  if (sp) parts.push(sp)
+  return parts
 }
 
 // 逆翻訳ここから。検索語のトークン(intitle:/after:/before:/#/-/"…")を概念へ戻す
@@ -328,6 +383,11 @@ function dynamicSupport(
     // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
     overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
   }
+  // intitle: はキーワード・完全一致の語にだけ付く。語が無い(タグだけの)検索では
+  // 何も送られないので、「適用」に見せない(check:parts が検出した食い違い)
+  if (state.titleOnly && andTerms(state).length === 0 && exactPhrases(state).length === 0) {
+    overrides.titleOnly = { level: 'none', noteKey: 'note.titleOnly.needsWords' }
+  }
   // 急上昇・コメント数順はnote/Reddit専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
   return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
@@ -363,7 +423,7 @@ export const youtube: PlatformDef = {
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport,
 }

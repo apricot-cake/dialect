@@ -1,6 +1,7 @@
 import type { PlatformDef, QueryState, Resolution } from './types'
 import { NO_SUPPORT } from './types'
 import { activeConcepts } from './concepts'
+import { joinParts } from './urlParts'
 
 /** ユーザーの条件セットをプラットフォームへ翻訳し、適用/近似/非対応に仕分けする */
 export function resolve(platform: PlatformDef, state: QueryState): Resolution {
@@ -9,8 +10,10 @@ export function resolve(platform: PlatformDef, state: QueryState): Resolution {
     ? { ...platform.support, ...platform.dynamicSupport(state) }
     : platform.support
 
+  const parts = platform.buildParts(state)
   const resolution: Resolution = {
-    url: platform.buildUrl(state),
+    url: parts ? joinParts(parts) : null,
+    parts,
     applied: [],
     approximated: [],
     dropped: [],

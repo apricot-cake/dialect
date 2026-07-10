@@ -1,6 +1,7 @@
-import type { ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
-import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -32,7 +33,7 @@ function listId(raw: string): string | null {
   return /^\d+$/.test(s) ? s : null
 }
 
-function buildUrl(state: QueryState): string | null {
+function buildParts(state: QueryState): UrlPart[] | null {
   const list = listId(state.xList)
   // 宛先・メンション・リンク先・リスト内だけの検索もXでは成立するので、正の条件に数える
   if (
@@ -45,39 +46,40 @@ function buildUrl(state: QueryState): string | null {
     return null
   }
 
-  const parts: string[] = []
-  parts.push(...quotedTerms(state))
-  parts.push(...minusExcludes(state))
-  if (state.fromUser.trim()) parts.push(`from:${stripAt(state.fromUser)}`)
-  parts.push(...words(state.excludeUser).map((u) => `-from:${stripAt(u)}`))
+  const toks: Token[] = []
+  toks.push(...quotedTermTokens(state))
+  toks.push(...minusExcludeTokens(state))
+  if (state.fromUser.trim()) toks.push(tok(`from:${stripAt(state.fromUser)}`, 'fromUser'))
+  toks.push(...words(state.excludeUser).map((u) => tok(`-from:${stripAt(u)}`, 'excludeUser')))
   // 宛先は複数指定で「どれか宛て」(OR)
   const tos = words(state.toUser).map((u) => `to:${stripAt(u)}`)
-  if (tos.length >= 2) parts.push(`(${tos.join(' OR ')})`)
-  else parts.push(...tos)
+  if (tos.length >= 2) toks.push(tok(`(${tos.join(' OR ')})`, 'toUser'))
+  else toks.push(...tos.map((t) => tok(t, 'toUser')))
   // メンション。to: と違い演算子ではなく素の@テキストなので、1件でも公式フォーム同様
   // 常にカッコで囲む(実機確認: 1件でも`(@user)`、複数件は`(@user1 OR @user2)`)
   const mentions = words(state.mentionsUser).map((u) => `@${stripAt(u)}`)
-  if (mentions.length > 0) parts.push(`(${mentions.join(' OR ')})`)
+  if (mentions.length > 0) toks.push(tok(`(${mentions.join(' OR ')})`, 'mentionsUser'))
   // リンク先ドメインは url: で絞る(部分一致)
-  if (state.domain.trim()) parts.push(`url:${state.domain.trim()}`)
+  if (state.domain.trim()) toks.push(tok(`url:${state.domain.trim()}`, 'domain'))
   // リスト内検索。list:<id> でそのリストのメンバーの投稿だけに絞る(他条件とAND可)
-  if (list) parts.push(`list:${list}`)
-  parts.push(...words(state.hashtag).map((t) => `#${stripHash(t)}`))
-  if (state.since) parts.push(`since:${state.since}`)
-  if (state.until) parts.push(`until:${state.until}`)
-  if (state.mediaOnly) parts.push('filter:media')
-  if (state.linksOnly) parts.push('filter:links')
-  if (state.verifiedOnly) parts.push('filter:blue_verified')
-  if (state.excludeReplies) parts.push('-filter:replies')
-  if (state.minLikes.trim()) parts.push(`min_faves:${state.minLikes.trim()}`)
-  if (state.minReposts.trim()) parts.push(`min_retweets:${state.minReposts.trim()}`)
-  if (state.minReplies.trim()) parts.push(`min_replies:${state.minReplies.trim()}`)
-  if (state.language) parts.push(`lang:${state.language}`)
+  if (list) toks.push(tok(`list:${list}`, 'xList'))
+  toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
+  if (state.since) toks.push(tok(`since:${state.since}`, 'period'))
+  if (state.until) toks.push(tok(`until:${state.until}`, 'period'))
+  if (state.mediaOnly) toks.push(tok('filter:media', 'mediaOnly'))
+  if (state.linksOnly) toks.push(tok('filter:links', 'linksOnly'))
+  if (state.verifiedOnly) toks.push(tok('filter:blue_verified', 'verifiedOnly'))
+  if (state.excludeReplies) toks.push(tok('-filter:replies', 'excludeReplies'))
+  if (state.minLikes.trim()) toks.push(tok(`min_faves:${state.minLikes.trim()}`, 'minLikes'))
+  if (state.minReposts.trim()) toks.push(tok(`min_retweets:${state.minReposts.trim()}`, 'minReposts'))
+  if (state.minReplies.trim()) toks.push(tok(`min_replies:${state.minReplies.trim()}`, 'minReplies'))
+  if (state.language) toks.push(tok(`lang:${state.language}`, 'language'))
 
+  const parts: UrlPart[] = [lit('https://x.com/search?q='), ...encodeTokens(toks)]
   // f=live=新しい順、f=top=人気順(話題)。指定なしは何も送らない(Xの既定はtop)
-  const tab =
-    state.sort === 'new' ? '&f=live' : state.sort === 'top' ? '&f=top' : ''
-  return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
+  if (state.sort === 'new') parts.push(part('&f=live', 'sortOrder'))
+  else if (state.sort === 'top') parts.push(part('&f=top', 'sortOrder'))
+  return parts
 }
 
 // 逆翻訳: x.com/search?q=…(旧 twitter.com も受ける)。q内の演算子トークンを
@@ -190,7 +192,7 @@ export const x: PlatformDef = {
     language: { level: 'full' },
     sortOrder: { level: 'full' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
   dynamicSupport: (state) => ({
     // 急上昇(note専用)などはXにないので、選ばれたら並び順を非対応に落とす

@@ -1,5 +1,6 @@
-import type { ParsedSearch, PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases, minusExcludes, words } from '../text'
+import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import { andTerms, exactPhrases, words } from '../text'
+import { encodeTokens, lit, minusExcludeTokens, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
@@ -8,17 +9,17 @@ import { hostIs, leftoverParams, tokenize } from '../parse'
 // AND・除外(-)・板指定(@板ID)が全て実測で効く ff5ch.syoboi.jp を検索先にする。
 // 部分文字列マッチ型なので引用符は不要(存在しない)。検索対象はスレタイトルのみ。
 // 板は複数指定でいずれか(OR)。@板ID を並べると和集合になる(2026-07-04実測)。
-function buildUrl(state: QueryState): string | null {
-  const parts = [...andTerms(state)]
+function buildParts(state: QueryState): UrlPart[] | null {
+  const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   // 引用符構文はないが部分文字列マッチのため、語句はそのまま埋め込めば効く
-  parts.push(...exactPhrases(state))
-  const boards = words(state.subreddit).map((b) => `@${b.replace(/^@+/, '')}`)
+  toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
+  const boardToks = words(state.subreddit).map((b) => tok(`@${b.replace(/^@+/, '')}`, 'subreddit'))
   // 正の条件はキーワード/フレーズ、または板指定。除外だけでは検索にならない
-  if (parts.length === 0 && boards.length === 0) return null
-  parts.push(...minusExcludes(state))
-  parts.push(...boards)
+  if (toks.length === 0 && boardToks.length === 0) return null
+  toks.push(...minusExcludeTokens(state))
+  toks.push(...boardToks)
 
-  return `https://ff5ch.syoboi.jp/?q=${encodeURIComponent(parts.join(' '))}`
+  return [lit('https://ff5ch.syoboi.jp/?q='), ...encodeTokens(toks)]
 }
 
 // 逆翻訳: ff5ch.syoboi.jp/?q=…。@板ID=板の絞り込み、-語=除外、他は語
@@ -60,6 +61,6 @@ export const fivech: PlatformDef = {
     subreddit: { level: 'partial', noteKey: 'note.fivech.subreddit' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
-  buildUrl,
+  buildParts,
   parseUrl,
 }

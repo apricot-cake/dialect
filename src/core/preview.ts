@@ -101,21 +101,27 @@ export function searchSummary(state: QueryState): string {
 
 /**
  * 起動カードの翻訳プレビュー。そのサイトで実際に効く条件(applied＋近似)だけを、
- * 読みやすいラベルの配列にして返す。落ちる条件(dropped)は含めない
+ * 読みやすいラベル(+由来の概念)の配列にして返す。落ちる条件(dropped)は含めない
  * ——「各サイトで効く条件の違い」がそのまま見え、打ち消し線の羅列にもならない。
  * 並びは条件バーと同じ CONCEPT_DEFS 順。1要素=1条件で、表示側は要素の途中で改行させず
  * 区切りでだけ折り返す(「初音ミ／ク」のような中途改行を避ける)。
+ * concept は生URL(UrlPart)との同色対応に使う
  */
-export function translationParts(resolution: Resolution, state: QueryState): string[] {
+export interface TranslationPart {
+  concept: ConceptId
+  label: string
+}
+
+export function translationParts(resolution: Resolution, state: QueryState): TranslationPart[] {
   const effective = new Set<ConceptId>([
     ...resolution.applied,
     ...resolution.approximated.map((a) => a.concept),
   ])
-  const parts: string[] = []
+  const parts: TranslationPart[] = []
   for (const def of CONCEPT_DEFS) {
     if (!effective.has(def.id)) continue
     const s = conceptSummary(def.id, state)
-    if (s) parts.push(s)
+    if (s) parts.push({ concept: def.id, label: s })
   }
   return parts
 }
