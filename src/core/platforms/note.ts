@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripAt, stripHash, words } from '../text'
+import { hostIs, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md
 // 演算子は from:@noteID のみ(公式機能)。除外・完全一致・期間は非対応。
@@ -124,6 +125,47 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   }
 }
 
+// 逆翻訳: note.com/search?context=…&q=…&sort=… と /hashtag/{tag}。
+// context: note=記事(既定)、note_for_sale=有料のみ、user/magazine/circle=探すものの切替
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'note.com')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs[0] === 'hashtag' && segs[1]) {
+    patch.hashtag = segs[1]
+    leftoverParams(url, new Set(), ignored)
+    return { patch, ignored }
+  }
+  if (segs[0] !== 'search') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const context = url.searchParams.get('context')
+  if (context === 'note_for_sale') patch.paidOnly = true
+  else if (context === 'user') patch.resultType = 'people'
+  else if (context === 'magazine') patch.resultType = 'series'
+  else if (context === 'circle') patch.resultType = 'circle'
+  else if (context !== null && context !== 'note') ignored.push(`context=${context}`)
+
+  const sort = url.searchParams.get('sort')
+  if (sort === 'new') patch.sort = 'new'
+  else if (sort === 'popular') patch.sort = 'top'
+  else if (sort === 'hot') patch.sort = 'hot'
+  else if (sort !== null) ignored.push(`sort=${sort}`)
+
+  const terms: string[] = []
+  for (const token of tokenize(q)) {
+    if (token.startsWith('from:')) patch.fromUser = stripAt(token.slice('from:'.length))
+    else terms.push(token)
+  }
+  if (terms.length > 0) patch.terms = terms
+
+  leftoverParams(url, new Set(['q', 'context', 'sort']), ignored)
+  return { patch, ignored }
+}
+
 export const note: PlatformDef = {
   id: 'note',
   name: 'note',
@@ -144,5 +186,6 @@ export const note: PlatformDef = {
     paidOnly: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

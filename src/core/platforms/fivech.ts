@@ -1,5 +1,6 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, QueryState } from '../types'
 import { andTerms, exactPhrases, minusExcludes, words } from '../text'
+import { hostIs, leftoverParams, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 5chは2026-03に5ch.net→5ch.ioへドメイン移行。公式スレタイ検索(find.5ch.io)は
@@ -20,6 +21,29 @@ function buildUrl(state: QueryState): string | null {
   return `https://ff5ch.syoboi.jp/?q=${encodeURIComponent(parts.join(' '))}`
 }
 
+// 逆翻訳: ff5ch.syoboi.jp/?q=…。@板ID=板の絞り込み、-語=除外、他は語
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'ff5ch.syoboi.jp')) return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const terms: string[] = []
+  const excludes: string[] = []
+  const boards: string[] = []
+  for (const token of tokenize(q)) {
+    if (token.startsWith('@') && token.length > 1) boards.push(token.slice(1))
+    else if (token.startsWith('-') && token.length > 1) excludes.push(token.slice(1))
+    else terms.push(token)
+  }
+  if (terms.length > 0) patch.terms = terms
+  if (excludes.length > 0) patch.exclude = excludes.join(' ')
+  if (boards.length > 0) patch.subreddit = boards.join(' ')
+  leftoverParams(url, new Set(['q']), ignored)
+  return { patch, ignored }
+}
+
 export const fivech: PlatformDef = {
   id: 'fivech',
   name: '5ちゃんねる',
@@ -37,4 +61,5 @@ export const fivech: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
 }

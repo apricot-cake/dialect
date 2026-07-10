@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { applyBins, emptyBins, hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md + 2026-07-07 実機再確認(件数比較)。ログイン不要。
 // イラストは seiga.nicovideo.jp/search/{クエリ}?target=illust、タグ単独は /tag/{タグ}。
@@ -43,6 +44,53 @@ function buildUrl(state: QueryState): string | null {
   return `https://seiga.nicovideo.jp/search/${encodeURIComponent(parts.join(' '))}${qs}`
 }
 
+// 逆翻訳: seiga.nicovideo.jp/{search|tag}/{q} と manga.nicovideo.jp/search?q=(マンガ)。
+// 旧形式の target=manga も「マンガ」として読む(現行サイトは manga.nicovideo.jp へ誘導)
+function parseUrl(url: URL): ParsedSearch | null {
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (hostIs(url, 'manga.nicovideo.jp')) {
+    if (pathSegments(url)[0] !== 'search') return null
+    const q = url.searchParams.get('q')
+    if (!q) return null
+    patch.workType = 'manga'
+    const bins = emptyBins()
+    for (const token of tokenize(q)) {
+      if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+      else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+      else bins.terms.push(token)
+    }
+    applyBins(patch, bins)
+    leftoverParams(url, new Set(['q']), ignored)
+    return { patch, ignored }
+  }
+
+  if (!hostIs(url, 'seiga.nicovideo.jp')) return null
+  const segs = pathSegments(url)
+  if ((segs[0] !== 'search' && segs[0] !== 'tag') || !segs[1]) return null
+  const bins = emptyBins()
+  for (const token of tokenize(segs[1])) {
+    if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (segs[0] === 'tag') bins.hashtags.push(token)
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+
+  const target = url.searchParams.get('target')
+  if (target === 'manga') patch.workType = 'manga'
+  else if (target !== null && target !== 'illust' && target !== 'illust_all') {
+    ignored.push(`target=${target}`)
+  }
+  const sort = url.searchParams.get('sort')
+  if (sort === 'image_created') patch.sort = 'new'
+  else if (sort === 'image_view') patch.sort = 'top'
+  else if (sort !== null) ignored.push(`sort=${sort}`)
+  leftoverParams(url, new Set(['target', 'sort']), ignored)
+  return { patch, ignored }
+}
+
 export const seiga: PlatformDef = {
   id: 'seiga',
   name: 'ニコニコ静画',
@@ -62,6 +110,7 @@ export const seiga: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {
       // 新着/閲覧数以外(急上昇)は静画に無いので落とす

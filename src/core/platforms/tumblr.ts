@@ -1,6 +1,16 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import {
+  applyBins,
+  emptyBins,
+  hostMatches,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: 2026-07-07 実機確認(未ログイン、GUI操作+URL叩き)。tumblr.com/search/{q}=コンテンツ検索
 // (既定=人気順)、/search/{q}/recent=最新順。単一タグは /tagged/{タグ}(人気順のみ。旧 /chrono は
@@ -56,6 +66,53 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.tumblr.com/search/${path}${suffix}${query}`
 }
 
+// 逆翻訳: /search/{q}(/recent)?postTypes=… と /tagged/{tag}。q内の from:/since:/
+// before:/#/-/"…" を概念へ戻し、postTypes は画像・動画つき/リンクありへ振り分ける
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'tumblr.com')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs[0] === 'tagged' && segs[1]) {
+    patch.hashtag = segs[1]
+    leftoverParams(url, new Set(), ignored)
+    return { patch, ignored }
+  }
+  if (segs[0] !== 'search' || !segs[1]) return null
+  if (segs[2] === 'recent') patch.sort = 'new'
+  else if (segs[2]) ignored.push(`/${segs[2]}`)
+
+  const bins = emptyBins()
+  for (const token of tokenize(segs[1])) {
+    if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
+    else if (token.startsWith('since:')) {
+      const v = token.slice('since:'.length)
+      if (isIsoDate(v)) patch.since = v
+      else ignored.push(token)
+    } else if (token.startsWith('before:')) {
+      const v = token.slice('before:'.length)
+      if (isIsoDate(v)) patch.until = v
+      else ignored.push(token)
+    } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+
+  const postTypes = url.searchParams.get('postTypes')
+  if (postTypes !== null) {
+    const values = new Set(postTypes.split(',').map((s) => s.trim()).filter(Boolean))
+    if (values.delete('link')) patch.linksOnly = true
+    const media = ['photo', 'gif', 'video'].filter((m) => values.delete(m))
+    if (media.length > 0) patch.mediaOnly = true
+    for (const rest of values) ignored.push(`postTypes=${rest}`)
+  }
+  leftoverParams(url, new Set(['postTypes']), ignored)
+  return { patch, ignored }
+}
+
 export const tumblr: PlatformDef = {
   id: 'tumblr',
   name: 'Tumblr',
@@ -75,6 +132,7 @@ export const tumblr: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {
       // 新着/人気以外(急上昇)は無いので落とす

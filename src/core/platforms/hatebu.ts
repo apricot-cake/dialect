@@ -1,6 +1,7 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, minusExcludes, quotedTerms, stripHash, words } from '../text'
+import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索対象はパスで分ける: /search/text(本文)・/search/title(タイトル)・/search/tag(タグ)。
@@ -43,6 +44,55 @@ function buildUrl(state: QueryState): string | null {
   return `https://b.hatena.ne.jp/search/${path}?${params.toString()}`
 }
 
+// 逆翻訳: b.hatena.ne.jp/search/{text|title|tag}?q=…。title=タイトルだけ、
+// tag=タグ検索(語をタグとして読む)。期間・並び順・ブクマ数・セーフサーチも戻す
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'b.hatena.ne.jp')) return null
+  const segs = pathSegments(url)
+  if (segs[0] !== 'search' || !['text', 'title', 'tag'].includes(segs[1])) return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  if (segs[1] === 'title') patch.titleOnly = true
+
+  const bins = emptyBins()
+  for (const token of tokenize(q)) {
+    if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (segs[1] === 'tag') bins.hashtags.push(token)
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+
+  const sort = url.searchParams.get('sort')
+  if (sort === 'recent') patch.sort = 'new'
+  else if (sort === 'popular') patch.sort = 'top'
+  else if (sort !== null) ignored.push(`sort=${sort}`)
+  const begin = url.searchParams.get('date_begin')
+  if (begin !== null) {
+    if (isIsoDate(begin)) patch.since = begin
+    else ignored.push(`date_begin=${begin}`)
+  }
+  const end = url.searchParams.get('date_end')
+  if (end !== null) {
+    if (isIsoDate(end)) patch.until = end
+    else ignored.push(`date_end=${end}`)
+  }
+  const users = url.searchParams.get('users')
+  if (users !== null) {
+    if (/^\d+$/.test(users)) patch.minLikes = users
+    else ignored.push(`users=${users}`)
+  }
+  const safe = url.searchParams.get('safe')
+  if (safe === 'off') patch.safeSearchOff = true
+  else if (safe !== null && safe !== 'on') ignored.push(`safe=${safe}`)
+
+  leftoverParams(url, new Set(['q', 'sort', 'date_begin', 'date_end', 'users', 'safe']), ignored)
+  return { patch, ignored }
+}
+
 // ハッシュタグ単独のときはタグ検索パスになり、「タイトルだけ」は参照されず効かない
 function dynamicSupport(
   state: QueryState,
@@ -79,5 +129,6 @@ export const hatebu: PlatformDef = {
     safeSearchOff: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

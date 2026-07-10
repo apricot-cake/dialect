@@ -1,5 +1,16 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import { POST_LANGUAGE_CODES } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import {
+  applyBins,
+  emptyBins,
+  hostIs,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: 2026-07-08 実機確認(ログイン済みブラウザ、GUI操作)。mastodon.social/search?q=&type=statuses
 // はSPAだがURL遷移だけで検索が自動実行される(Misskeyと違い手動ボタン不要)。ハッシュタグ単独は
@@ -48,6 +59,53 @@ function buildUrl(state: QueryState): string | null {
   return `https://mastodon.social/search?q=${query}&type=statuses`
 }
 
+// 逆翻訳: mastodon.social/search?q=…&type=statuses と /tags/{tag}。他インスタンスの
+// URLはホスト名からMastodonと判別できないため、既定インスタンスのみ受ける
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'mastodon.social')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs[0] === 'tags' && segs[1]) {
+    patch.hashtag = segs[1]
+    leftoverParams(url, new Set(), ignored)
+    return { patch, ignored }
+  }
+  if (segs[0] !== 'search') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+  const type = url.searchParams.get('type')
+  if (type !== null && type !== 'statuses') ignored.push(`type=${type}`)
+
+  const bins = emptyBins()
+  for (const token of tokenize(q)) {
+    if (token === 'has:media') patch.mediaOnly = true
+    else if (token === 'has:link') patch.linksOnly = true
+    else if (token === '-is:reply') patch.excludeReplies = true
+    else if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
+    else if (token.startsWith('after:')) {
+      const v = token.slice('after:'.length)
+      if (isIsoDate(v)) patch.since = v
+      else ignored.push(token)
+    } else if (token.startsWith('before:')) {
+      const v = token.slice('before:'.length)
+      if (isIsoDate(v)) patch.until = v
+      else ignored.push(token)
+    } else if (token.startsWith('language:')) {
+      const code = token.slice('language:'.length)
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      else ignored.push(token)
+    } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+  leftoverParams(url, new Set(['q', 'type']), ignored)
+  return { patch, ignored }
+}
+
 export const mastodon: PlatformDef = {
   id: 'mastodon',
   name: 'Mastodon',
@@ -69,4 +127,5 @@ export const mastodon: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
 }

@@ -1,5 +1,6 @@
-import type { PlatformDef, QueryState } from '../types'
-import { andTerms, exactPhrases } from '../text'
+import type { ParsedSearch, PlatformDef, QueryState } from '../types'
+import { andTerms, exactPhrases, words } from '../text'
+import { hostIs, leftoverParams, pathSegments } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索はパスにキーワードを埋め込む形式。スペース区切りのANDが効く(実測)。
@@ -17,6 +18,26 @@ function buildUrl(state: QueryState): string | null {
   return `https://bbs.animanch.com/${path}/${encodeURIComponent(parts.join(' '))}`
 }
 
+// 逆翻訳: /searchRes/{q}(レス本文)・/search2/{q}(過去ログタイトル=タイトルだけ)・
+// /search/{q}(現行スレのタイトル検索。全期間のタイトル検索として読み、その旨を残す)
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'bbs.animanch.com')) return null
+  const segs = pathSegments(url)
+  if (!['searchRes', 'search2', 'search'].includes(segs[0]) || !segs[1]) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const terms = words(segs[1])
+  if (terms.length > 0) patch.terms = terms
+  if (segs[0] === 'search2') patch.titleOnly = true
+  else if (segs[0] === 'search') {
+    patch.titleOnly = true
+    ignored.push('/search/(現行スレのみ)')
+  }
+  leftoverParams(url, new Set(), ignored)
+  return { patch, ignored }
+}
+
 export const animanch: PlatformDef = {
   id: 'animanch',
   name: 'あにまん掲示板',
@@ -31,4 +52,5 @@ export const animanch: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
 }

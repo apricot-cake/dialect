@@ -1,5 +1,6 @@
-import type { PlatformDef, QueryState } from '../types'
+import type { ParsedSearch, PlatformDef, QueryState } from '../types'
 import { andTerms, exactPhrases, minusExcludes, stripAt, stripHash, words } from '../text'
+import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、2026-07-08にログイン済みGUI操作で除外・完全一致を再検証)
 // 検索は /search?q=&type=note(要ログイン)。本文検索はMeilisearchで、語ごとのAND・除外(-語)が効く。
@@ -40,6 +41,48 @@ function buildUrl(state: QueryState): string | null {
   return `https://misskey.io/search?${query.join('&')}`
 }
 
+// 逆翻訳: misskey.io/search?q=…&type=note(&username=&host=) と /tags/{tag}。
+// 他インスタンスはホスト名から判別できないため misskey.io のみ受ける
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'misskey.io')) return null
+  const segs = pathSegments(url)
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+
+  if (segs[0] === 'tags' && segs[1]) {
+    patch.hashtag = segs[1]
+    leftoverParams(url, new Set(), ignored)
+    return { patch, ignored }
+  }
+  if (segs[0] !== 'search') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+  const type = url.searchParams.get('type')
+  if (type !== null && type !== 'note') ignored.push(`type=${type}`)
+
+  const user = url.searchParams.get('username')
+  const host = url.searchParams.get('host')
+  if (user) patch.fromUser = host ? `${user}@${host}` : user
+  else if (host) ignored.push(`host=${host}`)
+
+  const terms: string[] = []
+  const excludes: string[] = []
+  const hashtags: string[] = []
+  for (const token of tokenize(q)) {
+    if (token.startsWith('-') && token.length > 1) excludes.push(token.slice(1))
+    else if (token.startsWith('#') && token.length > 1) hashtags.push(token.slice(1))
+    // 引用符はMisskeyでは機能しない(送ると壊れる)ため、語に分解して読む
+    else if (token.startsWith('"')) terms.push(...words(unquote(token)))
+    else terms.push(token)
+  }
+  if (terms.length > 0) patch.terms = terms
+  if (excludes.length > 0) patch.exclude = excludes.join(' ')
+  if (hashtags.length > 0) patch.hashtag = hashtags.join(' ')
+
+  leftoverParams(url, new Set(['q', 'type', 'username', 'host']), ignored)
+  return { patch, ignored }
+}
+
 export const misskey: PlatformDef = {
   id: 'misskey',
   name: 'Misskey.io',
@@ -58,4 +101,5 @@ export const misskey: PlatformDef = {
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
   },
   buildUrl,
+  parseUrl,
 }

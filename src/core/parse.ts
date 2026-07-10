@@ -1,0 +1,114 @@
+import type { QueryState } from './types'
+
+/** 検索URLの逆翻訳(parseUrl)で共通に使う分解ヘルパー。シリアライザ側の text.ts と対をなす */
+
+/** URLのホストが指定ドメイン(そのもの、またはサブドメイン)か */
+export function hostMatches(url: URL, ...domains: string[]): boolean {
+  const host = url.hostname.toLowerCase()
+  return domains.some((d) => host === d || host.endsWith(`.${d}`))
+}
+
+/** URLのホストが指定ホスト名と完全一致するか(www. は付いても同一視する) */
+export function hostIs(url: URL, ...hosts: string[]): boolean {
+  const host = url.hostname.toLowerCase().replace(/^www\./, '')
+  return hosts.some((h) => host === h.replace(/^www\./, ''))
+}
+
+/** パスをデコード済みセグメント配列へ(空要素は除く) */
+export function pathSegments(url: URL): string[] {
+  return url.pathname
+    .split('/')
+    .filter(Boolean)
+    .map((s) => {
+      try {
+        return decodeURIComponent(s)
+      } catch {
+        return s
+      }
+    })
+}
+
+/** YYYY-MM-DD 形式か */
+export function isIsoDate(s: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(s)
+}
+
+/** 今日からn日前の YYYY-MM-DD。期間プリセット(t=week 等)を開始日へ逆変換するときに使う */
+export function daysAgoIso(days: number): string {
+  return new Date(Date.now() - days * 86400_000).toISOString().slice(0, 10)
+}
+
+/** 先頭末尾の引用符を外す */
+export function unquote(s: string): string {
+  return s.replace(/^"/, '').replace(/"$/, '')
+}
+
+/**
+ * 検索クエリ文字列を語に分割する。"…" は空白を含んでも1語として保ち、
+ * (…) のグループ(to:/メンションのOR結合など)も1語として保つ。全角スペース対応
+ */
+export function tokenize(q: string): string[] {
+  const tokens: string[] = []
+  let cur = ''
+  let inQuote = false
+  let depth = 0
+  for (const ch of q) {
+    if (inQuote) {
+      cur += ch
+      if (ch === '"') inQuote = false
+      continue
+    }
+    if (ch === '"') {
+      inQuote = true
+      cur += ch
+      continue
+    }
+    if (ch === '(') depth++
+    if (ch === ')' && depth > 0) depth--
+    if (/[\s　]/.test(ch) && depth === 0) {
+      if (cur) tokens.push(cur)
+      cur = ''
+      continue
+    }
+    cur += ch
+  }
+  if (cur) tokens.push(cur)
+  return tokens
+}
+
+/**
+ * 多くのサイトで共通する4種類の語の入れ物。各サイトの parseUrl がトークンを
+ * 仕分けして詰め、最後に applyBins で patch へ反映する
+ */
+export interface TokenBins {
+  terms: string[]
+  phrases: string[]
+  excludes: string[]
+  hashtags: string[]
+}
+
+export function emptyBins(): TokenBins {
+  return { terms: [], phrases: [], excludes: [], hashtags: [] }
+}
+
+/** 共通ビンの中身を patch へ反映する(空の入れ物は書かない=defaultState のまま) */
+export function applyBins(patch: Partial<QueryState>, bins: TokenBins): void {
+  if (bins.terms.length > 0) patch.terms = bins.terms
+  if (bins.phrases.length > 0) patch.exactPhrase = bins.phrases
+  if (bins.excludes.length > 0) patch.exclude = bins.excludes.join(' ')
+  if (bins.hashtags.length > 0) patch.hashtag = bins.hashtags.join(' ')
+}
+
+/**
+ * consumed に無いクエリパラメータを ignored へ集める。トラッキング用の付属品
+ * (utm_* 等)も含め、読めなかった指定は黙って捨てずに全部残す
+ */
+export function leftoverParams(
+  url: URL,
+  consumed: ReadonlySet<string>,
+  ignored: string[],
+): void {
+  for (const [k, v] of url.searchParams) {
+    if (!consumed.has(k)) ignored.push(v ? `${k}=${v}` : k)
+  }
+}

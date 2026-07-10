@@ -1,6 +1,7 @@
-import type { PlatformDef, QueryState } from '../types'
-import { limitSort } from '../types'
-import { andTerms } from '../text'
+import type { ParsedSearch, PlatformDef, QueryState } from '../types'
+import { FANTIA_CATEGORIES, limitSort } from '../types'
+import { andTerms, words } from '../text'
+import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-09 実機確認(ログイン済み、GUI操作)。年齢確認ゲート通過後、
 // ヘッダーの「さがす」検索ボックス→「投稿」タブで採取。
@@ -46,6 +47,39 @@ function buildUrl(state: QueryState): string | null {
   return `https://fantia.jp/posts?${params.toString()}`
 }
 
+// 逆翻訳: fantia.jp/posts?keyword=…。order=newer と brand_type=3 と keyword_type=all は
+// buildUrl が常に明示する既定値なので「指定なし」として読む
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'fantia.jp')) return null
+  if (pathSegments(url)[0] !== 'posts') return null
+  if (!url.searchParams.has('keyword')) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const terms = words(url.searchParams.get('keyword') ?? '')
+  if (terms.length > 0) patch.terms = terms
+
+  const keywordType = url.searchParams.get('keyword_type')
+  if (keywordType === 'title_only') patch.titleOnly = true
+  else if (keywordType !== null && keywordType !== 'all') ignored.push(`keyword_type=${keywordType}`)
+  const category = url.searchParams.get('category')
+  if (category !== null) {
+    if ((FANTIA_CATEGORIES as readonly string[]).includes(category)) {
+      patch.fantiaCategory = category as QueryState['fantiaCategory']
+    } else ignored.push(`category=${category}`)
+  }
+  const brandType = url.searchParams.get('brand_type')
+  if (brandType === '0') patch.fantiaAudience = 'male'
+  else if (brandType === '2') patch.fantiaAudience = 'female'
+  else if (brandType !== null && brandType !== '3') ignored.push(`brand_type=${brandType}`)
+  const order = url.searchParams.get('order')
+  if (order === 'popular') patch.sort = 'top'
+  else if (order !== null && order !== 'newer') ignored.push(`order=${order}`)
+
+  leftoverParams(url, new Set(['keyword', 'keyword_type', 'category', 'brand_type', 'order']), ignored)
+  return { patch, ignored }
+}
+
 export const fantia: PlatformDef = {
   id: 'fantia',
   name: 'Fantia',
@@ -63,5 +97,6 @@ export const fantia: PlatformDef = {
     sortOrder: { level: 'partial', noteKey: 'note.fantia.sort' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
 }

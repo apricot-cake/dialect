@@ -1,5 +1,5 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
-import { limitSort } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import { limitSort, POST_LANGUAGE_CODES } from '../types'
 import {
   andTerms,
   exactPhrases,
@@ -10,6 +10,16 @@ import {
   stripHash,
   words,
 } from '../text'
+import {
+  applyBins,
+  emptyBins,
+  hostMatches,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md
 // 演算子は公式ドキュメントあり(除外 - のみ未文書化・実測動作)。ログイン不要。
@@ -90,6 +100,68 @@ function dynamicSupport(
   }
 }
 
+// 逆翻訳: bsky.app/search?q=…。tab=user(アカウント検索)は語だけ、それ以外は
+// クエリ内演算子(from:/mentions:/domain:/since:/until:/#/-/"…")を概念へ戻す
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'bsky.app')) return null
+  if (pathSegments(url)[0] !== 'search') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const consumed = new Set(['q', 'tab', 'lang', 'media'])
+
+  const lang = url.searchParams.get('lang')
+  if (lang) {
+    if ((POST_LANGUAGE_CODES as readonly string[]).includes(lang)) patch.language = lang as PostLanguage
+    else ignored.push(`lang=${lang}`)
+  }
+  const media = url.searchParams.get('media')
+  if (media === 'true') patch.mediaOnly = true
+  else if (media) ignored.push(`media=${media}`)
+
+  const tab = url.searchParams.get('tab')
+  if (tab === 'user') {
+    // アカウント検索。本文演算子は効かないため語をそのままキーワードとして読む
+    patch.resultType = 'people'
+    const terms = words(q)
+    if (terms.length > 0) patch.terms = terms
+    leftoverParams(url, consumed, ignored)
+    return { patch, ignored }
+  }
+  if (tab === 'latest') patch.sort = 'new'
+  else if (tab === 'top') patch.sort = 'top'
+  else if (tab) ignored.push(`tab=${tab}`)
+
+  const bins = emptyBins()
+  for (const token of tokenize(q)) {
+    if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
+    else if (token.startsWith('mentions:')) patch.mentionsUser = token.slice('mentions:'.length)
+    else if (token.startsWith('domain:')) patch.domain = token.slice('domain:'.length)
+    else if (token.startsWith('since:')) {
+      const v = token.slice('since:'.length)
+      if (isIsoDate(v)) patch.since = v
+      else ignored.push(token)
+    } else if (token.startsWith('until:')) {
+      const v = token.slice('until:'.length)
+      if (isIsoDate(v)) patch.until = v
+      else ignored.push(token)
+    } else if (token.startsWith('lang:')) {
+      // UIは生成しないがAPIレベルで効く形。&lang= と同じ概念へ戻す
+      const code = token.slice('lang:'.length)
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      else ignored.push(token)
+    } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+  leftoverParams(url, consumed, ignored)
+  return { patch, ignored }
+}
+
 export const bluesky: PlatformDef = {
   id: 'bluesky',
   name: 'Bluesky',
@@ -112,5 +184,6 @@ export const bluesky: PlatformDef = {
     sortOrder: { level: 'partial' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

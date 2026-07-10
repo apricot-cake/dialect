@@ -1,6 +1,16 @@
-import type { PlatformDef, QueryState } from '../types'
-import { limitSort } from '../types'
+import type { ParsedSearch, PlatformDef, PostLanguage, QueryState } from '../types'
+import { limitSort, POST_LANGUAGE_CODES } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
+import {
+  applyBins,
+  emptyBins,
+  hostMatches,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md
 // 演算子は全て q= に平文で埋め込む。検索ページの閲覧はログイン必須。
@@ -70,6 +80,87 @@ function buildUrl(state: QueryState): string | null {
   return `https://x.com/search?q=${encodeURIComponent(parts.join(' '))}${tab}`
 }
 
+// 逆翻訳: x.com/search?q=…(旧 twitter.com も受ける)。q内の演算子トークンを
+// buildUrl と対応する概念へ戻す。読めない演算子・パラメータは ignored へ
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'x.com', 'twitter.com')) return null
+  if (pathSegments(url)[0] !== 'search') return null
+  const q = url.searchParams.get('q')
+  if (!q) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  const bins = emptyBins()
+  const toUsers: string[] = []
+  const mentions: string[] = []
+  const excludeUsers: string[] = []
+  for (const token of tokenize(q)) {
+    if (token === '-filter:replies') patch.excludeReplies = true
+    else if (token === 'filter:media') patch.mediaOnly = true
+    else if (token === 'filter:links') patch.linksOnly = true
+    else if (token === 'filter:blue_verified') patch.verifiedOnly = true
+    else if (token.startsWith('filter:') || token.startsWith('-filter:')) ignored.push(token)
+    else if (token.startsWith('-from:')) excludeUsers.push(token.slice('-from:'.length))
+    else if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
+    else if (token.startsWith('to:')) toUsers.push(token.slice('to:'.length))
+    else if (token.startsWith('url:')) patch.domain = token.slice('url:'.length)
+    else if (token.startsWith('list:')) patch.xList = token.slice('list:'.length)
+    else if (token.startsWith('since:')) {
+      const v = token.slice('since:'.length)
+      if (isIsoDate(v)) patch.since = v
+      else ignored.push(token)
+    } else if (token.startsWith('until:')) {
+      const v = token.slice('until:'.length)
+      if (isIsoDate(v)) patch.until = v
+      else ignored.push(token)
+    } else if (token.startsWith('min_faves:')) {
+      const v = token.slice('min_faves:'.length)
+      if (/^\d+$/.test(v)) patch.minLikes = v
+      else ignored.push(token)
+    } else if (token.startsWith('min_retweets:')) {
+      const v = token.slice('min_retweets:'.length)
+      if (/^\d+$/.test(v)) patch.minReposts = v
+      else ignored.push(token)
+    } else if (token.startsWith('min_replies:')) {
+      const v = token.slice('min_replies:'.length)
+      if (/^\d+$/.test(v)) patch.minReplies = v
+      else ignored.push(token)
+    } else if (token.startsWith('lang:')) {
+      const code = token.slice('lang:'.length)
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      else ignored.push(token)
+    } else if (token.startsWith('(') && token.endsWith(')')) {
+      // (to:a OR to:b)=宛先 / (@a OR @b)=メンション。それ以外のグループは読めない
+      const inner = token
+        .slice(1, -1)
+        .split(/\s+OR\s+/i)
+        .map((s) => s.trim())
+        .filter(Boolean)
+      if (inner.length > 0 && inner.every((p) => p.startsWith('to:'))) {
+        toUsers.push(...inner.map((p) => p.slice('to:'.length)))
+      } else if (inner.length > 0 && inner.every((p) => p.startsWith('@'))) {
+        mentions.push(...inner.map((p) => p.slice(1)))
+      } else ignored.push(token)
+    } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
+    // 素の @user もメンション扱い(公式フォームはカッコ付きで生成するが単体でも同義)
+    else if (token.startsWith('@') && token.length > 1) mentions.push(token.slice(1))
+    else if (token.startsWith('"')) bins.phrases.push(unquote(token))
+    else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
+    else bins.terms.push(token)
+  }
+  applyBins(patch, bins)
+  if (toUsers.length > 0) patch.toUser = toUsers.join(' ')
+  if (mentions.length > 0) patch.mentionsUser = mentions.join(' ')
+  if (excludeUsers.length > 0) patch.excludeUser = excludeUsers.join(' ')
+
+  const f = url.searchParams.get('f')
+  if (f === 'live') patch.sort = 'new'
+  else if (f === 'top') patch.sort = 'top'
+  else if (f) ignored.push(`f=${f}`)
+  leftoverParams(url, new Set(['q', 'f']), ignored)
+  return { patch, ignored }
+}
+
 export const x: PlatformDef = {
   id: 'x',
   name: 'X',
@@ -100,6 +191,7 @@ export const x: PlatformDef = {
     sortOrder: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport: (state) => ({
     // 急上昇(note専用)などはXにないので、選ばれたら並び順を非対応に落とす
     ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),

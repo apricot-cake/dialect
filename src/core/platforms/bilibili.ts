@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState, ResultType, SortOrder } from '../types'
-import { andTerms, exactPhrases } from '../text'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, SortOrder } from '../types'
+import { andTerms, exactPhrases, words } from '../text'
+import { hostIs, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-08 実機確認(未ログイン、GUI操作+URL叩き)。search.bilibili.com はログイン不要で
 // 検索できる(日本からのアクセスで地域ブロックなし)。タブ= 综合/all・视频/video・番剧/bangumi・
@@ -87,6 +88,62 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   return overrides
 }
 
+/** タブのパス → resultType(総合は既定='') */
+const TAB_RESULT_TYPE: Record<string, QueryState['resultType']> = {
+  all: '',
+  video: 'video',
+  bangumi: 'bangumi',
+  pgc: 'pgc',
+  live: 'live',
+  article: 'article',
+  upuser: 'channel',
+}
+
+/** 中国標準時(UTC+8)のエポック秒 → YYYY-MM-DD(cstEpochの逆方向) */
+function isoFromCstEpoch(sec: number): string {
+  return new Date((sec + 8 * 3600) * 1000).toISOString().slice(0, 10)
+}
+
+// 逆翻訳: search.bilibili.com/{タブ}?keyword=…。order=はタブごとの対応表を逆引きする
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostIs(url, 'search.bilibili.com')) return null
+  const segs = pathSegments(url)
+  const tab = segs[0] ?? 'all'
+  if (!(tab in TAB_RESULT_TYPE)) return null
+  const keyword = url.searchParams.get('keyword')
+  if (!keyword) return null
+
+  const patch: Partial<QueryState> = {}
+  const ignored: string[] = []
+  if (TAB_RESULT_TYPE[tab]) patch.resultType = TAB_RESULT_TYPE[tab]
+  const terms = words(keyword)
+  if (terms.length > 0) patch.terms = terms
+
+  const order = url.searchParams.get('order')
+  if (order !== null) {
+    const sort = Object.entries(ORDER_PARAM[tab]).find(([, v]) => v === order)?.[0]
+    if (sort) patch.sort = sort as SortOrder
+    else ignored.push(`order=${order}`)
+  }
+  const duration = url.searchParams.get('duration')
+  if (duration === '1') patch.videoLength = 'short'
+  else if (duration === '2') patch.videoLength = 'medium'
+  else if (duration === '4') patch.videoLength = 'long'
+  else if (duration !== null) ignored.push(`duration=${duration}`)
+  const begin = url.searchParams.get('pubtime_begin_s')
+  if (begin !== null) {
+    if (/^\d+$/.test(begin)) patch.since = isoFromCstEpoch(Number(begin))
+    else ignored.push(`pubtime_begin_s=${begin}`)
+  }
+  const end = url.searchParams.get('pubtime_end_s')
+  if (end !== null) {
+    if (/^\d+$/.test(end)) patch.until = isoFromCstEpoch(Number(end))
+    else ignored.push(`pubtime_end_s=${end}`)
+  }
+  leftoverParams(url, new Set(['keyword', 'order', 'duration', 'pubtime_begin_s', 'pubtime_end_s']), ignored)
+  return { patch, ignored }
+}
+
 export const bilibili: PlatformDef = {
   id: 'bilibili',
   name: 'bilibili',
@@ -104,5 +161,6 @@ export const bilibili: PlatformDef = {
     period: { level: 'full' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport,
 }

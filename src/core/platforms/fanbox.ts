@@ -1,5 +1,6 @@
-import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from '../types'
+import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState } from '../types'
 import { stripHash, words } from '../text'
+import { hostMatches, leftoverParams, pathSegments } from '../parse'
 
 // 出典: 2026-07-08 実機確認(未ログイン、GUI操作)。fanbox.cc の検索欄は「クリエイター・タグを検索」
 // のみで、投稿本文の全文キーワード検索は存在しない。/search?type=creator&q= はクリエイター名の
@@ -14,6 +15,17 @@ function buildUrl(state: QueryState): string | null {
   return `https://www.fanbox.cc/tags/${encodeURIComponent(tagNames[0])}`
 }
 
+// 逆翻訳: fanbox.cc/tags/{タグ}(唯一の投稿一覧ページ)
+function parseUrl(url: URL): ParsedSearch | null {
+  if (!hostMatches(url, 'fanbox.cc')) return null
+  const segs = pathSegments(url)
+  if (segs[0] !== 'tags' || !segs[1]) return null
+  const patch: Partial<QueryState> = { hashtag: segs[1] }
+  const ignored: string[] = []
+  leftoverParams(url, new Set(), ignored)
+  return { patch, ignored }
+}
+
 export const fanbox: PlatformDef = {
   id: 'fanbox',
   name: 'FANBOX',
@@ -25,6 +37,7 @@ export const fanbox: PlatformDef = {
     hashtag: { level: 'partial', noteKey: 'note.fanbox.hashtagOnly' },
   },
   buildUrl,
+  parseUrl,
   dynamicSupport: (state): Partial<Record<ConceptId, ConceptSupport>> => {
     const tagNames = words(state.hashtag).map(stripHash)
     if (tagNames.length !== 1) {
