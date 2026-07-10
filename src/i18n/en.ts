@@ -386,7 +386,7 @@ export const en = {
   'launch.droppedHeading': 'Not available',
   'launch.specialtyHeading': 'Only on other sites',
   'launch.specialtyOnly': '{name} only',
-  'launch.urlHeading': 'URL to open (colors match the conditions)',
+  'launch.urlHeading': 'URL to open',
 
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
   'sum.exclude': 'excluding {v}',

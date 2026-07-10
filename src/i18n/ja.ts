@@ -348,7 +348,7 @@ export const ja = {
   'launch.droppedHeading': '使えない',
   'launch.specialtyHeading': '他サイト専用',
   'launch.specialtyOnly': '{name}専用',
-  'launch.urlHeading': '開くURL（条件と同じ色の部分が対応）',
+  'launch.urlHeading': '開くURL',
 
   // 起動カードの翻訳プレビュー(効く条件を読みやすいラベルに畳む)。{v}に値が入る
   'sum.exclude': '{v}を除く',
