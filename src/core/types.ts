@@ -139,25 +139,16 @@ export type FantiaAudience = '' | 'male' | 'female'
  * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
  * ユーザー」とも共用。2026-07-09にGUI操作で実測)。circle=メンバーシップ(note専用。検索結果タブ
  * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)
+ * permalink と App の検証もこの配列を単一の真実として参照する(追加時はここだけ増やす)
  */
-export type ResultType =
-  | ''
-  | 'video'
-  | 'short'
-  | 'channel'
-  | 'playlist'
-  | 'posts'
-  | 'communities'
-  | 'comments'
-  | 'media'
-  | 'people'
-  | 'board'
-  | 'bangumi'
-  | 'pgc'
-  | 'live'
-  | 'article'
-  | 'series'
-  | 'circle'
+export const RESULT_TYPE_VALUES = [
+  '', 'video', 'short', 'channel', 'playlist',
+  'posts', 'communities', 'comments', 'media', 'people',
+  'board', 'bangumi', 'pgc', 'live', 'article',
+  'series', 'circle',
+] as const
+
+export type ResultType = (typeof RESULT_TYPE_VALUES)[number]
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
@@ -172,22 +163,16 @@ export type ResultType =
  * 「作成日」に流用し、videoCountで登録動画数、videoAddedで最後に動画が追加された日時を表す)。
  * followerCount=フォロワー数順・liveCount=生放送番組数順はniconicoのユーザー検索専用
  * (2026-07-09にGUI操作で実測。videoCountはユーザー検索では投稿動画数の意味で共用)。
- * 対応しないサイトでは dynamicSupport(limitSort)でnon-対応に落とす
+ * 対応しないサイトでは dynamicSupport(limitSort)でnon-対応に落とす。
+ * permalink と App の検証もこの配列を単一の真実として参照する(追加時はここだけ増やす)
  */
-export type SortOrder =
-  | 'new'
-  | 'top'
-  | 'hot'
-  | 'comments'
-  | 'auto'
-  | 'danmaku'
-  | 'favorites'
-  | 'likes'
-  | 'commentDate'
-  | 'videoCount'
-  | 'videoAdded'
-  | 'followerCount'
-  | 'liveCount'
+export const SORT_ORDER_VALUES = [
+  'new', 'top', 'hot', 'comments', 'auto',
+  'danmaku', 'favorites', 'likes', 'commentDate',
+  'videoCount', 'videoAdded', 'followerCount', 'liveCount',
+] as const
+
+export type SortOrder = (typeof SORT_ORDER_VALUES)[number]
 
 /** ユーザーが組み立てる検索条件 */
 export interface QueryState {

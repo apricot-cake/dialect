@@ -1,5 +1,11 @@
 import type { FantiaCategory, NicoGenre, PostLanguage, QueryState } from './types'
-import { FANTIA_CATEGORIES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
+import {
+  FANTIA_CATEGORIES,
+  NICO_GENRES,
+  POST_LANGUAGE_CODES,
+  RESULT_TYPE_VALUES,
+  SORT_ORDER_VALUES,
+} from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -168,13 +174,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (faud === 'male' || faud === 'female') state.fantiaAudience = faud
   state.safeSearchOff = params.get('nsafe') === '1'
   const rt = params.get('rt')
-  if (
-    rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
-    rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people' ||
-    rt === 'board' || rt === 'bangumi' || rt === 'pgc' || rt === 'live' || rt === 'article' ||
-    rt === 'series' || rt === 'circle'
-  ) {
-    state.resultType = rt
+  if (rt && (RESULT_TYPE_VALUES as readonly string[]).includes(rt)) {
+    state.resultType = rt as QueryState['resultType']
   }
   const pxu = params.get('pxu')
   if (pxu === '00users' || pxu === '000users' || pxu === '0000users') {
@@ -184,13 +185,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (age === 'safe' || age === 'r18') state.ageRating = age
   state.excludeAi = params.get('noai') === '1'
   const sort = params.get('sort')
-  if (
-    sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments' ||
-    sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'commentDate' ||
-    sort === 'videoCount' || sort === 'videoAdded' || sort === 'followerCount' || sort === 'liveCount' ||
-    sort === 'auto'
-  ) {
-    state.sort = sort
+  if (sort && (SORT_ORDER_VALUES as readonly string[]).includes(sort)) {
+    state.sort = sort as QueryState['sort']
   } else if (version < 4) {
     // v3以前は sort 省略=「新しい順」が既定だった。読み込みで当時の意味を保つ
     state.sort = 'new'
