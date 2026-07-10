@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
+import { activeConcepts } from '@/core/concepts'
 import { translationParts, specialtyOwner } from '@/core/preview'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type {
@@ -12,8 +13,27 @@ import type {
 } from '@/core/types'
 import { t, tf, type MessageKey } from '@/i18n'
 import { readableInk } from '@/lib/color'
+import { conceptColors } from '@/lib/conceptColors'
 import { PlatformBadge } from './PlatformBadge'
 import { ScrollUpPill } from './ConditionsArea'
+
+/**
+ * 概念色の下線。複数概念の複合断片(YouTubeのsp=等)は等分のストライプで
+ * 「複数の条件がここに合成されている」ことを正直に見せる
+ */
+function underlineStyle(colors: string[]): CSSProperties {
+  const n = colors.length
+  const stops = colors
+    .map((c, i) => `${c} ${(i / n) * 100}% ${((i + 1) / n) * 100}%`)
+    .join(', ')
+  return {
+    backgroundImage: `linear-gradient(90deg, ${stops})`,
+    backgroundSize: '100% 2px',
+    backgroundPosition: '0 100%',
+    backgroundRepeat: 'no-repeat',
+    paddingBottom: 1,
+  }
+}
 
 const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'sns', labelKey: 'group.sns' },
@@ -114,11 +134,14 @@ function LaunchCard({
   resolution,
   query,
   dark,
+  colors,
 }: {
   platform: PlatformDef
   resolution: Resolution
   query: QueryState
   dark: boolean
+  /** 概念→識別色(全カード共通=同じ条件は同じ色)。条件ラベルと生URL断片の対応付け */
+  colors: Map<ConceptId, string>
 }) {
   const [hover, setHover] = useState(false)
   const enabled = Boolean(resolution.url)
@@ -141,7 +164,8 @@ function LaunchCard({
     droppedReal.length > 0 ||
     droppedSpecialty.length > 0 ||
     resolution.approximated.length > 0
-  const showMeta = hover && (popHasContent || !enabled)
+  // 生URL(条件との同色対応)は開けるカード全部に出すので、ポップは常に中身を持つ
+  const showMeta = hover && (popHasContent || !enabled || Boolean(resolution.parts))
 
   // 翻訳プレビュー: このサイトで実際に効く条件を、読みやすいラベルで常時表示する。
   const parts = enabled ? translationParts(resolution, query) : []
@@ -196,14 +220,18 @@ function LaunchCard({
             className="mt-[5px] inline-block h-1.5 w-1.5 shrink-0 rounded-full"
             style={{ background: dotColor }}
           />
-          {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す */}
+          {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す。
+              下線の色はホバーポップの生URL断片と対応(同じ概念=同じ色) */}
           <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
-            {parts.map((p, i) => (
-              <span key={i} className="whitespace-nowrap">
-                {p}
-                {i < parts.length - 1 && <span className="text-faint">・</span>}
-              </span>
-            ))}
+            {parts.map((p, i) => {
+              const color = colors.get(p.concept)
+              return (
+                <span key={i} className="whitespace-nowrap">
+                  <span style={color ? underlineStyle([color]) : undefined}>{p.label}</span>
+                  {i < parts.length - 1 && <span className="text-faint">・</span>}
+                </span>
+              )
+            })}
           </div>
         </div>
       )}
@@ -226,6 +254,32 @@ function LaunchCard({
                 <path d="M15 12H3" />
               </svg>
               {t('ui.loginRequired')}
+            </div>
+          )}
+          {enabled && resolution.parts && (
+            <div className="flex flex-col gap-[5px]">
+              <span className="text-[10px] font-bold tracking-[0.04em] text-muted">
+                {t('launch.urlHeading')}
+              </span>
+              {/* 生URL全文。概念由来の断片は条件ラベルと同じ色(下線+文字色)、
+                  土台・区切りは薄く。複合断片(YouTubeのsp=等)はストライプ下線 */}
+              <div className="font-mono text-[10px] leading-[1.7] break-all">
+                {resolution.parts.map((p, i) => {
+                  if (p.concepts.length === 0) {
+                    return (
+                      <span key={i} className="text-faint">
+                        {p.text}
+                      </span>
+                    )
+                  }
+                  const cols = p.concepts.map((c) => colors.get(c) ?? SOFT_INK)
+                  return (
+                    <span key={i} style={{ color: cols[0], ...underlineStyle(cols) }}>
+                      {p.text}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
           )}
           {resolution.approximated.length > 0 && (
@@ -258,6 +312,9 @@ export function LinksArea({
     for (const p of PLATFORMS) map.set(p.id, resolve(p, query))
     return map
   }, [query])
+
+  // 概念→識別色。サイト非依存の activeConcepts から作るので、全カードで同じ条件が同じ色になる
+  const colors = useMemo(() => conceptColors(activeConcepts(query), dark), [query, dark])
 
   return (
     <section
@@ -301,6 +358,7 @@ export function LinksArea({
                       resolution={resolutions.get(p.id)!}
                       query={query}
                       dark={dark}
+                      colors={colors}
                     />
                   ))}
                 </div>
