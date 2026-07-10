@@ -423,6 +423,21 @@ export const ja = {
   'cal.clear': 'クリア',
   'cal.pickDate': '日付を選択',
 
+  // 検索URLの読み込み(逆翻訳)
+  'reverse.button': 'URLを読み込む',
+  'reverse.title': '検索URLを読み込む',
+  'reverse.hint':
+    '各サイトの検索ページのURLや、Dialectでコピーした共有URLを貼り付けると、条件に翻訳します。',
+  'reverse.placeholder': 'https://…',
+  'reverse.dialectUrl': 'Dialectの共有URL',
+  'reverse.ignoredLabel': '読み込めない部分',
+  'reverse.replace': 'いまの条件は置き換わります。',
+  'reverse.error':
+    'このURLは読み込めませんでした。対応しているサイトの検索ページのURLを貼ってください。',
+  'reverse.apply': '条件にする',
+  'reverse.cancel': 'キャンセル',
+  'reverse.close': '閉じる',
+
   // フッター
   'footer.privacy':
     '入力した条件がサーバーへ送信されることはありません。検索URLの組み立てはすべてブラウザ内で行われます。',

@@ -458,6 +458,20 @@ export const en = {
   'cal.clear': 'Clear',
   'cal.pickDate': 'Pick a date',
 
+  // Load a search URL (reverse translation)
+  'reverse.button': 'Load URL',
+  'reverse.title': 'Load a search URL',
+  'reverse.hint':
+    'Paste a search page URL from a supported site, or a Dialect share URL, and it will be translated into conditions.',
+  'reverse.placeholder': 'https://…',
+  'reverse.dialectUrl': 'Dialect share URL',
+  'reverse.ignoredLabel': "Parts that can't be read",
+  'reverse.replace': 'Your current conditions will be replaced.',
+  'reverse.error': "Couldn't read this URL. Paste a search page URL from a supported site.",
+  'reverse.apply': 'Use these conditions',
+  'reverse.cancel': 'Cancel',
+  'reverse.close': 'Close',
+
   // Footer
   'footer.privacy':
     'Your conditions are never sent to a server — search URLs are built entirely in your browser.',

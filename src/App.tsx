@@ -21,6 +21,7 @@ import { ConditionsArea, type ChipsApi } from '@/components/ConditionsArea'
 import { LinksArea } from '@/components/LinksArea'
 import { ConditionPicker } from '@/components/ConditionPicker'
 import { SaveSearchDialog, SavedListDialog } from '@/components/SavedSearches'
+import { ReverseDialog } from '@/components/ReverseDialog'
 import { useSnapAreas, type AreaId } from '@/hooks/useSnapAreas'
 
 const QUERY_KEY = 'dialect.v2.query'
@@ -151,6 +152,8 @@ export default function App() {
   const [saved, setSaved] = useState<StoredQuery[]>(loadSaved)
   const [saveOpen, setSaveOpen] = useState(false)
   const [savedListOpen, setSavedListOpen] = useState(false)
+  // 検索URLの読み込み(逆翻訳)ダイアログ
+  const [reverseOpen, setReverseOpen] = useState(false)
 
   const patchQuery = (patch: Partial<QueryState>) =>
     setQuery((q) => ({ ...q, ...patch }))
@@ -301,6 +304,16 @@ export default function App() {
     setRaw({})
     setSavedListOpen(false)
   }
+  // 貼り付けた検索URLの逆翻訳結果を適用。保存の復元と同じ手順でバー・チップを組み直す
+  const applyReverse = (state: QueryState) => {
+    setQuery(state)
+    setAdded([
+      ...new Set(activeConcepts(state).filter((c) => c !== 'keywords')),
+    ])
+    setChips(seedChips(state))
+    setRaw({})
+    setReverseOpen(false)
+  }
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-bg text-fg">
@@ -329,6 +342,7 @@ export default function App() {
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}
           onSave={canClear ? () => setSaveOpen(true) : undefined}
+          onOpenReverse={() => setReverseOpen(true)}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
         />
@@ -363,6 +377,13 @@ export default function App() {
         saved={saved}
         onRestore={restoreSaved}
         onDelete={handleDelete}
+      />
+      <ReverseDialog
+        open={reverseOpen}
+        onOpenChange={setReverseOpen}
+        dark={dark}
+        hasConditions={canClear}
+        onApply={applyReverse}
       />
     </div>
   )
