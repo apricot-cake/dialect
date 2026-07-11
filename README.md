@@ -32,7 +32,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | | Search page | Login | Operator support |
 |---|---|---|---|
 | X | `x.com/search` | Required | Rich (all unofficial), scoped OR |
-| Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
+| Bluesky | `bsky.app/search` | Required | Rich (officially documented, plus advanced-filter parameters: multi-value author/mention/domain/hashtag OR, embedded URL, video-only, reply/following filters) |
 | Instagram | `instagram.com/explore/search` | Required | Keywords only |
 | YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, scoped OR, etc. |
 | niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source, scoped OR) |

@@ -32,7 +32,7 @@ https://apricot-cake.github.io/dialect/
 | | 検索ページ | ログイン | 演算子対応 |
 |---|---|---|---|
 | X | `x.com/search` | 必要 | 豊富(全て非公式)・スコープ限定OR |
-| Bluesky | `bsky.app/search` | 不要 | 豊富(公式ドキュメントあり) |
+| Bluesky | `bsky.app/search` | 必要 | 豊富(公式ドキュメントあり。加えて高度な検索オプションの各種パラメータ=送信者/メンション先/ドメイン/ハッシュタグの複数値OR、埋め込みURL、動画付きのみ、返信/フォロー中フィルタに対応) |
 | Instagram | `instagram.com/explore/search` | 必要 | キーワードのみ |
 | YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さ・スコープ限定ORなど |
 | niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別・スコープ限定OR) |
