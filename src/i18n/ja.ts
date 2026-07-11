@@ -413,7 +413,7 @@ export const ja = {
   'saved.open': '保存した検索',
   'saved.title': '保存した検索',
   'saved.close': '閉じる',
-  'saved.hint': '保存はこの端末・このブラウザに残ります。履歴やサイトデータを消したり、別のブラウザ・別の端末・シークレットウィンドウで開いたりすると残りません。端末をまたいで持ち運ぶなら、条件バーの「URLをコピー」でURLを共有してください。',
+  'saved.hint': '保存はこの端末・このブラウザに残ります。履歴やサイトデータを消したり、別のブラウザ・別の端末・シークレットウィンドウで開いたりすると残りません。1件の検索を渡すなら条件バーの「URLをコピー」、保存検索や履歴もまとめて持ち運ぶなら下の書き出し・読み込みを使ってください。',
   'saved.empty': 'まだ保存した検索はありません。条件を組んで「保存」を押すと、ここに並びます。',
   'saved.restore': 'この条件を呼び出す',
   'saved.delete': '削除',
@@ -422,6 +422,14 @@ export const ja = {
   'saved.save.namePlaceholder': '検索の名前',
   'saved.save.confirm': '保存',
   'saved.save.cancel': 'キャンセル',
+
+  // 保存検索・履歴・設定のバックアップ(エクスポート/インポート)
+  'saved.backup.export': '書き出し',
+  'saved.backup.import': '読み込む',
+  'saved.backup.invalid': '読み込めませんでした。書き出したファイルを選んでください。',
+  'saved.backup.confirmSummary': '{saved}件の保存検索・{history}件の履歴が入ったファイルです。統合しますか、いまのこの端末のデータと置き換えますか?',
+  'saved.backup.merge': '統合する',
+  'saved.backup.replace': '置き換える',
 
   // 検索履歴(自動記録・localStorage)
   'saved.tab.saved': '保存',

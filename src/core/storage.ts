@@ -170,3 +170,102 @@ export function persistBulkOpenExcluded(excluded: PlatformId[]): void {
     /* the selection still applies for this session */
   }
 }
+
+// Export/import: bundles every dialect.* localStorage key (saved searches,
+// history, current query, language, filter...) into one downloadable JSON,
+// since this device's localStorage is the only place any of it lives (no
+// backend). Applying a backup only touches localStorage; the caller reloads
+// the page afterward so every piece of app state re-syncs from it, the same
+// path a fresh visit already takes.
+const DIALECT_KEY_PREFIX = 'dialect.'
+const BACKUP_VERSION = 1
+
+export interface Backup {
+  version: number
+  exportedAt: number
+  data: Record<string, string>
+}
+
+function isBackup(v: unknown): v is Backup {
+  if (typeof v !== 'object' || v === null) return false
+  const b = v as Backup
+  if (typeof b.version !== 'number' || typeof b.data !== 'object' || b.data === null) return false
+  return Object.entries(b.data).every(([k, val]) => typeof k === 'string' && typeof val === 'string')
+}
+
+export function exportBackup(now: number): Backup {
+  const data: Record<string, string> = {}
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key || !key.startsWith(DIALECT_KEY_PREFIX)) continue
+    const value = localStorage.getItem(key)
+    if (value !== null) data[key] = value
+  }
+  return { version: BACKUP_VERSION, exportedAt: now, data }
+}
+
+/** 壊れた・形式の合わないファイルは null を返す(呼び出し側でエラー表示する) */
+export function parseBackup(text: string): Backup | null {
+  try {
+    const parsed: unknown = JSON.parse(text)
+    return isBackup(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+/** 保存検索・履歴の配列を一意キー(params)単位で統合する。競合時はバックアップ側を優先する */
+function mergeJsonArray(localRaw: string | null, backupRaw: string): string {
+  const asArray = (raw: string | null): Array<{ params?: unknown }> => {
+    try {
+      const parsed: unknown = raw ? JSON.parse(raw) : []
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+  const map = new Map<string, { params?: unknown }>()
+  for (const e of asArray(localRaw)) {
+    if (typeof e.params === 'string') map.set(e.params, e)
+  }
+  for (const e of asArray(backupRaw)) {
+    if (typeof e.params === 'string') map.set(e.params, e)
+  }
+  return JSON.stringify([...map.values()])
+}
+
+// 統合(マージ)で「配列を一意キーで足し合わせる」対象キー。それ以外のスカラー系
+// キー(現在の条件・言語・設定トグル等)は、既に値があればこの端末側を残す
+const MERGE_ARRAY_KEYS = new Set([SAVED_KEY, HISTORY_KEY])
+
+/**
+ * バックアップを適用する(localStorageのみ更新。反映には呼び出し側でreloadが必要)。
+ * replace: 既存のdialect.*キーを全消去してからバックアップの内容だけを書く。
+ * 統合(replace=false): 保存検索・履歴は一意キーで足し合わせ、それ以外は既存値があれば残す
+ */
+export function applyBackup(backup: Backup, replace: boolean): void {
+  try {
+    if (replace) {
+      const toRemove: string[] = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key?.startsWith(DIALECT_KEY_PREFIX)) toRemove.push(key)
+      }
+      for (const key of toRemove) localStorage.removeItem(key)
+      for (const [key, value] of Object.entries(backup.data)) {
+        if (key.startsWith(DIALECT_KEY_PREFIX)) localStorage.setItem(key, value)
+      }
+      return
+    }
+    for (const [key, value] of Object.entries(backup.data)) {
+      if (!key.startsWith(DIALECT_KEY_PREFIX)) continue
+      if (MERGE_ARRAY_KEYS.has(key)) {
+        localStorage.setItem(key, mergeJsonArray(localStorage.getItem(key), value))
+      } else if (localStorage.getItem(key) === null) {
+        localStorage.setItem(key, value)
+      }
+    }
+  } catch {
+    /* 反映できなくても呼び出し側のreloadでこれまでの状態のまま起動する */
+  }
+}

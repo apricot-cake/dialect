@@ -448,7 +448,7 @@ export const en = {
   'saved.open': 'Saved searches',
   'saved.title': 'Saved searches',
   'saved.close': 'Close',
-  'saved.hint': 'Saved searches stay on this device and browser. They are lost if you clear history or site data, or open a different browser, device, or private window. To carry a search across devices, use “Copy URL” on the condition bar to share the URL.',
+  'saved.hint': 'Saved searches stay on this device and browser. They are lost if you clear history or site data, or open a different browser, device, or private window. To carry a single search, use “Copy URL” on the condition bar; to carry all your saved searches and history, use the export/import below.',
   'saved.empty': 'No saved searches yet. Build a search and press Save to keep it here.',
   'saved.restore': 'Load this search',
   'saved.delete': 'Delete',
@@ -457,6 +457,14 @@ export const en = {
   'saved.save.namePlaceholder': 'Name this search',
   'saved.save.confirm': 'Save',
   'saved.save.cancel': 'Cancel',
+
+  // Backup (export/import) of saved searches, history, and settings
+  'saved.backup.export': 'Export',
+  'saved.backup.import': 'Import',
+  'saved.backup.invalid': 'Could not read this file. Choose a file exported from here.',
+  'saved.backup.confirmSummary': 'This file has {saved} saved searches and {history} history entries. Merge with what you have, or replace it?',
+  'saved.backup.merge': 'Merge',
+  'saved.backup.replace': 'Replace',
 
   // Search history (auto-recorded, localStorage)
   'saved.tab.saved': 'Saved',

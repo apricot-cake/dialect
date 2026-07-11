@@ -1,9 +1,9 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
-import type { HistoryEntry, StoredQuery } from '@/core/storage'
-import { toQuery } from '@/core/storage'
+import type { Backup, HistoryEntry, StoredQuery } from '@/core/storage'
+import { applyBackup, exportBackup, parseBackup, toQuery } from '@/core/storage'
 import { searchSummary } from '@/core/preview'
-import { getLang, t } from '@/i18n'
+import { getLang, t, tf } from '@/i18n'
 
 const SCRIM = 'dl-scrim fixed inset-0 z-[60]'
 const POPUP =
@@ -53,6 +53,132 @@ function TrashIcon() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
     </svg>
+  )
+}
+
+function countEntries(raw: string | undefined): number {
+  if (!raw) return 0
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.length : 0
+  } catch {
+    return 0
+  }
+}
+
+function downloadBackup(backup: Backup) {
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `dialect-backup-${new Date(backup.exportedAt).toISOString().slice(0, 10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+type ImportState =
+  | { status: 'idle' }
+  | { status: 'invalid' }
+  | { status: 'confirm'; backup: Backup }
+
+/**
+ * この端末のlocalStorage(dialect.*名前空間)をJSONファイルへ書き出し/読み込む。
+ * 読み込みは即反映せず、統合(足し合わせ)か置き換えかを確認してから
+ * localStorageへ適用し、ページを再読み込みしてApp全体の状態を作り直す
+ */
+function BackupControls() {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [importState, setImportState] = useState<ImportState>({ status: 'idle' })
+
+  const handleFile = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const backup = typeof reader.result === 'string' ? parseBackup(reader.result) : null
+      setImportState(backup ? { status: 'confirm', backup } : { status: 'invalid' })
+    }
+    reader.onerror = () => setImportState({ status: 'invalid' })
+    reader.readAsText(file)
+  }
+
+  const apply = (replace: boolean) => {
+    if (importState.status !== 'confirm') return
+    applyBackup(importState.backup, replace)
+    location.reload()
+  }
+
+  if (importState.status === 'confirm') {
+    const saved = countEntries(importState.backup.data['dialect.saved.v1'])
+    const history = countEntries(importState.backup.data['dialect.history.v1'])
+    return (
+      <div className="flex flex-col gap-2.5 rounded-[12px] border border-border bg-card p-3">
+        <p className="m-0 text-[12px] leading-[1.5] text-muted">
+          {tf('saved.backup.confirmSummary', { saved: String(saved), history: String(history) })}
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            data-noscale
+            onClick={() => apply(false)}
+            className="inline-flex h-9 cursor-pointer items-center rounded-full bg-accent px-4 text-[12.5px] font-semibold text-white"
+          >
+            {t('saved.backup.merge')}
+          </button>
+          <button
+            type="button"
+            data-noscale
+            onClick={() => apply(true)}
+            className="inline-flex h-9 cursor-pointer items-center rounded-full border border-border bg-card px-4 text-[12.5px] font-semibold text-muted"
+          >
+            {t('saved.backup.replace')}
+          </button>
+          <button
+            type="button"
+            data-noscale
+            onClick={() => setImportState({ status: 'idle' })}
+            className="inline-flex h-9 cursor-pointer items-center rounded-full px-3 text-[12.5px] font-semibold text-faint"
+          >
+            {t('saved.save.cancel')}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          data-noscale
+          onClick={() => downloadBackup(exportBackup(Date.now()))}
+          className="inline-flex h-8 cursor-pointer items-center rounded-full border border-border bg-card px-3.5 text-[12px] font-semibold text-muted hover:text-fg"
+        >
+          {t('saved.backup.export')}
+        </button>
+        <button
+          type="button"
+          data-noscale
+          onClick={() => fileInputRef.current?.click()}
+          className="inline-flex h-8 cursor-pointer items-center rounded-full border border-border bg-card px-3.5 text-[12px] font-semibold text-muted hover:text-fg"
+        >
+          {t('saved.backup.import')}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json,.json"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            e.target.value = ''
+            if (file) handleFile(file)
+          }}
+        />
+      </div>
+      {importState.status === 'invalid' && (
+        <span className="text-[11.5px] text-muted">{t('saved.backup.invalid')}</span>
+      )}
+    </div>
   )
 }
 
@@ -313,6 +439,9 @@ export function SavedListDialog({
               </div>
             </div>
           )}
+          <div className="border-t border-border px-[18px] pt-3 pb-4">
+            <BackupControls />
+          </div>
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>
