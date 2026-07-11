@@ -12,12 +12,7 @@ import {
   type ConceptDef,
 } from '@/core/conceptDefs'
 import { buildSearchIndex, searchConcepts, type MatchTier } from '@/core/conceptSearch'
-import {
-  CATEGORIES,
-  CONCEPT_CATEGORY,
-  FAMILIES,
-  type CategoryId,
-} from '@/core/conceptTags'
+import { CATEGORIES, CONCEPT_CATEGORY, FAMILIES, type CategoryId } from '@/core/conceptTags'
 import { t, type Lang } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
 import { CONCEPT_ICONS } from './conceptIcons'
@@ -123,13 +118,10 @@ export function ConditionPicker({
   // ラベル・ヘルプ・値ラベルは言語依存なので、言語が変わったら索引を作り直す
   const index = useMemo(() => buildSearchIndex(lang), [lang])
   const addedSet = new Set(added)
-  const filterPlatform = filterId
-    ? (PLATFORMS.find((p) => p.id === filterId) ?? null)
-    : null
+  const filterPlatform = filterId ? (PLATFORMS.find((p) => p.id === filterId) ?? null) : null
   const matchesFilter = (id: ConceptId) =>
     !filterPlatform || supportOf(filterPlatform, id).level !== 'none'
-  const matchesCategory = (id: ConceptId) =>
-    !categoryId || CONCEPT_CATEGORY[id] === categoryId
+  const matchesCategory = (id: ConceptId) => !categoryId || CONCEPT_CATEGORY[id] === categoryId
 
   const q = queryText.trim()
   const searching = q !== ''
@@ -209,11 +201,30 @@ export function ConditionPicker({
           <span className="text-xs leading-snug text-muted">{t(def.helpKey)}</span>
         </span>
         {isAdded ? (
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--accent-bright)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0"
+          >
             <path d="M20 6 9 17l-5-5" />
           </svg>
         ) : (
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2.2" strokeLinecap="round" className="shrink-0">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--faint)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            className="shrink-0"
+          >
             <path d="M12 5v14M5 12h14" />
           </svg>
         )}
@@ -268,7 +279,15 @@ export function ConditionPicker({
                   className="ml-auto inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border border-border text-muted"
                   style={{ background: 'color-mix(in oklch, var(--card) 70%, transparent)' }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
                     <path d="M18 6 6 18M6 6l12 12" />
                   </svg>
                 </Dialog.Close>
@@ -301,7 +320,15 @@ export function ConditionPicker({
                       className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-faint"
                       onClick={() => setQueryText('')}
                     >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      >
                         <path d="M18 6 6 18M6 6l12 12" />
                       </svg>
                     </button>
@@ -311,60 +338,60 @@ export function ConditionPicker({
             </div>
             {/* サイトフィルタ(スティッキーではない=リストと一緒にスクロールで流れる) */}
             {showSiteFilter && (
-            <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
-              <span
-                data-tip={t('builder.filter.help')}
-                className="cursor-help self-start text-[11.5px] font-medium text-muted"
-              >
-                {t('builder.filter.label')}
-              </span>
-              <div className="flex flex-wrap items-center gap-[9px]">
-                <button
-                  type="button"
-                  className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                  style={activeChipStyle(filterId === null)}
-                  onClick={() => onSetFilter(null)}
+              <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
+                <span
+                  data-tip={t('builder.filter.help')}
+                  className="cursor-help self-start text-[11.5px] font-medium text-muted"
                 >
-                  {t('builder.filter.all')}
-                </button>
-                {PLATFORMS.map((p) => (
+                  {t('builder.filter.label')}
+                </span>
+                <div className="flex flex-wrap items-center gap-[9px]">
                   <button
-                    key={p.id}
                     type="button"
-                    data-noscale
-                    data-tip={p.name}
-                    aria-pressed={filterId === p.id}
-                    className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
-                    style={activeChipStyle(filterId === p.id)}
-                    onClick={() => onSetFilter(filterId === p.id ? null : p.id)}
+                    className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                    style={activeChipStyle(filterId === null)}
+                    onClick={() => onSetFilter(null)}
                   >
-                    <PlatformBadge platform={p} dark={dark} size={17} />
+                    {t('builder.filter.all')}
                   </button>
-                ))}
+                  {PLATFORMS.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      data-noscale
+                      data-tip={p.name}
+                      aria-pressed={filterId === p.id}
+                      className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
+                      style={activeChipStyle(filterId === p.id)}
+                      onClick={() => onSetFilter(filterId === p.id ? null : p.id)}
+                    >
+                      <PlatformBadge platform={p} dark={dark} size={17} />
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
             {/* 条件の種類でしぼるチップ(サイトフィルタとは別軸・非永続) */}
             {showCategoryFilter && (
-            <div className="flex flex-col gap-2.5 px-[26px] pb-4">
-              <span className="self-start text-[11.5px] font-medium text-muted">
-                {t('picker.category.label')}
-              </span>
-              <div className="flex flex-wrap items-center gap-[9px]">
-                {CATEGORIES.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    aria-pressed={categoryId === c.id}
-                    className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                    style={activeChipStyle(categoryId === c.id)}
-                    onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}
-                  >
-                    {t(c.labelKey)}
-                  </button>
-                ))}
+              <div className="flex flex-col gap-2.5 px-[26px] pb-4">
+                <span className="self-start text-[11.5px] font-medium text-muted">
+                  {t('picker.category.label')}
+                </span>
+                <div className="flex flex-wrap items-center gap-[9px]">
+                  {CATEGORIES.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-pressed={categoryId === c.id}
+                      className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                      style={activeChipStyle(categoryId === c.id)}
+                      onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}
+                    >
+                      {t(c.labelKey)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             )}
 
             {/* 関連する条件＋条件リスト(検索中はスコア順、それ以外は対応サイト数の多い順) */}
@@ -378,7 +405,9 @@ export function ConditionPicker({
                     <div
                       key={fam.id}
                       className="mb-3 rounded-[12px] border border-border p-2"
-                      style={{ background: 'color-mix(in oklch, var(--accent-bright) 5%, transparent)' }}
+                      style={{
+                        background: 'color-mix(in oklch, var(--accent-bright) 5%, transparent)',
+                      }}
                     >
                       <div className="mb-1 flex items-center gap-2.5 px-[9px] pt-1">
                         <span className="text-[12px] font-semibold text-muted">
@@ -391,7 +420,15 @@ export function ConditionPicker({
                             className="ml-auto inline-flex h-[26px] cursor-pointer items-center gap-1 rounded-full bg-accent px-3 text-[11.5px] font-semibold text-white"
                             onClick={() => onAddMany(unadded)}
                           >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.6"
+                              strokeLinecap="round"
+                            >
                               <path d="M12 5v14M5 12h14" />
                             </svg>
                             {t('picker.related.addAll')}
@@ -430,7 +467,18 @@ export function ConditionPicker({
                 className="pointer-events-auto inline-flex h-10 cursor-pointer items-center gap-[9px] rounded-full border border-border bg-card pr-4 pl-3 text-[12.5px] font-semibold text-muted shadow-[0_3px_14px_oklch(0_0_0_/_0.11)]"
                 onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" style={{ animation: 'dl-bob-up 1.5s ease-in-out infinite' }}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0"
+                  style={{ animation: 'dl-bob-up 1.5s ease-in-out infinite' }}
+                >
                   <path d="m18 15-6-6-6 6" />
                 </svg>
                 {t('picker.scrollTop')}

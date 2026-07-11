@@ -1,7 +1,22 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { hasPositiveTerm, minusExcludes, quotedTerms, stripAt, stripHash, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  part,
+  quotedTermTokens,
+  tok,
+  type Token,
+} from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -37,10 +52,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const singleTag = singleTagOnly(state)
   // 単一タグのみ(他の条件が何もない)ならタグページ。並び順・投稿タイプ等はURLで指定できない(人気順固定)
   if (singleTag) {
-    return [
-      lit('https://www.tumblr.com/tagged/'),
-      part(encodeURIComponent(singleTag), 'hashtag'),
-    ]
+    return [lit('https://www.tumblr.com/tagged/'), part(encodeURIComponent(singleTag), 'hashtag')]
   }
 
   if (!hasPositiveTerm(state)) return null
@@ -113,7 +125,12 @@ function parseUrl(url: URL): ParsedSearch | null {
 
   const postTypes = url.searchParams.get('postTypes')
   if (postTypes !== null) {
-    const values = new Set(postTypes.split(',').map((s) => s.trim()).filter(Boolean))
+    const values = new Set(
+      postTypes
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    )
     if (values.delete('link')) patch.linksOnly = true
     const media = ['photo', 'gif', 'video'].filter((m) => values.delete(m))
     if (media.length > 0) patch.mediaOnly = true

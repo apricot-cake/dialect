@@ -1,8 +1,32 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripHash, words } from '../text'
-import { formEncode, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
-import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import {
+  formEncode,
+  lit,
+  minusExcludeTokens,
+  ParamParts,
+  part,
+  quotedTermTokens,
+  tok,
+} from '../urlParts'
+import {
+  applyBins,
+  emptyBins,
+  hostIs,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査、実測)
 // 検索対象はパスで分ける: /search/text(本文)・/search/title(タイトル)・/search/tag(タグ)。
@@ -109,9 +133,7 @@ function parseUrl(url: URL): ParsedSearch | null {
 }
 
 // ハッシュタグ単独のときはタグ検索パスになり、「タイトルだけ」は参照されず効かない
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   const tagOnly =
     words(state.hashtag).length > 0 &&
     andTerms(state).length === 0 &&

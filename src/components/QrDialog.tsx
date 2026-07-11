@@ -14,7 +14,15 @@ function CloseButton() {
       className="ml-auto inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border border-border text-muted"
       style={{ background: 'color-mix(in oklch, var(--card) 70%, transparent)' }}
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      >
         <path d="M18 6 6 18M6 6l12 12" />
       </svg>
     </Dialog.Close>
@@ -69,7 +77,13 @@ export function QrDialog({
             </p>
             <div className="flex size-[280px] shrink-0 items-center justify-center rounded-[14px] bg-white p-3">
               {dataUrl && (
-                <img src={dataUrl} alt={t('ui.qrTitle')} width={280} height={280} className="size-full" />
+                <img
+                  src={dataUrl}
+                  alt={t('ui.qrTitle')}
+                  width={280}
+                  height={280}
+                  className="size-full"
+                />
               )}
             </div>
           </div>

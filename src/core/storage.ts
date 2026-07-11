@@ -190,7 +190,9 @@ function isBackup(v: unknown): v is Backup {
   if (typeof v !== 'object' || v === null) return false
   const b = v as Backup
   if (typeof b.version !== 'number' || typeof b.data !== 'object' || b.data === null) return false
-  return Object.entries(b.data).every(([k, val]) => typeof k === 'string' && typeof val === 'string')
+  return Object.entries(b.data).every(
+    ([k, val]) => typeof k === 'string' && typeof val === 'string',
+  )
 }
 
 export function exportBackup(now: number): Backup {

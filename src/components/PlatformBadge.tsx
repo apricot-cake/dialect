@@ -37,7 +37,13 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   bilibili: siBilibili,
 }
 
-const BUBBLE: Partial<Record<PlatformId, string>> = { fivech: '5', animanch: 'あ', seiga: '静', fanbox: 'F', fantia: 'フ' }
+const BUBBLE: Partial<Record<PlatformId, string>> = {
+  fivech: '5',
+  animanch: 'あ',
+  seiga: '静',
+  fanbox: 'F',
+  fantia: 'フ',
+}
 
 /**
  * ブランドアイコン1つ。simple-iconsのロゴ、なければ角丸矩形+1文字の吹き出し風。
@@ -92,13 +98,7 @@ export function PlatformBadge({
 }
 
 /** 対応ポップオーバー用: 淡い角丸タイルに載せたバッジ */
-export function PlatformBadgeTile({
-  platform,
-  dark,
-}: {
-  platform: PlatformDef
-  dark: boolean
-}) {
+export function PlatformBadgeTile({ platform, dark }: { platform: PlatformDef; dark: boolean }) {
   return (
     <span
       title={platform.name}

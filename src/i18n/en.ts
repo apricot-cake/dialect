@@ -19,21 +19,17 @@ export const en = {
     'Finds posts containing at least one of the words you enter (X, Reddit, pixiv, YouTube, niconico, and niconico Seiga only).',
   'concept.exclude.label': 'Exclude keywords',
   'concept.exclude.placeholder': 'e.g. ad',
-  'concept.exclude.help':
-    'Removes posts containing the given words from the results.',
+  'concept.exclude.help': 'Removes posts containing the given words from the results.',
   'concept.titleOnly.label': 'Title only',
-  'concept.titleOnly.help':
-    'Finds only posts whose title contains the keyword, not the body.',
+  'concept.titleOnly.help': 'Finds only posts whose title contains the keyword, not the body.',
   'concept.exactTag.label': 'Exact tag',
-  'concept.exactTag.help':
-    'Finds only works tagged with exactly your search term (pixiv only).',
+  'concept.exactTag.help': 'Finds only works tagged with exactly your search term (pixiv only).',
   'concept.tagTitleCaption.label': 'Search tags, title, and caption',
   'concept.tagTitleCaption.help':
     'Searches the title and caption in addition to tags, widening the match beyond a plain tag search (pixiv only).',
   'concept.fromUser.label': 'From this user only',
   'concept.fromUser.placeholder': 'e.g. nhk_news',
-  'concept.fromUser.help':
-    'Finds only posts by the given user. Do not include @ in the username.',
+  'concept.fromUser.help': 'Finds only posts by the given user. Do not include @ in the username.',
   'concept.excludeUser.label': 'Exclude this user',
   'concept.excludeUser.placeholder': 'e.g. nhk_news',
   'concept.excludeUser.help':
@@ -44,8 +40,7 @@ export const en = {
     'Finds only replies addressed to the given user. Do not include @ in the username.',
   'concept.mentionsUser.label': 'Mentions this user only',
   'concept.mentionsUser.placeholder': 'e.g. user.bsky.social',
-  'concept.mentionsUser.help':
-    'Finds only posts that mention the given user.',
+  'concept.mentionsUser.help': 'Finds only posts that mention the given user.',
   'concept.excludeMentions.label': 'Exclude mentions of this user',
   'concept.excludeMentions.placeholder': 'e.g. user.bsky.social',
   'concept.excludeMentions.help':
@@ -75,8 +70,7 @@ export const en = {
     'Finds only posts from an X List (a set of accounts grouped together). Paste the List’s URL or ID.',
   'concept.hashtag.label': 'Hashtag',
   'concept.hashtag.placeholder': 'e.g. booklog',
-  'concept.hashtag.help':
-    'Finds posts with the given hashtag. Do not include #.',
+  'concept.hashtag.help': 'Finds posts with the given hashtag. Do not include #.',
   'concept.hashtagOr.label': 'Match any of these hashtags',
   'concept.hashtagOr.placeholder': 'e.g. cat',
   'concept.hashtagOr.help':
@@ -86,8 +80,7 @@ export const en = {
   'concept.excludeHashtag.help':
     'Removes posts tagged with the given hashtag from the results (Bluesky only). Do not include #.',
   'concept.period.label': 'Date range',
-  'concept.period.help':
-    'Filters by post date. You can set just one side.',
+  'concept.period.help': 'Filters by post date. You can set just one side.',
   'concept.mediaOnly.label': 'With image or video only',
   'concept.mediaOnly.help': 'Keeps only posts that include an image or video.',
   'concept.videoOnly.label': 'With video only',
@@ -132,20 +125,16 @@ export const en = {
   'concept.repliesOnly.label': 'Replies only',
   'concept.repliesOnly.help': 'On Bluesky, keeps only replies.',
   'concept.followingOnly.label': 'From people you follow only',
-  'concept.followingOnly.help':
-    'On Bluesky, keeps only posts from accounts you follow.',
+  'concept.followingOnly.help': 'On Bluesky, keeps only posts from accounts you follow.',
   'concept.minLikes.label': 'Minimum likes',
   'concept.minLikes.placeholder': 'e.g. 100',
-  'concept.minLikes.help':
-    'Keeps only posts with at least the given number of likes.',
+  'concept.minLikes.help': 'Keeps only posts with at least the given number of likes.',
   'concept.minReposts.label': 'Minimum reposts',
   'concept.minReposts.placeholder': 'e.g. 50',
-  'concept.minReposts.help':
-    'Keeps only posts with at least the given number of reposts.',
+  'concept.minReposts.help': 'Keeps only posts with at least the given number of reposts.',
   'concept.minReplies.label': 'Minimum replies',
   'concept.minReplies.placeholder': 'e.g. 10',
-  'concept.minReplies.help':
-    'Keeps only posts with at least the given number of replies.',
+  'concept.minReplies.help': 'Keeps only posts with at least the given number of replies.',
   'concept.language.label': 'Post language',
   'concept.language.none': 'Any',
   'concept.language.ja': 'Japanese',
@@ -162,8 +151,7 @@ export const en = {
   'concept.language.hi': 'Hindi',
   'concept.language.th': 'Thai',
   'concept.language.id': 'Indonesian',
-  'concept.language.help':
-    'Filters by the language the post is written in (X and Bluesky only).',
+  'concept.language.help': 'Filters by the language the post is written in (X and Bluesky only).',
   'concept.workType.label': 'Work type',
   'concept.workType.none': 'Any',
   'concept.workType.illust': 'Illustration',
@@ -270,7 +258,7 @@ export const en = {
   'concept.sortOrder.liveCount': 'Live count',
   'concept.sortOrder.auto': 'Default',
   'concept.sortOrder.help':
-    "Sets the result order. \"Default\" keeps each site's own ordering (usually relevance-based).",
+    'Sets the result order. "Default" keeps each site\'s own ordering (usually relevance-based).',
   'concept.pixivPopular.label': 'Popularity',
   'concept.pixivPopular.none': 'Any',
   'concept.pixivPopular.100': '100+ bookmarks',
@@ -299,24 +287,19 @@ export const en = {
     'Exact-phrase search is not available here. To match the words, add them to Keywords.',
   'note.exact.substring':
     'Searches for the text as one continuous string. Phrases with spaces are split into separate words.',
-  'note.titleOnly.needsWords':
-    'Works only when combined with keywords or an exact phrase.',
+  'note.titleOnly.needsWords': 'Works only when combined with keywords or an exact phrase.',
   'note.exact.unreliable':
     'Searches for the exact phrase, but some results may have the words scattered apart.',
   'note.tagPage.combined':
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.nosort': 'Sort order cannot be set.',
   'note.videoOnly': 'This site is video-only, so this filter is unnecessary.',
-  'note.imageOnly':
-    'This site is image/illustration-only, so this filter is unnecessary.',
+  'note.imageOnly': 'This site is image/illustration-only, so this filter is unnecessary.',
 
   // Per-platform notes
-  'note.x.period':
-    'You cannot search by date alone. Combine it with a keyword.',
-  'note.x.listInvalid':
-    'Couldn’t read the List from that input. Paste the URL of the List’s page.',
-  'note.niconico.videoLength':
-    '“Medium (4–20 min)” cannot be set and is ignored.',
+  'note.x.period': 'You cannot search by date alone. Combine it with a keyword.',
+  'note.x.listInvalid': 'Couldn’t read the List from that input. Paste the URL of the List’s page.',
+  'note.niconico.videoLength': '“Medium (4–20 min)” cannot be set and is ignored.',
   'note.niconico.resultTypeConflict':
     'This filter has no effect on series, mylist, or user search.',
   'note.niconico.hashtagAsKeyword':
@@ -335,14 +318,12 @@ export const en = {
   'note.youtube.exclude': 'Words you exclude may still appear in the results.',
   'note.youtube.fromUser': 'Opens the in-channel search page.',
   'note.youtube.hashtag': 'Searched as an ordinary keyword.',
-  'note.youtube.mediaOnly':
-    'YouTube is video-only, so this filter is unnecessary.',
+  'note.youtube.mediaOnly': 'YouTube is video-only, so this filter is unnecessary.',
   'note.youtube.sort':
     'Popular is approximated by view count. Newest currently no longer works on YouTube.',
   'note.youtube.channelConflict':
     'This filter has no effect when combined with a user filter (in-channel search).',
-  'note.note.keywords':
-    'Some articles may contain only some of your words.',
+  'note.note.keywords': 'Some articles may contain only some of your words.',
   'note.note.exclude': 'note has no exclusion search.',
   'note.note.fromUser': 'The username is the part after @.',
   'note.note.hashtag':
@@ -353,26 +334,22 @@ export const en = {
   'note.note.sort.tagPage': "A single tag's tag page can't be sorted.",
   'note.note.resultTypeConflict':
     'This filter has no effect on creator, magazine, or membership search.',
-  'note.note.paidOnly.circle':
-    'Every membership is already paid, so this filter has no meaning.',
+  'note.note.paidOnly.circle': 'Every membership is already paid, so this filter has no meaning.',
 
   // Additional platform-specific notes
   'note.reddit.hashtag': 'Reddit has no hashtag system.',
   'note.reddit.period': 'Filtered roughly by “past day / week / month / year”.',
-  'note.reddit.untilOnly':
-    'Reddit cannot filter by an end date alone (a start date is required).',
+  'note.reddit.untilOnly': 'Reddit cannot filter by an end date alone (a start date is required).',
   'note.reddit.mediaOnly':
     'This filter is not available. Choosing “Media” under Result type gets close.',
-  'note.instagram.hashtag':
-    'Tag pages show only top posts (no latest order).',
+  'note.instagram.hashtag': 'Tag pages show only top posts (no latest order).',
   'note.instagram.multiTag':
     'With two or more hashtags this becomes a loose search rather than a tag page, and some results may include only some of the tags.',
   'note.pixiv.keywords':
     'Searches by tags. Words not in the tags won’t be found even if they’re in the body.',
   'note.pixiv.exactPhrase':
     'Matched against tags as one continuous string. Phrases with spaces are split into separate words.',
-  'note.pixiv.titleOnly':
-    'Searches titles and descriptions, not tags.',
+  'note.pixiv.titleOnly': 'Searches titles and descriptions, not tags.',
   'note.pixiv.fromUser': 'pixiv search has no user filter.',
   'note.pixiv.sort': 'Popular order works only for pixiv Premium members.',
   'note.pixiv.popular':
@@ -385,8 +362,7 @@ export const en = {
     'Finds posts that contain all your words. On the page that opens, press the “Search” button to see results.',
   'note.misskey.fromUser': 'Requires combining with a keyword.',
   'note.youtube.resultType': 'It cannot be combined with a user filter.',
-  'note.hatebu.minLikes':
-    'The number you set is used as the minimum bookmark count.',
+  'note.hatebu.minLikes': 'The number you set is used as the minimum bookmark count.',
   'note.hatebu.titleTagConflict':
     'When searching by hashtag alone, the title-only filter has no effect.',
   'note.hatebu.fromUser':
@@ -402,11 +378,11 @@ export const en = {
     'Filters by board name (e.g. sony). Set several to match any of those boards.',
   'note.animanch.keywords':
     'Searches post bodies (an experimental feature, so some may be missed).',
-  'note.animanch.titleOnly':
-    'Searches only thread titles across the full archive.',
+  'note.animanch.titleOnly': 'Searches only thread titles across the full archive.',
   'note.seiga.workType': 'Niconico Seiga can only search illustrations and manga.',
   'note.seiga.mangaSort': "Sort order can't be set when searching manga.",
-  'note.tumblr.tagSort': "Sort order can't be set when searching by hashtag alone (results are by popularity).",
+  'note.tumblr.tagSort':
+    "Sort order can't be set when searching by hashtag alone (results are by popularity).",
   'note.mastodon.keywords':
     'Only covers posts your logged-in instance knows about (your own posts, people you follow, and posts it has seen through federation).',
   'note.exclude.literal':
@@ -421,8 +397,7 @@ export const en = {
 
   // Launch panel. {name} is filled with the site name
   'launch.search': 'Search {name}',
-  'launch.bgHint':
-    'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
+  'launch.bgHint': 'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
   'launch.approxHeading': 'Partially works',
   'launch.droppedHeading': 'Not available',
   'launch.droppedBadge': '{n} not available',
@@ -439,7 +414,7 @@ export const en = {
   'bulk.selectAll': 'Select all',
   'bulk.clearAll': 'Deselect all',
   'bulk.blocked':
-    "{n} could not be opened (browsers only allow one new tab per click by default). To open them all, open your address bar's lock or tune icon, allow \"Pop-ups and redirects\", reload the page, then click again.",
+    '{n} could not be opened (browsers only allow one new tab per click by default). To open them all, open your address bar\'s lock or tune icon, allow "Pop-ups and redirects", reload the page, then click again.',
 
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
   'sum.anyOf': 'any of {v}',
@@ -476,7 +451,8 @@ export const en = {
   'ui.clearConditions': 'Clear all',
   'ui.copyLink': 'Copy URL',
   'ui.copyLinkDone': 'Copied',
-  'ui.copyLinkHint': 'Copies a URL containing all your current conditions. Bookmark or share it to reopen the same search on another device or browser.',
+  'ui.copyLinkHint':
+    'Copies a URL containing all your current conditions. Bookmark or share it to reopen the same search on another device or browser.',
   'ui.qrButton': 'QR',
   'ui.qrTitle': 'QR code',
   'ui.qrHint': 'Scan with your phone camera to open the same conditions there.',
@@ -494,7 +470,8 @@ export const en = {
   'saved.open': 'Saved searches',
   'saved.title': 'Saved searches',
   'saved.close': 'Close',
-  'saved.hint': 'Saved searches stay on this device and browser. They are lost if you clear history or site data, or open a different browser, device, or private window. To carry a single search, use “Copy URL” on the condition bar; to carry all your saved searches and history, use the export/import below.',
+  'saved.hint':
+    'Saved searches stay on this device and browser. They are lost if you clear history or site data, or open a different browser, device, or private window. To carry a single search, use “Copy URL” on the condition bar; to carry all your saved searches and history, use the export/import below.',
   'saved.empty': 'No saved searches yet. Build a search and press Save to keep it here.',
   'saved.restore': 'Load this search',
   'saved.delete': 'Delete',
@@ -508,7 +485,8 @@ export const en = {
   'saved.backup.export': 'Export',
   'saved.backup.import': 'Import',
   'saved.backup.invalid': 'Could not read this file. Choose a file exported from here.',
-  'saved.backup.confirmSummary': 'This file has {saved} saved searches and {history} history entries. Merge with what you have, or replace it?',
+  'saved.backup.confirmSummary':
+    'This file has {saved} saved searches and {history} history entries. Merge with what you have, or replace it?',
   'saved.backup.merge': 'Merge',
   'saved.backup.replace': 'Replace',
 

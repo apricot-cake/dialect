@@ -168,10 +168,7 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['手芸'], keywordsOr: '猫 犬' },
     { keywordsOr: '猫', workType: 'manga' },
   ],
-  instagram: [
-    { hashtag: 'ねこ' },
-    { terms: ['cafe', 'tokyo'], hashtag: 'cat art' },
-  ],
+  instagram: [{ hashtag: 'ねこ' }, { terms: ['cafe', 'tokyo'], hashtag: 'cat art' }],
   reddit: [
     {
       terms: ['rust', 'hello world'],
@@ -251,10 +248,7 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['猫'], exclude: '犬', subreddit: 'news4vip livejupiter' },
     { terms: ['セール'] },
   ],
-  animanch: [
-    { terms: ['ワンピース', '考察'] },
-    { terms: ['ネタバレ'], titleOnly: true },
-  ],
+  animanch: [{ terms: ['ワンピース', '考察'] }, { terms: ['ネタバレ'], titleOnly: true }],
   tumblr: [
     { hashtag: 'cat' },
     {
@@ -314,7 +308,13 @@ const CASES: Record<PlatformId, Patch[]> = {
   ],
   fantia: [
     { terms: ['猫'] },
-    { terms: ['猫'], titleOnly: true, fantiaCategory: 'illust', fantiaAudience: 'female', sort: 'top' },
+    {
+      terms: ['猫'],
+      titleOnly: true,
+      fantiaCategory: 'illust',
+      fantiaAudience: 'female',
+      sort: 'top',
+    },
     { terms: ['猫'], fantiaAudience: 'male', sort: 'new' },
   ],
 }
@@ -467,13 +467,17 @@ for (const wild of WILD) {
   }
   const gotId = result.platform?.id ?? null
   if (gotId !== wild.platform) {
-    fail(`wild: サイト誤認(期待=${wild.platform ?? 'permalink'} 実際=${gotId ?? 'permalink'}): ${wild.url}`)
+    fail(
+      `wild: サイト誤認(期待=${wild.platform ?? 'permalink'} 実際=${gotId ?? 'permalink'}): ${wild.url}`,
+    )
     continue
   }
   for (const [key, value] of Object.entries(wild.expect ?? {})) {
     const got = result.state[key as keyof QueryState]
     if (JSON.stringify(got) !== JSON.stringify(value)) {
-      fail(`wild: ${wild.url}\n    ${key} 期待=${JSON.stringify(value)} 実際=${JSON.stringify(got)}`)
+      fail(
+        `wild: ${wild.url}\n    ${key} 期待=${JSON.stringify(value)} 実際=${JSON.stringify(got)}`,
+      )
     }
   }
   for (const key of wild.truthy ?? []) {
@@ -483,7 +487,9 @@ for (const wild of WILD) {
     }
   }
   if (wild.ignoredMin !== undefined && result.ignored.length < wild.ignoredMin) {
-    fail(`wild: ${wild.url}\n    読み残しが ${wild.ignoredMin} 件以上あるはず(実際 ${result.ignored.length} 件)`)
+    fail(
+      `wild: ${wild.url}\n    読み残しが ${wild.ignoredMin} 件以上あるはず(実際 ${result.ignored.length} 件)`,
+    )
   }
 }
 
@@ -499,7 +505,9 @@ const NEGATIVE: string[] = [
 for (const input of NEGATIVE) {
   const result = parseSearchUrl(input)
   if (result) {
-    fail(`negative: 検索URLでないのに読めてしまう: ${input} → ${result.platform?.id ?? 'permalink'}`)
+    fail(
+      `negative: 検索URLでないのに読めてしまう: ${input} → ${result.platform?.id ?? 'permalink'}`,
+    )
   }
 }
 

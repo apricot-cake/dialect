@@ -1,7 +1,22 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, stripHash, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, tok, type Token } from '../urlParts'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  ParamParts,
+  part,
+  tok,
+  type Token,
+} from '../urlParts'
 import { hostMatches, isIsoDate, leftoverParams, pathSegments, tokenize } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-03調査)
@@ -74,12 +89,12 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.tagTitleCaption) {
     // タグ・タイトル・キャプションのときだけ /search?q=…&type=… エンドポイントへ。
     // type= は作品の種類が指定なし(artwork)でも常に送るので、そのときは無帰属
-    params.set('type', SEARCH_ENDPOINT_TYPE[state.workType], ...(state.workType ? (['workType'] as const) : []))
-    return [
-      lit('https://www.pixiv.net/search?q='),
-      ...encodeTokens(toks),
-      ...params.parts('&'),
-    ]
+    params.set(
+      'type',
+      SEARCH_ENDPOINT_TYPE[state.workType],
+      ...(state.workType ? (['workType'] as const) : []),
+    )
+    return [lit('https://www.pixiv.net/search?q='), ...encodeTokens(toks), ...params.parts('&')]
   }
 
   // うごくイラストは専用パスが無く(/tags/…/ugoira は「不正なリクエスト」)、
@@ -154,7 +169,11 @@ function parseUrl(url: URL): ParsedSearch | null {
     else if (/^0+users$/.test(token)) patch.pixivPopular = token as QueryState['pixivPopular']
     else if (token.startsWith('(') && token.endsWith(')')) {
       // (a OR b OR ...): スコープ限定OR(「このどれかを含む」)
-      const inner = token.slice(1, -1).split(/\s+OR\s+/i).map((s) => s.trim()).filter(Boolean)
+      const inner = token
+        .slice(1, -1)
+        .split(/\s+OR\s+/i)
+        .map((s) => s.trim())
+        .filter(Boolean)
       if (inner.length >= 2) orTerms.push(...inner)
       else terms.push(token)
     } else terms.push(token)

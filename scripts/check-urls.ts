@@ -77,7 +77,10 @@ function classify(
     return { verdict: 'ok' }
   }
   if (s === 401 || s === 403)
-    return { verdict: 'maybe', note: `HTTP ${s}: bot/ログインブロックの可能性(ブラウザでは開ける場合あり)` }
+    return {
+      verdict: 'maybe',
+      note: `HTTP ${s}: bot/ログインブロックの可能性(ブラウザでは開ける場合あり)`,
+    }
   if (s >= 300 && s < 400) return { verdict: 'maybe', note: `リダイレクト ${s}` }
   return { verdict: 'broken', note: `HTTP ${s}` }
 }
@@ -142,7 +145,8 @@ console.log(
 )
 if (broken.length) {
   console.log('\n❌ BROKEN (要修正):')
-  for (const r of broken) console.log(`  ${r.platform} [${r.sample}] ${r.status} ${r.url}  ${r.note ?? ''}`)
+  for (const r of broken)
+    console.log(`  ${r.platform} [${r.sample}] ${r.status} ${r.url}  ${r.note ?? ''}`)
 }
 console.log(
   '\n凡例: ✅=HTTP到達OK(ログイン/JSサイトは結果表示まで保証しない) / ⚠️=要ブラウザ・手動確認 / ❌=構造的な壊れ(404/400/5xx)。',

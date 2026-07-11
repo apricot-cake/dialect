@@ -1,79 +1,80 @@
-@import "tailwindcss";
-@import "@fontsource-variable/geist";
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: 'Geist Variable', sans-serif;
 
-    /* デザイン(Dialect.dc.html)のトークンをTailwindユーティリティへ渡す */
-    --color-bg: var(--bg);
-    --color-fg: var(--fg);
-    --color-card: var(--card);
-    --color-tray: var(--tray);
-    --color-field: var(--field);
-    --color-muted: var(--muted);
-    --color-faint: var(--faint);
-    --color-label: var(--label);
-    --color-border: var(--border);
-    --color-secondary: var(--secondary);
-    --color-primary: var(--primary);
-    --color-primary-fg: var(--primary-fg);
-    --color-accent: var(--accent);
+  /* デザイン(Dialect.dc.html)のトークンをTailwindユーティリティへ渡す */
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-card: var(--card);
+  --color-tray: var(--tray);
+  --color-field: var(--field);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-label: var(--label);
+  --color-border: var(--border);
+  --color-secondary: var(--secondary);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
 }
 
 :root {
-    /* デザイン(Dialect.dc.html)のライトテーマ。薄く青紫(272)を差したニュートラル。
+  /* デザイン(Dialect.dc.html)のライトテーマ。薄く青紫(272)を差したニュートラル。
        アクセントは落ち着いたスレートブルー1色で、ブランド色(検索ボタン)と競合させない */
-    --bg: oklch(0.995 0.002 272);
-    --fg: oklch(0.21 0.012 272);
-    --card: oklch(1 0 0);
-    --tray: oklch(0.975 0.004 272);
-    --field: oklch(1 0 0);
-    --muted: oklch(0.552 0.02 272);
-    --faint: oklch(0.7 0.015 272);
-    /* 太字見出し/ピッカー行タイトル専用。--fg(ニアブラック)だと太字で真っ黒に
+  --bg: oklch(0.995 0.002 272);
+  --fg: oklch(0.21 0.012 272);
+  --card: oklch(1 0 0);
+  --tray: oklch(0.975 0.004 272);
+  --field: oklch(1 0 0);
+  --muted: oklch(0.552 0.02 272);
+  --faint: oklch(0.7 0.015 272);
+  /* 太字見出し/ピッカー行タイトル専用。--fg(ニアブラック)だと太字で真っ黒に
        見えてグレー基調から浮くため、mutedを少し混ぜて軟らかくする。両テーマ追従 */
-    --label: color-mix(in oklch, var(--fg) 72%, var(--muted));
-    --border: oklch(0.912 0.006 272);
-    --secondary: oklch(0.965 0.005 272);
-    --primary: oklch(0.25 0.012 272);
-    --primary-fg: oklch(0.99 0.01 272);
-    --accent: #4d5772;
-    /* アクセントをアイコン・チェックなど前景として使うときの色。
+  --label: color-mix(in oklch, var(--fg) 72%, var(--muted));
+  --border: oklch(0.912 0.006 272);
+  --secondary: oklch(0.965 0.005 272);
+  --primary: oklch(0.25 0.012 272);
+  --primary-fg: oklch(0.99 0.01 272);
+  --accent: #4d5772;
+  /* アクセントをアイコン・チェックなど前景として使うときの色。
        ダークでは #4d5772 が地に沈むので、そこだけ明るい変種に差し替える */
-    --accent-bright: #4d5772;
-    /* 追加済み条件の行。「選択済み」はカチッと締まった印象にしたいので、影で浮かせず
+  --accent-bright: #4d5772;
+  /* 追加済み条件の行。「選択済み」はカチッと締まった印象にしたいので、影で浮かせず
        アクセントの塗り+くっきりした輪郭線で表す。線は--borderと混ぜず透明と混ぜて
        色相を保ったまま濃くする */
-    --picker-added: color-mix(in oklch, var(--accent-bright) 10%, transparent);
-    --picker-added-border: color-mix(in oklch, var(--accent-bright) 55%, transparent);
+  --picker-added: color-mix(in oklch, var(--accent-bright) 10%, transparent);
+  --picker-added-border: color-mix(in oklch, var(--accent-bright) 55%, transparent);
 }
 
 .dark {
-    /* 漆黒を避けたソフトダーク。bg < tray < card < field の明度差で面を分ける */
-    --bg: oklch(0.24 0.006 272);
-    --fg: oklch(0.985 0.002 272);
-    --card: oklch(0.305 0.008 272);
-    --tray: oklch(0.275 0.007 272);
-    --field: oklch(0.35 0.01 272);
-    --muted: oklch(0.72 0.015 272);
-    --faint: oklch(0.6 0.015 272);
-    --border: oklch(1 0 0 / 0.13);
-    --secondary: oklch(0.37 0.012 272);
-    --primary: oklch(0.92 0.008 272);
-    --primary-fg: oklch(0.24 0.01 272);
-    /* 暗い地に沈まない明るいスレートブルー。前景アクセント(チェック・行の塗り)に使う */
-    --accent-bright: oklch(0.78 0.06 268);
-    --picker-added: color-mix(in oklch, var(--accent-bright) 16%, transparent);
-    --picker-added-border: color-mix(in oklch, var(--accent-bright) 60%, transparent);
+  /* 漆黒を避けたソフトダーク。bg < tray < card < field の明度差で面を分ける */
+  --bg: oklch(0.24 0.006 272);
+  --fg: oklch(0.985 0.002 272);
+  --card: oklch(0.305 0.008 272);
+  --tray: oklch(0.275 0.007 272);
+  --field: oklch(0.35 0.01 272);
+  --muted: oklch(0.72 0.015 272);
+  --faint: oklch(0.6 0.015 272);
+  --border: oklch(1 0 0 / 0.13);
+  --secondary: oklch(0.37 0.012 272);
+  --primary: oklch(0.92 0.008 272);
+  --primary-fg: oklch(0.24 0.01 272);
+  /* 暗い地に沈まない明るいスレートブルー。前景アクセント(チェック・行の塗り)に使う */
+  --accent-bright: oklch(0.78 0.06 268);
+  --picker-added: color-mix(in oklch, var(--accent-bright) 16%, transparent);
+  --picker-added-border: color-mix(in oklch, var(--accent-bright) 60%, transparent);
 }
 
 @layer base {
   * {
     @apply border-border;
-    }
-  html, body {
+  }
+  html,
+  body {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -81,69 +82,129 @@
        (画面2→条件へ戻る操作が下スワイプのため)。全面固定レイアウトで
        ページ自体はスクロールしないので、引っ張り更新・端の連鎖を止める */
     overscroll-behavior: none;
-    }
+  }
   html {
     @apply font-sans;
-    }
+  }
   body {
     @apply bg-bg text-fg;
     font-size: 15px;
     -webkit-font-smoothing: antialiased;
-    }
+  }
   ::-webkit-scrollbar {
     width: 9px;
     height: 9px;
-    }
+  }
   ::-webkit-scrollbar-thumb {
     background: color-mix(in oklch, currentColor 18%, transparent);
     border-radius: 999px;
-    }
+  }
   ::-webkit-scrollbar-track {
     background: transparent;
-    }
+  }
   input::placeholder {
     color: var(--faint);
     opacity: 1;
-    }
-  button, input, select, kbd {
+  }
+  button,
+  input,
+  select,
+  kbd {
     font: inherit;
-    }
+  }
 }
 
 /* ---- 新デザインのアニメーション ---- */
 @keyframes dl-drop {
-  from { opacity: 0; transform: translateY(-14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-@keyframes dl-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes dl-bob { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
-@keyframes dl-bob-up { 0%, 100% { transform: translateY(1.5px); } 50% { transform: translateY(-1.5px); } }
+@keyframes dl-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dl-bob {
+  0%,
+  100% {
+    transform: translateY(-1.5px);
+  }
+  50% {
+    transform: translateY(1.5px);
+  }
+}
+@keyframes dl-bob-up {
+  0%,
+  100% {
+    transform: translateY(1.5px);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
 
 /* ボタン・外部リンクの共通トランジション+ホバースケール。
    スイッチと data-noscale(独自のホバー演出を持つ要素)は除外する */
-button, a[target] {
-  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), background 140ms ease, filter 140ms ease;
+button,
+a[target] {
+  transition:
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 140ms ease,
+    filter 140ms ease;
 }
-button:not([role="switch"]):not([data-noscale]):hover, a[target]:hover { transform: scale(1.04); }
-button:not([role="switch"]):not([data-noscale]):active, a[target]:active { transform: scale(0.97); }
+button:not([role='switch']):not([data-noscale]):hover,
+a[target]:hover {
+  transform: scale(1.04);
+}
+button:not([role='switch']):not([data-noscale]):active,
+a[target]:active {
+  transform: scale(0.97);
+}
 
 /* ホバーで即時に出る説明ツールチップ(ブラウザ標準title の遅延なし版) */
-[data-tip] { position: relative; }
+[data-tip] {
+  position: relative;
+}
 [data-tip]:hover::after {
   content: attr(data-tip);
-  position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
-  width: max-content; max-width: 250px; white-space: normal; text-align: left;
-  padding: 10px 12px; border-radius: 12px;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 250px;
+  white-space: normal;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 12px;
   background: color-mix(in oklch, var(--card) 88%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid var(--border); color: var(--muted);
-  font-size: 11.5px; line-height: 1.45; font-weight: 500;
-  box-shadow: 0 16px 44px oklch(0 0 0 / 0.18); z-index: 200; pointer-events: none;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.45;
+  font-weight: 500;
+  box-shadow: 0 16px 44px oklch(0 0 0 / 0.18);
+  z-index: 200;
+  pointer-events: none;
   animation: dl-fade 160ms ease both;
 }
 
 /* ホバー中のバーは前面へ(対応ポップオーバーが下のバーに潜らないように) */
-[data-bar]:hover { z-index: 45 !important; }
+[data-bar]:hover {
+  z-index: 45 !important;
+}
 
 /* ガラス面(ポップオーバー・メニュー・ツールチップ共通の質感) */
 .dl-glass {
@@ -156,39 +217,72 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
 
 /* 統一条件バーのシェル(検索バーと各条件が共有するピル型の面) */
 .dl-bar {
-  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; min-height: 58px;
-  padding: 8px 14px 8px 22px; color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  min-height: 58px;
+  padding: 8px 14px 8px 22px;
+  color: var(--fg);
   background: var(--card);
-  border: 1px solid var(--border); border-radius: 999px;
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 18px oklch(0 0 0 / 0.04);
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 0.05),
+    0 6px 18px oklch(0 0 0 / 0.04);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 /* ×はPCでは外側(左スペーサーと対称)に置く。バー内側版は狭幅でだけ出す */
-.dl-remove-inner { display: none; }
+.dl-remove-inner {
+  display: none;
+}
 /* ホバー時は影で浮かせるだけにする。以前はここで scale(1.014) していたが、
    拡大された祖先の内側に描かれるツールチップ・対応ポップが分数倍で再ラスタライズ
    されて文字が滲むため、スケールはやめて影の変化だけで表現する */
 .dl-bar:hover {
-  box-shadow: 0 6px 16px oklch(0 0 0 / 0.09), 0 16px 36px oklch(0 0 0 / 0.06);
+  box-shadow:
+    0 6px 16px oklch(0 0 0 / 0.09),
+    0 16px 36px oklch(0 0 0 / 0.06);
 }
 
 /* 「条件を追加」「すべてクリア」ボタン: スケールではなく浮き上がり(data-noscale とセットで使う) */
-.dl-add, .dl-clear { transition: box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1); }
-.dl-add:hover, .dl-clear:hover { box-shadow: 0 8px 22px oklch(0 0 0 / 0.12); transform: translateY(-1px); }
+.dl-add,
+.dl-clear {
+  transition:
+    box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dl-add:hover,
+.dl-clear:hover {
+  box-shadow: 0 8px 22px oklch(0 0 0 / 0.12);
+  transform: translateY(-1px);
+}
 
 /* カレンダーのヘッダー(年月表示)ボタンのホバー */
-.dl-calhead:hover { background: var(--secondary); }
+.dl-calhead:hover {
+  background: var(--secondary);
+}
 
 /* 条件追加モーダルの行。ホバーでわずかに拡大する(data-noscale で共通スケールは切り、
    ここで専用の控えめなスケールをかける) */
 .dl-pick-row {
-  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background 130ms ease,
-    box-shadow 150ms ease, border-color 150ms ease;
+  transition:
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 130ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
 }
-.dl-pick-row:hover { transform: scale(1.02); }
+.dl-pick-row:hover {
+  transform: scale(1.02);
+}
 
 /* ドロップダウン・ポップオーバーの出現アニメーション */
-.dl-drop-in { animation: dl-drop 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.dl-drop-in {
+  animation: dl-drop 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 /* 条件追加モーダル(Base UI Dialog)の開閉トランジション。
    開きの初期状態はネイティブの @starting-style で与える。Base UI の
@@ -201,13 +295,19 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   transition: opacity 300ms ease;
 }
 @starting-style {
-  .dl-scrim { opacity: 0; }
+  .dl-scrim {
+    opacity: 0;
+  }
 }
-.dl-scrim[data-ending-style] { opacity: 0; }
+.dl-scrim[data-ending-style] {
+  opacity: 0;
+}
 .dl-sheet {
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
-  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 260ms ease;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 260ms ease;
 }
 @starting-style {
   .dl-sheet {
@@ -227,12 +327,24 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
    ::-webkit-scrollbar を丸ごと無視して増減ボタン付きの標準バーを出す。そこで標準
    プロパティは webkit 擬似を持たない環境(Firefox等)だけに @supports で限定する */
 @supports not selector(::-webkit-scrollbar) {
-  .dl-modal-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--faint) 60%, transparent) transparent; }
+  .dl-modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--faint) 60%, transparent) transparent;
+  }
 }
-.dl-modal-scroll::-webkit-scrollbar { width: 12px; }
+.dl-modal-scroll::-webkit-scrollbar {
+  width: 12px;
+}
 /* Chrome はバーをカスタムすると上下に増減ボタン(▲▼)が出て角丸に食い込むため消す */
-.dl-modal-scroll::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
-.dl-modal-scroll::-webkit-scrollbar-track { background: transparent; margin: 18px 0; }
+.dl-modal-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.dl-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 18px 0;
+}
 .dl-modal-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in oklch, var(--faint) 55%, transparent);
   border: 3px solid transparent;
@@ -247,7 +359,9 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
    タップ時の mouseenter で出てしまい説明文に被さるうえ、狭幅ではバッジ列が
    行の左端からはみ出す */
 @media (hover: none) {
-  .dl-pick-support { display: none; }
+  .dl-pick-support {
+    display: none;
+  }
 }
 
 /* ---- モバイル / 狭幅 ---- */
@@ -255,55 +369,113 @@ button:not([role="switch"]):not([data-noscale]):active, a[target]:active { trans
   /* 狭幅でもPCと同じ「アイコン+ラベル+入力欄」の1行構成が基本。
      バー内部の余白・最小高さを詰める。入力欄のフォントは iOS の
      フォーカス時ズーム回避のため 16px のまま触らない */
-  .dl-bar { flex-wrap: wrap !important; row-gap: 7px !important; min-height: 52px !important; padding-top: 9px !important; padding-bottom: 9px !important; padding-left: 18px !important; }
+  .dl-bar {
+    flex-wrap: wrap !important;
+    row-gap: 7px !important;
+    min-height: 52px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+    padding-left: 18px !important;
+  }
   /* 999pxは高さの半分にクランプされるため、折り返して背が高くなったバーほど
      不自然に丸くなる(団子状)。1行時の丸み(52pxの半分=26px)に固定し、
      何段に折り返しても丸みの強さを一定に保つ */
-  .dl-bar { border-radius: 26px !important; }
+  .dl-bar {
+    border-radius: 26px !important;
+  }
   /* width:0 で入力欄の固有幅(数値inputはsize属性が効かず約150px)を消す。
      実際の幅は flex-grow が広げるので、見た目は空きスペースいっぱいのまま */
-  .dl-bar input { min-width: 0 !important; width: 0 !important; }
-  .dl-bar-label { font-size: 14px !important; }
+  .dl-bar input {
+    min-width: 0 !important;
+    width: 0 !important;
+  }
+  .dl-bar-label {
+    font-size: 14px !important;
+  }
   /* 削除ボタン(右30px)との対称用の左スペーサーは畳み、40px(320px幅の12%)をバーへ返す */
-  .dl-bar-spacer { display: none !important; }
+  .dl-bar-spacer {
+    display: none !important;
+  }
   /* ×を外側の専用スロットからバー内側の右端へ移す。左右非対称(左スペーサー無し+
      右に×だけの列)だとバー本体が中心からずれるため、外側の列ごと畳んでバーへ幅を
      返し、×はバーの中身として一緒に中央寄せされるようにする */
-  .dl-remove-outer-slot { display: none !important; }
-  .dl-remove-inner { display: inline-flex !important; }
+  .dl-remove-outer-slot {
+    display: none !important;
+  }
+  .dl-remove-inner {
+    display: inline-flex !important;
+  }
   /* placeholderは入力例なので、収まらない分は…で切って1行を守る */
-  .dl-bar input::placeholder { text-overflow: ellipsis; }
+  .dl-bar input::placeholder {
+    text-overflow: ellipsis;
+  }
   /* 入力欄(ウィジェット)は中身の最小幅より縮まない=縮めて文字を壊す代わりに、
      収まらないバーだけ2行目へ自然に折り返す(1行が基本のフォールバック)。
      子(ChipsField等の外枠)にはPC用の min-w-0 が付いていて min-content の伝播を
      断ち切るため、直下の枠にも同じ指定を通す */
-  .dl-bar-widget, .dl-bar-widget > div { min-width: min-content !important; }
+  .dl-bar-widget,
+  .dl-bar-widget > div {
+    min-width: min-content !important;
+  }
   /* 期間だけは常に折り返す: 日付ボタン2つは本質的に幅広で、カレンダーの並びも安定させたい */
-  [data-bar="period"] .dl-bar-widget { flex-basis: 100% !important; }
+  [data-bar='period'] .dl-bar-widget {
+    flex-basis: 100% !important;
+  }
   /* 折り返した期間バーの中で、日付ボタン2つがさらに縦積みで3段になるのを防ぎ、
      横並びのまま2段(ラベル+日付)に収める。表記自体もDateButton側で狭幅用の
      簡潔な数字表記に切り替え済み。それでも収まらない極端なケースの保険として
      ボタン内テキストはtruncateで省略(min-w-0/truncateはコンポーネント側)。
      汎用ルール(直下の子はmin-content未満に縮まない)は期間には逆効果なので、
      widget自体と期間行の両方で縮小を許可してバー幅に収める */
-  [data-bar="period"] .dl-bar-widget, .dl-bar-widget > .dl-period-row { min-width: 0 !important; }
-  .dl-period-row { flex-wrap: nowrap !important; gap: 6px !important; }
-  .dl-date-btn { flex: 0 1 auto; min-width: 0 !important; padding-left: 8px !important; padding-right: 8px !important; }
+  [data-bar='period'] .dl-bar-widget,
+  .dl-bar-widget > .dl-period-row {
+    min-width: 0 !important;
+  }
+  .dl-period-row {
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+  }
+  .dl-date-btn {
+    flex: 0 1 auto;
+    min-width: 0 !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
   /* カレンダーアイコンはバー自体のラベルアイコンと重複するので、狭幅では省いて
      日付テキストの取り分を増やす(横並び2列を保つための優先順位) */
-  .dl-date-btn svg { display: none !important; }
+  .dl-date-btn svg {
+    display: none !important;
+  }
   /* バー同士の間隔も詰める(条件を何本も立てると縦が伸びるため) */
-  [data-bars-list] { gap: 11px !important; }
-  .dl-sup { display: none !important; }
-  .dl-tagline { display: none !important; }
+  [data-bars-list] {
+    gap: 11px !important;
+  }
+  .dl-sup {
+    display: none !important;
+  }
+  .dl-tagline {
+    display: none !important;
+  }
   /* 固定ヘッダーの下端は約52px。上余白96pxは空きすぎなので詰める */
-  [data-bars-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 74px !important; }
-  [data-links-scroll] { padding-left: 14px !important; padding-right: 14px !important; padding-top: 118px !important; }
+  [data-bars-scroll] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-top: 74px !important;
+  }
+  [data-links-scroll] {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-top: 118px !important;
+  }
   /* 狭幅ではヘッダー(ロゴ+右クラスタ)がほぼ全幅を占め、中央のScrollUpPillと
      同じ高さで重なる(右クラスタにEnglish等の文言があり折り返さないため)。
      ヘッダー下端(約54px)より下へ逃がす。ヒント枠側のpadding-topも合わせて広げてある */
-  [data-scroll-up-pill] { top: 60px !important; }
+  [data-scroll-up-pill] {
+    top: 60px !important;
+  }
 }
 @media (max-width: 380px) {
-  .dl-bar { padding-left: 16px !important; }
+  .dl-bar {
+    padding-left: 16px !important;
+  }
 }

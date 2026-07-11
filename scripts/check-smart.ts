@@ -19,12 +19,7 @@
  *
  * Run: npm run check:smart   (executed directly via tsx)
  */
-import {
-  mergeFragments,
-  parseCountWord,
-  parsePeriodWord,
-  parseSmartInput,
-} from '@/core/smartInput'
+import { mergeFragments, parseCountWord, parsePeriodWord, parseSmartInput } from '@/core/smartInput'
 import { suggestFor } from '@/core/smartSuggest'
 import { defaultState } from '@/core/concepts'
 

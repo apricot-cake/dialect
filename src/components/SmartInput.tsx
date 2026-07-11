@@ -40,10 +40,7 @@ export function SmartInput({
   const fragments = useMemo(() => parseSmartInput(input, now), [input, now])
   const filled = hasFragments(fragments)
   // Preview against a blank state: shows exactly what this line adds
-  const previewState = useMemo(
-    () => mergeFragments(defaultState(), fragments),
-    [fragments],
-  )
+  const previewState = useMemo(() => mergeFragments(defaultState(), fragments), [fragments])
   const previewConcepts = activeConcepts(previewState)
   const colors = conceptColors(previewConcepts, dark)
   const suggestions = useMemo(
@@ -75,7 +72,17 @@ export function SmartInput({
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="dl-bar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--faint)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="shrink-0"
+        >
           <circle cx="11" cy="11" r="7" />
           <path d="m21 21-4.3-4.3" />
         </svg>
@@ -116,7 +123,10 @@ export function SmartInput({
                 key={concept}
                 className="inline-flex max-w-full items-baseline gap-1 rounded-[8px] border border-border bg-card px-2 py-0.5"
               >
-                <span className="font-semibold whitespace-nowrap" style={{ color: colors.get(concept) }}>
+                <span
+                  className="font-semibold whitespace-nowrap"
+                  style={{ color: colors.get(concept) }}
+                >
                   {t(CONCEPT_MAP[concept].labelKey)}
                 </span>
                 <span className="min-w-0 break-words text-fg">{s}</span>

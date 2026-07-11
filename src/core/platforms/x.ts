@@ -1,7 +1,15 @@
 import type { ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
 import { hasPositiveTerm, stripAt, stripHash, stripQuerySyntax, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  part,
+  quotedTermTokens,
+  tok,
+  type Token,
+} from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -76,7 +84,8 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.linksOnly) toks.push(tok('filter:links', 'linksOnly'))
   if (state.verifiedOnly) toks.push(tok('filter:blue_verified', 'verifiedOnly'))
   if (state.excludeReplies) toks.push(tok('-filter:replies', 'excludeReplies'))
-  if (state.minLikes.trim()) toks.push(tok(`min_faves:${stripQuerySyntax(state.minLikes.trim())}`, 'minLikes'))
+  if (state.minLikes.trim())
+    toks.push(tok(`min_faves:${stripQuerySyntax(state.minLikes.trim())}`, 'minLikes'))
   if (state.minReposts.trim()) {
     toks.push(tok(`min_retweets:${stripQuerySyntax(state.minReposts.trim())}`, 'minReposts'))
   }
@@ -140,7 +149,8 @@ function parseUrl(url: URL): ParsedSearch | null {
       else ignored.push(token)
     } else if (token.startsWith('lang:')) {
       const code = token.slice('lang:'.length)
-      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code))
+        patch.language = code as PostLanguage
       else ignored.push(token)
     } else if (token.startsWith('(') && token.endsWith(')')) {
       // (to:a OR to:b)=宛先 / (@a OR @b)=メンション。それ以外のグループは読めない
@@ -153,7 +163,10 @@ function parseUrl(url: URL): ParsedSearch | null {
         toUsers.push(...inner.map((p) => p.slice('to:'.length)))
       } else if (inner.length > 0 && inner.every((p) => p.startsWith('@'))) {
         mentions.push(...inner.map((p) => p.slice(1)))
-      } else if (inner.length >= 2 && inner.every((p) => !p.includes(':') && !p.startsWith('@') && !p.startsWith('-'))) {
+      } else if (
+        inner.length >= 2 &&
+        inner.every((p) => !p.includes(':') && !p.startsWith('@') && !p.startsWith('-'))
+      ) {
         // (a OR b OR ...): スコープ限定OR(「このどれかを含む」)。to:/@ 以外の素の語だけの
         // グループをkeywordsOrとして読む
         orTerms.push(...inner)

@@ -13,8 +13,7 @@ export const ja = {
   'concept.terms.removeTerm': 'この語を外す',
   'concept.exactPhrase.label': '完全一致で探す',
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
-  'concept.exactPhrase.help':
-    '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
+  'concept.exactPhrase.help': '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
   'concept.keywordsOr.label': 'このどれかを含む',
   'concept.keywordsOr.placeholder': '例: 犬',
   'concept.keywordsOr.help':
@@ -23,11 +22,9 @@ export const ja = {
   'concept.exclude.placeholder': '例: 広告',
   'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',
   'concept.titleOnly.label': 'タイトルだけで探す',
-  'concept.titleOnly.help':
-    '本文ではなく、タイトルにキーワードを含む投稿だけを探します',
+  'concept.titleOnly.help': '本文ではなく、タイトルにキーワードを含む投稿だけを探します',
   'concept.exactTag.label': 'タグ完全一致',
-  'concept.exactTag.help':
-    '検索語とぴったり同じタグがついた作品だけを探します（pixivのみ対応）',
+  'concept.exactTag.help': '検索語とぴったり同じタグがついた作品だけを探します（pixivのみ対応）',
   'concept.tagTitleCaption.label': 'タグ・タイトル・キャプションで探す',
   'concept.tagTitleCaption.help':
     'タグだけでなく、タイトルと説明文（キャプション）も対象にして探します。ふつうのタグ検索より広い範囲がヒットします（pixivのみ対応）',
@@ -41,12 +38,10 @@ export const ja = {
     '指定したユーザーの投稿を検索結果から除きます。ユーザー名に@はつけません',
   'concept.toUser.label': 'このユーザー宛ての返信だけ',
   'concept.toUser.placeholder': '例: nhk_news',
-  'concept.toUser.help':
-    '指定したユーザーに宛てた返信だけを探します。ユーザー名に@はつけません',
+  'concept.toUser.help': '指定したユーザーに宛てた返信だけを探します。ユーザー名に@はつけません',
   'concept.mentionsUser.label': 'このユーザーへのメンションだけ',
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
-  'concept.mentionsUser.help':
-    '指定したユーザーへのメンションを含む投稿だけを探します',
+  'concept.mentionsUser.help': '指定したユーザーへのメンションを含む投稿だけを探します',
   'concept.excludeMentions.label': 'このユーザーへのメンションを除く',
   'concept.excludeMentions.placeholder': '例: user.bsky.social',
   'concept.excludeMentions.help':
@@ -57,8 +52,7 @@ export const ja = {
     '指定したコミュニティ(Redditのsubreddit、5ちゃんねるの板)の中の投稿だけを探します。名前にr/はつけません',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
-  'concept.domain.help':
-    '指定したサイトへのリンクを含む投稿だけを探します',
+  'concept.domain.help': '指定したサイトへのリンクを含む投稿だけを探します',
   'concept.excludeDomain.label': 'このサイトへのリンクを除く',
   'concept.excludeDomain.placeholder': '例: nhk.or.jp',
   'concept.excludeDomain.help':
@@ -77,8 +71,7 @@ export const ja = {
     'Xの「リスト」（登録したアカウントのまとまり）の投稿だけを探します。リストのURLかIDを貼ってください',
   'concept.hashtag.label': 'ハッシュタグ',
   'concept.hashtag.placeholder': '例: 読書記録',
-  'concept.hashtag.help':
-    '指定したハッシュタグがついた投稿を探します。#はつけません',
+  'concept.hashtag.help': '指定したハッシュタグがついた投稿を探します。#はつけません',
   'concept.hashtagOr.label': 'このハッシュタグのどれかを含む',
   'concept.hashtagOr.placeholder': '例: cat',
   'concept.hashtagOr.help':
@@ -88,8 +81,7 @@ export const ja = {
   'concept.excludeHashtag.help':
     '指定したハッシュタグがついた投稿を検索結果から除きます（Blueskyのみ対応）。#はつけません',
   'concept.period.label': '期間',
-  'concept.period.help':
-    '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
+  'concept.period.help': '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
   'concept.mediaOnly.label': '画像・動画つきの投稿だけ',
   'concept.mediaOnly.help': '画像または動画がついた投稿だけに絞り込みます',
   'concept.videoOnly.label': '動画つきの投稿だけ',
@@ -102,7 +94,8 @@ export const ja = {
   'concept.hdOnly.label': 'HDの動画だけ',
   'concept.hdOnly.help': 'YouTubeで、HD画質の動画だけに絞り込みます',
   'concept.captionsOnly.label': '字幕つきの動画だけ',
-  'concept.captionsOnly.help': 'YouTubeで、字幕（クローズドキャプション）がついた動画だけに絞り込みます',
+  'concept.captionsOnly.help':
+    'YouTubeで、字幕（クローズドキャプション）がついた動画だけに絞り込みます',
   'concept.creativeCommons.label': 'クリエイティブ・コモンズだけ',
   'concept.creativeCommons.help':
     'YouTubeで、クリエイティブ・コモンズ・ライセンス（条件付きで再利用が許可された動画）の動画だけに絞り込みます',
@@ -138,16 +131,13 @@ export const ja = {
     'Blueskyで、自分がフォローしているアカウントの投稿だけに絞り込みます',
   'concept.minLikes.label': '最低いいね数',
   'concept.minLikes.placeholder': '例: 100',
-  'concept.minLikes.help':
-    'いいね数が指定した数以上の投稿だけに絞り込みます',
+  'concept.minLikes.help': 'いいね数が指定した数以上の投稿だけに絞り込みます',
   'concept.minReposts.label': '最低リポスト数',
   'concept.minReposts.placeholder': '例: 50',
-  'concept.minReposts.help':
-    'リポスト数が指定した数以上の投稿だけに絞り込みます',
+  'concept.minReposts.help': 'リポスト数が指定した数以上の投稿だけに絞り込みます',
   'concept.minReplies.label': '最低返信数',
   'concept.minReplies.placeholder': '例: 10',
-  'concept.minReplies.help':
-    '返信(リプライ)数が指定した数以上の投稿だけに絞り込みます',
+  'concept.minReplies.help': '返信(リプライ)数が指定した数以上の投稿だけに絞り込みます',
   'concept.language.label': '投稿の言語',
   'concept.language.none': '指定なし',
   'concept.language.ja': '日本語',
@@ -164,8 +154,7 @@ export const ja = {
   'concept.language.hi': 'ヒンディー語',
   'concept.language.th': 'タイ語',
   'concept.language.id': 'インドネシア語',
-  'concept.language.help':
-    '投稿が書かれている言語で絞り込みます（X・Blueskyのみ対応）',
+  'concept.language.help': '投稿が書かれている言語で絞り込みます（X・Blueskyのみ対応）',
   'concept.workType.label': '作品の種類',
   'concept.workType.none': '指定なし',
   'concept.workType.illust': 'イラスト',
@@ -297,10 +286,13 @@ export const ja = {
 
   // 複数プラットフォーム共通の注記
   'note.loose.and': '入力した言葉の一部だけを含む投稿も混ざることがあります',
-  'note.exactPhrase.dropped': '完全一致では探せません。ことばで探したいときは、キーワードに入れてください',
-  'note.exact.substring': 'つながった文字列のまま探します。スペースを含む語句は、語ごとの絞り込みに分かれます',
+  'note.exactPhrase.dropped':
+    '完全一致では探せません。ことばで探したいときは、キーワードに入れてください',
+  'note.exact.substring':
+    'つながった文字列のまま探します。スペースを含む語句は、語ごとの絞り込みに分かれます',
   'note.titleOnly.needsWords': 'キーワードか完全一致のことばと組み合わせたときだけ使えます',
-  'note.exact.unreliable': '完全一致で探しますが、言葉がバラバラに含まれる投稿も混ざることがあります',
+  'note.exact.unreliable':
+    '完全一致で探しますが、言葉がバラバラに含まれる投稿も混ざることがあります',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.nosort': '並び順は指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
@@ -310,15 +302,16 @@ export const ja = {
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
   'note.x.listInvalid': 'リストを読み取れませんでした。リストのページのURLを貼り付けてください',
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
-  'note.niconico.resultTypeConflict': 'シリーズ・マイリスト・ユーザー検索では、この絞り込みは使えません',
-  'note.niconico.hashtagAsKeyword': 'タグ専用ページが無いため、ふつうのキーワードとして検索されます',
+  'note.niconico.resultTypeConflict':
+    'シリーズ・マイリスト・ユーザー検索では、この絞り込みは使えません',
+  'note.niconico.hashtagAsKeyword':
+    'タグ専用ページが無いため、ふつうのキーワードとして検索されます',
   'note.bluesky.fromUser':
     'ユーザー名は「user.bsky.social」の形式です。複数指定はスペース区切りで、いずれか一致で判定します',
   'note.bluesky.domainMulti':
     'ドメインは「nhk.or.jp」のように入力します。複数指定はスペース区切りで、いずれか一致で判定します',
   'note.bluesky.peopleConflict': 'アカウント検索では、この絞り込みは使えません',
-  'note.bluesky.followingOnly':
-    'フォロー中かどうかは、リンクを開くBlueskyアカウントに依存します',
+  'note.bluesky.followingOnly': 'フォロー中かどうかは、リンクを開くBlueskyアカウントに依存します',
   'note.bluesky.repliesConflict':
     '「リプライを除く」と同時に選ぶと、リプライを除く方が優先されます',
   'note.youtube.exactPhrase': '完全一致で探しますが、言葉がバラバラに含まれる投稿も多く混ざります',
@@ -338,54 +331,71 @@ export const ja = {
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
   'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
   'note.note.sort.tagPage': '単一タグのタグページでは並び順を指定できません',
-  'note.note.resultTypeConflict': 'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
+  'note.note.resultTypeConflict':
+    'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
   'note.note.paidOnly.circle': 'メンバーシップはすべて有料のため、この絞り込みは意味を持ちません',
 
   // 追加プラットフォーム固有の注記
   'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
   'note.reddit.period': 'おおまかに「1日以内/1週間/1か月/1年以内」で絞り込みます',
   'note.reddit.untilOnly': 'Redditは「いつまで」だけの期間を指定できません(「いつから」が必要です)',
-  'note.reddit.mediaOnly': 'この絞り込みはできません。「探すものの種類」で「メディア」を選ぶと近いことができます',
+  'note.reddit.mediaOnly':
+    'この絞り込みはできません。「探すものの種類」で「メディア」を選ぶと近いことができます',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
   'note.instagram.multiTag':
     'ハッシュタグを2つ以上指定すると、タグページではなくゆるい検索になり、一部のタグだけの投稿も混ざります',
   'note.pixiv.keywords': 'タグから検索します。タグにない言葉は、本文にあっても見つかりません',
-  'note.pixiv.exactPhrase': 'タグへの部分一致として、つながったまま探します。スペースを含む語句は語ごとに分かれます',
+  'note.pixiv.exactPhrase':
+    'タグへの部分一致として、つながったまま探します。スペースを含む語句は語ごとに分かれます',
   'note.pixiv.titleOnly': 'タグではなく、タイトルと説明文から探します',
   'note.pixiv.fromUser': 'pixivの検索にはユーザー指定がありません',
   'note.pixiv.sort': '人気順はpixivプレミアム会員のみ有効です',
-  'note.pixiv.popular': '「◯◯users入り」タグで擬似的に人気作を絞り込みます。ファンが手動で付けるタグのため、付いていない人気作は漏れることがあります',
-  'note.pixiv.r18Login': 'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
-  'note.pixiv.smodeConflict': 'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
-  'note.misskey.keywords': '入力した言葉をすべて含む投稿を探します。開いたページで「検索」ボタンを押すと結果が出ます',
+  'note.pixiv.popular':
+    '「◯◯users入り」タグで擬似的に人気作を絞り込みます。ファンが手動で付けるタグのため、付いていない人気作は漏れることがあります',
+  'note.pixiv.r18Login':
+    'R18作品の表示にはpixivへのログインが必要です（未ログインだと結果に出ません）',
+  'note.pixiv.smodeConflict':
+    'pixivでは検索対象を1つしか指定できないため、他の指定（タイトルだけ／完全一致）が優先されてこの条件は送られません',
+  'note.misskey.keywords':
+    '入力した言葉をすべて含む投稿を探します。開いたページで「検索」ボタンを押すと結果が出ます',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です',
   'note.youtube.resultType': 'ユーザー指定との併用はできません',
   'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
-  'note.hatebu.titleTagConflict': 'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
-  'note.hatebu.fromUser': 'ブックマーク内検索は自分自身のブックマークだけが対象で、他のユーザーの投稿を指定して探すことはできません',
+  'note.hatebu.titleTagConflict':
+    'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
+  'note.hatebu.fromUser':
+    'ブックマーク内検索は自分自身のブックマークだけが対象で、他のユーザーの投稿を指定して探すことはできません',
   'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.resultType.otherSite': 'この種類は、このサイトでは指定できません',
-  'note.fivech.keywords': 'スレッドのタイトルだけが検索対象です。スレッドタイトル検索サービス(ff5ch.syoboi.jp)を開きます',
-  'note.fivech.titleOnly': '5ちゃんねる検索はもともとスレッドのタイトルだけが対象です(この切り替えに関わらず、常にタイトルを検索します)',
-  'note.fivech.subreddit': '板の名前(例: sony)で絞り込みます。複数指定すると、そのいずれかの板が対象になります',
-  'note.animanch.keywords': '書き込みの本文を検索します(試験的な機能のため、取りこぼしがあることがあります)',
+  'note.fivech.keywords':
+    'スレッドのタイトルだけが検索対象です。スレッドタイトル検索サービス(ff5ch.syoboi.jp)を開きます',
+  'note.fivech.titleOnly':
+    '5ちゃんねる検索はもともとスレッドのタイトルだけが対象です(この切り替えに関わらず、常にタイトルを検索します)',
+  'note.fivech.subreddit':
+    '板の名前(例: sony)で絞り込みます。複数指定すると、そのいずれかの板が対象になります',
+  'note.animanch.keywords':
+    '書き込みの本文を検索します(試験的な機能のため、取りこぼしがあることがあります)',
   'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
   'note.seiga.workType': 'ニコニコ静画で探せるのはイラストとマンガだけです',
   'note.seiga.mangaSort': 'マンガを選ぶと、並び順は指定できません',
-  'note.tumblr.tagSort': 'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
+  'note.tumblr.tagSort':
+    'ハッシュタグだけで検索するときは、並び順を指定できません（人気順になります）',
   'note.mastodon.keywords':
     'ログイン中のインスタンスが把握している投稿（自分の投稿・フォロー先・連合内で見つかった投稿）だけが対象です',
   'note.exclude.literal': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
-  'note.fanbox.hashtagOnly': 'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
-  'note.bilibili.videoLength': '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
+  'note.fanbox.hashtagOnly':
+    'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
+  'note.bilibili.videoLength':
+    '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
   'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
   'note.fantia.sort': 'この並び順は、新しい順・お気に入り数順のみ対応しています（Fantiaのみ対応）',
   'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
-  'launch.bgHint': 'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
+  'launch.bgHint':
+    'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
   'launch.droppedBadge': '使えない {n}',
@@ -439,7 +449,8 @@ export const ja = {
   'ui.clearConditions': 'すべてクリア',
   'ui.copyLink': 'URLをコピー',
   'ui.copyLinkDone': 'コピーしました',
-  'ui.copyLinkHint': 'いまの条件がすべて入ったURLをコピーします。ブックマークや共有をすれば、別の端末やブラウザでも同じ条件で開けます。',
+  'ui.copyLinkHint':
+    'いまの条件がすべて入ったURLをコピーします。ブックマークや共有をすれば、別の端末やブラウザでも同じ条件で開けます。',
   'ui.qrButton': 'QR',
   'ui.qrTitle': 'QRコード',
   'ui.qrHint': 'スマホのカメラで読み取ると、いまの条件をそのままスマホで開けます。',
@@ -459,7 +470,8 @@ export const ja = {
   'saved.open': '保存した検索',
   'saved.title': '保存した検索',
   'saved.close': '閉じる',
-  'saved.hint': '保存はこの端末・このブラウザに残ります。履歴やサイトデータを消したり、別のブラウザ・別の端末・シークレットウィンドウで開いたりすると残りません。1件の検索を渡すなら条件バーの「URLをコピー」、保存検索や履歴もまとめて持ち運ぶなら下の書き出し・読み込みを使ってください。',
+  'saved.hint':
+    '保存はこの端末・このブラウザに残ります。履歴やサイトデータを消したり、別のブラウザ・別の端末・シークレットウィンドウで開いたりすると残りません。1件の検索を渡すなら条件バーの「URLをコピー」、保存検索や履歴もまとめて持ち運ぶなら下の書き出し・読み込みを使ってください。',
   'saved.empty': 'まだ保存した検索はありません。条件を組んで「保存」を押すと、ここに並びます。',
   'saved.restore': 'この条件を呼び出す',
   'saved.delete': '削除',
@@ -473,17 +485,16 @@ export const ja = {
   'saved.backup.export': '書き出し',
   'saved.backup.import': '読み込む',
   'saved.backup.invalid': '読み込めませんでした。書き出したファイルを選んでください。',
-  'saved.backup.confirmSummary': '{saved}件の保存検索・{history}件の履歴が入ったファイルです。統合しますか、いまのこの端末のデータと置き換えますか?',
+  'saved.backup.confirmSummary':
+    '{saved}件の保存検索・{history}件の履歴が入ったファイルです。統合しますか、いまのこの端末のデータと置き換えますか?',
   'saved.backup.merge': '統合する',
   'saved.backup.replace': '置き換える',
 
   // 検索履歴(自動記録・localStorage)
   'saved.tab.saved': '保存',
   'saved.tab.history': '履歴',
-  'history.hint':
-    'サイトを開くと、その検索がここに自動で残ります（この端末のみ・最新50件）。',
-  'history.empty':
-    'まだ履歴はありません。条件を組んでサイトを開くと、ここに残ります。',
+  'history.hint': 'サイトを開くと、その検索がここに自動で残ります（この端末のみ・最新50件）。',
+  'history.empty': 'まだ履歴はありません。条件を組んでサイトを開くと、ここに残ります。',
   'history.promote': '名前を付けて保存',
   'history.clearAll': '全削除',
   'history.disable': '履歴を残さない',

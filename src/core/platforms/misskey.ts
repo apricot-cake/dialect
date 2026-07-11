@@ -24,10 +24,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // mastodon/tumblr と同じく検索ページへ回して #タグ+除外 として送る(2026-07-10 修正。
   // それまでタグ+除外の組み合わせで除外が黙って落ちていた=check:parts が検出)
   if (tagNames.length === 1 && textToks.length === 0 && !handle && excludeToks.length === 0) {
-    return [
-      lit('https://misskey.io/tags/'),
-      part(encodeURIComponent(tagNames[0]), 'hashtag'),
-    ]
+    return [lit('https://misskey.io/tags/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
   }
 
   // ノート本文にはタグが「#タグ」の文字列で含まれるため、部分一致検索に畳み込める

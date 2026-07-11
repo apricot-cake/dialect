@@ -1,4 +1,13 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, SortOrder, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  ResultType,
+  SortOrder,
+  UrlPart,
+} from '../types'
 import { andTerms, words } from '../text'
 import { lit, ParamParts, part } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments } from '../parse'
@@ -147,7 +156,11 @@ function parseUrl(url: URL): ParsedSearch | null {
     if (/^\d+$/.test(end)) patch.until = isoFromCstEpoch(Number(end))
     else ignored.push(`pubtime_end_s=${end}`)
   }
-  leftoverParams(url, new Set(['keyword', 'order', 'duration', 'pubtime_begin_s', 'pubtime_end_s']), ignored)
+  leftoverParams(
+    url,
+    new Set(['keyword', 'order', 'duration', 'pubtime_begin_s', 'pubtime_end_s']),
+    ignored,
+  )
   return { patch, ignored }
 }
 

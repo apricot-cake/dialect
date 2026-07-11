@@ -101,9 +101,7 @@ function loadInitial(): {
       if (Array.isArray(parsed)) {
         added = [
           ...new Set(
-            parsed.filter(
-              (c): c is ConceptId => typeof c === 'string' && c in CONCEPT_MAP,
-            ),
+            parsed.filter((c): c is ConceptId => typeof c === 'string' && c in CONCEPT_MAP),
           ),
         ]
       }
@@ -152,9 +150,7 @@ export default function App() {
   // setLang() 呼び出し1回だけから全体の再描画が伝播する(手動の二重呼び出しをやめた)
   const lang: Lang = useSyncExternalStore(subscribe, getLang)
   // ダークモード。初期値は index.html の先読みスクリプトが付けた class から拾う
-  const [dark, setDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  )
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
   const [area, setArea] = useState<AreaId>('conditions')
   const [pickerOpen, setPickerOpen] = useState(false)
   // 名前付きで保存した検索(この端末のlocalStorage)。保存ダイアログ・一覧ダイアログ
@@ -172,8 +168,7 @@ export default function App() {
   // 条件のパーマリンクをQRコードで見せるダイアログ
   const [qrOpen, setQrOpen] = useState(false)
 
-  const patchQuery = (patch: Partial<QueryState>) =>
-    setQuery((q) => ({ ...q, ...patch }))
+  const patchQuery = (patch: Partial<QueryState>) => setQuery((q) => ({ ...q, ...patch }))
 
   const toggleLang = () => {
     setLang(lang === 'ja' ? 'en' : 'ja')

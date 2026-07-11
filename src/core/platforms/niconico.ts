@@ -1,8 +1,34 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, SortOrder, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  SortOrder,
+  UrlPart,
+} from '../types'
 import { limitSort, NICO_GENRES } from '../types'
 import { stripHash, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
-import { applyBins, emptyBins, extractBareOrChain, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  ParamParts,
+  part,
+  quotedTermTokens,
+  tok,
+} from '../urlParts'
+import {
+  applyBins,
+  emptyBins,
+  extractBareOrChain,
+  hostIs,
+  isIsoDate,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査27パターン+2026-07-09ログイン済みGUI操作)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/並び順が全てURLで効く。
@@ -55,7 +81,12 @@ const RESULT_TYPE_PATH: Partial<Record<QueryState['resultType'], string>> = {
 
 // niconico が対応する値(他サイト専用のchannel/posts/…等はここに含めない)
 const NICONICO_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
-  '', 'video', 'short', 'series', 'playlist', 'people',
+  '',
+  'video',
+  'short',
+  'series',
+  'playlist',
+  'people',
 ])
 
 // 動画と同じ検索基盤(ジャンル/動画種別/再生時間/期間/並び順=sort・order・genre・kind・
@@ -65,12 +96,15 @@ const NICONICO_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
 // 投稿動画数/生放送番組数)はそれぞれ専用の並び順を持ち、フィルタパネル自体が無い(GUI操作で確認)。
 // 専用並び順は 2026-07-09 に SERIES_SORT_PARAM/PEOPLE_SORT_PARAM として実装
 const VIDEO_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
-  '', 'video', 'short',
+  '',
+  'video',
+  'short',
 ])
 
 // シリーズ・マイリストは同一の並び順パラメータを共有する(2026-07-09 GUI操作で確認)
 const SERIES_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
-  'series', 'playlist',
+  'series',
+  'playlist',
 ])
 
 function buildParts(state: QueryState): UrlPart[] | null {
@@ -123,7 +157,12 @@ function buildParts(state: QueryState): UrlPart[] | null {
 
   // タグ単独(+除外)ならタグ検索。動画(既定)のときだけ(シリーズ等にタグページは無い)。
   // OR指定があるときはタグの厳密一致ではなくキーワード検索が要るので対象外。除外はタグページでも有効(実測)
-  if (state.resultType === '' && tagToks.length > 0 && textToks.length === 0 && orToks.length === 0) {
+  if (
+    state.resultType === '' &&
+    tagToks.length > 0 &&
+    textToks.length === 0 &&
+    orToks.length === 0
+  ) {
     return [
       lit('https://www.nicovideo.jp/tag/'),
       ...encodeTokens([...tagToks, ...excludeToks]),
@@ -247,7 +286,8 @@ function parseUrl(url: URL): ParsedSearch | null {
   // タグページ(head==='tag')はOR構文を送らない(buildParts参照)ので、そのままトークン化する。
   // それ以外は括弧なし並置OR(a OR b)の最初の1連なりをkeywordsOrとして抜き出す
   const rawTokens = tokenize(rawQuery)
-  const { orTerms, rest } = head === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
+  const { orTerms, rest } =
+    head === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
   const bins = emptyBins()
   for (const token of rest) {
     if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
@@ -278,7 +318,8 @@ function parseUrl(url: URL): ParsedSearch | null {
     else if (lRange !== null) ignored.push(`l_range=${lRange}`)
     const genre = url.searchParams.get('genre')
     if (genre !== null) {
-      if ((NICO_GENRES as readonly string[]).includes(genre)) patch.genre = genre as QueryState['genre']
+      if ((NICO_GENRES as readonly string[]).includes(genre))
+        patch.genre = genre as QueryState['genre']
       else ignored.push(`genre=${genre}`)
     }
     const kind = url.searchParams.get('kind')

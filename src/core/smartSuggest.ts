@@ -37,17 +37,72 @@ interface VocabEntry {
  * バズった→10000 likes mirrors the issue's canonical example
  */
 const VOCAB: VocabEntry[] = [
-  { words: ['動画', 'ビデオ', 'video', 'videos'], concept: 'resultType', key: 'resultType:video', patch: { resultType: 'video' } },
-  { words: ['ショート', 'shorts'], concept: 'resultType', key: 'resultType:short', patch: { resultType: 'short' } },
-  { words: ['イラスト', 'illustration', 'illust'], concept: 'workType', key: 'workType:illust', patch: { workType: 'illust' } },
-  { words: ['漫画', 'マンガ', 'まんが', 'manga'], concept: 'workType', key: 'workType:manga', patch: { workType: 'manga' } },
-  { words: ['うごイラ', 'ugoira'], concept: 'workType', key: 'workType:ugoira', patch: { workType: 'ugoira' } },
-  { words: ['小説', 'novel', 'novels'], concept: 'workType', key: 'workType:novel', patch: { workType: 'novel' } },
-  { words: ['ライブ', '生放送', '生配信', '配信中', 'ライブ配信', 'live'], concept: 'liveOnly', key: 'liveOnly', patch: { liveOnly: true } },
-  { words: ['画像', '写真', 'メディア', 'image', 'images', 'photo', 'photos', 'picture', 'media'], concept: 'mediaOnly', key: 'mediaOnly', patch: { mediaOnly: true } },
-  { words: ['バズった', 'バズってる', 'バズっている', 'バズ', 'viral', 'buzz'], concept: 'minLikes', key: 'minLikes:10000', patch: { minLikes: '10000' } },
-  { words: ['人気', '話題', '注目', 'popular', 'trending'], concept: 'sortOrder', key: 'sortOrder:top', patch: { sort: 'top' } },
-  { words: ['最新', '新着', '新しい順', 'newest', 'latest'], concept: 'sortOrder', key: 'sortOrder:new', patch: { sort: 'new' } },
+  {
+    words: ['動画', 'ビデオ', 'video', 'videos'],
+    concept: 'resultType',
+    key: 'resultType:video',
+    patch: { resultType: 'video' },
+  },
+  {
+    words: ['ショート', 'shorts'],
+    concept: 'resultType',
+    key: 'resultType:short',
+    patch: { resultType: 'short' },
+  },
+  {
+    words: ['イラスト', 'illustration', 'illust'],
+    concept: 'workType',
+    key: 'workType:illust',
+    patch: { workType: 'illust' },
+  },
+  {
+    words: ['漫画', 'マンガ', 'まんが', 'manga'],
+    concept: 'workType',
+    key: 'workType:manga',
+    patch: { workType: 'manga' },
+  },
+  {
+    words: ['うごイラ', 'ugoira'],
+    concept: 'workType',
+    key: 'workType:ugoira',
+    patch: { workType: 'ugoira' },
+  },
+  {
+    words: ['小説', 'novel', 'novels'],
+    concept: 'workType',
+    key: 'workType:novel',
+    patch: { workType: 'novel' },
+  },
+  {
+    words: ['ライブ', '生放送', '生配信', '配信中', 'ライブ配信', 'live'],
+    concept: 'liveOnly',
+    key: 'liveOnly',
+    patch: { liveOnly: true },
+  },
+  {
+    words: ['画像', '写真', 'メディア', 'image', 'images', 'photo', 'photos', 'picture', 'media'],
+    concept: 'mediaOnly',
+    key: 'mediaOnly',
+    patch: { mediaOnly: true },
+  },
+  {
+    words: ['バズった', 'バズってる', 'バズっている', 'バズ', 'viral', 'buzz'],
+    concept: 'minLikes',
+    key: 'minLikes:10000',
+    patch: { minLikes: '10000' },
+  },
+  {
+    words: ['人気', '話題', '注目', 'popular', 'trending'],
+    concept: 'sortOrder',
+    key: 'sortOrder:top',
+    patch: { sort: 'top' },
+  },
+  {
+    words: ['最新', '新着', '新しい順', 'newest', 'latest'],
+    concept: 'sortOrder',
+    key: 'sortOrder:new',
+    patch: { sort: 'new' },
+  },
 ]
 
 /** Period words double as suggestions when buried inside a longer token */
@@ -74,11 +129,7 @@ function cjk(word: string): boolean {
  * Exact token matches come first, then CJK substring matches. Suggestions
  * whose value is already set in `state` are omitted (nothing to add)
  */
-export function suggestFor(
-  terms: string[],
-  state: QueryState,
-  now: Date,
-): SmartSuggestion[] {
+export function suggestFor(terms: string[], state: QueryState, now: Date): SmartSuggestion[] {
   const out: SmartSuggestion[] = []
   const seen = new Set<string>()
   const push = (s: SmartSuggestion) => {
@@ -87,9 +138,7 @@ export function suggestFor(
     out.push(s)
   }
   const alreadySet = (patch: Partial<QueryState>): boolean =>
-    Object.entries(patch).every(
-      ([k, v]) => state[k as keyof QueryState] === v,
-    )
+    Object.entries(patch).every(([k, v]) => state[k as keyof QueryState] === v)
 
   for (const source of terms) {
     const norm = normalizeForSearch(source)
@@ -98,13 +147,25 @@ export function suggestFor(
       for (const word of entry.words) {
         const w = normalizeForSearch(word)
         if (norm === w) {
-          push({ source, remainder: '', concept: entry.concept, patch: entry.patch, key: entry.key })
+          push({
+            source,
+            remainder: '',
+            concept: entry.concept,
+            patch: entry.patch,
+            key: entry.key,
+          })
           break
         }
         if (cjk(word)) {
           const rest = peel(source, word)
           if (rest !== null) {
-            push({ source, remainder: rest, concept: entry.concept, patch: entry.patch, key: entry.key })
+            push({
+              source,
+              remainder: rest,
+              concept: entry.concept,
+              patch: entry.patch,
+              key: entry.key,
+            })
             break
           }
         }

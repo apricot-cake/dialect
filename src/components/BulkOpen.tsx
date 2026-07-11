@@ -35,9 +35,7 @@ export function BulkOpen({
   /** Called once per bulk-open click (counts as a single executed search) */
   onLaunch: () => void
 }) {
-  const [excluded, setExcluded] = useState<Set<PlatformId>>(
-    () => new Set(loadBulkOpenExcluded()),
-  )
+  const [excluded, setExcluded] = useState<Set<PlatformId>>(() => new Set(loadBulkOpenExcluded()))
   const [panelOpen, setPanelOpen] = useState(false)
   const [blocked, setBlocked] = useState(0)
 
@@ -61,9 +59,7 @@ export function BulkOpen({
     persist(all)
   }
 
-  const openable = PLATFORMS.filter(
-    (p) => !excluded.has(p.id) && resolutions.get(p.id)?.url,
-  )
+  const openable = PLATFORMS.filter((p) => !excluded.has(p.id) && resolutions.get(p.id)?.url)
 
   const handleClick = () => {
     if (openable.length === 0) return
@@ -82,7 +78,17 @@ export function BulkOpen({
           onClick={handleClick}
           className="dl-add inline-flex h-11 cursor-pointer items-center gap-[9px] rounded-full bg-accent pr-5 pl-4 text-sm font-semibold text-white shadow-[0_1px_3px_oklch(0_0_0_/_0.06)] disabled:cursor-default disabled:opacity-45"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0"
+          >
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
             <path d="M15 3h6v6" />
             <path d="M10 14 21 3" />

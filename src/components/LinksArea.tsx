@@ -23,9 +23,7 @@ import { BulkOpen } from './BulkOpen'
  */
 function underlineStyle(colors: string[], dashed = false): CSSProperties {
   const n = colors.length
-  const stops = colors
-    .map((c, i) => `${c} ${(i / n) * 100}% ${((i + 1) / n) * 100}%`)
-    .join(', ')
+  const stops = colors.map((c, i) => `${c} ${(i / n) * 100}% ${((i + 1) / n) * 100}%`).join(', ')
   return {
     backgroundImage: dashed
       ? `repeating-linear-gradient(90deg, ${colors[0]} 0 4px, transparent 4px 7px)`
@@ -41,7 +39,15 @@ const SOFT_INK = 'color-mix(in oklch, var(--fg) 68%, var(--muted))'
 
 function BanIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      className="shrink-0"
+    >
       <circle cx="12" cy="12" r="10" />
       <path d="m4.9 4.9 14.2 14.2" />
     </svg>
@@ -51,11 +57,31 @@ function BanIcon() {
 /** タッチ端末向け「検索文字列をコピー」ボタンのアイコン(コピー/コピー済み) */
 function CopyIcon({ done }: { done?: boolean }) {
   return done ? (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+    >
       <path d="M20 6 9 17l-5-5" />
     </svg>
   ) : (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+    >
       <rect x="8" y="8" width="12" height="12" rx="2" />
       <path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3" />
     </svg>
@@ -77,7 +103,17 @@ function MetaSection({
     <div className="flex flex-col gap-[7px]">
       <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.04em] text-muted">
         {tone === 'approx' ? (
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0"
+          >
             <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
             <path d="M12 8.2v5.2" />
             <path d="M12 17.6h.01" />
@@ -109,11 +145,7 @@ function MetaSection({
 }
 
 /** 他サイト専用の条件を、打ち消し線で騒がせず「〇〇専用」と静かに伝える */
-function SpecialtySection({
-  items,
-}: {
-  items: Array<{ concept: ConceptId; owner: PlatformDef }>
-}) {
+function SpecialtySection({ items }: { items: Array<{ concept: ConceptId; owner: PlatformDef }> }) {
   return (
     <div className="flex flex-col gap-[7px]">
       <span className="text-[10px] font-bold tracking-[0.04em] text-faint">
@@ -123,10 +155,7 @@ function SpecialtySection({
         {items.map(({ concept, owner }) => (
           <span key={concept} className="text-[11px] leading-[1.35] text-muted">
             {t(CONCEPT_MAP[concept].labelKey)}
-            <span className="text-faint">
-              {' '}
-              {tf('launch.specialtyOnly', { name: owner.name })}
-            </span>
+            <span className="text-faint"> {tf('launch.specialtyOnly', { name: owner.name })}</span>
           </span>
         ))}
       </div>
@@ -235,7 +264,9 @@ function LaunchCard({
             boxShadow: dark
               ? '0 1px 2px oklch(0 0 0 / 0.28), inset 0 0 0 1px oklch(1 0 0 / 0.1)'
               : '0 1px 2px oklch(0 0 0 / 0.07)',
-            ...(enabled ? { cursor: 'pointer' } : { opacity: 0.34, pointerEvents: 'none' as const }),
+            ...(enabled
+              ? { cursor: 'pointer' }
+              : { opacity: 0.34, pointerEvents: 'none' as const }),
           }}
         >
           <PlatformBadge
@@ -316,14 +347,27 @@ function LaunchCard({
           style={{ animation: 'dl-fade 160ms ease both' }}
         >
           {!enabled && (
-            <div className="flex items-center gap-1.5 text-[11.5px] font-bold" style={{ color: SOFT_INK }}>
+            <div
+              className="flex items-center gap-1.5 text-[11.5px] font-bold"
+              style={{ color: SOFT_INK }}
+            >
               <BanIcon />
               {t('ui.notSearchable')}
             </div>
           )}
           {showLogin && (
             <div className="flex items-center gap-1.5 text-[11px] leading-[1.35] text-muted">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0"
+              >
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                 <path d="M10 17l5-5-5-5" />
                 <path d="M15 12H3" />
@@ -360,12 +404,8 @@ function LaunchCard({
           {resolution.approximated.length > 0 && (
             <MetaSection tone="approx" items={resolution.approximated} />
           )}
-          {droppedReal.length > 0 && (
-            <MetaSection tone="dropped" items={droppedReal} />
-          )}
-          {droppedSpecialty.length > 0 && (
-            <SpecialtySection items={droppedSpecialty} />
-          )}
+          {droppedReal.length > 0 && <MetaSection tone="dropped" items={droppedReal} />}
+          {droppedSpecialty.length > 0 && <SpecialtySection items={droppedSpecialty} />}
         </div>
       )}
     </div>
@@ -408,7 +448,17 @@ export function LinksArea({
         <div className="mx-auto flex w-full max-w-[940px] flex-col gap-2">
           <div className="flex flex-col gap-[9px] px-0.5 pt-1 pb-2">
             <div className="inline-flex max-w-full items-center gap-[9px] self-start rounded-[11px] border border-border bg-card py-2 pr-3.5 pl-3 text-muted">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="-mt-px shrink-0">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="1.9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="-mt-px shrink-0"
+              >
                 <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18" />
                 <path d="M12 11v5" />
                 <path d="M12 8h.01" />
@@ -449,10 +499,16 @@ export function LinksArea({
           <div className="flex flex-col gap-2 px-0.5 pt-7 pb-1.5 text-[11.5px] leading-[1.6] text-faint">
             <span>{t('footer.privacy')}</span>
             <span className="flex flex-wrap gap-x-3 gap-y-1">
-              <a href="./health.html" className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted">
+              <a
+                href="./health.html"
+                className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted"
+              >
                 {pt(getLang(), 'footer.health')}
               </a>
-              <a href="./matrix.html" className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted">
+              <a
+                href="./matrix.html"
+                className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted"
+              >
                 {pt(getLang(), 'footer.matrix')}
               </a>
             </span>

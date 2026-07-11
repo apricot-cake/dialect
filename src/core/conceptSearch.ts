@@ -209,7 +209,5 @@ export function searchConcepts(index: SearchIndex, rawQuery: string): RankedHit[
   if (helpHit.length) return rank(helpHit, 'partial', q)
 
   if (q.length <= 2) return []
-  return fuse
-    .search(q)
-    .map((h) => ({ id: h.item.id, tier: 'fuzzy' as const, score: h.score ?? 1 }))
+  return fuse.search(q).map((h) => ({ id: h.item.id, tier: 'fuzzy' as const, score: h.score ?? 1 }))
 }

@@ -54,10 +54,7 @@ export function encodeTokens(tokens: Token[]): UrlPart[] {
 }
 
 /** text.ts の quotedTerms のトークン版: AND語(フレーズは引用符)=keywords、"語句"=exactPhrase */
-export function quotedTermTokens(state: {
-  terms: string[]
-  exactPhrase: string[]
-}): Token[] {
+export function quotedTermTokens(state: { terms: string[]; exactPhrase: string[] }): Token[] {
   return [
     ...andTerms(state).map((t) => tok(quoteIfPhrase(t), 'keywords')),
     ...exactPhrases(state).map((p) => tok(`"${stripQuerySyntax(p)}"`, 'exactPhrase')),

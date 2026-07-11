@@ -83,8 +83,20 @@ export type AgeRating = '' | 'safe' | 'r18'
  * permalink と App の検証もこの配列を単一の真実として参照する(追加時はここだけ増やす)
  */
 export const POST_LANGUAGE_CODES = [
-  'ja', 'en', 'zh', 'ko', 'es', 'fr', 'de',
-  'pt', 'ru', 'it', 'ar', 'hi', 'th', 'id',
+  'ja',
+  'en',
+  'zh',
+  'ko',
+  'es',
+  'fr',
+  'de',
+  'pt',
+  'ru',
+  'it',
+  'ar',
+  'hi',
+  'th',
+  'id',
 ] as const
 
 /** 投稿の言語。空は指定なし */
@@ -99,8 +111,18 @@ export type WorkType = '' | 'illust' | 'manga' | 'ugoira' | 'novel'
  * permalink と App の検証もこの配列を単一の真実として参照する
  */
 export const NICO_GENRES = [
-  'music_sound', 'game', 'entertainment', 'other', 'dance', 'anime',
-  'technology_craft', 'commentary_lecture', 'sports', 'radio', 'vehicle', 'traveling_outdoor',
+  'music_sound',
+  'game',
+  'entertainment',
+  'other',
+  'dance',
+  'anime',
+  'technology_craft',
+  'commentary_lecture',
+  'sports',
+  'radio',
+  'vehicle',
+  'traveling_outdoor',
 ] as const
 
 export type NicoGenre = '' | (typeof NICO_GENRES)[number]
@@ -119,9 +141,30 @@ export type NicoKind = '' | 'user' | 'channel'
  * 種類系の概念(ジャンル・作品の種類等)と同じ単一選択で対応する
  */
 export const FANTIA_CATEGORIES = [
-  'illust', 'comic', 'vtuber', 'voice', 'voiceactor', '3d', '2d_anime', 'game',
-  'music', 'novel', 'doll', 'art', 'program', 'handmade', 'history', 'railroad',
-  'shop', 'other', 'fortune', 'cosplay', 'idol', 'youtuber', 'photo_movie', 'other_real',
+  'illust',
+  'comic',
+  'vtuber',
+  'voice',
+  'voiceactor',
+  '3d',
+  '2d_anime',
+  'game',
+  'music',
+  'novel',
+  'doll',
+  'art',
+  'program',
+  'handmade',
+  'history',
+  'railroad',
+  'shop',
+  'other',
+  'fortune',
+  'cosplay',
+  'idol',
+  'youtuber',
+  'photo_movie',
+  'other_real',
 ] as const
 
 export type FantiaCategory = '' | (typeof FANTIA_CATEGORIES)[number]
@@ -431,10 +474,7 @@ export interface PlatformDef {
 
 export const NO_SUPPORT: ConceptSupport = { level: 'none' }
 
-export function supportOf(
-  platform: PlatformDef,
-  concept: ConceptId,
-): ConceptSupport {
+export function supportOf(platform: PlatformDef, concept: ConceptId): ConceptSupport {
   return platform.support[concept] ?? NO_SUPPORT
 }
 

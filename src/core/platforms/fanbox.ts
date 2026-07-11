@@ -1,4 +1,11 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { stripHash, words } from '../text'
 import { lit, part } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
@@ -16,10 +23,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // pathSegmentsの空セグメント除去で読み戻せない(2026-07-11 check:props で発見)
   const tagNames = words(state.hashtag).map(stripHash).filter(Boolean)
   if (tagNames.length !== 1) return null
-  return [
-    lit('https://www.fanbox.cc/tags/'),
-    part(encodeURIComponent(tagNames[0]), 'hashtag'),
-  ]
+  return [lit('https://www.fanbox.cc/tags/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
 }
 
 // 逆翻訳: fanbox.cc/tags/{タグ}(唯一の投稿一覧ページ)

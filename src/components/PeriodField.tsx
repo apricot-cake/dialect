@@ -7,8 +7,34 @@ import { FILLED_INK } from './widgets'
 // 期間(この日から/この日の前まで)の2つの日付ボタン。ネイティブの date input は
 // 使わず、デザインの自作カレンダー(日/月/年グリッド)をポップオーバーで出す
 
-const MONTHS_JA = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTHS_JA = [
+  '1月',
+  '2月',
+  '3月',
+  '4月',
+  '5月',
+  '6月',
+  '7月',
+  '8月',
+  '9月',
+  '10月',
+  '11月',
+  '12月',
+]
+const MONTHS_EN = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
 const DOWS_JA = ['日', '月', '火', '水', '木', '金', '土']
 const DOWS_EN = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
@@ -53,7 +79,10 @@ const CELL_BASE =
   'flex cursor-pointer items-center justify-center rounded-lg border-none text-[13px]'
 
 /** セルの塗り分け: 選択中=アクセント、今日/表示中=淡いグレー、他=素のテキスト */
-function cellTone(selected: boolean, current: boolean): {
+function cellTone(
+  selected: boolean,
+  current: boolean,
+): {
   className: string
   style?: React.CSSProperties
 } {
@@ -92,7 +121,10 @@ function Calendar({
     shift = (dir) => setView((v) => ({ y: v.y + dir, m: v.m }))
     const names = ja ? MONTHS_JA : MONTHS_EN
     body = (
-      <div className="grid gap-[3px]" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '40px' }}>
+      <div
+        className="grid gap-[3px]"
+        style={{ gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '40px' }}
+      >
         {names.map((name, i) => {
           const tone = cellTone(curY === view.y && curM === i, i === view.m)
           return (
@@ -118,7 +150,10 @@ function Calendar({
     headerLabel = `${startY} – ${startY + 11}`
     shift = (dir) => setView((v) => ({ y: v.y + dir * 12, m: v.m }))
     body = (
-      <div className="grid gap-[3px]" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '40px' }}>
+      <div
+        className="grid gap-[3px]"
+        style={{ gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '40px' }}
+      >
         {Array.from({ length: 12 }, (_, i) => {
           const year = startY + i
           const tone = cellTone(curY === year, year === view.y)
@@ -184,9 +219,15 @@ function Calendar({
     while (cells.length < 42) cells.push(<span key={`e${cells.length}`} />)
     body = (
       <>
-        <div className="grid justify-center gap-px" style={{ gridTemplateColumns: 'repeat(7, 34px)' }}>
+        <div
+          className="grid justify-center gap-px"
+          style={{ gridTemplateColumns: 'repeat(7, 34px)' }}
+        >
           {(ja ? DOWS_JA : DOWS_EN).map((dow, i) => (
-            <span key={i} className="flex h-[26px] items-center justify-center text-[11px] font-semibold text-faint">
+            <span
+              key={i}
+              className="flex h-[26px] items-center justify-center text-[11px] font-semibold text-faint"
+            >
               {dow}
             </span>
           ))}
@@ -243,13 +284,7 @@ function Calendar({
   )
 }
 
-function DateButton({
-  value,
-  onChange,
-}: {
-  value: string
-  onChange: (value: string) => void
-}) {
+function DateButton({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [open, setOpen] = useState(false)
   const ja = getLang() === 'ja'
   const narrow = useNarrow()
@@ -260,14 +295,30 @@ function DateButton({
         className="dl-date-btn inline-flex h-[34px] min-w-0 cursor-pointer items-center gap-[7px] rounded-[9px] border border-border bg-card px-3 text-sm font-medium whitespace-nowrap"
         style={{ color: value ? FILLED_INK : 'var(--muted)' }}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--faint)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="shrink-0"
+        >
           <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
         </svg>
         <span className="min-w-0 truncate">{fmtDisplay(value, ja, narrow)}</span>
       </Popover.Trigger>
       <Popover.Portal>
         {/* 画面下端で開くときは Positioner が自動で上側にフリップする */}
-        <Popover.Positioner side="bottom" align="start" sideOffset={6} collisionPadding={12} className="z-50">
+        <Popover.Positioner
+          side="bottom"
+          align="start"
+          sideOffset={6}
+          collisionPadding={12}
+          className="z-50"
+        >
           <Popover.Popup className="dl-glass dl-drop-in flex w-[268px] flex-col gap-1.5 rounded-[14px] p-3">
             <Calendar
               value={value}

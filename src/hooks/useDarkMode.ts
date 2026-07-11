@@ -7,9 +7,7 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
  * the class the pre-render script in each *.html already applied (avoids flash).
  */
 export function useDarkMode(): [boolean, Dispatch<SetStateAction<boolean>>] {
-  const [dark, setDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  )
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
     try {

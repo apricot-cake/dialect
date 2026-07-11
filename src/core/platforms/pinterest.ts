@@ -1,4 +1,11 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { andTerms, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
@@ -16,16 +23,14 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (toks.length === 0) return null
   // フィルターの4択はパスの切り替え。既定(すべてのピン=pins)は無帰属
   const path =
-    state.resultType === 'video' ? part('videos', 'resultType')
-    : state.resultType === 'board' ? part('boards', 'resultType')
-    : state.resultType === 'people' ? part('users', 'resultType')
-    : lit('pins')
-  return [
-    lit('https://www.pinterest.com/search/'),
-    path,
-    lit('/?q='),
-    ...encodeTokens(toks),
-  ]
+    state.resultType === 'video'
+      ? part('videos', 'resultType')
+      : state.resultType === 'board'
+        ? part('boards', 'resultType')
+        : state.resultType === 'people'
+          ? part('users', 'resultType')
+          : lit('pins')
+  return [lit('https://www.pinterest.com/search/'), path, lit('/?q='), ...encodeTokens(toks)]
 }
 
 // 逆翻訳: /search/{pins|videos|boards|users}/?q=…。日本の pinterest.jp も受ける
@@ -54,9 +59,7 @@ function parseUrl(url: URL): ParsedSearch | null {
 
 const PINTEREST_RESULT_TYPES: ReadonlySet<string> = new Set(['video', 'board', 'people'])
 
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   if (state.resultType && !PINTEREST_RESULT_TYPES.has(state.resultType)) {
     return { resultType: { level: 'none', noteKey: 'note.resultType.otherSite' } }
   }

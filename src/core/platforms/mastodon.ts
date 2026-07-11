@@ -40,10 +40,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
     Boolean(state.language)
   // 単一タグのみ(他の条件が何もない)ならタグページ(ログアウトでも見られる唯一の経路)
   if (tagNames.length === 1 && !hasOtherConditions) {
-    return [
-      lit('https://mastodon.social/tags/'),
-      part(encodeURIComponent(tagNames[0]), 'hashtag'),
-    ]
+    return [lit('https://mastodon.social/tags/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
   }
 
   if (!hasPositiveTerm(state)) return null
@@ -62,11 +59,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.language) toks.push(tok(`language:${state.language}`, 'language'))
 
   // type=statuses は指定の有無によらず常に送る固定値なので無帰属
-  return [
-    lit('https://mastodon.social/search?q='),
-    ...encodeTokens(toks),
-    lit('&type=statuses'),
-  ]
+  return [lit('https://mastodon.social/search?q='), ...encodeTokens(toks), lit('&type=statuses')]
 }
 
 // 逆翻訳: mastodon.social/search?q=…&type=statuses と /tags/{tag}。他インスタンスの
@@ -104,7 +97,8 @@ function parseUrl(url: URL): ParsedSearch | null {
       else ignored.push(token)
     } else if (token.startsWith('language:')) {
       const code = token.slice('language:'.length)
-      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code))
+        patch.language = code as PostLanguage
       else ignored.push(token)
     } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
     else if (token.startsWith('"')) bins.phrases.push(unquote(token))

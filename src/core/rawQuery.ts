@@ -32,7 +32,9 @@ function extractText(platformId: PlatformId, url: URL): string | null {
     case 'misskey':
     case 'mastodon':
       // /tags/{タグ}(note は /hashtag/{タグ})はパス埋め込み、それ以外は q=
-      return segs[0] === 'tags' || segs[0] === 'hashtag' ? (segs[1] ?? null) : url.searchParams.get('q')
+      return segs[0] === 'tags' || segs[0] === 'hashtag'
+        ? (segs[1] ?? null)
+        : url.searchParams.get('q')
     case 'pixiv':
       // /tags/{q}/{section} はパス埋め込み、/search?q=(タグ・タイトル・キャプション)は q=
       return segs[0] === 'tags' ? (segs[1] ?? null) : url.searchParams.get('q')
@@ -60,12 +62,33 @@ const STRUCTURAL_EXCLUDE: Partial<Record<PlatformId, ReadonlySet<ConceptId>>> = 
   x: new Set(['sortOrder']),
   bluesky: new Set(['sortOrder', 'language', 'mediaOnly', 'resultType']),
   youtube: new Set([
-    'sortOrder', 'resultType', 'videoLength', 'liveOnly', 'fourK', 'hdOnly',
-    'captionsOnly', 'creativeCommons', 'threeSixty', 'vr180', 'threeD', 'hdr',
-    'locationOnly', 'purchased', 'fromUser',
+    'sortOrder',
+    'resultType',
+    'videoLength',
+    'liveOnly',
+    'fourK',
+    'hdOnly',
+    'captionsOnly',
+    'creativeCommons',
+    'threeSixty',
+    'vr180',
+    'threeD',
+    'hdr',
+    'locationOnly',
+    'purchased',
+    'fromUser',
   ]),
   note: new Set(['resultType', 'sortOrder', 'paidOnly']),
-  pixiv: new Set(['sortOrder', 'period', 'ageRating', 'excludeAi', 'workType', 'titleOnly', 'exactTag', 'tagTitleCaption']),
+  pixiv: new Set([
+    'sortOrder',
+    'period',
+    'ageRating',
+    'excludeAi',
+    'workType',
+    'titleOnly',
+    'exactTag',
+    'tagTitleCaption',
+  ]),
   niconico: new Set(['sortOrder', 'period', 'videoLength', 'genre', 'nicoKind', 'resultType']),
   seiga: new Set(['sortOrder', 'workType']),
   tumblr: new Set(['sortOrder', 'mediaOnly', 'linksOnly']),

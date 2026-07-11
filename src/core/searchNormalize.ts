@@ -14,9 +14,7 @@
 export function normalizeForSearch(input: string): string {
   return input
     .normalize('NFKC')
-    .replace(/[ぁ-ゖ]/g, (c) =>
-      String.fromCharCode(c.charCodeAt(0) + 0x60),
-    )
+    .replace(/[ぁ-ゖ]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0x60))
     .toLowerCase()
     .trim()
     .replace(/[\s　]+/g, ' ')

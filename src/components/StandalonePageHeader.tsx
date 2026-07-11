@@ -29,10 +29,7 @@ export function StandalonePageHeader({
   return (
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-3 px-5 pt-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <a
-          href="./"
-          className="text-[13px] font-medium text-muted no-underline hover:text-fg"
-        >
+        <a href="./" className="text-[13px] font-medium text-muted no-underline hover:text-fg">
           {pt(lang, 'page.backToApp')}
         </a>
         <div className="flex items-center gap-1.5">
@@ -68,9 +65,7 @@ export function StandalonePageHeader({
           </a>
         </div>
       </div>
-      <h1 className="m-0 text-[22px] font-bold tracking-[-0.01em] text-fg">
-        {pt(lang, titleKey)}
-      </h1>
+      <h1 className="m-0 text-[22px] font-bold tracking-[-0.01em] text-fg">{pt(lang, titleKey)}</h1>
     </div>
   )
 }

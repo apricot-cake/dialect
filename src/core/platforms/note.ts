@@ -1,4 +1,11 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { andTerms, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
@@ -89,7 +96,10 @@ function buildParts(state: QueryState): UrlPart[] | null {
 
 // note が対応する値のみ(他サイト専用の値はここに含めない)
 const NOTE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set([
-  '', 'people', 'series', 'circle',
+  '',
+  'people',
+  'series',
+  'circle',
 ])
 
 // クリエイター・マガジン・メンバーシップ検索では効かない演算子(2026-07-09 GUI操作で確認:

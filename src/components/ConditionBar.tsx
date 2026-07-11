@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import type { PlatformDef, QueryState, SortOrder } from '@/core/types'
-import { activeSupportersOf, SORT_OPTIONS, splitSupporters, type ConceptDef } from '@/core/conceptDefs'
+import {
+  activeSupportersOf,
+  SORT_OPTIONS,
+  splitSupporters,
+  type ConceptDef,
+} from '@/core/conceptDefs'
 import { t } from '@/i18n'
 import { PlatformBadgeTile } from './PlatformBadge'
 import { ChipsField, PlainField, SelectField, ToggleField } from './widgets'
@@ -22,11 +27,31 @@ function SupSection({
     <span className="flex flex-col gap-[7px]">
       <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.04em] text-muted">
         {tone === 'full' ? (
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--accent-bright)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0"
+          >
             <path d="M20 6 9 17l-5-5" />
           </svg>
         ) : (
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e0a63a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#e0a63a"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0"
+          >
             <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
             <path d="M12 8.2v5.2" />
             <path d="M12 17.6h.01" />
@@ -131,9 +156,7 @@ export function ConditionBar({
       break
   }
 
-  const { full, partial } = supHover
-    ? splitSupporters(def.id, query)
-    : { full: [], partial: [] }
+  const { full, partial } = supHover ? splitSupporters(def.id, query) : { full: [], partial: [] }
 
   const Icon = CONCEPT_ICONS[def.id]
 
@@ -176,7 +199,15 @@ export function ConditionBar({
             className="dl-remove-inner inline-flex size-[26px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
             onClick={onRemove}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
@@ -190,7 +221,15 @@ export function ConditionBar({
             className="dl-remove-outer inline-flex size-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-faint"
             onClick={onRemove}
           >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>

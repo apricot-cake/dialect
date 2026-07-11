@@ -171,7 +171,12 @@ for (const state of states) {
     try {
       resolution = resolve(platform, state)
     } catch (e) {
-      report('join', platform.id, 'throw', `resolve が例外: ${String(e)} state=${JSON.stringify(state)}`)
+      report(
+        'join',
+        platform.id,
+        'throw',
+        `resolve が例外: ${String(e)} state=${JSON.stringify(state)}`,
+      )
       continue
     }
     const { parts, url } = resolution
@@ -216,7 +221,9 @@ for (const state of states) {
   }
 }
 
-console.log(`check:parts — サンプル ${states.length} 状態 × ${PLATFORMS.length} サイト(URL生成 ${checked} 件)`)
+console.log(
+  `check:parts — サンプル ${states.length} 状態 × ${PLATFORMS.length} サイト(URL生成 ${checked} 件)`,
+)
 if (COVERAGE_EXEMPT.length > 0) {
   console.log('免除(URL断片を生まないが固定挙動・既定値で意図が満たされる):')
   for (const e of COVERAGE_EXEMPT) console.log(`  ${e.platform}::${e.concept} — ${e.reason}`)

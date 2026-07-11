@@ -1,8 +1,32 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { stripHash, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
-import { applyBins, emptyBins, extractBareOrChain, hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  ParamParts,
+  part,
+  quotedTermTokens,
+  tok,
+} from '../urlParts'
+import {
+  applyBins,
+  emptyBins,
+  extractBareOrChain,
+  hostIs,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md + 2026-07-07 実機再確認(件数比較)。ログイン不要。
 // イラストは seiga.nicovideo.jp/search/{クエリ}?target=illust、タグ単独は /tag/{タグ}。
@@ -32,10 +56,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
     const toks = [...positive, ...excludeToks]
     const params = new ParamParts()
     params.set('q', toks.map((t) => t.text).join(' '), ...new Set(toks.flatMap((t) => t.concepts)))
-    return [
-      part('https://manga.nicovideo.jp/search', 'workType'),
-      ...params.parts('?'),
-    ]
+    return [part('https://manga.nicovideo.jp/search', 'workType'), ...params.parts('?')]
   }
 
   // イラスト(既定)。target=illust を明示し、新着/閲覧数のときだけ sort を送る。
@@ -94,7 +115,8 @@ function parseUrl(url: URL): ParsedSearch | null {
   if ((segs[0] !== 'search' && segs[0] !== 'tag') || !segs[1]) return null
   // タグページ(segs[0]==='tag')はOR構文を送らない(buildParts参照)ので、そのままトークン化する
   const rawTokens = tokenize(segs[1])
-  const { orTerms, rest } = segs[0] === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
+  const { orTerms, rest } =
+    segs[0] === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
   const bins = emptyBins()
   for (const token of rest) {
     if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))

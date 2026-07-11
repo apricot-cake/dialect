@@ -53,7 +53,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   params.set('order', order ?? 'newer', ...(order ? (['sortOrder'] as const) : []))
   // keyword_type= も常に送る(既定=all。Fantia側の既定title_onlyを外す固定値)。
   // 「タイトルだけ」ONのときだけ帰属させる
-  params.set('keyword_type', state.titleOnly ? 'title_only' : 'all', ...(state.titleOnly ? (['titleOnly'] as const) : []))
+  params.set(
+    'keyword_type',
+    state.titleOnly ? 'title_only' : 'all',
+    ...(state.titleOnly ? (['titleOnly'] as const) : []),
+  )
   params.set('keyword', terms.join(' '), 'keywords')
   return [lit('https://fantia.jp/posts'), ...params.parts('?')]
 }
@@ -72,7 +76,8 @@ function parseUrl(url: URL): ParsedSearch | null {
 
   const keywordType = url.searchParams.get('keyword_type')
   if (keywordType === 'title_only') patch.titleOnly = true
-  else if (keywordType !== null && keywordType !== 'all') ignored.push(`keyword_type=${keywordType}`)
+  else if (keywordType !== null && keywordType !== 'all')
+    ignored.push(`keyword_type=${keywordType}`)
   const category = url.searchParams.get('category')
   if (category !== null) {
     if ((FANTIA_CATEGORIES as readonly string[]).includes(category)) {
@@ -87,7 +92,11 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (order === 'popular') patch.sort = 'top'
   else if (order !== null && order !== 'newer') ignored.push(`order=${order}`)
 
-  leftoverParams(url, new Set(['keyword', 'keyword_type', 'category', 'brand_type', 'order']), ignored)
+  leftoverParams(
+    url,
+    new Set(['keyword', 'keyword_type', 'category', 'brand_type', 'order']),
+    ignored,
+  )
   return { patch, ignored }
 }
 

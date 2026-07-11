@@ -18,7 +18,10 @@ export function stripQuerySyntax(s: string): string {
 
 /** 空白区切りの入力を単語配列へ(全角スペース対応) */
 export function words(input: string): string[] {
-  return stripQuerySyntax(input).trim().split(/[\s　]+/).filter(Boolean)
+  return stripQuerySyntax(input)
+    .trim()
+    .split(/[\s　]+/)
+    .filter(Boolean)
 }
 
 /** キーワードの枠から空でない語を取り出す。1枠=1語で、枠の中身は分割しない。枠どうしはAND */
@@ -64,7 +67,9 @@ export function stripAt(input: string): string {
 
 /** 先頭の # (全角含む) を除去したタグ名。生の引用符・丸カッコは埋め込み前に除去する */
 export function stripHash(input: string): string {
-  return stripQuerySyntax(input).trim().replace(/^[#＃]+/, '')
+  return stripQuerySyntax(input)
+    .trim()
+    .replace(/^[#＃]+/, '')
 }
 
 /** 検索として成立する「正の条件」があるか(除外や期間だけでは検索できない) */
@@ -76,8 +81,8 @@ export function hasPositiveTerm(state: {
 }): boolean {
   return Boolean(
     andTerms(state).length > 0 ||
-      exactPhrases(state).length > 0 ||
-      state.fromUser.trim() ||
-      state.hashtag.trim(),
+    exactPhrases(state).length > 0 ||
+    state.fromUser.trim() ||
+    state.hashtag.trim(),
   )
 }

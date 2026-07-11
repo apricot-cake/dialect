@@ -42,7 +42,10 @@ function Cell({
   return (
     <td
       className="border border-border p-0 text-center"
-      style={{ background: cellColor(support.level, dark), cursor: clickable ? 'pointer' : undefined }}
+      style={{
+        background: cellColor(support.level, dark),
+        cursor: clickable ? 'pointer' : undefined,
+      }}
       onClick={
         clickable
           ? () =>
@@ -102,7 +105,10 @@ export default function SupportMatrix() {
           </span>
         </div>
 
-        <div className="overflow-auto rounded-[14px] border border-border" style={{ maxHeight: '75dvh' }}>
+        <div
+          className="overflow-auto rounded-[14px] border border-border"
+          style={{ maxHeight: '75dvh' }}
+        >
           <table className="border-collapse text-[12px]" style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr>

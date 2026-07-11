@@ -17,6 +17,7 @@ export function collectReadingPhrases(): string[] {
   for (const def of Object.values(TAG_DEFS)) for (const t of def.synonyms.ja) set.add(t)
   for (const def of CONCEPT_DEFS) set.add(ja[def.labelKey])
   for (const opt of SORT_OPTIONS) set.add(ja[opt.labelKey])
-  for (const opts of Object.values(SELECT_OPTIONS)) for (const opt of opts) set.add(ja[opt.labelKey])
+  for (const opts of Object.values(SELECT_OPTIONS))
+    for (const opt of opts) set.add(ja[opt.labelKey])
   return [...set].filter(hasKanji)
 }

@@ -1,4 +1,11 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { andTerms, words } from '../text'
 import { lit, ParamParts } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments } from '../parse'
@@ -41,9 +48,7 @@ function parseUrl(url: URL): ParsedSearch | null {
 
 // Twitchで探せるのは動画とチャンネルだけ。それ以外(ショート/再生リスト/Reddit専用の値)が
 // 選ばれたら落とす
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   if (state.resultType && state.resultType !== 'video' && state.resultType !== 'channel') {
     return { resultType: { level: 'none', noteKey: 'note.twitch.resultType' } }
   }

@@ -1,17 +1,31 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, quoteIfPhrase, stripAt, stripQuerySyntax, words } from '../text'
 import { formEncode, lit, ParamParts, part, tok, type Token } from '../urlParts'
-import { applyBins, daysAgoIso, emptyBins, hostMatches, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import {
+  applyBins,
+  daysAgoIso,
+  emptyBins,
+  hostMatches,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査)
 // デスクトップWebはログイン不要。Boolean演算子(AND/NOT、大文字)は公式ドキュメントあり。
 // スペース区切りは関連度ベースの緩い一致なので、AND結合で厳密化する。
 // 期間はq内構文がなく t= プリセット(day/week/month/year)への丸め。
 function tParam(since: string): string {
-  const days = Math.ceil(
-    (Date.now() - new Date(since).getTime()) / (24 * 60 * 60 * 1000),
-  )
+  const days = Math.ceil((Date.now() - new Date(since).getTime()) / (24 * 60 * 60 * 1000))
   if (days <= 1) return 'day'
   if (days <= 7) return 'week'
   if (days <= 31) return 'month'
@@ -37,8 +51,14 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // 「タイトルだけ」は語ごとの title: 接頭辞として現れるため、語の断片へ複合で帰属させる
   const field = state.titleOnly ? 'title:' : ''
   const fieldConcepts: ConceptId[] = state.titleOnly ? ['titleOnly'] : []
-  clauses.push(...andTerms(state).map((w) => tok(`${field}${quoteIfPhrase(w)}`, 'keywords', ...fieldConcepts)))
-  clauses.push(...exactPhrases(state).map((p) => tok(`${field}"${stripQuerySyntax(p)}"`, 'exactPhrase', ...fieldConcepts)))
+  clauses.push(
+    ...andTerms(state).map((w) => tok(`${field}${quoteIfPhrase(w)}`, 'keywords', ...fieldConcepts)),
+  )
+  clauses.push(
+    ...exactPhrases(state).map((p) =>
+      tok(`${field}"${stripQuerySyntax(p)}"`, 'exactPhrase', ...fieldConcepts),
+    ),
+  )
   // スコープ限定OR(「このどれかを含む」)。2語以上は(a OR b)、1語は通常の語と同じ扱い
   // (2026-07-11にreddit.comの検索ボックスをGUI操作で実測、issue #26)
   const orWords = words(state.keywordsOr)
@@ -46,9 +66,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   else clauses.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   if (state.fromUser.trim()) clauses.push(tok(`author:${stripAt(state.fromUser)}`, 'fromUser'))
   // コミュニティは複数指定で「どれか」(OR)
-  const subs = words(state.subreddit).map(
-    (s) => `subreddit:${s.replace(/^\/?r\//, '')}`,
-  )
+  const subs = words(state.subreddit).map((s) => `subreddit:${s.replace(/^\/?r\//, '')}`)
   if (subs.length >= 2) clauses.push(tok(`(${subs.join(' OR ')})`, 'subreddit'))
   else clauses.push(...subs.map((s) => tok(s, 'subreddit')))
 
@@ -197,12 +215,14 @@ function parseUrl(url: URL): ParsedSearch | null {
 // 他サイト専用の新しい値(例: Pinterestのボード)を追加するたびここも直す必要があり、
 // 直し忘れると「適用と出るのに送られない」を再発する(実際にPinterestのboard追加時に発覚)
 const REDDIT_RESULT_TYPES: ReadonlySet<string> = new Set([
-  'posts', 'communities', 'comments', 'media', 'people',
+  'posts',
+  'communities',
+  'comments',
+  'media',
+  'people',
 ])
 
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   const overrides: Partial<Record<ConceptId, ConceptSupport>> =
     state.until && !state.since
       ? { period: { level: 'none', noteKey: 'note.reddit.untilOnly' } }

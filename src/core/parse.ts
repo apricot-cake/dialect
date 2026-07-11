@@ -140,11 +140,7 @@ export function extractBareOrChain(tokens: string[]): { orTerms: string[]; rest:
  * consumed に無いクエリパラメータを ignored へ集める。トラッキング用の付属品
  * (utm_* 等)も含め、読めなかった指定は黙って捨てずに全部残す
  */
-export function leftoverParams(
-  url: URL,
-  consumed: ReadonlySet<string>,
-  ignored: string[],
-): void {
+export function leftoverParams(url: URL, consumed: ReadonlySet<string>, ignored: string[]): void {
   for (const [k, v] of url.searchParams) {
     if (!consumed.has(k)) ignored.push(v ? `${k}=${v}` : k)
   }

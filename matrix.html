@@ -11,12 +11,10 @@
     <title>Dialect — 条件×対応サイト表</title>
     <!-- 描画前にテーマを確定してダークモードのちらつきを防ぐ(index.htmlと同じ処理) -->
     <script>
-      (function () {
+      ;(function () {
         try {
           var saved = localStorage.getItem('theme')
-          var dark = saved
-            ? saved === 'dark'
-            : matchMedia('(prefers-color-scheme: dark)').matches
+          var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
           if (dark) document.documentElement.classList.add('dark')
         } catch (e) {}
       })()

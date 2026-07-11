@@ -107,10 +107,16 @@ function paramsToState(params: URLSearchParams): QueryState {
   for (const s of params.getAll('or')) {
     const texts = legacy
       ? words(s)
-      : s.split(OR_SEPARATOR).map((t) => t.trim()).filter(Boolean)
+      : s
+          .split(OR_SEPARATOR)
+          .map((t) => t.trim())
+          .filter(Boolean)
     if (texts.length > 0) terms.push(texts[0])
   }
-  const phrases = params.getAll('ph').map((s) => s.trim()).filter(Boolean)
+  const phrases = params
+    .getAll('ph')
+    .map((s) => s.trim())
+    .filter(Boolean)
   if (legacy && params.get('phm') === 'any' && words(phrases[0] ?? '').length >= 2) {
     // 旧形式の「どれかを含む」複数語句も先頭だけ残す
     terms.push(words(phrases[0])[0])
@@ -190,10 +196,22 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.safeSearchOff = params.get('nsafe') === '1'
   const rt = params.get('rt')
   if (
-    rt === 'video' || rt === 'short' || rt === 'channel' || rt === 'playlist' ||
-    rt === 'posts' || rt === 'communities' || rt === 'comments' || rt === 'media' || rt === 'people' ||
-    rt === 'board' || rt === 'bangumi' || rt === 'pgc' || rt === 'live' || rt === 'article' ||
-    rt === 'series' || rt === 'circle'
+    rt === 'video' ||
+    rt === 'short' ||
+    rt === 'channel' ||
+    rt === 'playlist' ||
+    rt === 'posts' ||
+    rt === 'communities' ||
+    rt === 'comments' ||
+    rt === 'media' ||
+    rt === 'people' ||
+    rt === 'board' ||
+    rt === 'bangumi' ||
+    rt === 'pgc' ||
+    rt === 'live' ||
+    rt === 'article' ||
+    rt === 'series' ||
+    rt === 'circle'
   ) {
     state.resultType = rt
   }
@@ -206,9 +224,18 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.excludeAi = params.get('noai') === '1'
   const sort = params.get('sort')
   if (
-    sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments' ||
-    sort === 'danmaku' || sort === 'favorites' || sort === 'likes' || sort === 'commentDate' ||
-    sort === 'videoCount' || sort === 'videoAdded' || sort === 'followerCount' || sort === 'liveCount' ||
+    sort === 'new' ||
+    sort === 'top' ||
+    sort === 'hot' ||
+    sort === 'comments' ||
+    sort === 'danmaku' ||
+    sort === 'favorites' ||
+    sort === 'likes' ||
+    sort === 'commentDate' ||
+    sort === 'videoCount' ||
+    sort === 'videoAdded' ||
+    sort === 'followerCount' ||
+    sort === 'liveCount' ||
     sort === 'auto'
   ) {
     state.sort = sort

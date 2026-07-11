@@ -46,7 +46,15 @@ export function ChipsField({
             className="inline-flex cursor-pointer border-none bg-transparent p-0 text-faint"
             onClick={() => onRemoveChip(i)}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
@@ -168,7 +176,13 @@ export function SelectField({
       </Select.Trigger>
       <Select.Portal>
         {/* alignItemWithTrigger を切って、トリガー直下に出るふつうのメニューにする */}
-        <Select.Positioner side="bottom" align="start" sideOffset={6} alignItemWithTrigger={false} className="z-50">
+        <Select.Positioner
+          side="bottom"
+          align="start"
+          sideOffset={6}
+          alignItemWithTrigger={false}
+          className="z-50"
+        >
           <Select.Popup className="dl-glass dl-drop-in flex min-w-[190px] flex-col gap-0.5 rounded-xl p-1.5">
             {options.map((o) => (
               <Select.Item
@@ -183,8 +197,19 @@ export function SelectField({
                     {t('builder.support.label')} {counts.get(o.value)}
                   </span>
                 )}
-                <Select.ItemIndicator className={showCounts && o.value !== noneValue ? '' : 'ml-auto'}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <Select.ItemIndicator
+                  className={showCounts && o.value !== noneValue ? '' : 'ml-auto'}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
                 </Select.ItemIndicator>

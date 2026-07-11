@@ -1,14 +1,24 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  PostLanguage,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
+import { andTerms, hasPositiveTerm, stripAt, stripHash, stripQuerySyntax, words } from '../text'
 import {
-  andTerms,
-  hasPositiveTerm,
-  stripAt,
-  stripHash,
-  stripQuerySyntax,
-  words,
-} from '../text'
-import { encodeTokens, formEncode, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
+  encodeTokens,
+  formEncode,
+  lit,
+  minusExcludeTokens,
+  part,
+  quotedTermTokens,
+  tok,
+  type Token,
+} from '../urlParts'
 import {
   applyBins,
   emptyBins,
@@ -92,38 +102,67 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // 既存フィールドを流用する4組はスペース区切りで複数語に割り、スペースをformEncodeで
   // +として結合する(2026-07-11 GUI採取: author=jay.bsky.team+pfrazee.com の実際の形と一致)
   if (state.fromUser.trim()) {
-    parts.push(part(`&author=${formEncode(words(state.fromUser).map(stripAt).join(' '))}`, 'fromUser'))
+    parts.push(
+      part(`&author=${formEncode(words(state.fromUser).map(stripAt).join(' '))}`, 'fromUser'),
+    )
   }
   if (state.excludeUser.trim()) {
-    parts.push(part(`&excludeAuthor=${formEncode(words(state.excludeUser).map(stripAt).join(' '))}`, 'excludeUser'))
+    parts.push(
+      part(
+        `&excludeAuthor=${formEncode(words(state.excludeUser).map(stripAt).join(' '))}`,
+        'excludeUser',
+      ),
+    )
   }
   if (state.mentionsUser.trim()) {
-    parts.push(part(`&mentions=${formEncode(words(state.mentionsUser).map(stripAt).join(' '))}`, 'mentionsUser'))
+    parts.push(
+      part(
+        `&mentions=${formEncode(words(state.mentionsUser).map(stripAt).join(' '))}`,
+        'mentionsUser',
+      ),
+    )
   }
   if (state.excludeMentions.trim()) {
     parts.push(
-      part(`&excludeMentions=${formEncode(words(state.excludeMentions).map(stripAt).join(' '))}`, 'excludeMentions'),
+      part(
+        `&excludeMentions=${formEncode(words(state.excludeMentions).map(stripAt).join(' '))}`,
+        'excludeMentions',
+      ),
     )
   }
   if (state.domain.trim()) {
     parts.push(part(`&domain=${formEncode(words(state.domain).join(' '))}`, 'domain'))
   }
   if (state.excludeDomain.trim()) {
-    parts.push(part(`&excludeDomain=${formEncode(words(state.excludeDomain).join(' '))}`, 'excludeDomain'))
+    parts.push(
+      part(`&excludeDomain=${formEncode(words(state.excludeDomain).join(' '))}`, 'excludeDomain'),
+    )
   }
   // url=/excludeUrl= は単一値のみ確認済み(複数値は未検証)なので、そのままtrimして送る
   if (state.linkUrl.trim()) {
     parts.push(part(`&url=${formEncode(stripQuerySyntax(state.linkUrl.trim()))}`, 'linkUrl'))
   }
   if (state.excludeLinkUrl.trim()) {
-    parts.push(part(`&excludeUrl=${formEncode(stripQuerySyntax(state.excludeLinkUrl.trim()))}`, 'excludeLinkUrl'))
+    parts.push(
+      part(
+        `&excludeUrl=${formEncode(stripQuerySyntax(state.excludeLinkUrl.trim()))}`,
+        'excludeLinkUrl',
+      ),
+    )
   }
   // tag=(OR意味論。既存hashtag概念とは別物)とexcludeTag=
   if (state.hashtagOr.trim()) {
-    parts.push(part(`&tag=${formEncode(words(state.hashtagOr).map(stripHash).join(' '))}`, 'hashtagOr'))
+    parts.push(
+      part(`&tag=${formEncode(words(state.hashtagOr).map(stripHash).join(' '))}`, 'hashtagOr'),
+    )
   }
   if (state.excludeHashtag.trim()) {
-    parts.push(part(`&excludeTag=${formEncode(words(state.excludeHashtag).map(stripHash).join(' '))}`, 'excludeHashtag'))
+    parts.push(
+      part(
+        `&excludeTag=${formEncode(words(state.excludeHashtag).map(stripHash).join(' '))}`,
+        'excludeHashtag',
+      ),
+    )
   }
   return parts
 }
@@ -134,9 +173,7 @@ const PEOPLE_CONFLICT: ConceptSupport = {
   level: 'none',
   noteKey: 'note.bluesky.peopleConflict',
 }
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
   if (state.resultType === 'people') {
     // 語句どうしのANDも保証されない、ふつうの部分一致(note.loose.and)
@@ -195,14 +232,29 @@ function parseUrl(url: URL): ParsedSearch | null {
   const patch: Partial<QueryState> = {}
   const ignored: string[] = []
   const consumed = new Set([
-    'q', 'tab', 'lang', 'media', 'video', 'replies', 'following',
-    'author', 'excludeAuthor', 'mentions', 'excludeMentions',
-    'domain', 'excludeDomain', 'url', 'excludeUrl', 'tag', 'excludeTag',
+    'q',
+    'tab',
+    'lang',
+    'media',
+    'video',
+    'replies',
+    'following',
+    'author',
+    'excludeAuthor',
+    'mentions',
+    'excludeMentions',
+    'domain',
+    'excludeDomain',
+    'url',
+    'excludeUrl',
+    'tag',
+    'excludeTag',
   ])
 
   const lang = url.searchParams.get('lang')
   if (lang) {
-    if ((POST_LANGUAGE_CODES as readonly string[]).includes(lang)) patch.language = lang as PostLanguage
+    if ((POST_LANGUAGE_CODES as readonly string[]).includes(lang))
+      patch.language = lang as PostLanguage
     else ignored.push(`lang=${lang}`)
   }
   const media = url.searchParams.get('media')
@@ -274,7 +326,8 @@ function parseUrl(url: URL): ParsedSearch | null {
     } else if (token.startsWith('lang:')) {
       // UIは生成しないがAPIレベルで効く形。&lang= と同じ概念へ戻す
       const code = token.slice('lang:'.length)
-      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+      if ((POST_LANGUAGE_CODES as readonly string[]).includes(code))
+        patch.language = code as PostLanguage
       else ignored.push(token)
     } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
     else if (token.startsWith('"')) bins.phrases.push(unquote(token))

@@ -1,4 +1,11 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { andTerms, stripHash, words } from '../text'
 import { encodeTokens, lit, part, tok, type Token } from '../urlParts'
 import { hostMatches, leftoverParams, pathSegments, tokenize } from '../parse'
@@ -22,16 +29,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const toks = [...textToks, ...tagNames.map((t) => tok(`#${t}`, 'hashtag'))]
   if (toks.length === 0) return null
 
-  return [
-    lit('https://www.instagram.com/explore/search/keyword/?q='),
-    ...encodeTokens(toks),
-  ]
+  return [lit('https://www.instagram.com/explore/search/keyword/?q='), ...encodeTokens(toks)]
 }
 
 // タグ1つならタグページ(厳密)だが、2つ以上はキーワードSERPに落ちてAND保証がなくなる
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   if (words(state.hashtag).length > 1) {
     return { hashtag: { level: 'partial', noteKey: 'note.instagram.multiTag' } }
   }

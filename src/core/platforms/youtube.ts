@@ -1,7 +1,24 @@
-import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, ResultType, UrlPart, VideoLength } from '../types'
+import type {
+  ConceptId,
+  ConceptSupport,
+  ParsedSearch,
+  PlatformDef,
+  QueryState,
+  ResultType,
+  UrlPart,
+  VideoLength,
+} from '../types'
 import { limitSort } from '../types'
 import { andTerms, exactPhrases, hasPositiveTerm, stripAt, stripHash, words } from '../text'
-import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
+import {
+  encodeTokens,
+  lit,
+  minusExcludeTokens,
+  part,
+  quotedTermTokens,
+  tok,
+  type Token,
+} from '../urlParts'
 import {
   applyBins,
   daysAgoIso,
@@ -187,7 +204,10 @@ function parseQueryTokens(q: string, patch: Partial<QueryState>, ignored: string
     else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
     else if (token.includes('|')) {
       // a|b|...: スコープ限定OR(「このどれかを含む」)
-      const parts = token.split('|').map((s) => s.trim()).filter(Boolean)
+      const parts = token
+        .split('|')
+        .map((s) => s.trim())
+        .filter(Boolean)
       if (parts.length >= 2) orTerms.push(...parts)
       else if (token) bins.terms.push(token)
     } else if (token) bins.terms.push(token)
@@ -373,9 +393,7 @@ const CHANNEL_CONFLICT: ConceptSupport = {
   level: 'none',
   noteKey: 'note.youtube.channelConflict',
 }
-function dynamicSupport(
-  state: QueryState,
-): Partial<Record<ConceptId, ConceptSupport>> {
+function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSupport>> {
   const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
   if (state.fromUser.trim()) {
     overrides.sortOrder = CHANNEL_CONFLICT
