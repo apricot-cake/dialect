@@ -360,8 +360,6 @@ export interface PlatformDef {
    */
   ink?: string
   requiresLogin: boolean
-  /** Googleフォールバック(site:検索)で使うドメイン */
-  googleSite: string
   /** 対応する概念のみ記載。未記載の概念は非対応(none)として扱う */
   support: Partial<Record<ConceptId, ConceptSupport>>
   /**

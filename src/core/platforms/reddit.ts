@@ -230,7 +230,6 @@ export const reddit: PlatformDef = {
   group: 'text',
   brandColor: '#ff4500',
   requiresLogin: false,
-  googleSite: 'reddit.com',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },

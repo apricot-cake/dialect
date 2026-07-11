@@ -173,7 +173,6 @@ export const bluesky: PlatformDef = {
   group: 'sns',
   brandColor: '#0085ff',
   requiresLogin: false,
-  googleSite: 'bsky.app',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },

@@ -411,7 +411,6 @@ export const youtube: PlatformDef = {
   group: 'video',
   brandColor: '#ff0033',
   requiresLogin: false,
-  googleSite: 'youtube.com',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.youtube.exactPhrase' },

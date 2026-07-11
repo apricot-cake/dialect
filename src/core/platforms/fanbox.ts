@@ -39,7 +39,6 @@ export const fanbox: PlatformDef = {
   group: 'image',
   brandColor: '#0096FA',
   requiresLogin: false,
-  googleSite: 'fanbox.cc',
   support: {
     hashtag: { level: 'partial', noteKey: 'note.fanbox.hashtagOnly' },
   },

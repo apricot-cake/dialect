@@ -157,7 +157,6 @@ export const bilibili: PlatformDef = {
   group: 'video',
   brandColor: '#00A1D6',
   requiresLogin: false,
-  googleSite: 'bilibili.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },

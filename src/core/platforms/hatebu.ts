@@ -130,7 +130,6 @@ export const hatebu: PlatformDef = {
   group: 'text',
   brandColor: '#00A4DE',
   requiresLogin: false,
-  googleSite: 'b.hatena.ne.jp',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },

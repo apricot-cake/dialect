@@ -129,7 +129,6 @@ export const tumblr: PlatformDef = {
   group: 'sns',
   brandColor: '#36465D',
   requiresLogin: false,
-  googleSite: 'tumblr.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'full' },

@@ -318,7 +318,6 @@ export const niconico: PlatformDef = {
   group: 'video',
   brandColor: '#252525',
   requiresLogin: false,
-  googleSite: 'nicovideo.jp',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },

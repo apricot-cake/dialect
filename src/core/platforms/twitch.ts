@@ -56,7 +56,6 @@ export const twitch: PlatformDef = {
   group: 'video',
   brandColor: '#9146FF',
   requiresLogin: false,
-  googleSite: 'twitch.tv',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
