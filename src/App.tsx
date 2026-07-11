@@ -184,15 +184,19 @@ export default function App() {
   }, [dark])
 
   // 現在の条件を常にURLへ反映しておく(ブックマーク・共有用)。
-  // ただし条件が1つも無いとき(v= だけ)はクエリを付けず、初期表示のURLを汚さない
+  // ただし条件が1つも無いとき(v= だけ)はクエリを付けず、初期表示のURLを汚さない。
+  // 連続入力(1文字ごとのquery更新)でreplaceStateが連打されないよう間引く
   useEffect(() => {
-    const params = stateToParams(query)
-    const hasConditions = [...params.keys()].some((k) => k !== 'v')
-    history.replaceState(
-      null,
-      '',
-      hasConditions ? `${location.pathname}?${params}` : location.pathname,
-    )
+    const timer = setTimeout(() => {
+      const params = stateToParams(query)
+      const hasConditions = [...params.keys()].some((k) => k !== 'v')
+      history.replaceState(
+        null,
+        '',
+        hasConditions ? `${location.pathname}?${params}` : location.pathname,
+      )
+    }, 300)
+    return () => clearTimeout(timer)
   }, [query])
 
   // 次回起動時の復元用。URLと違い、バー構成やサイト絞り込みも覚える
