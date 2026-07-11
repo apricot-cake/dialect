@@ -346,6 +346,63 @@ for (const platform of PLATFORMS) {
   }
 }
 
+// ---- 1b. インスタンスホスト設定時の往復検査(issue #32) --------------------------------
+// mastodon/misskeyはctx.instanceHostで利用インスタンスを切り替えられる。ctx未指定の
+// 通常往復(上のCASES)に加え、カスタムホスト指定時の往復と、instanceHosts未指定では
+// カスタムホストのURLを誤って読まないことを確認する
+const INSTANCE_CASES: Array<{
+  platform: 'mastodon' | 'misskey'
+  host: string
+  patch: Patch
+}> = [
+  { platform: 'mastodon', host: 'fosstodon.org', patch: { terms: ['猫'], exclude: 'dog' } },
+  { platform: 'mastodon', host: 'fosstodon.org', patch: { hashtag: 'art' } },
+  { platform: 'misskey', host: 'misskey.design', patch: { terms: ['猫'], fromUser: 'alice' } },
+  { platform: 'misskey', host: 'misskey.design', patch: { hashtag: 'art' } },
+]
+for (const { platform: id, host, patch } of INSTANCE_CASES) {
+  const platform = PLATFORMS.find((p) => p.id === id)
+  if (!platform) {
+    fail(`${id}: PLATFORMSに見つからない`)
+    continue
+  }
+  const state: QueryState = { ...defaultState(), ...patch }
+  const url = buildUrl(platform, state, { instanceHost: host })
+  if (!url) {
+    fail(`${id}: instanceHost指定時にbuildUrlがnull: ${JSON.stringify(patch)}`)
+    continue
+  }
+  if (!url.includes(host)) {
+    fail(`${id}: instanceHostがURLに反映されていない: ${url}`)
+    continue
+  }
+  // instanceHosts未指定では、カスタムホストのURLをどのサイトとしても読めないはず
+  if (parseSearchUrl(url)) {
+    fail(`${id}: instanceHosts未指定なのにカスタムホストのURLを読めてしまった: ${url}`)
+  }
+  const instanceHosts = id === 'mastodon' ? { mastodon: host } : { misskey: host }
+  const result = parseSearchUrl(url, instanceHosts)
+  if (!result || result.platform?.id !== id) {
+    fail(`${id}: instanceHosts指定時に逆翻訳できない: ${url}`)
+    continue
+  }
+  if (result.ignored.length > 0) {
+    fail(`${id}: instanceHost往復で読み残し ${JSON.stringify(result.ignored)}: ${url}`)
+  }
+  const rebuilt = buildUrl(platform, result.state, { instanceHost: host })
+  if (rebuilt !== url) {
+    fail(`${id}: instanceHost往復不一致\n    元: ${url}\n    再: ${rebuilt}`)
+  }
+  // 既定ホストのURLも、instanceHosts指定時に引き続き読めること
+  const defaultUrl = buildUrl(platform, state)
+  if (defaultUrl) {
+    const defaultResult = parseSearchUrl(defaultUrl, instanceHosts)
+    if (!defaultResult || defaultResult.platform?.id !== id) {
+      fail(`${id}: instanceHosts指定時でも既定ホストのURLを読めるべき: ${defaultUrl}`)
+    }
+  }
+}
+
 // ---- 2. ワイルドURL検査 ---------------------------------------------------------
 // サイト自身が生成する形(旧ドメイン・トラッキング付き・レガシーパラメータ等)。
 // expect は state の一部を突き合わせ、truthy はゼロ値でないことだけ確認する
@@ -518,5 +575,5 @@ if (failures > 0) {
   process.exit(1)
 }
 console.log(
-  `check:reverse — OK(往復 ${total} ケース / ワイルド ${WILD.length} 件 / 拒否 ${NEGATIVE.length} 件、全20サイト)`,
+  `check:reverse — OK(往復 ${total} ケース / instanceHost往復 ${INSTANCE_CASES.length} 件 / ワイルド ${WILD.length} 件 / 拒否 ${NEGATIVE.length} 件、全20サイト)`,
 )

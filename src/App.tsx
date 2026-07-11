@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import type { ConceptId, PlatformId, QueryState } from '@/core/types'
+import type { ConceptId, InstanceHosts, PlatformId, QueryState } from '@/core/types'
 import { NICO_GENRES, POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_DEFS, CONCEPT_MAP, type ConceptDef } from '@/core/conceptDefs'
@@ -13,9 +13,11 @@ import {
   loadConceptUsage,
   loadHistory,
   loadHistoryEnabled,
+  loadInstanceHosts,
   loadSaved,
   markHistorySuggested,
   persistHistoryEnabled,
+  persistInstanceHosts,
   recordConceptUsage,
   recordHistory,
   saveSearch,
@@ -170,6 +172,17 @@ export default function App() {
   const [conceptUsage, setConceptUsage] = useState(loadConceptUsage)
   // 同じ検索を3回実行したときに一度だけ出す「保存しますか?」サジェスト
   const [promoteSuggestion, setPromoteSuggestion] = useState<HistoryEntry | null>(null)
+  // mastodon/misskeyの設定済みインスタンスホスト(issue #32)
+  const [instanceHosts, setInstanceHosts] = useState<InstanceHosts>(loadInstanceHosts)
+  const updateInstanceHost = (id: PlatformId, host: string | null) => {
+    setInstanceHosts((prev) => {
+      const next = { ...prev }
+      if (host) next[id] = host
+      else delete next[id]
+      persistInstanceHosts(next)
+      return next
+    })
+  }
   const [historyEnabled, setHistoryEnabledState] = useState(loadHistoryEnabled)
   // 検索URLの読み込み(逆翻訳)ダイアログ
   const [reverseOpen, setReverseOpen] = useState(false)
@@ -409,6 +422,7 @@ export default function App() {
           dark={dark}
           onGoConditions={() => setArea('conditions')}
           onLaunch={recordLaunch}
+          instanceHosts={instanceHosts}
         />
       </div>
       <ConditionPicker
@@ -445,6 +459,8 @@ export default function App() {
         onClearHistory={() => setSearchHistory(clearHistory())}
         onToggleHistoryEnabled={toggleHistoryEnabled}
         onPromote={(entry) => setSaveTarget(toQuery(entry))}
+        instanceHosts={instanceHosts}
+        onChangeInstanceHost={updateInstanceHost}
       />
       <ReverseDialog
         open={reverseOpen}
@@ -452,6 +468,7 @@ export default function App() {
         dark={dark}
         hasConditions={canClear}
         onApply={applyReverse}
+        instanceHosts={instanceHosts}
       />
       <QrDialog
         open={qrOpen}

@@ -1,7 +1,9 @@
-import type { ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
+import type { ParsedSearch, PlatformCtx, PlatformDef, QueryState, UrlPart } from '../types'
 import { andTerms, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+
+const DEFAULT_HOST = 'misskey.io'
 
 // 出典: docs/operator-research.md(2026-07-03調査、2026-07-08にログイン済みGUI操作で除外・完全一致を再検証)
 // 検索は /search?q=&type=note(要ログイン)。本文検索はMeilisearchで、語ごとのAND・除外(-語)が効く。
@@ -13,7 +15,8 @@ import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../pars
 // そのまま引用符で括ってすら0件になる(引用符が文字として扱われ、クエリ全体を壊す)。さらに他のAND語と
 // 組み合わせると検索全体が0件になる実害を確認した。機能しない条件を語のANDに
 // 付け替えて送ることはしない(意味を変える畳み込み禁止)ため、非対応として送らない。
-function buildParts(state: QueryState): UrlPart[] | null {
+function buildParts(state: QueryState, ctx?: PlatformCtx): UrlPart[] | null {
+  const host = ctx?.instanceHost ?? DEFAULT_HOST
   const textToks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
@@ -24,7 +27,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // mastodon/tumblr と同じく検索ページへ回して #タグ+除外 として送る(2026-07-10 修正。
   // それまでタグ+除外の組み合わせで除外が黙って落ちていた=check:parts が検出)
   if (tagNames.length === 1 && textToks.length === 0 && !handle && excludeToks.length === 0) {
-    return [lit('https://misskey.io/tags/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
+    return [lit(`https://${host}/tags/`), part(encodeURIComponent(tagNames[0]), 'hashtag')]
   }
 
   // ノート本文にはタグが「#タグ」の文字列で含まれるため、部分一致検索に畳み込める
@@ -38,7 +41,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // スペースへ戻す保証がないため、%20になるencodeURIComponentで組む。
   // type=note は指定の有無によらず常に送る固定値なので無帰属
   const parts: UrlPart[] = [
-    lit('https://misskey.io/search?q='),
+    lit(`https://${host}/search?q=`),
     ...encodeTokens(toks),
     lit('&type=note'),
   ]
@@ -51,10 +54,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   return parts
 }
 
-// 逆翻訳: misskey.io/search?q=…&type=note(&username=&host=) と /tags/{tag}。
-// 他インスタンスはホスト名から判別できないため misskey.io のみ受ける
-function parseUrl(url: URL): ParsedSearch | null {
-  if (!hostIs(url, 'misskey.io')) return null
+// 逆翻訳: {host}/search?q=…&type=note(&username=&host=) と /tags/{tag}。既定ホスト(misskey.io)と、
+// ユーザーが設定したインスタンスホスト(issue #32)の両方を受ける
+function parseUrl(url: URL, ctx?: PlatformCtx): ParsedSearch | null {
+  const hosts = [DEFAULT_HOST, ...(ctx?.instanceHost ? [ctx.instanceHost] : [])]
+  if (!hostIs(url, ...hosts)) return null
   const segs = pathSegments(url)
   const patch: Partial<QueryState> = {}
   const ignored: string[] = []

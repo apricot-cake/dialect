@@ -1,4 +1,4 @@
-import type { ConceptId, PlatformId, QueryState } from './types'
+import type { ConceptId, InstanceHosts, PlatformId, QueryState } from './types'
 import { paramsToQuery, stateToParams } from './permalink'
 import { PLATFORMS } from './platforms'
 
@@ -250,6 +250,55 @@ export function conceptFrecency(usage: ConceptUsageMap, id: ConceptId, now: numb
   if (!entry) return 0
   const days = (now - entry.lastUsedAt) / (1000 * 60 * 60 * 24)
   return entry.count * Math.pow(0.5, days / 30)
+}
+
+// fediverseのインスタンスホスト設定(mastodon/misskeyのみが参照。issue #32)。既定インスタンス
+// 固定だと自分のアカウントで検索したい利用者には使えないため、ホスト名を上書きできるようにする
+const INSTANCES_KEY = 'dialect.instances.v1'
+
+function isInstanceHosts(v: unknown): v is InstanceHosts {
+  if (typeof v !== 'object' || v === null) return false
+  return Object.entries(v as Record<string, unknown>).every(
+    ([id, host]) => PLATFORMS.some((p) => p.id === id) && typeof host === 'string',
+  )
+}
+
+export function loadInstanceHosts(): InstanceHosts {
+  try {
+    const raw = localStorage.getItem(INSTANCES_KEY)
+    if (!raw) return {}
+    const parsed: unknown = JSON.parse(raw)
+    return isInstanceHosts(parsed) ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+export function persistInstanceHosts(hosts: InstanceHosts): void {
+  try {
+    localStorage.setItem(INSTANCES_KEY, JSON.stringify(hosts))
+  } catch {
+    /* 保存できなくても今回のセッションの設定は使える */
+  }
+}
+
+/**
+ * ユーザー入力からホスト名だけを取り出す(protocol・パス・先頭の@を剥がし、小文字化)。
+ * `new URL('https://' + host)` で妥当性を検証し、不正な入力(空・スペース混入等)は null
+ */
+export function normalizeInstanceHost(input: string): string | null {
+  const host = input
+    .trim()
+    .replace(/^https?:\/\//i, '')
+    .split('/')[0]
+    .replace(/^@+/, '')
+    .toLowerCase()
+  if (!host) return null
+  try {
+    return new URL(`https://${host}`).hostname === host ? host : null
+  } catch {
+    return null
+  }
 }
 
 // Export/import: bundles every dialect.* localStorage key (saved searches,

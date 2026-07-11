@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
-import type { QueryState } from '@/core/types'
+import type { InstanceHosts, QueryState } from '@/core/types'
 import { parseSearchUrl } from '@/core/reverse'
 import { searchSummary } from '@/core/preview'
 import { PlatformBadge } from './PlatformBadge'
@@ -20,6 +20,7 @@ export function ReverseDialog({
   dark,
   hasConditions,
   onApply,
+  instanceHosts,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -27,13 +28,15 @@ export function ReverseDialog({
   /** いま条件があるか(適用すると置き換わる注意書きを出す) */
   hasConditions: boolean
   onApply: (state: QueryState) => void
+  /** mastodon/misskeyの設定済みインスタンスホスト。既定ホストのURLと併せて読める(issue #32) */
+  instanceHosts: InstanceHosts
 }) {
   const [input, setInput] = useState('')
   // 開くたびに空から(前回の貼り付けを引きずらない)
   useEffect(() => {
     if (open) setInput('')
   }, [open])
-  const result = useMemo(() => parseSearchUrl(input), [input])
+  const result = useMemo(() => parseSearchUrl(input, instanceHosts), [input, instanceHosts])
   const submit = () => {
     if (result) onApply(result.state)
   }

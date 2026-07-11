@@ -1,4 +1,4 @@
-import type { ConceptId, PlatformDef, QueryState, UrlPart } from './types'
+import type { ConceptId, PlatformCtx, PlatformDef, QueryState, UrlPart } from './types'
 import { andTerms, exactPhrases, quoteIfPhrase, stripQuerySyntax, words } from './text'
 
 /**
@@ -24,8 +24,12 @@ export function joinParts(parts: UrlPart[]): string {
 }
 
 /** 条件をそのサイトの検索URLへ翻訳する(buildPartsを結合した最終URL)。成立しなければ null */
-export function buildUrl(platform: PlatformDef, state: QueryState): string | null {
-  const parts = platform.buildParts(state)
+export function buildUrl(
+  platform: PlatformDef,
+  state: QueryState,
+  ctx?: PlatformCtx,
+): string | null {
+  const parts = platform.buildParts(state, ctx)
   return parts ? joinParts(parts) : null
 }
 

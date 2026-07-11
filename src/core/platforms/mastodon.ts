@@ -1,4 +1,11 @@
-import type { ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
+import type {
+  ParsedSearch,
+  PlatformCtx,
+  PlatformDef,
+  PostLanguage,
+  QueryState,
+  UrlPart,
+} from '../types'
 import { POST_LANGUAGE_CODES } from '../types'
 import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok } from '../urlParts'
@@ -13,6 +20,8 @@ import {
   unquote,
 } from '../parse'
 
+const DEFAULT_HOST = 'mastodon.social'
+
 // 出典: 2026-07-08 実機確認(ログイン済みブラウザ、GUI操作)。mastodon.social/search?q=&type=statuses
 // はSPAだがURL遷移だけで検索が自動実行される(Misskeyと違い手動ボタン不要)。ハッシュタグ単独は
 // /tags/{tag} でログアウトでも閲覧可能。本文検索(投稿タブ)は未ログインだと"hello"のような
@@ -22,7 +31,8 @@ import {
 // from:は投稿者で絞り込む、before:/after:は日付の前後で正しく絞られる、-is:replyでリプライが
 // 除外される、language:で言語が絞られる、has:media/has:linkはそれぞれ独立に結果を変える、
 // をすべて実際の投稿の増減で確認済み。
-function buildParts(state: QueryState): UrlPart[] | null {
+function buildParts(state: QueryState, ctx?: PlatformCtx): UrlPart[] | null {
+  const host = ctx?.instanceHost ?? DEFAULT_HOST
   const tagNames = words(state.hashtag).map(stripHash)
   const handle = stripAt(state.fromUser)
   const textToks = quotedTermTokens(state)
@@ -40,7 +50,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
     Boolean(state.language)
   // 単一タグのみ(他の条件が何もない)ならタグページ(ログアウトでも見られる唯一の経路)
   if (tagNames.length === 1 && !hasOtherConditions) {
-    return [lit('https://mastodon.social/tags/'), part(encodeURIComponent(tagNames[0]), 'hashtag')]
+    return [lit(`https://${host}/tags/`), part(encodeURIComponent(tagNames[0]), 'hashtag')]
   }
 
   if (!hasPositiveTerm(state)) return null
@@ -59,13 +69,14 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.language) toks.push(tok(`language:${state.language}`, 'language'))
 
   // type=statuses は指定の有無によらず常に送る固定値なので無帰属
-  return [lit('https://mastodon.social/search?q='), ...encodeTokens(toks), lit('&type=statuses')]
+  return [lit(`https://${host}/search?q=`), ...encodeTokens(toks), lit('&type=statuses')]
 }
 
-// 逆翻訳: mastodon.social/search?q=…&type=statuses と /tags/{tag}。他インスタンスの
-// URLはホスト名からMastodonと判別できないため、既定インスタンスのみ受ける
-function parseUrl(url: URL): ParsedSearch | null {
-  if (!hostIs(url, 'mastodon.social')) return null
+// 逆翻訳: {host}/search?q=…&type=statuses と /tags/{tag}。既定ホスト(mastodon.social)と、
+// ユーザーが設定したインスタンスホスト(issue #32)の両方を受ける
+function parseUrl(url: URL, ctx?: PlatformCtx): ParsedSearch | null {
+  const hosts = [DEFAULT_HOST, ...(ctx?.instanceHost ? [ctx.instanceHost] : [])]
+  if (!hostIs(url, ...hosts)) return null
   const segs = pathSegments(url)
   const patch: Partial<QueryState> = {}
   const ignored: string[] = []

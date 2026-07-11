@@ -490,6 +490,14 @@ export const ja = {
   'saved.backup.merge': '統合する',
   'saved.backup.replace': '置き換える',
 
+  // インスタンス設定(mastodon/misskeyの利用インスタンスホスト。issue #32)
+  'instance.label': '利用インスタンス',
+  'instance.help':
+    '自分が使っているサーバーのホスト名を入れると、検索がそのサーバー宛てに開きます。空欄なら既定のインスタンスのままです',
+  'instance.mastodon.default': '例: mastodon.social(既定)',
+  'instance.misskey.default': '例: misskey.io(既定)',
+  'instance.invalid': 'ホスト名として読み取れませんでした',
+
   // 検索履歴(自動記録・localStorage)
   'saved.tab.saved': '保存',
   'saved.tab.history': '履歴',

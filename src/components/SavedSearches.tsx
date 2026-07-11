@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import type { Backup, HistoryEntry, StoredQuery } from '@/core/storage'
-import { applyBackup, exportBackup, parseBackup, toQuery } from '@/core/storage'
+import {
+  applyBackup,
+  exportBackup,
+  normalizeInstanceHost,
+  parseBackup,
+  toQuery,
+} from '@/core/storage'
 import { searchSummary } from '@/core/preview'
+import { PLATFORMS } from '@/core/platforms'
+import type { InstanceHosts, PlatformId } from '@/core/types'
 import { getLang, t, tf } from '@/i18n'
 
 const SCRIM = 'dl-scrim fixed inset-0 z-[60]'
@@ -97,6 +105,77 @@ type ImportState =
   | { status: 'idle' }
   | { status: 'invalid' }
   | { status: 'confirm'; backup: Backup }
+
+// インスタンス設定の対象は現状mastodon/misskeyのみ(issue #32)
+const INSTANCE_PLATFORM_IDS: PlatformId[] = ['mastodon', 'misskey']
+
+/** fediverse(mastodon/misskey)の設定済みインスタンスホストの入力欄。未入力=既定ホスト */
+function InstanceHostControls({
+  instanceHosts,
+  onChange,
+}: {
+  instanceHosts: InstanceHosts
+  onChange: (id: PlatformId, host: string | null) => void
+}) {
+  const [drafts, setDrafts] = useState<Partial<Record<PlatformId, string>>>({})
+  const [invalid, setInvalid] = useState<Partial<Record<PlatformId, boolean>>>({})
+
+  const commit = (id: PlatformId, raw: string) => {
+    if (!raw.trim()) {
+      onChange(id, null)
+      setDrafts((d) => ({ ...d, [id]: undefined }))
+      setInvalid((v) => ({ ...v, [id]: false }))
+      return
+    }
+    const host = normalizeInstanceHost(raw)
+    if (!host) {
+      setInvalid((v) => ({ ...v, [id]: true }))
+      return
+    }
+    onChange(id, host)
+    setDrafts((d) => ({ ...d, [id]: undefined }))
+    setInvalid((v) => ({ ...v, [id]: false }))
+  }
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <span
+        data-tip={t('instance.help')}
+        className="cursor-help self-start text-[11.5px] font-medium text-muted"
+      >
+        {t('instance.label')}
+      </span>
+      {INSTANCE_PLATFORM_IDS.map((id) => {
+        const platform = PLATFORMS.find((p) => p.id === id)
+        if (!platform) return null
+        return (
+          <label key={id} className="flex flex-col gap-1 text-[12px] font-semibold text-muted">
+            {platform.name}
+            <input
+              type="text"
+              value={drafts[id] ?? instanceHosts[id] ?? ''}
+              placeholder={t(
+                id === 'mastodon' ? 'instance.mastodon.default' : 'instance.misskey.default',
+              )}
+              onChange={(e) => setDrafts((d) => ({ ...d, [id]: e.target.value }))}
+              onBlur={(e) => commit(id, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                  e.preventDefault()
+                  commit(id, e.currentTarget.value)
+                }
+              }}
+              className="h-9 w-full rounded-[9px] border border-border bg-card px-3 text-[13px] font-normal text-fg outline-none"
+            />
+            {invalid[id] && (
+              <span className="font-normal text-[11px]">{t('instance.invalid')}</span>
+            )}
+          </label>
+        )
+      })}
+    </div>
+  )
+}
 
 /**
  * この端末のlocalStorage(dialect.*名前空間)をJSONファイルへ書き出し/読み込む。
@@ -289,6 +368,8 @@ export function SavedListDialog({
   onClearHistory,
   onToggleHistoryEnabled,
   onPromote,
+  instanceHosts,
+  onChangeInstanceHost,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -301,6 +382,8 @@ export function SavedListDialog({
   onClearHistory: () => void
   onToggleHistoryEnabled: (enabled: boolean) => void
   onPromote: (entry: HistoryEntry) => void
+  instanceHosts: InstanceHosts
+  onChangeInstanceHost: (id: PlatformId, host: string | null) => void
 }) {
   const [tab, setTab] = useState<'saved' | 'history'>('saved')
   // Reopening always starts on the saved tab (the primary, user-curated list)
@@ -465,6 +548,9 @@ export function SavedListDialog({
               </div>
             </div>
           )}
+          <div className="border-t border-border px-[18px] pt-3 pb-3">
+            <InstanceHostControls instanceHosts={instanceHosts} onChange={onChangeInstanceHost} />
+          </div>
           <div className="border-t border-border px-[18px] pt-3 pb-4">
             <BackupControls />
           </div>

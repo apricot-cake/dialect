@@ -434,6 +434,18 @@ export interface ParsedSearch {
   ignored: string[]
 }
 
+/**
+ * サイトごとの利用者設定(現状はfediverseのインスタンスホストのみ)。QueryStateとは別枠
+ * (検索条件ではなく「どのサーバーへ翻訳するか」という利用者環境の設定のため)。
+ * mastodon/misskeyだけが参照し、他サイトは無視する(issue #32)
+ */
+export interface PlatformCtx {
+  instanceHost?: string
+}
+
+/** サイトIDごとの設定済みインスタンスホスト。未設定のサイトは既定ホストを使う */
+export type InstanceHosts = Partial<Record<PlatformId, string>>
+
 export interface PlatformDef {
   id: PlatformId
   name: string
@@ -455,14 +467,14 @@ export interface PlatformDef {
    * 変えたときだけ帰属させる(指定なしでも常に送る固定既定値は無帰属。
    * check:parts が applied∪approximated との整合を機械検査する)
    */
-  buildParts(state: QueryState): UrlPart[] | null
+  buildParts(state: QueryState, ctx?: PlatformCtx): UrlPart[] | null
   /**
    * このサイトの検索URLをDialectの条件へ逆翻訳する(buildPartsの逆方向)。
    * このサイトの検索URLでなければ null。buildParts が出すURLは必ず読めること
    * (check:reverse が往復一致を機械検査する)。サイトが実際に生成する形の
    * バリエーション(旧ドメイン・別パラメータ等)もできる範囲で受ける
    */
-  parseUrl(url: URL): ParsedSearch | null
+  parseUrl(url: URL, ctx?: PlatformCtx): ParsedSearch | null
   /**
    * state に応じて support を上書きする(任意)。同じ概念でも入力の組み合わせ次第で
    * 実際にはURLへ送れないことがある(例: YouTubeはユーザー指定を入れると

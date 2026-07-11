@@ -5,7 +5,7 @@ import { activeConcepts } from '@/core/concepts'
 import { translationParts, specialtyOwner } from '@/core/preview'
 import { rawQuery } from '@/core/rawQuery'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
-import type { ConceptId, PlatformDef, QueryState, Resolution } from '@/core/types'
+import type { ConceptId, InstanceHosts, PlatformDef, QueryState, Resolution } from '@/core/types'
 import { getLang, t, tf, type MessageKey } from '@/i18n'
 import { pt } from '@/i18n/pageCopy'
 import { readableInk } from '@/lib/color'
@@ -418,18 +418,22 @@ export function LinksArea({
   dark,
   onGoConditions,
   onLaunch,
+  instanceHosts,
 }: {
   query: QueryState
   dark: boolean
   onGoConditions: () => void
   /** Called when a launch link is opened; App records it as search history */
   onLaunch: () => void
+  /** mastodon/misskeyの設定済みインスタンスホスト。未設定サイトは既定ホストのまま(issue #32) */
+  instanceHosts: InstanceHosts
 }) {
   const resolutions = useMemo(() => {
     const map = new Map<string, Resolution>()
-    for (const p of PLATFORMS) map.set(p.id, resolve(p, query))
+    for (const p of PLATFORMS)
+      map.set(p.id, resolve(p, query, { instanceHost: instanceHosts[p.id] }))
     return map
-  }, [query])
+  }, [query, instanceHosts])
 
   // 概念→識別色。サイト非依存の activeConcepts から作るので、全カードで同じ条件が同じ色になる
   const colors = useMemo(() => conceptColors(activeConcepts(query), dark), [query, dark])

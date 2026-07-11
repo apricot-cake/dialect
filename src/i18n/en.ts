@@ -490,6 +490,14 @@ export const en = {
   'saved.backup.merge': 'Merge',
   'saved.backup.replace': 'Replace',
 
+  // Instance settings (mastodon/misskey home instance host, issue #32)
+  'instance.label': 'Home instance',
+  'instance.help':
+    'Enter the hostname of the server you use, and searches will open there. Leave blank to keep the default instance',
+  'instance.mastodon.default': 'e.g. mastodon.social (default)',
+  'instance.misskey.default': 'e.g. misskey.io (default)',
+  'instance.invalid': "Couldn't read that as a hostname",
+
   // Search history (auto-recorded, localStorage)
   'saved.tab.saved': 'Saved',
   'saved.tab.history': 'History',

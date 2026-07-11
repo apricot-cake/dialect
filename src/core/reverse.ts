@@ -1,4 +1,4 @@
-import type { PlatformDef, QueryState } from './types'
+import type { InstanceHosts, PlatformDef, QueryState } from './types'
 import { PLATFORMS } from './platforms'
 import { activeConcepts, defaultState } from './concepts'
 import { paramsToQuery } from './permalink'
@@ -13,9 +13,10 @@ export interface ReverseResult {
 /**
  * 貼り付けられた文字列を検索URLとして解釈し、Dialectの条件へ逆翻訳する。
  * 各サイトの parseUrl(buildUrlの逆方向)を順に試し、どれにも当たらなければ
- * Dialect自身の共有URL(パーマリンク)として読めるかを試す。読めなければ null
+ * Dialect自身の共有URL(パーマリンク)として読めるかを試す。読めなければ null。
+ * instanceHosts はmastodon/misskeyの設定済みインスタンスホスト(未設定なら既定ホストのみ試す)
  */
-export function parseSearchUrl(input: string): ReverseResult | null {
+export function parseSearchUrl(input: string, instanceHosts?: InstanceHosts): ReverseResult | null {
   const raw = input.trim()
   if (!raw) return null
   // スキーム無しの「x.com/search?q=…」も受ける
@@ -29,7 +30,7 @@ export function parseSearchUrl(input: string): ReverseResult | null {
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return null
 
   for (const platform of PLATFORMS) {
-    const parsed = platform.parseUrl(url)
+    const parsed = platform.parseUrl(url, { instanceHost: instanceHosts?.[platform.id] })
     if (!parsed) continue
     const state: QueryState = { ...defaultState(), ...parsed.patch }
     // ホストは合うが条件を1つも読み取れなかった(検索URLとして中身が無い)
