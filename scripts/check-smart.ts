@@ -17,7 +17,7 @@
  *      candidates plus the peeled remainder (猫), and are never auto-applied
  *      (they stay out of the fragments).
  *
- * Run: npm run check:smart   (bundled by esbuild, executed by node)
+ * Run: npm run check:smart   (executed directly via tsx)
  */
 import {
   mergeFragments,

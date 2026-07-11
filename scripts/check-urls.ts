@@ -8,7 +8,7 @@
  *   本当に出るか」までは判定できない(ログインpage や JSシェルが 200 で返るため)。
  *   それらは ⚠️ として「要ブラウザ/手動確認」に振り分ける。最終確認はブラウザで。
  *
- * 実行: npm run check:urls   (esbuild でバンドルして node で実行)
+ * 実行: npm run check:urls   (tsx で直接実行)
  */
 import { PLATFORMS } from '@/core/platforms'
 import { defaultState } from '@/core/concepts'

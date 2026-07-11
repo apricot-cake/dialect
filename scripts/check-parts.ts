@@ -15,7 +15,7 @@
  *       意図が満たされる例外は COVERAGE_EXEMPT に理由つきで列挙)
  *   3. 結合整合: joinParts(parts) === resolve().url (ヘルパーの壊れ検知)
  *
- * 実行: npm run check:parts   (esbuild でバンドルして node で実行)
+ * 実行: npm run check:parts   (tsx で直接実行)
  */
 import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'

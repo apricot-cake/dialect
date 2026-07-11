@@ -4,7 +4,7 @@
  * checklist rows parsed by scripts/lib/checklistParser.ts (priority/target/UI
  * name/verify URL/expected result/last-checked date/pass-fail).
  *
- * Run: npm run gen:health   (esbuild-bundled then run under node, same pattern as
+ * Run: npm run gen:health   (executed directly via tsx, same pattern as
  * gen:readings/check:operators). The output is committed; scripts/check-health.ts
  * fails CI if the checklist changed but health.json wasn't regenerated.
  */

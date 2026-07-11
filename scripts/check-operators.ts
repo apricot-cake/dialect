@@ -21,7 +21,7 @@
  *   4. 生成した網羅サンプルを全サイトの buildUrl に通し、宣言表にも許可リストにも無い
  *      未登録の演算子キーが出ていないかを安全網として警告する(将来の追加漏れ検知)。
  *
- * 実行: npm run check:operators   (esbuild でバンドルして node で実行)
+ * 実行: npm run check:operators   (tsx で直接実行)
  */
 import { readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
@@ -37,7 +37,6 @@ import { CHECKLIST_HEADING, sectionFor } from './lib/checklistParser'
 // セクション分割ロジック(CHECKLIST_HEADING・sectionFor)は scripts/gen-health.ts と共用
 // するため scripts/lib/checklistParser.ts へ抽出済み。
 
-// npm run から起動されるとき cwd はプロジェクトルート(バンドル先の node_modules/.cache ではない)
 const CHECKLIST_PATH = pathResolve(process.cwd(), 'docs/operator-checklist.md')
 const checklist = readFileSync(CHECKLIST_PATH, 'utf8')
 

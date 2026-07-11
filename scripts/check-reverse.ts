@@ -14,7 +14,7 @@
  *      レガシーパラメータ等)のフィクスチャを読み、期待する条件へ戻ることを確認する。
  *   3. 非検索URLの拒否: 対応サイト外・検索ページ以外のURLが null になることを確認する。
  *
- * 実行: npm run check:reverse   (esbuild でバンドルして node で実行)
+ * 実行: npm run check:reverse   (tsx で直接実行)
  */
 import { PLATFORMS } from '@/core/platforms'
 import { parseSearchUrl } from '@/core/reverse'
