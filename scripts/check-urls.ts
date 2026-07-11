@@ -10,6 +10,7 @@
  *
  * 実行: npm run check:urls   (tsx で直接実行)
  */
+import { appendFileSync, writeFileSync } from 'node:fs'
 import { PLATFORMS } from '@/core/platforms'
 import { defaultState } from '@/core/concepts'
 import { buildUrl } from '@/core/urlParts'
@@ -151,6 +152,31 @@ if (broken.length) {
 console.log(
   '\n凡例: ✅=HTTP到達OK(ログイン/JSサイトは結果表示まで保証しない) / ⚠️=要ブラウザ・手動確認 / ❌=構造的な壊れ(404/400/5xx)。',
 )
+
+// GitHub Actionsのジョブサマリー(#36)。ローカル実行では未設定なので何もしない
+if (process.env.GITHUB_STEP_SUMMARY) {
+  const table = [
+    '## check:urls 結果',
+    '',
+    `✅ ${ok.length} ok / ⚠️ ${maybe.length} 要ブラウザ確認 / ❌ ${broken.length} broken`,
+    '',
+    '| | サイト | サンプル | HTTP | URL | 注記 |',
+    '|---|---|---|---|---|---|',
+    ...rows.map(
+      (r) =>
+        `| ${ICON[r.verdict]} | ${r.platform} | ${r.sample} | ${r.status} | ${r.url} | ${r.note ?? ''} |`,
+    ),
+  ].join('\n')
+  appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${table}\n`)
+}
+
+// 機械可読の結果(#36)。CHECK_URLS_JSON_OUT が指定されたときだけartifact用に書き出す
+if (process.env.CHECK_URLS_JSON_OUT) {
+  writeFileSync(
+    process.env.CHECK_URLS_JSON_OUT,
+    JSON.stringify({ rows, ok: ok.length, maybe: maybe.length, broken: broken.length }, null, 2),
+  )
+}
 
 // 壊れがあれば非0終了(CI やスクリプトからゲートに使えるように)
 if (broken.length) process.exitCode = 1

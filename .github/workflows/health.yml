@@ -1,0 +1,55 @@
+name: Health
+
+# 手動GUI確認(operator-check、3か月ごと)を代替するものではなく補完する保険。
+# 検索URLがHTTPレベルで丸ごと死んだ/リダイレクトされる破壊だけを週次で自動検知する
+# (「演算子が無視されるようになった」のようなJS描画レベルの壊れはここでは分からない)。
+on:
+  schedule:
+    - cron: '0 3 * * 1' # 毎週月曜 03:00 UTC (JST正午前後)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run check:urls
+        id: check
+        env:
+          CHECK_URLS_JSON_OUT: check-urls-report.json
+        run: npm run check:urls
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: check-urls-report
+          path: check-urls-report.json
+      - name: File or update an issue on failure
+        if: steps.check.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="check:urls: 検索URLの死活確認で壊れを検知"
+          EXISTING=$(gh issue list --state open --json number,title \
+            --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n1)
+          BODY="週次の自動チェック(.github/workflows/health.yml)でcheck:urlsが壊れ(404/400/5xx等)を検知しました。詳細は[このワークフロー実行]($RUN_URL)のcheck-urls-report artifactを参照してください。"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label bug
+          fi
+      - name: Fail the job if check:urls found breakage
+        if: steps.check.outcome == 'failure'
+        run: exit 1

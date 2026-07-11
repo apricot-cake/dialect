@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+check-urls-report.json
 
 # モバイル実機/エミュレーション確認用の一時スクリプト置き場(追跡しない)
 .scratch-mobile-check/
