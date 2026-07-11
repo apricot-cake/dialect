@@ -353,6 +353,9 @@ export const ja = {
   'launch.specialtyHeading': '他サイト専用',
   'launch.specialtyOnly': '{name}専用',
   'launch.urlHeading': '開くURL（条件と同じ色の部分が対応）',
+  'launch.copyQuery': '検索文字列をコピー',
+  'launch.copyQueryHint': 'アプリの検索ボックスに貼れる文字列をコピーします',
+  'launch.copyExcluded': 'この文字列には含まれない条件: {list}',
 
   // まとめて開く
   'bulk.open': 'まとめて開く（{n}サイト）',

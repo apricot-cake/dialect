@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import type { ConceptId, QueryState } from '@/core/types'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import { t } from '@/i18n'
+import { useCoarsePointer } from '@/hooks/useCoarsePointer'
 import { ConditionBar } from './ConditionBar'
 
 // バー追加・削除時のFLIPと降ってくる出現(デザインの motionFeel='spring' 相当)
@@ -61,24 +62,6 @@ function usePillCompact(): boolean {
     }
   })
   return compact
-}
-
-/**
- * タッチ主体の端末か(マウスでホバーできない)。ピルの案内を「スクロール」から
- * 「タップ」に切り替えるために使う。CSSの `@media (hover: none)` と同じ判定基準
- */
-function useCoarsePointer(): boolean {
-  const [coarse, setCoarse] = useState(
-    () => typeof matchMedia !== 'undefined' && matchMedia('(hover: none)').matches,
-  )
-  useEffect(() => {
-    if (typeof matchMedia === 'undefined') return
-    const mq = matchMedia('(hover: none)')
-    const onChange = () => setCoarse(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-  return coarse
 }
 
 function MouseIcon({ up }: { up?: boolean }) {

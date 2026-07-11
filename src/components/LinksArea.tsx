@@ -3,12 +3,14 @@ import { PLATFORMS } from '@/core/platforms'
 import { resolve } from '@/core/resolve'
 import { activeConcepts } from '@/core/concepts'
 import { translationParts, specialtyOwner } from '@/core/preview'
+import { rawQuery } from '@/core/rawQuery'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type { ConceptId, PlatformDef, QueryState, Resolution } from '@/core/types'
 import { t, tf, type MessageKey } from '@/i18n'
 import { readableInk } from '@/lib/color'
 import { conceptColors } from '@/lib/conceptColors'
 import { GROUPS } from '@/lib/platformGroups'
+import { useCoarsePointer } from '@/hooks/useCoarsePointer'
 import { PlatformBadge } from './PlatformBadge'
 import { ScrollUpPill } from './ConditionsArea'
 import { BulkOpen } from './BulkOpen'
@@ -41,6 +43,20 @@ function BanIcon() {
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
       <circle cx="12" cy="12" r="10" />
       <path d="m4.9 4.9 14.2 14.2" />
+    </svg>
+  )
+}
+
+/** タッチ端末向け「検索文字列をコピー」ボタンのアイコン(コピー/コピー済み) */
+function CopyIcon({ done }: { done?: boolean }) {
+  return done ? (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  ) : (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <rect x="8" y="8" width="12" height="12" rx="2" />
+      <path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3" />
     </svg>
   )
 }
@@ -140,10 +156,26 @@ function LaunchCard({
 }) {
   const [hover, setHover] = useState(false)
   const [openUpward, setOpenUpward] = useState(false)
+  const [copied, setCopied] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const enabled = Boolean(resolution.url)
   const ink = platform.ink ?? readableInk(platform.brandColor)
   const showLogin = platform.requiresLogin && enabled
+
+  // タッチ端末限定(ホバー不可な端末=PCのホバーポップが使えない)の「検索文字列をコピー」。
+  // 主な使い道はスマホの公式アプリの検索ボックスへ演算子テキストを貼ること(issue #30)
+  const coarse = useCoarsePointer()
+  const rq = enabled ? rawQuery(platform.id, resolution) : null
+  const copyQuery = async () => {
+    if (!rq) return
+    try {
+      await navigator.clipboard.writeText(rq.text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), rq.excluded.length > 0 ? 2600 : 1800)
+    } catch {
+      /* クリップボードが使えない環境では何もしない */
+    }
+  }
 
   // 落ちる条件を「このサイトが本来できるはずなのに使えない」ものと、
   // 「もともと単一サイト専用で、このサイトの守備範囲外」のものに分ける。
@@ -183,37 +215,64 @@ function LaunchCard({
       }}
       onMouseLeave={() => setHover(false)}
     >
-      <a
-        href={resolution.url ?? '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-disabled={enabled ? undefined : true}
-        tabIndex={enabled ? undefined : -1}
-        onClick={onLaunch}
-        // Middle-click opens a background tab without firing click; count it too
-        onAuxClick={(e) => {
-          if (e.button === 1) onLaunch()
-        }}
-        className="inline-flex h-[42px] w-full items-center justify-center gap-2 rounded-[10px] text-sm font-semibold tracking-[-0.01em] no-underline"
-        style={{
-          background: platform.brandColor,
-          color: ink,
-          boxShadow: dark
-            ? '0 1px 2px oklch(0 0 0 / 0.28), inset 0 0 0 1px oklch(1 0 0 / 0.1)'
-            : '0 1px 2px oklch(0 0 0 / 0.07)',
-          ...(enabled ? { cursor: 'pointer' } : { opacity: 0.34, pointerEvents: 'none' as const }),
-        }}
-      >
-        <PlatformBadge
-          platform={platform}
-          dark={dark}
-          size={17}
-          color={ink}
-          bubbleBg={ink}
-          bubbleFg={platform.brandColor}
-        />
-        {tf('launch.search', { name: platform.name })}
-      </a>
+      <div className="flex items-stretch gap-2">
+        <a
+          href={resolution.url ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled={enabled ? undefined : true}
+          tabIndex={enabled ? undefined : -1}
+          onClick={onLaunch}
+          // Middle-click opens a background tab without firing click; count it too
+          onAuxClick={(e) => {
+            if (e.button === 1) onLaunch()
+          }}
+          className="inline-flex h-[42px] w-full flex-1 items-center justify-center gap-2 rounded-[10px] text-sm font-semibold tracking-[-0.01em] no-underline"
+          style={{
+            background: platform.brandColor,
+            color: ink,
+            boxShadow: dark
+              ? '0 1px 2px oklch(0 0 0 / 0.28), inset 0 0 0 1px oklch(1 0 0 / 0.1)'
+              : '0 1px 2px oklch(0 0 0 / 0.07)',
+            ...(enabled ? { cursor: 'pointer' } : { opacity: 0.34, pointerEvents: 'none' as const }),
+          }}
+        >
+          <PlatformBadge
+            platform={platform}
+            dark={dark}
+            size={17}
+            color={ink}
+            bubbleBg={ink}
+            bubbleFg={platform.brandColor}
+          />
+          {tf('launch.search', { name: platform.name })}
+        </a>
+        {coarse && rq && (
+          <button
+            type="button"
+            data-noscale
+            onClick={copyQuery}
+            title={t('launch.copyQueryHint')}
+            aria-label={t('launch.copyQuery')}
+            className="inline-flex h-[42px] w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-border bg-card text-muted"
+          >
+            <CopyIcon done={copied} />
+          </button>
+        )}
+      </div>
+      {copied && (
+        <div className="mt-[7px] px-1 text-[11px] leading-[1.4] text-muted">
+          {t('ui.copyLinkDone')}
+          {rq && rq.excluded.length > 0 && (
+            <>
+              {' '}
+              {tf('launch.copyExcluded', {
+                list: rq.excluded.map((c) => t(CONCEPT_MAP[c].labelKey)).join('・'),
+              })}
+            </>
+          )}
+        </div>
+      )}
       {enabled && (parts.length > 0 || droppedReal.length > 0) && (
         <div className="mt-[7px] px-1">
           {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す。

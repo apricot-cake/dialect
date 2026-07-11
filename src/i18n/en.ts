@@ -390,6 +390,9 @@ export const en = {
   'launch.specialtyHeading': 'Only on other sites',
   'launch.specialtyOnly': '{name} only',
   'launch.urlHeading': 'URL to open (colors match the conditions)',
+  'launch.copyQuery': 'Copy search text',
+  'launch.copyQueryHint': "Copies text you can paste into the app's own search box",
+  'launch.copyExcluded': 'Not included in this text: {list}',
 
   // Bulk open
   'bulk.open': 'Open all ({n} sites)',
