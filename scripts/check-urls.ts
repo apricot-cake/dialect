@@ -77,10 +77,10 @@ function classify(
       return { verdict: 'maybe', note: '要ログイン: HTTP到達のみ確認(結果表示は未検証)' }
     return { verdict: 'ok' }
   }
-  if (s === 401 || s === 403)
+  if (s === 401 || s === 403 || s === 429)
     return {
       verdict: 'maybe',
-      note: `HTTP ${s}: bot/ログインブロックの可能性(ブラウザでは開ける場合あり)`,
+      note: `HTTP ${s}: bot/ログインブロック・レート制限の可能性(ブラウザでは開ける場合あり)`,
     }
   if (s >= 300 && s < 400) return { verdict: 'maybe', note: `リダイレクト ${s}` }
   return { verdict: 'broken', note: `HTTP ${s}` }
