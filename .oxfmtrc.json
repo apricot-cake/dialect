@@ -2,5 +2,10 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "singleQuote": true,
   "semi": false,
-  "ignorePatterns": ["src/core/readings.generated.ts"]
+  "ignorePatterns": [
+    "src/core/readings.generated.ts",
+    "docs/operator-checklist.md",
+    "docs/operator-research.md",
+    "README.ja.md"
+  ]
 }
