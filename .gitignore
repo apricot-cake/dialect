@@ -15,6 +15,7 @@ dist-ssr
 # モバイル実機/エミュレーション確認用の一時スクリプト置き場(追跡しない)
 .scratch-mobile-check/
 .scratch-bulk-open-check/
+.scratch-conflicts-check/
 
 # Editor directories and files
 .vscode/*

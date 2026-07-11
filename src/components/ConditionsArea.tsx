@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { ConceptId, QueryState } from '@/core/types'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
+import { detectConflicts } from '@/core/conflicts'
 import { t } from '@/i18n'
 import type { SmartFragments } from '@/core/smartInput'
 import type { SmartSuggestion } from '@/core/smartSuggest'
@@ -167,6 +168,8 @@ export function ConditionsArea({
   // smart input): bars follow `added` alone, so an empty search shows zero
   // bars and just the input line
   const barDefs = added.map((c) => CONCEPT_MAP[c])
+  // 必ず0件になる条件の組み合わせを事前に警告する(ブロックはしない。issue #44)
+  const conflicts = detectConflicts(query)
   // タッチ端末では上スワイプがブラウザの引っ張り更新と紛らわしいので、ピルはタップで案内する
   const coarse = useCoarsePointer()
   const scrollLabel = t(coarse ? 'ui.tapToLinks' : 'ui.scrollToLinks')
@@ -222,6 +225,33 @@ export function ConditionsArea({
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {conflicts.length > 0 && (
+            <div role="alert" className="flex w-full flex-col gap-1.5">
+              {conflicts.map((c) => (
+                <div
+                  key={c.messageKey}
+                  className="flex items-start gap-2 rounded-[10px] border border-border bg-card px-3 py-2.5 text-[12px] leading-[1.5] text-muted"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mt-[1px] shrink-0"
+                  >
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                    <path d="M12 9v4M12 17h.01" />
+                  </svg>
+                  {t(c.messageKey)}
+                </div>
+              ))}
+            </div>
+          )}
 
           <motion.div
             layout

@@ -503,6 +503,20 @@ export const en = {
   'history.promoteSuggest.save': 'Save',
   'history.promoteSuggest.dismiss': 'Dismiss',
 
+  // Conflicting conditions (combinations that always yield zero results)
+  'conflict.keywordsExclude':
+    'The same word appears in both the include and exclude keywords. This combination will always return zero results.',
+  'conflict.exactPhraseExclude':
+    'A word in the exact-match phrase is also an exclude keyword. This combination will always return zero results.',
+  'conflict.keywordsOrExhausted':
+    'Every option in "include any of these" is also an exclude keyword. This combination will always return zero results.',
+  'conflict.hashtagExclude':
+    'The same tag appears in both the include and exclude hashtags. This combination will always return zero results.',
+  'conflict.hashtagOrExhausted':
+    'Every option in "include any of these hashtags" is also an exclude hashtag. This combination will always return zero results.',
+  'conflict.periodReversed':
+    'The start date is after the end date. No search is possible for this range.',
+
   'support.full': 'Full support',
   'support.partial': 'Partial support',
   'picker.title': 'Add a condition',

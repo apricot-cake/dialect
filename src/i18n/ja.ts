@@ -502,6 +502,19 @@ export const ja = {
   'history.promoteSuggest.save': '保存する',
   'history.promoteSuggest.dismiss': '閉じる',
 
+  // 条件の矛盾検知(必ず0件になる組み合わせの警告)
+  'conflict.keywordsExclude':
+    '含むキーワードと除外キーワードに同じ語があります。この組み合わせでは検索結果が常に0件になります。',
+  'conflict.exactPhraseExclude':
+    '完全一致の文に含まれる語が除外キーワードにも指定されています。この組み合わせでは検索結果が常に0件になります。',
+  'conflict.keywordsOrExhausted':
+    '「このどれかを含む」の選択肢がすべて除外キーワードにも指定されています。この組み合わせでは検索結果が常に0件になります。',
+  'conflict.hashtagExclude':
+    '含むハッシュタグと除外ハッシュタグに同じタグがあります。この組み合わせでは検索結果が常に0件になります。',
+  'conflict.hashtagOrExhausted':
+    '「このハッシュタグのどれかを含む」の選択肢がすべて除外ハッシュタグにも指定されています。この組み合わせでは検索結果が常に0件になります。',
+  'conflict.periodReversed': '開始日が終了日より後になっています。この期間では検索できません。',
+
   'support.full': '完全対応',
   'support.partial': '一部対応',
   'picker.title': '条件を追加',
