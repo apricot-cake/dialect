@@ -1,0 +1,36 @@
+[
+  {
+    "name": "index (main page initial load)",
+    "path": [
+      "dist/assets/main-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/platformGroups-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "310 KB"
+  },
+  {
+    "name": "health.html initial load",
+    "path": [
+      "dist/assets/health-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "155 KB"
+  },
+  {
+    "name": "matrix.html initial load",
+    "path": [
+      "dist/assets/matrix-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/platformGroups-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "140 KB"
+  }
+]

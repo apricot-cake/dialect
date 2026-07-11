@@ -6,6 +6,8 @@ name: CI
 # check:operators / check:readings / check:reverse / check:parts / check:props はコードと生成物・
 # チェックリストを読むだけでネットワーク不要=決定論的(読みドリフト検査は kuromoji も使わずキー照合
 # だけなので辞書も要らない。check:props はシード固定のプロパティテストなので毎回同じ結果になる)。
+# check:size はビルド成果物(dist/)のgzipサイズを .size-limit.json の閾値と突き合わせ、
+# 意図しない肥大化を検知する(#60)。
 on:
   pull_request:
     branches: [main]
@@ -38,6 +40,7 @@ jobs:
       - run: npm run lint
       - run: npm run fmt:check
       - run: npm run build
+      - run: npm run check:size
       - run: npm run check:operators
       - run: npm run check:readings
       - run: npm run check:reverse
