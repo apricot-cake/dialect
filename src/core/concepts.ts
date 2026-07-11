@@ -21,6 +21,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.excludeDomain.trim()) active.push('excludeDomain')
   if (state.linkUrl.trim()) active.push('linkUrl')
   if (state.excludeLinkUrl.trim()) active.push('excludeLinkUrl')
+  if (state.fileType) active.push('fileType')
+  if (state.region.trim()) active.push('region')
+  if (state.license) active.push('license')
+  if (state.exactMatchMode) active.push('exactMatchMode')
   if (state.xList.trim()) active.push('xList')
   if (state.hashtag.trim()) active.push('hashtag')
   if (state.hashtagOr.trim()) active.push('hashtagOr')
@@ -86,6 +90,10 @@ export function defaultState(): QueryState {
     excludeDomain: '',
     linkUrl: '',
     excludeLinkUrl: '',
+    fileType: '',
+    region: '',
+    license: '',
+    exactMatchMode: false,
     xList: '',
     hashtag: '',
     hashtagOr: '',

@@ -19,8 +19,9 @@ import { pinterest } from './pinterest'
 import { fanbox } from './fanbox'
 import { bilibili } from './bilibili'
 import { fantia } from './fantia'
+import { google } from './google'
 
-// 並び順はグループ順(SNS→動画→イラスト・画像→ブログ・掲示板)に揃える。
+// 並び順はグループ順(SNS→動画→イラスト・画像→ブログ・掲示板→Web検索)に揃える。
 // この配列順が、起動画面のカード・条件追加モーダルのフィルタ・対応ポップの
 // バッジ並びすべての元になるので、一箇所直せば全画面で一致する。
 // (起動画面はさらにグループ見出しで区切るが、各グループ内の順は同じ)
@@ -49,4 +50,6 @@ export const PLATFORMS: PlatformDef[] = [
   hatebu,
   fivech,
   animanch,
+  // Web検索
+  google,
 ]

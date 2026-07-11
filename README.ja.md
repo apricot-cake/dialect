@@ -51,6 +51,7 @@ https://apricot-cake.github.io/dialect/
 | FANBOX | `fanbox.cc/tags` | 不要 | 単一タグのみ(全文検索・並び順・除外等は非対応) |
 | bilibili | `search.bilibili.com` | 不要 | 豊富(任意期間・長さ・タブ切替・弾幕数/収蔵数などの並び順) |
 | Fantia | `fantia.jp/posts` | 必要 | カテゴリー・対象読者・タイトル/本文切替・並び順(除外・完全一致は非対応) |
+| Google | `google.com/search` | 不要 | 豊富(ファイル形式・地域・ライセンス・完全一致モード・任意期間・スコープ限定OR・探すもの) |
 
 サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
 

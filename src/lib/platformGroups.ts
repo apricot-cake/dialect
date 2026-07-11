@@ -7,4 +7,5 @@ export const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
   { group: 'video', labelKey: 'group.video' },
   { group: 'image', labelKey: 'group.image' },
   { group: 'text', labelKey: 'group.text' },
+  { group: 'web', labelKey: 'group.web' },
 ]

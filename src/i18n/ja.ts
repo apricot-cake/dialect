@@ -244,6 +244,11 @@ export const ja = {
   'concept.resultType.article': 'コラム記事',
   'concept.resultType.series': 'シリーズ',
   'concept.resultType.circle': 'メンバーシップ',
+  'concept.resultType.images': '画像',
+  'concept.resultType.shopping': 'ショッピング',
+  'concept.resultType.news': 'ニュース',
+  'concept.resultType.web': 'ウェブのみ',
+  'concept.resultType.books': '書籍',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -276,6 +281,34 @@ export const ja = {
   'concept.ageRating.help': 'pixivで、全年齢の作品だけ、またはR18の作品だけに絞り込みます',
   'concept.excludeAi.label': 'AI生成作品を除く',
   'concept.excludeAi.help': 'pixivで、AI生成作品を検索結果から除きます',
+  'concept.fileType.label': 'ファイル形式',
+  'concept.fileType.none': '指定なし',
+  'concept.fileType.pdf': 'PDF（.pdf）',
+  'concept.fileType.ps': 'Adobe PostScript（.ps）',
+  'concept.fileType.dwf': 'Autodesk DWF（.dwf）',
+  'concept.fileType.kml': 'Google Earth KML（.kml）',
+  'concept.fileType.kmz': 'Google Earth KMZ（.kmz）',
+  'concept.fileType.xls': 'Excel（.xls）',
+  'concept.fileType.ppt': 'PowerPoint（.ppt）',
+  'concept.fileType.doc': 'Word（.doc）',
+  'concept.fileType.rtf': 'リッチテキスト（.rtf）',
+  'concept.fileType.swf': 'Shockwave Flash（.swf）',
+  'concept.fileType.help': '指定した形式のファイルだけに絞り込みます（Googleのみ対応）',
+  'concept.region.label': '地域',
+  'concept.region.placeholder': '例: JP',
+  'concept.region.help':
+    '指定した国・地域向けのページに絞り込みます（Googleのみ対応）。国名の2文字コード（日本ならJP、アメリカならUS）で入力します',
+  'concept.license.label': 'ライセンス',
+  'concept.license.none': 'フィルタリングしない',
+  'concept.license.f': '自由に使用または共有できる',
+  'concept.license.fc': '営利目的を含め自由に使用または共有できる',
+  'concept.license.fm': '自由に使用、共有、または変更できる',
+  'concept.license.fmc': '営利目的を含め自由に使用、共有、または変更できる',
+  'concept.license.help':
+    '利用が許可されているライセンス（利用権）の範囲でページを絞り込みます（Googleのみ対応）',
+  'concept.exactMatchMode.label': '完全一致で検索',
+  'concept.exactMatchMode.help':
+    '入力した語をそのまま使って検索し、類義語や表記ゆれへの自動的な言い換えを抑えます（Googleのみ対応。完全一致で探す＝語順を保った句の一致とは別の設定です）',
 
   // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
@@ -391,6 +424,9 @@ export const ja = {
   'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
   'note.fantia.sort': 'この並び順は、新しい順・お気に入り数順のみ対応しています（Fantiaのみ対応）',
   'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
+  'note.google.titleOnly':
+    'タイトルへの一致を優先しますが、一致しないページも結果に混ざることがあります',
+  'note.google.zhApprox': '簡体字中国語のページとして検索します（繁体字は指定できません）',
 
   // 起動パネル。{name} にサイト名が入る
   'launch.search': '{name}で検索',
@@ -436,6 +472,7 @@ export const ja = {
   'group.video': '動画',
   'group.image': 'イラスト・画像',
   'group.text': 'ブログ・掲示板',
+  'group.web': 'Web検索',
 
   // Smart input (build conditions from one line)
   'smart.label': 'スマート入力欄',

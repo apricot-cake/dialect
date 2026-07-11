@@ -138,8 +138,8 @@ export const TAG_DEFS: Record<TagId, TagDef> = {
   place: {
     id: 'place',
     synonyms: {
-      ja: ['コミュニティ', '板', 'サブレディット', 'リスト', '場所', 'グループ'],
-      en: ['community', 'subreddit', 'board', 'list', 'group'],
+      ja: ['コミュニティ', '板', 'サブレディット', 'リスト', '場所', 'グループ', '地域', '国'],
+      en: ['community', 'subreddit', 'board', 'list', 'group', 'region', 'country'],
     },
   },
   link: {
@@ -202,6 +202,10 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   excludeDomain: ['link', 'exclude'],
   linkUrl: ['link'],
   excludeLinkUrl: ['link', 'exclude'],
+  fileType: ['format'],
+  region: ['place'],
+  license: ['format'],
+  exactMatchMode: ['word'],
   xList: ['place', 'person'],
   hashtag: ['tag', 'word'],
   hashtagOr: ['tag', 'word'],
@@ -343,6 +347,10 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   excludeDomain: 'media',
   linkUrl: 'media',
   excludeLinkUrl: 'media',
+  fileType: 'media',
+  region: 'lang',
+  license: 'media',
+  exactMatchMode: 'word',
   workType: 'media',
   resultType: 'media',
   genre: 'media',

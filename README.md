@@ -51,6 +51,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 | FANBOX          | `fanbox.cc/tags`                        | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.)                                                                                               |
 | bilibili        | `search.bilibili.com`                   | Not required | Rich (arbitrary date, length, tab switch, danmaku/favorite-count sorts)                                                                                        |
 | Fantia          | `fantia.jp/posts`                       | Required     | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported)                                                                     |
+| Google          | `google.com/search`                     | Not required | Rich (file type, region, license, verbatim mode, arbitrary date, scoped OR, result type)                                                                       |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 

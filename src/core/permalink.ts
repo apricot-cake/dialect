@@ -1,5 +1,5 @@
-import type { FantiaCategory, NicoGenre, PostLanguage, QueryState } from './types'
-import { FANTIA_CATEGORIES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
+import type { FantiaCategory, GoogleFileType, GoogleLicense, NicoGenre, PostLanguage, QueryState } from './types'
+import { FANTIA_CATEGORIES, GOOGLE_FILE_TYPES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -44,6 +44,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.excludeDomain.trim()) params.set('exdom', state.excludeDomain.trim())
   if (state.linkUrl.trim()) params.set('url', state.linkUrl.trim())
   if (state.excludeLinkUrl.trim()) params.set('exurl', state.excludeLinkUrl.trim())
+  if (state.fileType) params.set('ftype', state.fileType)
+  if (state.region.trim()) params.set('reg', state.region.trim())
+  if (state.license) params.set('lic', state.license)
+  if (state.exactMatchMode) params.set('exact', '1')
   if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
   if (state.hashtagOr.trim()) params.set('tagor', state.hashtagOr.trim())
@@ -139,6 +143,14 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.excludeDomain = params.get('exdom') ?? ''
   state.linkUrl = params.get('url') ?? ''
   state.excludeLinkUrl = params.get('exurl') ?? ''
+  const ftype = params.get('ftype')
+  if (ftype && (GOOGLE_FILE_TYPES as readonly string[]).includes(ftype)) {
+    state.fileType = ftype as GoogleFileType
+  }
+  state.region = params.get('reg') ?? ''
+  const lic = params.get('lic')
+  if (lic === 'f' || lic === 'fc' || lic === 'fm' || lic === 'fmc') state.license = lic as GoogleLicense
+  state.exactMatchMode = params.get('exact') === '1'
   state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
   state.hashtagOr = params.get('tagor') ?? ''
@@ -211,7 +223,12 @@ function paramsToState(params: URLSearchParams): QueryState {
     rt === 'live' ||
     rt === 'article' ||
     rt === 'series' ||
-    rt === 'circle'
+    rt === 'circle' ||
+    rt === 'images' ||
+    rt === 'shopping' ||
+    rt === 'news' ||
+    rt === 'web' ||
+    rt === 'books'
   ) {
     state.resultType = rt
   }

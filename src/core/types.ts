@@ -59,6 +59,10 @@ export type ConceptId =
   | 'excludeDomain'
   | 'linkUrl'
   | 'excludeLinkUrl'
+  | 'fileType'
+  | 'region'
+  | 'license'
+  | 'exactMatchMode'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -178,6 +182,32 @@ export type FantiaCategory = '' | (typeof FANTIA_CATEGORIES)[number]
 export type FantiaAudience = '' | 'male' | 'female'
 
 /**
+ * Googleのファイル形式(filetype:)。空=指定なし。詳細検索フォーム(advanced_search)の
+ * 「ファイル形式」ドロップダウンから全10種を採取(2026-07-11にGUI操作で実測、issue #33)
+ */
+export const GOOGLE_FILE_TYPES = [
+  'pdf',
+  'ps',
+  'dwf',
+  'kml',
+  'kmz',
+  'xls',
+  'ppt',
+  'doc',
+  'rtf',
+  'swf',
+] as const
+
+export type GoogleFileType = '' | (typeof GOOGLE_FILE_TYPES)[number]
+
+/**
+ * Googleのライセンス(利用権、tbs=sur:)。空=フィルタリングしない。詳細検索フォームの
+ * 「ライセンス」ドロップダウンから全4種を採取(2026-07-11にGUI操作で実測、issue #33)。
+ * f=自由に使用・共有できる/fc=+営利目的も可/fm=+変更も可/fmc=+営利目的の変更も可
+ */
+export type GoogleLicense = '' | 'f' | 'fc' | 'fm' | 'fmc'
+
+/**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
  * playlist=再生リスト(YouTube専用の値。Twitchは動画・チャンネルのみ)。
  * posts=投稿、communities=コミュニティ、comments=コメント、media=メディア、
@@ -191,7 +221,13 @@ export type FantiaAudience = '' | 'male' | 'female'
  * series=シリーズ(niconico専用。検索結果タブ「動画/ショート/シリーズ/マイリスト/
  * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
  * ユーザー」とも共用。2026-07-09にGUI操作で実測)。circle=メンバーシップ(note専用。検索結果タブ
- * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)
+ * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)。
+ * images=画像(Google専用。udm=2)、shopping=ショッピング(Google専用。udm=28)、
+ * news=ニュース(Google専用。tbm=nws。他サイトのresultTypeとは別パラメータ形式)、
+ * web=ウェブ(Google専用。udm=web。リッチな要素を除いた素の検索結果一覧)、
+ * books=書籍(Google専用。udm=36)。shortはGoogleの「ショート動画」タブ(udm=39)とも共用。
+ * いずれも2026-07-11にGUI操作で実測(issue #33)。AIモード(udm=50)は検索結果一覧ではなく
+ * 別の対話型体験のため対象外(マップ・フライトと同様の理由で除外)
  */
 export type ResultType =
   | ''
@@ -211,6 +247,11 @@ export type ResultType =
   | 'article'
   | 'series'
   | 'circle'
+  | 'images'
+  | 'shopping'
+  | 'news'
+  | 'web'
+  | 'books'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
@@ -295,6 +336,22 @@ export interface QueryState {
   linkUrl: string
   /** Bluesky専用。linkUrlの除外版(excludeUrl=)。単一値のみ確認済み。2026-07-11にGUI操作で実測(issue #27) */
   excludeLinkUrl: string
+  /** Google専用。ファイル形式で絞り込む(filetype:)。空=指定なし */
+  fileType: GoogleFileType
+  /**
+   * Google専用。地域(cr=country{code})。ISO 3166-1の2文字コード(例: JP・US)を生で持つ。
+   * 詳細検索フォームの「地域」ドロップダウンは240件と膨大なため、他サイトの選択式
+   * (workType等)と違い自由入力にした(domain等と同じplain)。2026-07-11にGUI操作で実測(issue #33)
+   */
+  region: string
+  /** Google専用。ライセンス(利用権、tbs=sur:)。空=フィルタリングしない */
+  license: GoogleLicense
+  /**
+   * Google専用。完全一致モード(tbs=li:1、ツールメニューの「完全一致」)。表記ゆれ・類義語への
+   * 自動展開を抑え、入力した語のとおりに検索する。既存のexactPhrase(語順つき句の一致)とは別物
+   * (クエリ全体の解釈モードの切り替え)。2026-07-11にGUI操作で実測(issue #33)
+   */
+  exactMatchMode: boolean
   /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
   xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */
@@ -389,7 +446,7 @@ export interface ConceptSupport {
   noteKey?: MessageKey
 }
 
-export type PlatformGroup = 'sns' | 'video' | 'image' | 'text'
+export type PlatformGroup = 'sns' | 'video' | 'image' | 'text' | 'web'
 
 export type PlatformId =
   | 'x'
@@ -412,6 +469,7 @@ export type PlatformId =
   | 'fanbox'
   | 'bilibili'
   | 'fantia'
+  | 'google'
 
 /**
  * 検索URLの1断片。全パーツの text をそのまま連結したものが最終URLになる。

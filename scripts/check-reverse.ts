@@ -317,6 +317,26 @@ const CASES: Record<PlatformId, Patch[]> = {
     },
     { terms: ['猫'], fantiaAudience: 'male', sort: 'new' },
   ],
+  google: [
+    {
+      terms: ['dialect', 'test'],
+      exactPhrase: ['exact phrase here'],
+      exclude: 'excludedword',
+      titleOnly: true,
+      domain: 'example.com',
+      fileType: 'pdf',
+      since: '2024-01-01',
+      until: '2024-12-31',
+      language: 'ja',
+      region: 'JP',
+      license: 'f',
+      exactMatchMode: true,
+      safeSearchOff: true,
+      resultType: 'images',
+    },
+    { terms: ['犬'], keywordsOr: '猫 兎', resultType: 'news' },
+    { fileType: 'doc', domain: 'example.org' },
+  ],
 }
 
 for (const platform of PLATFORMS) {

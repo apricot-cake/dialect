@@ -241,6 +241,11 @@ export const en = {
   'concept.resultType.article': 'Articles',
   'concept.resultType.series': 'Series',
   'concept.resultType.circle': 'Membership',
+  'concept.resultType.images': 'Images',
+  'concept.resultType.shopping': 'Shopping',
+  'concept.resultType.news': 'News',
+  'concept.resultType.web': 'Web only',
+  'concept.resultType.books': 'Books',
   'concept.resultType.help':
     'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
@@ -273,6 +278,33 @@ export const en = {
   'concept.ageRating.help': 'On pixiv, keeps only all-ages works, or only R-18 works.',
   'concept.excludeAi.label': 'Exclude AI-generated',
   'concept.excludeAi.help': 'On pixiv, removes AI-generated works from the results.',
+  'concept.fileType.label': 'File type',
+  'concept.fileType.none': 'Any',
+  'concept.fileType.pdf': 'PDF (.pdf)',
+  'concept.fileType.ps': 'Adobe PostScript (.ps)',
+  'concept.fileType.dwf': 'Autodesk DWF (.dwf)',
+  'concept.fileType.kml': 'Google Earth KML (.kml)',
+  'concept.fileType.kmz': 'Google Earth KMZ (.kmz)',
+  'concept.fileType.xls': 'Excel (.xls)',
+  'concept.fileType.ppt': 'PowerPoint (.ppt)',
+  'concept.fileType.doc': 'Word (.doc)',
+  'concept.fileType.rtf': 'Rich Text Format (.rtf)',
+  'concept.fileType.swf': 'Shockwave Flash (.swf)',
+  'concept.fileType.help': 'Keeps only files of the given type (Google only).',
+  'concept.region.label': 'Region',
+  'concept.region.placeholder': 'e.g. US',
+  'concept.region.help':
+    'Keeps only pages meant for a given country or region (Google only). Enter the 2-letter country code (e.g. US, JP).',
+  'concept.license.label': 'License',
+  'concept.license.none': "Don't filter by license",
+  'concept.license.f': 'Free to use or share',
+  'concept.license.fc': 'Free to use or share, even commercially',
+  'concept.license.fm': 'Free to use, share, or modify',
+  'concept.license.fmc': 'Free to use, share, or modify, even commercially',
+  'concept.license.help': 'Keeps only pages with the given usage rights (Google only).',
+  'concept.exactMatchMode.label': 'Search exactly as typed',
+  'concept.exactMatchMode.help':
+    'Searches for your exact terms, without automatic synonym or spelling substitutions (Google only). This is separate from Exact phrase, which matches an exact word order.',
 
   // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
@@ -393,6 +425,9 @@ export const en = {
     'Length buckets differ slightly (short = under 10 min, medium = 10–30 min, long = over 60 min).',
   'note.bilibili.tabSort': "This sort order isn't available for the selected result type.",
   'note.bilibili.tabOnly': 'Only available when the result type is videos (or unspecified).',
+  'note.google.titleOnly':
+    'Favors pages whose title matches, but some non-matching pages may still appear.',
+  'note.google.zhApprox': 'Searches for Simplified Chinese pages (Traditional Chinese is not selectable).',
   'note.fantia.sort': 'Only newest and most-favorited sort orders are supported (Fantia only).',
 
   // Launch panel. {name} is filled with the site name
@@ -438,6 +473,7 @@ export const en = {
   'group.video': 'Video',
   'group.image': 'Illustration & Images',
   'group.text': 'Blogs & Forums',
+  'group.web': 'Web Search',
 
   // Smart input (build conditions from one line)
   'smart.label': 'Smart input',

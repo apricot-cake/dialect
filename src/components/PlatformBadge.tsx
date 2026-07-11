@@ -1,6 +1,7 @@
 import {
   siBilibili,
   siBluesky,
+  siGoogle,
   siHatenabookmark,
   siInstagram,
   siMastodon,
@@ -35,6 +36,7 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   mastodon: siMastodon,
   pinterest: siPinterest,
   bilibili: siBilibili,
+  google: siGoogle,
 }
 
 const BUBBLE: Partial<Record<PlatformId, string>> = {

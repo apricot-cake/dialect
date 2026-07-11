@@ -1585,5 +1585,178 @@
       "lastChecked": "2026-07-04",
       "result": "✅"
     }
+  ],
+  "google": [
+    {
+      "priority": "中",
+      "target": "`-語`(除外、`as_eq`)[GUI操作]",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20-dog",
+      "expected": "「dog」を含まない結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`\"...\"`(完全一致、`as_epq`)[GUI操作]",
+      "uiName": "完全一致で探す",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20%22%E8%A8%88%E7%94%BB%E9%81%8B%E4%BC%91%22",
+      "expected": "語順のまま「計画運休」を含む結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`(a OR b)`(スコープ限定OR)[doc/URL叩き]",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20%28%E7%8A%AC%20OR%20%E5%85%8E%29",
+      "expected": "「犬」か「兎」のどちらかを含む結果(公式ヘルプに記載の演算子。GUIにOR専用の入力欄は無い)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`allintitle:`[doc/URL叩き]",
+      "uiName": "タイトルだけで探す",
+      "verifyUrl": "https://www.google.com/search?q=allintitle%3A%20dialect%20language",
+      "expected": "タイトルへの一致を優先するが、一致しない結果も混ざる(近年の緩和挙動のためDialectはpartial扱い)",
+      "lastChecked": "2026-07-11",
+      "result": "⚠️(緩和挙動)"
+    },
+    {
+      "priority": "中",
+      "target": "`site:`(`as_sitesearch`)[GUI操作]",
+      "uiName": "このサイトへのリンクを含む",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20site%3Aexample.com",
+      "expected": "example.comのページのみ",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`filetype:pdf`(`as_filetype`、全10種)[GUI操作]",
+      "uiName": "ファイル形式",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20filetype%3Apdf",
+      "expected": "PDFファイルのみ",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`tbs=cdr:1,cd_min:M/D/YYYY,cd_max:M/D/YYYY`(カスタム期間)[GUI操作]",
+      "uiName": "期間",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2024%2Ccd_max%3A6%2F30%2F2024",
+      "expected": "2024年上半期のみ(ツールメニュー「期間を指定」の実操作で採取)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`lr=lang_ja`(全47言語)[GUI操作]",
+      "uiName": "投稿の言語",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&lr=lang_ja",
+      "expected": "日本語ページのみ(中国語はzh-CN/zh-TW分割のため`zh`はzh-CNへ近似・partial扱い)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`cr=countryJP`(全240地域)[GUI操作]",
+      "uiName": "地域",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&cr=countryJP",
+      "expected": "日本向けページのみ",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`safe=off`[URL叩き]",
+      "uiName": "セーフサーチを解除",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&safe=off",
+      "expected": "結果ページ内リンクに`safe=off`が引き継がれる(設定画面の「ぼかし」とは別系統の古典パラメータ、未ログインでも機能)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`tbs=li:1`(完全一致モード)[GUI操作]",
+      "uiName": "完全一致で検索",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=li%3A1",
+      "expected": "類義語展開を抑えた検索(ツールメニュー「完全一致」の実操作で採取)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`tbs=sur:f`(ライセンス、全4種)[GUI操作]",
+      "uiName": "ライセンス",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=sur%3Af",
+      "expected": "自由に使用・共有できるページのみ(詳細検索フォームの実操作で全4値=f/fc/fm/fmcを採取)",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=2`(画像)[GUI操作]",
+      "uiName": "探すもの=画像",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=2",
+      "expected": "画像タブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=7`(動画)[GUI操作]",
+      "uiName": "探すもの=動画",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=7",
+      "expected": "動画タブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=28`(ショッピング)[GUI操作]",
+      "uiName": "探すもの=ショッピング",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=28",
+      "expected": "ショッピングタブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=39`(ショート動画)[GUI操作]",
+      "uiName": "探すもの=ショート動画",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=39",
+      "expected": "ショート動画タブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=web`(ウェブのみ)[GUI操作]",
+      "uiName": "探すもの=ウェブのみ",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=web",
+      "expected": "リッチ要素を除いた素のウェブ結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`udm=36`(書籍)[GUI操作]",
+      "uiName": "探すもの=書籍",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&udm=36",
+      "expected": "書籍タブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`tbm=nws`(ニュース)[GUI操作]",
+      "uiName": "探すもの=ニュース",
+      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbm=nws",
+      "expected": "ニュースタブの結果",
+      "lastChecked": "2026-07-11",
+      "result": "✅"
+    }
   ]
 }

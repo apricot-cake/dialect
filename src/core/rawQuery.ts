@@ -17,6 +17,7 @@ function extractText(platformId: PlatformId, url: URL): string | null {
     case 'reddit':
     case 'fivech':
     case 'pinterest':
+    case 'google':
       return url.searchParams.get('q')
     case 'twitch':
       return url.searchParams.get('term')
@@ -100,6 +101,7 @@ const STRUCTURAL_EXCLUDE: Partial<Record<PlatformId, ReadonlySet<ConceptId>>> = 
   pinterest: new Set(['resultType']),
   animanch: new Set(['titleOnly']),
   misskey: new Set(['fromUser']),
+  google: new Set(['language', 'region', 'license', 'exactMatchMode', 'period', 'safeSearchOff', 'resultType']),
 }
 
 export interface RawQuery {
