@@ -36,6 +36,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - run: npm run fmt:check
       - run: npm run build
       - run: npm run check:operators
       - run: npm run check:readings
