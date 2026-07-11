@@ -28,6 +28,7 @@ import { LinksArea } from '@/components/LinksArea'
 import { ConditionPicker } from '@/components/ConditionPicker'
 import { SaveSearchDialog, SavedListDialog } from '@/components/SavedSearches'
 import { ReverseDialog } from '@/components/ReverseDialog'
+import { QrDialog } from '@/components/QrDialog'
 import { useSnapAreas, type AreaId } from '@/hooks/useSnapAreas'
 
 const QUERY_KEY = 'dialect.v2.query'
@@ -166,6 +167,8 @@ export default function App() {
   const [historyEnabled, setHistoryEnabledState] = useState(loadHistoryEnabled)
   // 検索URLの読み込み(逆翻訳)ダイアログ
   const [reverseOpen, setReverseOpen] = useState(false)
+  // 条件のパーマリンクをQRコードで見せるダイアログ
+  const [qrOpen, setQrOpen] = useState(false)
 
   const patchQuery = (patch: Partial<QueryState>) =>
     setQuery((q) => ({ ...q, ...patch }))
@@ -364,6 +367,7 @@ export default function App() {
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}
           onSave={canClear ? () => setSaveTarget(query) : undefined}
+          onShowQr={canClear ? () => setQrOpen(true) : undefined}
           onOpenReverse={() => setReverseOpen(true)}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
@@ -415,6 +419,11 @@ export default function App() {
         dark={dark}
         hasConditions={canClear}
         onApply={applyReverse}
+      />
+      <QrDialog
+        open={qrOpen}
+        onOpenChange={setQrOpen}
+        url={canClear ? permalinkUrl(query) : undefined}
       />
     </div>
   )

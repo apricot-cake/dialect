@@ -96,6 +96,7 @@ export function ConditionsArea({
   onClear,
   shareUrl,
   onSave,
+  onShowQr,
   onOpenReverse,
   onOpenPicker,
   onGoLinks,
@@ -112,6 +113,8 @@ export function ConditionsArea({
   shareUrl?: string
   /** 保存ダイアログを開く。条件が1つでもあるときだけ渡る */
   onSave?: () => void
+  /** QRコード表示ダイアログを開く。条件が1つでもあるときだけ渡る */
+  onShowQr?: () => void
   /** 検索URLの読み込みダイアログを開く(常時表示。空の状態からの入口にもなる) */
   onOpenReverse: () => void
   onOpenPicker: () => void
@@ -235,6 +238,24 @@ export function ConditionsArea({
                   </svg>
                 )}
                 {copied ? t('ui.copyLinkDone') : t('ui.copyLink')}
+              </button>
+            )}
+            {onShowQr && (
+              <button
+                type="button"
+                data-noscale
+                title={t('ui.qrHint')}
+                aria-label={t('ui.qrButton')}
+                className="dl-clear inline-flex h-11 cursor-pointer items-center gap-[7px] rounded-full border border-border bg-card pr-5 pl-4 text-sm font-semibold text-muted shadow-[0_1px_3px_oklch(0_0_0_/_0.06)]"
+                onClick={onShowQr}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01" />
+                </svg>
+                {t('ui.qrButton')}
               </button>
             )}
             {onSave && (
