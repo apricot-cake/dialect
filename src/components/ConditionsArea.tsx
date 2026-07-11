@@ -3,8 +3,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import type { ConceptId, QueryState } from '@/core/types'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import { t } from '@/i18n'
+import type { SmartFragments } from '@/core/smartInput'
+import type { SmartSuggestion } from '@/core/smartSuggest'
 import { useCoarsePointer } from '@/hooks/useCoarsePointer'
 import { ConditionBar } from './ConditionBar'
+import { SmartInput } from './SmartInput'
 
 // バー追加・削除時のFLIPと降ってくる出現(デザインの motionFeel='spring' 相当)
 const SPRING = { duration: 0.64, ease: [0.16, 1, 0.3, 1] as const }
@@ -92,6 +95,8 @@ export function ConditionsArea({
   dark,
   chipsApi,
   patch,
+  onApplySmart,
+  onAdoptSuggestion,
   removeConcept,
   onClear,
   shareUrl,
@@ -105,6 +110,8 @@ export function ConditionsArea({
   dark: boolean
   chipsApi: ChipsApi
   patch: (patch: Partial<QueryState>) => void
+  onApplySmart: (fragments: SmartFragments) => void
+  onAdoptSuggestion: (suggestion: SmartSuggestion) => void
   removeConcept: (concept: ConceptId) => void
   /** 条件が1つでもあるときだけ渡る。undefined ならクリアボタンを出さない */
   onClear?: () => void
@@ -130,7 +137,10 @@ export function ConditionsArea({
       /* クリップボードが使えない環境では何もしない(アドレスバーから手動コピー可) */
     }
   }
-  const barDefs = [CONCEPT_MAP.keywords, ...added.map((c) => CONCEPT_MAP[c])]
+  // Keywords are no longer a fixed slot (demoted to a regular concept by the
+  // smart input): bars follow `added` alone, so an empty search shows zero
+  // bars and just the input line
+  const barDefs = added.map((c) => CONCEPT_MAP[c])
   // タッチ端末では上スワイプがブラウザの引っ張り更新と紛らわしいので、ピルはタップで案内する
   const coarse = useCoarsePointer()
   const scrollLabel = t(coarse ? 'ui.tapToLinks' : 'ui.scrollToLinks')
@@ -146,6 +156,18 @@ export function ConditionsArea({
         style={{ justifyContent: 'safe center' }}
       >
         <div data-bars-list className="flex w-full max-w-[620px] flex-col items-stretch gap-4">
+          {/* The single pure entry line: committing drops chips onto the
+              bars below and the line goes back to empty */}
+          <motion.div layout transition={SPRING} className="flex w-full items-start gap-2.5">
+            <div className="dl-bar-spacer w-[30px] shrink-0" />
+            <SmartInput
+              query={query}
+              dark={dark}
+              onApply={onApplySmart}
+              onAdopt={onAdoptSuggestion}
+            />
+            <div className="dl-remove-outer-slot w-[30px] shrink-0" />
+          </motion.div>
           <AnimatePresence initial={false}>
             {barDefs.map((def) => (
               <motion.div
@@ -168,7 +190,7 @@ export function ConditionsArea({
                     onCommit={() => chipsApi.onCommit(def.id)}
                     onRemoveChip={(index) => chipsApi.onRemoveChip(def.id, index)}
                     patch={patch}
-                    onRemove={def.id === 'keywords' ? undefined : () => removeConcept(def.id)}
+                    onRemove={() => removeConcept(def.id)}
                   />
                 </div>
               </motion.div>

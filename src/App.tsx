@@ -19,6 +19,8 @@ import {
   toQuery,
   type StoredQuery,
 } from '@/core/storage'
+import { mergeFragments, type SmartFragments } from '@/core/smartInput'
+import type { SmartSuggestion } from '@/core/smartSuggest'
 import { andTerms, exactPhrases, words } from '@/core/text'
 import { getLang, setLang, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
@@ -99,8 +101,7 @@ function loadInitial(): {
         added = [
           ...new Set(
             parsed.filter(
-              (c): c is ConceptId =>
-                typeof c === 'string' && c !== 'keywords' && c in CONCEPT_MAP,
+              (c): c is ConceptId => typeof c === 'string' && c in CONCEPT_MAP,
             ),
           ),
         ]
@@ -111,7 +112,7 @@ function loadInitial(): {
   }
   // 値が入っている概念には必ずバーを立てる(URL・保存値のどちら由来でも)
   for (const concept of activeConcepts(query)) {
-    if (concept !== 'keywords' && !added.includes(concept)) added.push(concept)
+    if (!added.includes(concept)) added.push(concept)
   }
 
   let filterId: PlatformId | null = null
@@ -275,7 +276,8 @@ export default function App() {
   const removeConcept = (concept: ConceptId) => {
     const def = CONCEPT_MAP[concept]
     // 値も一緒に空へ戻す(残すと次回起動時のバー復元で復活してしまう)
-    if (concept === 'exactPhrase') patchQuery({ exactPhrase: [''] })
+    if (concept === 'keywords') patchQuery({ terms: [''] })
+    else if (concept === 'exactPhrase') patchQuery({ exactPhrase: [''] })
     else if (concept === 'period') patchQuery({ since: '', until: '' })
     else if (concept === 'sortOrder') patchQuery({ sort: 'auto' })
     else if (def.widget === 'toggle') patchQuery({ [def.field]: false })
@@ -319,9 +321,7 @@ export default function App() {
   const restoreSaved = (entry: { params: string }) => {
     const restored = toQuery(entry)
     setQuery(restored)
-    setAdded([
-      ...new Set(activeConcepts(restored).filter((c) => c !== 'keywords')),
-    ])
+    setAdded([...new Set(activeConcepts(restored))])
     setChips(seedChips(restored))
     setRaw({})
     setSavedListOpen(false)
@@ -329,12 +329,26 @@ export default function App() {
   // 貼り付けた検索URLの逆翻訳結果を適用。保存の復元と同じ手順でバー・チップを組み直す
   const applyReverse = (state: QueryState) => {
     setQuery(state)
-    setAdded([
-      ...new Set(activeConcepts(state).filter((c) => c !== 'keywords')),
-    ])
+    setAdded([...new Set(activeConcepts(state))])
     setChips(seedChips(state))
     setRaw({})
     setReverseOpen(false)
+  }
+
+  // Commit of the smart input: append the fragments to the current
+  // conditions, raise bars for every valued concept, and rebuild chips
+  // (same path as applying a reverse translation, but additive, not replace)
+  const applySmart = (fragments: SmartFragments) => {
+    const next = mergeFragments(query, fragments)
+    setQuery(next)
+    setAdded((a) => [...a, ...activeConcepts(next).filter((c) => !a.includes(c))])
+    setChips(seedChips(next))
+    setRaw({})
+  }
+  // Adopt one "did you mean" suggestion: write its value, raise its bar
+  const adoptSuggestion = (s: SmartSuggestion) => {
+    patchQuery(s.patch)
+    setAdded((a) => (a.includes(s.concept) ? a : [...a, s.concept]))
   }
 
   return (
@@ -360,6 +374,8 @@ export default function App() {
           dark={dark}
           chipsApi={chipsApi}
           patch={patchQuery}
+          onApplySmart={applySmart}
+          onAdoptSuggestion={adoptSuggestion}
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}

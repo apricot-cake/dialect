@@ -40,3 +40,4 @@ jobs:
       - run: npm run check:reverse
       - run: npm run check:parts
       - run: npm run check:props
+      - run: npm run check:smart
