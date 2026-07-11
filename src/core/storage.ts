@@ -1,5 +1,6 @@
-import type { QueryState } from './types'
+import type { PlatformId, QueryState } from './types'
 import { paramsToQuery, stateToParams } from './permalink'
+import { PLATFORMS } from './platforms'
 
 // 名前付きで保存した検索を localStorage に持つ。保存形式は条件をパーマリンクと同じ
 // クエリ文字列(params)に畳んだもので、バージョン管理は permalink.ts に相乗りする。
@@ -140,5 +141,32 @@ export function persistHistoryEnabled(enabled: boolean): void {
     localStorage.setItem(HISTORY_ENABLED_KEY, String(enabled))
   } catch {
     /* the toggle still applies for this session */
+  }
+}
+
+// Bulk-open site selection: stored as the EXCLUDED set, not the selected one.
+// This keeps the default "all sites" correct after a new platform is added
+// later, even for users who already opened the picker and unchecked a few.
+const BULK_OPEN_EXCLUDED_KEY = 'dialect.bulkOpen.excluded.v1'
+
+export function loadBulkOpenExcluded(): PlatformId[] {
+  try {
+    const raw = localStorage.getItem(BULK_OPEN_EXCLUDED_KEY)
+    if (!raw) return []
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter(
+      (v): v is PlatformId => typeof v === 'string' && PLATFORMS.some((p) => p.id === v),
+    )
+  } catch {
+    return []
+  }
+}
+
+export function persistBulkOpenExcluded(excluded: PlatformId[]): void {
+  try {
+    localStorage.setItem(BULK_OPEN_EXCLUDED_KEY, JSON.stringify(excluded))
+  } catch {
+    /* the selection still applies for this session */
   }
 }

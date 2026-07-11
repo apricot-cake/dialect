@@ -350,6 +350,14 @@ export const ja = {
   'launch.specialtyOnly': '{name}専用',
   'launch.urlHeading': '開くURL（条件と同じ色の部分が対応）',
 
+  // まとめて開く
+  'bulk.open': 'まとめて開く（{n}サイト）',
+  'bulk.choose': '開くサイトを選ぶ',
+  'bulk.selectAll': 'すべて選ぶ',
+  'bulk.clearAll': 'すべて外す',
+  'bulk.blocked':
+    '{n}件はブラウザにブロックされました。このサイトのポップアップを許可して、もう一度押すと全部開けます',
+
   // 起動カードの翻訳プレビュー(効く条件を読みやすいラベルに畳む)。{v}に値が入る
   'sum.exclude': '{v}を除く',
   'sum.from': '{v}から',

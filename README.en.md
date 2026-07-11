@@ -24,6 +24,7 @@ It never fetches or displays results itself. It only opens each site's own real 
 - **See the URL being opened** — Hover over a site's button to see the full search URL it will open. Each condition and the URL fragment it produced share the same color, which also makes it a way to learn each site's raw operators.
 - **Share via URL** — Assembled conditions are reflected in the URL, so bookmarking or sharing the browser URL reopens the same conditions.
 - **Load a search URL (reverse translation)** — Paste a search page URL from any supported site into "Load URL" and it is translated back into conditions, so a search built on one site can be carried to another. Anything that can't be read is shown, not silently dropped.
+- **Open all at once** — One "Open all" button on the "open on each site" screen opens every selected site in its own new tab. Sites to open are chosen with checkboxes, and the selection is remembered on this device. If your browser blocks the pop-ups, a prompt tells you to allow them.
 - **Dark mode / English & Japanese** — Toggle the theme and display language from the buttons at the top right.
 
 ## Supported sites

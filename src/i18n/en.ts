@@ -387,6 +387,14 @@ export const en = {
   'launch.specialtyOnly': '{name} only',
   'launch.urlHeading': 'URL to open (colors match the conditions)',
 
+  // Bulk open
+  'bulk.open': 'Open all ({n} sites)',
+  'bulk.choose': 'Choose sites to open',
+  'bulk.selectAll': 'Select all',
+  'bulk.clearAll': 'Deselect all',
+  'bulk.blocked':
+    '{n} were blocked by your browser. Allow pop-ups for this site and click again to open them all.',
+
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
   'sum.exclude': 'excluding {v}',
   'sum.from': 'from {v}',

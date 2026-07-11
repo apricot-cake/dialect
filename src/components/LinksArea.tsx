@@ -4,18 +4,14 @@ import { resolve } from '@/core/resolve'
 import { activeConcepts } from '@/core/concepts'
 import { translationParts, specialtyOwner } from '@/core/preview'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
-import type {
-  ConceptId,
-  PlatformDef,
-  PlatformGroup,
-  QueryState,
-  Resolution,
-} from '@/core/types'
+import type { ConceptId, PlatformDef, QueryState, Resolution } from '@/core/types'
 import { t, tf, type MessageKey } from '@/i18n'
 import { readableInk } from '@/lib/color'
 import { conceptColors } from '@/lib/conceptColors'
+import { GROUPS } from '@/lib/platformGroups'
 import { PlatformBadge } from './PlatformBadge'
 import { ScrollUpPill } from './ConditionsArea'
+import { BulkOpen } from './BulkOpen'
 
 /**
  * 概念色の下線。ホバーポップの生URL全文でのみ使う。複数概念の複合断片
@@ -37,13 +33,6 @@ function underlineStyle(colors: string[], dashed = false): CSSProperties {
     paddingBottom: 1,
   }
 }
-
-const GROUPS: Array<{ group: PlatformGroup; labelKey: MessageKey }> = [
-  { group: 'sns', labelKey: 'group.sns' },
-  { group: 'video', labelKey: 'group.video' },
-  { group: 'image', labelKey: 'group.image' },
-  { group: 'text', labelKey: 'group.text' },
-]
 
 const SOFT_INK = 'color-mix(in oklch, var(--fg) 68%, var(--muted))'
 
@@ -366,6 +355,7 @@ export function LinksArea({
               </svg>
               <span className="text-xs leading-[1.45]">{t('launch.bgHint')}</span>
             </div>
+            <BulkOpen resolutions={resolutions} dark={dark} onLaunch={onLaunch} />
           </div>
 
           {GROUPS.map(({ group, labelKey }) => {
