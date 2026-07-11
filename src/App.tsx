@@ -10,10 +10,12 @@ import {
   clearHistory,
   deleteHistory,
   deleteSaved,
+  loadConceptUsage,
   loadHistory,
   loadHistoryEnabled,
   loadSaved,
   persistHistoryEnabled,
+  recordConceptUsage,
   recordHistory,
   saveSearch,
   toQuery,
@@ -162,6 +164,8 @@ export default function App() {
   // Automatically recorded search history (this device's localStorage).
   // Named searchHistory to avoid shadowing window.history used below
   const [searchHistory, setSearchHistory] = useState(loadHistory)
+  // ピッカーの既定並びを底上げする使用頻度(frecency)。追加操作でのみ更新
+  const [conceptUsage, setConceptUsage] = useState(loadConceptUsage)
   const [historyEnabled, setHistoryEnabledState] = useState(loadHistoryEnabled)
   // 検索URLの読み込み(逆翻訳)ダイアログ
   const [reverseOpen, setReverseOpen] = useState(false)
@@ -259,6 +263,7 @@ export default function App() {
     const def = CONCEPT_MAP[concept]
     if (def.widget === 'toggle') patchQuery({ [def.field]: true })
     setAdded((a) => [...a, concept])
+    setConceptUsage(recordConceptUsage([concept], Date.now()))
   }
   // 家族の「まとめて追加」。未追加のものだけをまとめて足し、トグル系はONにする
   const addConcepts = (concepts: ConceptId[]) => {
@@ -273,6 +278,7 @@ export default function App() {
     }
     if (Object.keys(toggles).length > 0) patchQuery(toggles)
     setAdded((a) => [...a, ...fresh.filter((c) => !a.includes(c))])
+    setConceptUsage(recordConceptUsage(fresh, Date.now()))
   }
   const removeConcept = (concept: ConceptId) => {
     const def = CONCEPT_MAP[concept]
@@ -399,6 +405,7 @@ export default function App() {
         added={added}
         filterId={filterId}
         query={query}
+        conceptUsage={conceptUsage}
         dark={dark}
         lang={lang}
         onAdd={addConcept}

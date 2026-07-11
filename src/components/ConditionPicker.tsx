@@ -13,6 +13,7 @@ import {
 } from '@/core/conceptDefs'
 import { buildSearchIndex, searchConcepts, type MatchTier } from '@/core/conceptSearch'
 import { CATEGORIES, CONCEPT_CATEGORY, FAMILIES, type CategoryId } from '@/core/conceptTags'
+import { conceptFrecency, type ConceptUsageMap } from '@/core/storage'
 import { t, type Lang } from '@/i18n'
 import { PlatformBadge } from './PlatformBadge'
 import { CONCEPT_ICONS } from './conceptIcons'
@@ -78,6 +79,7 @@ export function ConditionPicker({
   added,
   filterId,
   query,
+  conceptUsage,
   dark,
   lang,
   onAdd,
@@ -90,6 +92,7 @@ export function ConditionPicker({
   added: ConceptId[]
   filterId: PlatformId | null
   query: QueryState
+  conceptUsage: ConceptUsageMap
   dark: boolean
   lang: Lang
   onAdd: (concept: ConceptId) => void
@@ -159,12 +162,21 @@ export function ConditionPicker({
     rows = hits.map((h) => CONCEPT_MAP[h.id])
   } else {
     // keywords is a regular pickable concept since the smart-input demotion
-    rows = CONCEPT_DEFS.filter(
+    const candidates = CONCEPT_DEFS.filter(
       (d) =>
         matchesCategory(d.id) &&
         (matchesFilter(d.id) || addedSet.has(d.id)) &&
         !relatedIds.has(d.id),
-    ).sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
+    )
+    // 使用実績(frecency)がある概念はスコア降順で先頭へ浮かせ、残りは従来どおり
+    // 対応サイト数の多い順。学習データがゼロなら旧来の並びと完全一致する
+    const now = Date.now()
+    const scored = candidates.map((d) => ({ d, score: conceptFrecency(conceptUsage, d.id, now) }))
+    const used = scored.filter((x) => x.score > 0).sort((a, b) => b.score - a.score)
+    const rest = scored
+      .filter((x) => x.score === 0)
+      .sort((a, b) => SUPPORT_COUNT[b.d.id] - SUPPORT_COUNT[a.d.id])
+    rows = [...used, ...rest].map((x) => x.d)
   }
   // fuzzy 段でしか当たらなかったとき(表記ゆれ・タイポ)は「もしかして」として弱く見せる
   const fuzzyMode = searchTier === 'fuzzy'

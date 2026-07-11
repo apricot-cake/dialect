@@ -1,4 +1,4 @@
-import type { PlatformId, QueryState } from './types'
+import type { ConceptId, PlatformId, QueryState } from './types'
 import { paramsToQuery, stateToParams } from './permalink'
 import { PLATFORMS } from './platforms'
 
@@ -169,6 +169,70 @@ export function persistBulkOpenExcluded(excluded: PlatformId[]): void {
   } catch {
     /* the selection still applies for this session */
   }
+}
+
+// Picker default-order frecency: how often/recently each concept was added.
+// Recorded on concept-add operations only (not removal), read back to boost
+// the picker's default ordering (see ConditionPicker.tsx).
+const CONCEPT_USAGE_KEY = 'dialect.conceptUsage.v1'
+
+export interface ConceptUsage {
+  count: number
+  lastUsedAt: number
+}
+
+export type ConceptUsageMap = Partial<Record<ConceptId, ConceptUsage>>
+
+function isConceptUsage(v: unknown): v is ConceptUsage {
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    typeof (v as ConceptUsage).count === 'number' &&
+    typeof (v as ConceptUsage).lastUsedAt === 'number'
+  )
+}
+
+export function loadConceptUsage(): ConceptUsageMap {
+  try {
+    const raw = localStorage.getItem(CONCEPT_USAGE_KEY)
+    if (!raw) return {}
+    const parsed: unknown = JSON.parse(raw)
+    if (typeof parsed !== 'object' || parsed === null) return {}
+    const out: ConceptUsageMap = {}
+    for (const [id, entry] of Object.entries(parsed as Record<string, unknown>)) {
+      if (isConceptUsage(entry)) out[id as ConceptId] = entry
+    }
+    return out
+  } catch {
+    return {}
+  }
+}
+
+function storeConceptUsage(usage: ConceptUsageMap): ConceptUsageMap {
+  try {
+    localStorage.setItem(CONCEPT_USAGE_KEY, JSON.stringify(usage))
+  } catch {
+    /* 保存できなくても今回のセッションの並びには反映される */
+  }
+  return usage
+}
+
+/** 追加した概念のカウントを+1し、最終使用時刻を更新する */
+export function recordConceptUsage(concepts: ConceptId[], now: number): ConceptUsageMap {
+  const usage = loadConceptUsage()
+  for (const id of concepts) {
+    const prev = usage[id]
+    usage[id] = { count: (prev?.count ?? 0) + 1, lastUsedAt: now }
+  }
+  return storeConceptUsage(usage)
+}
+
+/** frecencyスコア: count × 0.5^(経過日数/30)。使用実績が無ければ0 */
+export function conceptFrecency(usage: ConceptUsageMap, id: ConceptId, now: number): number {
+  const entry = usage[id]
+  if (!entry) return 0
+  const days = (now - entry.lastUsedAt) / (1000 * 60 * 60 * 24)
+  return entry.count * Math.pow(0.5, days / 30)
 }
 
 // Export/import: bundles every dialect.* localStorage key (saved searches,
