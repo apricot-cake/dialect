@@ -12,4 +12,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      // GitHub Pagesはパスルーティングできないため、健康ボード(health.html)と
+      // 対応表(matrix.html)をindex.htmlと並ぶ独立ページとしてマルチページビルドする
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        health: path.resolve(__dirname, 'health.html'),
+        matrix: path.resolve(__dirname, 'matrix.html'),
+      },
+    },
+  },
 })

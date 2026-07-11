@@ -1,0 +1,1589 @@
+{
+  "x": [
+    {
+      "priority": "高",
+      "target": "`min_faves:`",
+      "uiName": "最低いいね数",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_faves%3A500&f=live",
+      "expected": "全結果が500いいね以上。2026-07-08にx.com/search-advancedのGUI操作でも「いいねの最小件数」欄として実在を再確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`min_retweets:`",
+      "uiName": "最低リポスト数",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20min_retweets%3A500&f=live",
+      "expected": "全結果が500リポスト以上。2026-07-08にx.com/search-advancedのGUI操作でも「リポストの最小件数」欄として実在を再確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`filter:blue_verified`",
+      "uiName": "認証済みアカウントだけ",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20filter%3Ablue_verified&f=live",
+      "expected": "全結果が認証済み(青バッジ)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`since:`/`until:`",
+      "uiName": "期間",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20since%3A2026-06-01%20until%3A2026-06-08&f=live",
+      "expected": "全結果が期間内(untilの日は含まない。境界はUTC基準なのでJST表示だとuntil当日まで見える)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`filter:media`",
+      "uiName": "画像・動画つきだけ",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20filter%3Amedia&f=live",
+      "expected": "全結果にメディアつき",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`-filter:replies`",
+      "uiName": "リプライを除く",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20-filter%3Areplies&f=live",
+      "expected": "結果にリプライが混ざらない(引用ポストは別)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`from:` / `to:` / `-語` / `\"...\"` / `lang:ja` / `f=live`",
+      "uiName": "ユーザー指定・除外ほか",
+      "verifyUrl": "https://x.com/search?q=%22%E8%A8%88%E7%94%BB%E9%81%8B%E4%BC%91%22%20-%E5%BA%83%E5%91%8A%20lang%3Aja&f=live",
+      "expected": "完全一致・除外・日本語絞りが効き「最新」タブで開く",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`url:<ドメイン>`(2026-07-04追加)",
+      "uiName": "このサイトへのリンクを含む",
+      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20url%3Anhk.or.jp&f=live",
+      "expected": "全結果が nhk.or.jp へのリンクを含む。2026-07-04ログイン済みブラウザで実測(結果本文に www2.nhk.or.jp リンク)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`filter:links`(リンク付き)(2026-07-05追加)",
+      "uiName": "リンク付きだけ",
+      "verifyUrl": "https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks&f=live",
+      "expected": "全結果がリンク(URLカード等)を含む。2026-07-05ログイン済みブラウザ実測",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`-from:<ユーザー>`(除外ユーザー)(2026-07-05追加)",
+      "uiName": "除外するユーザー",
+      "verifyUrl": "https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks%20-from%3Azooaqua_5&f=live",
+      "expected": "指定ユーザーの投稿が結果から消える(from:の否定。ユーザー名は適宜読み替え)。2026-07-05実測(除外前に先頭だったアカウントが消えた)",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`min_replies:`(2026-07-06追加)",
+      "uiName": "最低返信数",
+      "verifyUrl": "https://x.com/search?q=%E7%8C%AB%20min_replies%3A200&f=live",
+      "expected": "全結果が200返信以上。2026-07-06実測(241/739/269/369/2497/209返信)",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`list:<リストID>`(2026-07-06追加)",
+      "uiName": "Xのリスト内を検索",
+      "verifyUrl": "https://x.com/search?q=list%3A1215911364234924032%20%E5%A4%A9%E6%B0%97&f=live",
+      "expected": "そのリスト(公開のおすすめ「京都」)のメンバーの投稿だけ＋キーワードでAND絞り込み。2026-07-06実測(kyoto_np/nhk_kyoto等・全件「天気」を含む)。リストが消えたら別の公開リストIDに差し替え",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`(@nhk)`(メンション)(2026-07-07追加)",
+      "uiName": "このユーザーへのメンションだけ",
+      "verifyUrl": "https://x.com/search?q=%28%40nhk%29%20%E5%A4%A9%E6%B0%97&f=live",
+      "expected": "「@nhk」への言及を含む投稿＋キーワードでAND絞り込み(演算子でなくカッコ付きの素の@テキスト)。2026-07-07にx.com/search-advancedのGUI操作で実測(1件=`(@user)`、複数件=`(@user1 OR @user2)`)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`(猫 OR 犬)`(このどれかを含む、2026-07-11追加)",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://x.com/search?q=%E6%89%8B%E8%8A%B8%20%28%E7%8C%AB%20OR%20%E7%8A%AC%29&f=live",
+      "expected": "「手芸」を含み、かつ「猫」か「犬」のどちらかを含む投稿(スコープ限定OR)。2026-07-11にx.com/search-advancedの「次のキーワードのいずれかを含む」欄をGUI操作で実測(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "bluesky": [
+    {
+      "priority": "高",
+      "target": "`-語`(未文書化)",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://bsky.app/search?q=%E5%A4%A9%E6%B0%97%20-%E9%9B%A8",
+      "expected": "結果に単語「雨」を含む投稿がない(「梅雨」は別トークンなので残ってよい)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`tab=latest`(未文書化)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://bsky.app/search?q=%E5%A4%A9%E6%B0%97&tab=latest",
+      "expected": "「最新」タブが選択された状態で開く",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`from:` / `mentions:` / `domain:` / `since:`/`until:`(公式演算子)",
+      "uiName": "ユーザー指定ほか",
+      "verifyUrl": "https://bsky.app/search?q=%E5%A4%A9%E6%B0%97%20since%3A2026-06-01",
+      "expected": "期間内のみに絞られる",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`&lang=ja`(言語フィルタ、2026-07-09 GUIドロップダウンをフォーム採取)",
+      "uiName": "言語",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&lang=ja",
+      "expected": "検索ページの「すべての言語」ドロップダウンが「日本語」になり日本語投稿に絞られる。旧実装はクエリ内 `lang:` 演算子だったが、実プロダクトが生成する `&lang=` パラメータへ揃えた(UIは `lang:` をクエリ文字扱いする)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`&media=true`(未文書化。検索フォームにトグルは無い)",
+      "uiName": "メディア",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&media=true",
+      "expected": "結果に文章だけの投稿がなくなり、ユーザー/フィードタブが非表示になる(サーバー側がパラメータを認識している証拠)",
+      "lastChecked": "2026-07-09(URL叩き。GUIトグルが無いため未露出のまま機能する挙動の確認)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`tab=user`(未文書化。ユーザータブをクリックすると同じ結果になる)",
+      "uiName": "探す=プロフィール",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&tab=user",
+      "expected": "アカウント検索結果(投稿ではなくプロフィール一覧)が表示される。`-語`・引用符など本文演算子は効かない(GUI操作で確認)",
+      "lastChecked": "2026-07-09(GUI操作。ユーザータブをクリックして同結果を確認)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`video=true`(高度な検索オプション「メディア」→「動画付きの投稿のみ」、2026-07-11追加)",
+      "uiName": "動画付きのみ",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&video=true",
+      "expected": "結果が動画付き投稿のみに絞られる。既存の`media=true`(画像+動画)とは別の3値目。2026-07-11にフィルターモーダルのドロップダウンから採取",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`replies=none`(「含める」→「返信を含まない」、2026-07-11追加)",
+      "uiName": "返信を除く",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&replies=none",
+      "expected": "投稿のみに絞られ返信が結果から消える",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`replies=only`(「含める」→「返信のみ」、2026-07-11追加)",
+      "uiName": "返信のみ",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&replies=only",
+      "expected": "返信のみに絞られる",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`following=true`(「通知対象」→「フォロー中の人」、2026-07-11追加)",
+      "uiName": "フォロー中のみ",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&following=true",
+      "expected": "閲覧アカウントがフォローしている相手の投稿のみに絞られる(ビューア依存)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`author=`/`excludeAuthor=`(追加フィルタ「これらの人から」、2026-07-11追加)",
+      "uiName": "ユーザー指定(複数)",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&author=jay.bsky.team+pfrazee.com",
+      "expected": "指定した複数アカウントいずれかの投稿が混在して返る(OR)。既存の単一値`from:`とは別径路",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`mentions=`/`excludeMentions=`(追加フィルタ「これらの人にメンション」、2026-07-11追加)",
+      "uiName": "メンション先(複数)",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&mentions=alice.bsky.social",
+      "expected": "指定アカウントへのメンションを含む投稿に絞られる。複数値はOR",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`domain=`/`excludeDomain=`(追加フィルタ「これらのドメイン」、2026-07-11追加)",
+      "uiName": "リンク先ドメイン(複数)",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&domain=example.com+foo.org",
+      "expected": "指定ドメインいずれかへのリンクを含む投稿に絞られる(OR)。既存の単一値`domain:`とは別径路",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`tag=`/`excludeTag=`(追加フィルタ「これらのハッシュタグ」、2026-07-11追加)",
+      "uiName": "ハッシュタグ(OR)",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&tag=cat+dog",
+      "expected": "`#cat`のみ・`#dog`のみの投稿がどちらも混在して返る(OR)。既存の`hashtag`概念(空白区切り複数=AND)とは意味論が異なる別物",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`url=`/`excludeUrl=`(追加フィルタ「これらのURL」、2026-07-11追加・完全新規概念)",
+      "uiName": "埋め込みURL指定",
+      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&url=example.com%2Ftest",
+      "expected": "埋め込みリンク・カード先が指定URLの投稿に絞られる。既存の対応する概念なし",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "instagram": [],
+  "misskey": [
+    {
+      "priority": "高",
+      "target": "`username=`(非公式)",
+      "uiName": "このユーザーの投稿だけ",
+      "verifyUrl": "https://misskey.io/search?q=%E5%A4%A9%E6%B0%97&type=note&username=syuilo",
+      "expected": "ユーザー入力欄は正しく埋まる(「ユーザー指定」ON)が、検索が自動実行されず結果は出ない(要「検索」クリック)",
+      "lastChecked": "2026-07-04",
+      "result": "⚠️"
+    },
+    {
+      "priority": "中",
+      "target": "検索URL",
+      "uiName": "キーワード",
+      "verifyUrl": "https://misskey.io/search?q=%E5%8F%B0%E9%A2%A8&type=note",
+      "expected": "URL遷移ではクエリ欄が埋まるだけで結果は自動表示されない(要「検索」クリック)",
+      "lastChecked": "2026-07-04",
+      "result": "❌"
+    },
+    {
+      "priority": "低",
+      "target": "タグページ",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://misskey.io/tags/%E5%A4%A9%E6%B0%97",
+      "expected": "タグのノート一覧が開く",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`-dog`(除外)",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://misskey.io/search?q=%E7%8C%AB%20-%E7%8A%AC&type=note",
+      "expected": "「検索」ボタン押下後、猫と犬を含む実在の投稿が結果から消える。ログイン済みGUI操作で実際の投稿の増減を確認(2026-07-08)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`\"...\"`(完全一致) **機能しないと確定**",
+      "uiName": "完全一致で探す",
+      "verifyUrl": "https://misskey.io/search?q=%22%E3%81%9D%E3%82%82%E3%81%9D%E3%82%82%E3%81%93%E3%81%AE%E7%8C%ABBSS%E3%82%92%E5%A5%BD%E3%82%80%22&type=note",
+      "expected": "実在の投稿本文をそのまま引用符で括っても0件(引用符が文字として扱われクエリを壊す)。さらに`猫 \"今日\"`のように他のキーワードと組み合わせると検索全体が0件になる実害を確認(2026-07-08ログイン済みGUI操作)。2026-07-10、機能しない条件を語のANDに付け替えて送る旧実装(意味を変える畳み込み)を撤回し、非対応(送らない)へ変更。キーワード欄への手動入力で代替できる",
+      "lastChecked": "2026-07-10",
+      "result": "❌(送信しない・非対応)"
+    }
+  ],
+  "tumblr": [
+    {
+      "priority": "中",
+      "target": "`/search/{q}`(コンテンツ検索)",
+      "uiName": "キーワード",
+      "verifyUrl": "https://www.tumblr.com/search/cat",
+      "expected": "未ログインでも猫の投稿が並ぶ(既定=人気順)。2026-07-07実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/search/{q}/recent`(最新順)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://www.tumblr.com/search/cat/recent",
+      "expected": "「最新」タブが選択され新着順で並ぶ。2026-07-07実測(aria-selected)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/tagged/{タグ}`(タグページ)",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://www.tumblr.com/tagged/cat",
+      "expected": "タグ「cat」の投稿が並ぶ(単一タグのみ・人気順固定)。2026-07-07実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/tagged/{タグ}/chrono` **廃止確認**",
+      "uiName": "(タグの最新順)",
+      "verifyUrl": "https://www.tumblr.com/tagged/cat/chrono",
+      "expected": "現状は `/explore/trending` へリダイレクト=タグページの最新順URLは無い(並び替えはボタンのみ)。復活したらタグページでも並び順を送れる",
+      "lastChecked": "2026-07-07",
+      "result": "❌(送信しない)"
+    },
+    {
+      "priority": "中",
+      "target": "`-dog`(除外)",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://www.tumblr.com/search/cat%20-dog",
+      "expected": "「cat」単独と比べてトップ結果が変わり、dogタグの投稿が上位から外れる。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`from:staff`(送信者)",
+      "uiName": "このユーザーの投稿だけ",
+      "verifyUrl": "https://www.tumblr.com/search/from%3Astaff",
+      "expected": "staffブログの投稿だけに絞られる。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`\"golden retriever puppy\"`(完全一致)",
+      "uiName": "完全一致で探す",
+      "verifyUrl": "https://www.tumblr.com/search/%22golden%20retriever%20puppy%22",
+      "expected": "語順を入れ替えた `\"puppy golden retriever\"` と比較するとヒットする投稿が変わり、語順まで見た真の完全一致と確認。無引用符の同じ語順とはトップ結果が一致(=無引用符はゆるい一致)。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`#photography #sunset`(複数タグAND)",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://www.tumblr.com/search/%23photography%20%23sunset",
+      "expected": "両方のタグを持つ投稿だけが並ぶ(AND)。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`since:`/`before:`(期間)",
+      "uiName": "期間",
+      "verifyUrl": "https://www.tumblr.com/search/cat%20since%3A2020-01-01",
+      "expected": "指定日以降/以前の投稿に絞られる。開始・終了どちらか片方だけでも独立して効く(非対称なし)。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`?postTypes=photo,gif,video`(投稿タイプ)",
+      "uiName": "画像・動画つきの投稿だけ",
+      "verifyUrl": "https://www.tumblr.com/search/cat?postTypes=photo",
+      "expected": "画像投稿だけに絞られる(`postTypes=video`だと動画投稿に変わることも確認)。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`?postTypes=link`(投稿タイプ)",
+      "uiName": "リンクを含む投稿だけ",
+      "verifyUrl": "https://www.tumblr.com/search/cat?postTypes=link",
+      "expected": "リンクカード付きの投稿に絞られる。GUI操作で採取・実機確認(2026-07-07)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    }
+  ],
+  "mastodon": [
+    {
+      "priority": "高",
+      "target": "`-語`(除外)",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20-Rom%C3%A2nia&type=statuses",
+      "expected": "「internet」単独のトップ結果(România関連の投稿)が消え、別の投稿に変わる。2026-07-08ログイン済みで実測",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`\"...\"`(完全一致)",
+      "uiName": "完全一致で探す",
+      "verifyUrl": "https://mastodon.social/search?q=%22conectivitate%20la%20internet%22&type=statuses",
+      "expected": "語順どおりの投稿がヒットするが、語順を入れ替えた`\"internet la conectivitate\"`は0件になり、真の完全一致と確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`from:`(送信者。リモートは`from:user@host`)",
+      "uiName": "このユーザーの投稿だけ",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron&type=statuses",
+      "expected": "指定ユーザーの投稿だけに絞られる(別ユーザーの同キーワード投稿は出ない)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`before:`/`after:`(期間)",
+      "uiName": "期間",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron%20before%3A2022-01-01&type=statuses",
+      "expected": "指定日の前後で異なる投稿に絞られる(2021年の投稿 vs 2024年の投稿)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`-is:reply`(返信を除く)",
+      "uiName": "返信を除外",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron%20-is%3Areply&type=statuses",
+      "expected": "返信投稿が結果から消え、通常投稿に変わる",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`language:`(言語)",
+      "uiName": "言語",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20language%3Aro&type=statuses",
+      "expected": "指定言語の投稿だけに絞られる(ルーマニア語の投稿に変わる)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`has:media`/`has:link`",
+      "uiName": "メディア・リンク",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron%20before%3A2022-01-01%20has%3Alink&type=statuses",
+      "expected": "`has:media`と`has:link`で異なる投稿に絞られる(画像添付 vs リンクカード)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/tags/{tag}`(タグページ)",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://mastodon.social/tags/cats",
+      "expected": "未ログインでもタグの投稿一覧が表示される",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    }
+  ],
+  "youtube": [
+    {
+      "priority": "高",
+      "target": "`after:` / `before:`",
+      "uiName": "期間",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%B4%AB%E9%99%BD%E8%8A%B1%20after%3A2026-06-25",
+      "expected": "全結果が指定日以降の投稿",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`sp=CAM%3D`(視聴回数順)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%B4%AB%E9%99%BD%E8%8A%B1&sp=CAM%3D",
+      "expected": "視聴回数のおおむね降順(近似ソート。厳密な全順序ではなく低再生の動画が上位に混じることがある)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`sp=CAMSAhgB`(視聴回数順+4分未満)",
+      "uiName": "人気順+動画の長さ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=CAMSAhgB",
+      "expected": "全結果が4分未満、かつおおむね視聴回数降順(近似)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`sp=CAI%3D`(アップロード日順)**復活チェック**",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E5%8F%B0%E9%A2%A8&sp=CAI%3D",
+      "expected": "現状は**効かない**(関連度に古い投稿が混在)。時系列に並ぶようになったら復活→UI注記 `note.youtube.sort` を修正",
+      "lastChecked": "2026-07-04",
+      "result": "❌(送信は継続)"
+    },
+    {
+      "priority": "中",
+      "target": "`-語`",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB%20-%E7%8A%AC",
+      "expected": "タイトル・概要にリテラル「犬」を含む動画が上位に出ない(もともと信頼度中。「ハスキー」等の犬関連語は残る)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`intitle:`",
+      "uiName": "タイトルだけで探す",
+      "verifyUrl": "https://www.youtube.com/results?search_query=intitle%3A%E7%B4%AB%E9%99%BD%E8%8A%B1",
+      "expected": "全結果のタイトルに「紫陽花」を含む",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgIYAQ%3D%3D`(4分未満、長さ単独)",
+      "uiName": "動画の長さ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=EgIYAQ%3D%3D",
+      "expected": "全結果が4分未満",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgJAAQ%3D%3D`(ライブ、特徴単独)(2026-07-05追加)",
+      "uiName": "ライブ配信だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9&sp=EgJAAQ%3D%3D",
+      "expected": "全結果がライブ配信(配信中・ライブアーカイブ)。YouTubeのフィルタUIが「ライブ」で出す値(filterサブメッセージ field8=1)。Dialectは並び順と合成して送る。2026-07-05ブラウザ実測(【LIVE】ニュース配信が並ぶ)",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "引用符(効かないことの確認)",
+      "uiName": "完全一致",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%22%E5%86%B7%E8%94%B5%E5%BA%AB%E3%81%A7%E5%AF%8C%E5%A3%AB%E5%B1%B1%E3%82%92%E5%86%B7%E3%82%84%E3%81%99%22",
+      "expected": "存在しないフレーズでも通常検索の結果が返る=引用符は実質無視(UI注記の根拠)。厳密に効くようになったら注記を緩める",
+      "lastChecked": "2026-07-04",
+      "result": "❌(注記済み)"
+    },
+    {
+      "priority": "低",
+      "target": "チャンネル内検索URL",
+      "uiName": "このユーザーの投稿だけ",
+      "verifyUrl": "https://www.youtube.com/@NHK/search?query=%E5%8F%B0%E9%A2%A8",
+      "expected": "チャンネル内の検索結果ページが開く",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgJwAQ%3D%3D`(4K、特徴単独)(2026-07-07追加)",
+      "uiName": "4Kの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E9%A2%A8%E6%99%AF&sp=EgJwAQ%3D%3D",
+      "expected": "全結果が4K画質(filterサブメッセージ field14=1)。2026-07-07にフィルタUIから実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgIgAQ%3D%3D`(HD、特徴単独)(2026-07-07追加)",
+      "uiName": "HDの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E9%A2%A8%E6%99%AF&sp=EgIgAQ%3D%3D",
+      "expected": "全結果がHD画質(field4=1)。2026-07-07にフィルタUIから実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgIoAQ%3D%3D`(字幕、特徴単独)(2026-07-07追加)",
+      "uiName": "字幕つきの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9&sp=EgIoAQ%3D%3D",
+      "expected": "全結果に字幕(クローズドキャプション)がある(field5=1)。2026-07-07にフィルタUIから実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgIwAQ%3D%3D`(クリエイティブ・コモンズ、特徴単独)(2026-07-07追加)",
+      "uiName": "クリエイティブ・コモンズだけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%B4%A0%E6%9D%90&sp=EgIwAQ%3D%3D",
+      "expected": "全結果がクリエイティブ・コモンズ・ライセンス(field6=1)。2026-07-07にフィルタUIから実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgJ4AQ%3D%3D`(360°、特徴単独)(2026-07-08追加)",
+      "uiName": "360°動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgJ4AQ%3D%3D",
+      "expected": "結果が360°動画・4K動画に絞られる(field15=1)。2026-07-08にフィルタUIから実測、実機で360°バッジつき動画のみ表示を確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgPQAQE%3D`(VR180、特徴単独)(2026-07-08追加)",
+      "uiName": "VR180の動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgPQAQE%3D",
+      "expected": "結果がVR180動画に絞られる(field26=1、2バイトvarintタグ)。2026-07-08にフィルタUIから実測、実機でVR180バッジつき動画のみ表示を確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgI4AQ%3D%3D`(3D、特徴単独)(2026-07-08追加)",
+      "uiName": "3D動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgI4AQ%3D%3D",
+      "expected": "結果が3D動画に絞られる(field7=1)。2026-07-08にフィルタUIから実測、実機で3Dバッジつき動画のみ表示を確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgPIAQE%3D`(HDR、特徴単独)(2026-07-08追加)",
+      "uiName": "HDRの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgPIAQE%3D",
+      "expected": "結果がHDR動画に絞られる(field25=1、2バイトvarintタグ)。2026-07-08にフィルタUIから実測、実機でHDRバッジつき動画のみ表示を確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgO4AQE%3D`(場所、特徴単独)(2026-07-08追加)",
+      "uiName": "撮影場所つきの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E6%B8%8B%E8%B0%B7&sp=EgO4AQE%3D",
+      "expected": "地名で検索すると実際にその場所で撮影された動画(旅行記・街歩き等)に絞られる(field23=1、2バイトvarintタグ)。地名以外の一般語では0件になる(位置情報タグつき動画自体が少ないため)。2026-07-08にフィルタUIから実測、渋谷の実写動画で確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgJIAQ%3D%3D`(購入済み、特徴単独)(2026-07-08追加)",
+      "uiName": "購入済みの動画だけ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgJIAQ%3D%3D",
+      "expected": "自分が購入した映画・番組に絞られる(field9=1)。2026-07-08にフィルタUIから値を採取(このアカウントは購入履歴が無く0件表示、絞り込み自体の実動作は未検証)",
+      "lastChecked": "2026-07-08",
+      "result": "✅(値採取のみ)"
+    },
+    {
+      "priority": "中",
+      "target": "`%7C`(パイプ区切り、このどれかを含む)(2026-07-11追加)",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E6%89%8B%E8%8A%B8%20%E7%8C%AB%7C%E7%8A%AC",
+      "expected": "「手芸」の結果に、猫関連・犬関連の動画が両方混ざる(union)。2026-07-11にyoutube.comの検索ボックスでパイプ区切りのキーワードを検索し実機確認(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgIQAg%3D%3D`(種別チャンネル)",
+      "uiName": "探すもの=チャンネル",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E6%96%99%E7%90%86&sp=EgIQAg%3D%3D",
+      "expected": "チャンネルだけが並ぶ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=EgIQCQ%3D%3D`(種別ショート、type=9)(2026-07-04追加)",
+      "uiName": "探すもの=ショート",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=EgIQCQ%3D%3D",
+      "expected": "ショート動画だけが並ぶ。sp値はフィルタUIから実測採取",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sp=EgIQAw%3D%3D`(種別再生リスト、type=3)(2026-07-04追加)",
+      "uiName": "探すもの=再生リスト",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=EgIQAw%3D%3D",
+      "expected": "再生リストだけが並ぶ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sp=CAMSBBABGAE%3D`(人気順+動画+短い、合成値)",
+      "uiName": "探すもの+並び順+長さ",
+      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=CAMSBBABGAE%3D",
+      "expected": "動画のみ・4分未満、かつおおむね視聴回数降順(近似)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    }
+  ],
+  "niconico": [
+    {
+      "priority": "中",
+      "target": "`start=`/`end=`(任意期間)",
+      "uiName": "期間",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E5%8F%B0%E9%A2%A8?start=2026-06-01&end=2026-06-30&sort=registeredAt&order=desc",
+      "expected": "全結果が6月の投稿・新着順。任意期間はフィルタモーダルの「日付を指定」で2026-07-09 GUI採取",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "OR並置文法(括弧なし、このどれかを含む)",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB%20OR%20%E7%8A%AC%20%E6%89%8B%E8%8A%B8",
+      "expected": "(猫 OR 犬) AND 手芸 として絞り込まれる(件数が「猫 手芸」+「犬 手芸」程度)。括弧を使うとリテラル扱いで壊れる。2026-07-11にnicovideo.jpの検索ボックスで`猫 OR 犬`をGUI操作で再確認(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=registeredAt&order=desc`(新しい順)(2026-07-09 modern形式へ移行)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=registeredAt&order=desc",
+      "expected": "投稿が新しい順に並ぶ。並び順ドロップダウンが「投稿日時」を示す。2026-07-09 GUI採取(旧 `sort=f&order=d` も有効なエイリアス)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=viewCount&order=desc`(人気順=再生数)(2026-07-09 移行。旧 `sort=h`)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=viewCount&order=desc",
+      "expected": "再生数の多い順に並ぶ(bilibili top=最多播放と揃えた「動画サイトの人気=再生数」)。ドロップダウンが「再生数」を示す。/tag ページでも有効。2026-07-09 GUI採取",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=commentCount&order=desc`(コメント数順)(2026-07-09追加)",
+      "uiName": "並び順=コメント数順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=commentCount&order=desc",
+      "expected": "コメント数の多い順に並ぶ。ドロップダウンが「コメント数」を示す。2026-07-09 GUI採取",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=likeCount&order=desc`(いいね数順)(2026-07-09追加)",
+      "uiName": "並び順=いいね数順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=likeCount&order=desc",
+      "expected": "いいね数の多い順に並ぶ。ドロップダウンが「いいね！数」を示す。2026-07-09 GUI採取",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=mylistCount&order=desc`(マイリスト数順)(2026-07-09追加)",
+      "uiName": "並び順=マイリスト数順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=mylistCount&order=desc",
+      "expected": "マイリスト登録数の多い順に並ぶ。ドロップダウンが「マイリスト登録数」を示す。2026-07-09 GUI採取",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=lastCommentTime&order=desc`(コメント日時順)(2026-07-09追加)",
+      "uiName": "並び順=コメント日時順",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?sort=lastCommentTime&order=desc",
+      "expected": "直近にコメントが付いた順に並ぶ。ドロップダウンが「コメント日時」を示す(コメント数順=commentCountとは別概念)。2026-07-09 GUI採取(並び順ドロップダウンを実操作)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`genre=`(ジャンル、2026-07-06追加)",
+      "uiName": "ジャンル",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF?genre=music_sound",
+      "expected": "「音楽・サウンド」ジャンルに絞られる。/search・/tag 両方で有効(件数が段階的に絞られる)。2026-07-06実測(ゲーム2万≪音楽29万<指定なし38万)",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`genre=`の未収録5値(動物/料理/自然/社会政治時事/例のソレ、2026-07-08追加)",
+      "uiName": "ジャンル",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?genre=cooking",
+      "expected": "ログイン済みフィルタモーダルを再操作したところ、当初収録の12値(music_sound/game/entertainment/other/dance/anime/technology_craft/commentary_lecture/sports/radio/vehicle/traveling_outdoor)に加え `animal`(動物)・`cooking`(料理)・`nature`(自然)・`society_politics_news`(社会・政治・時事)・`r18`(例のソレ)の5値が存在すると判明(全17値)。`genre=cooking`を実際に適用し結果ページURLで反映を確認、2,159件・料理関連の猫動画に絞られることも確認。**ログイン要否**: Cookie無しの素のcurlで同じ検索URLを取得したところ、HTML内に`&quot;label&quot;:&quot;料理&quot;,&quot;value&quot;:&quot;cooking&quot;`のようにジャンル全17値がSSRデータとして直接埋め込まれていると確認(animal/nature/r18/game/music_soundも同様)＝ログイン不要と確証を持って確定",
+      "lastChecked": "2026-07-08(GUI操作+URL叩き)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`kind=user`/`kind=channel`(動画種別)(2026-07-09追加)",
+      "uiName": "動画の種別",
+      "verifyUrl": "https://www.nicovideo.jp/search/%E7%8C%AB?kind=user",
+      "expected": "検索フィルタモーダルの「動画種別」でユーザー投稿/公式チャンネルに絞る。2026-07-09 GUI採取(モーダルを実操作)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "タグページ+除外",
+      "uiName": "ハッシュタグ・除外",
+      "verifyUrl": "https://www.nicovideo.jp/tag/%E3%82%B2%E3%83%BC%E3%83%A0%20-%E5%AE%9F%E6%B3%81",
+      "expected": "タグ一致かつ「実況」を除外した一覧(タイトル内の実況は別トークン扱いで残る)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/tag/`ページで並び順・期間・長さ(2026-07-05追加)",
+      "uiName": "ハッシュタグ単独時の並び順・期間・動画の長さ",
+      "verifyUrl": "https://www.nicovideo.jp/tag/%E3%82%B2%E3%83%BC%E3%83%A0?sort=h&start=2015-01-01&end=2015-12-31&l_range=2",
+      "expected": "タグ検索でも sort/start/end/l_range が /search/ と同様に効く(「ニコニコで人気」順・全件2015年・全件20分超に絞られる)。2026-07-05ブラウザ実測。個別も確認済: `sort=f&order=d`=投稿日時順で最新先頭・`l_range=1`=5分未満",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/search_shorts/`(検索結果タブ「ショート」、2026-07-09追加)",
+      "uiName": "探す=ショート",
+      "verifyUrl": "https://www.nicovideo.jp/search_shorts/%E7%8C%AB",
+      "expected": "ショート動画のみの一覧になる。動画本体と同じフィルタパネル・並び順ドロップダウン(`sort=viewCount&order=desc`等)を共有することを確認",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/series_search/`(検索結果タブ「シリーズ」、2026-07-09追加)",
+      "uiName": "探す=シリーズ",
+      "verifyUrl": "https://www.nicovideo.jp/series_search/%E7%8C%AB",
+      "expected": "シリーズ(投稿者がまとめた連作)の一覧になる。フィルタパネルは無く、専用の並び順(登録動画数/作成日/動画追加日時)を持つ",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/mylist_search/`(検索結果タブ「マイリスト」、2026-07-09追加)",
+      "uiName": "探す=マイリスト(再生リスト)",
+      "verifyUrl": "https://www.nicovideo.jp/mylist_search/%E7%8C%AB",
+      "expected": "公開マイリストの一覧になる。フィルタパネルは無く、シリーズと同じ並び順パラメータを共有する",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/user_search/`(検索結果タブ「ユーザー」、2026-07-09追加)",
+      "uiName": "探す=ユーザー(プロフィール)",
+      "verifyUrl": "https://www.nicovideo.jp/user_search/%E7%8C%AB",
+      "expected": "アカウントの一覧になる。並び順は独自(`sort=followerCount`/`sort=videoCount`/`sort=liveCount`、いずれも`&order=desc`、フォロワー数/投稿動画数/生放送番組数)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=startTime&order=desc`(シリーズ/マイリストの並び順=作成日、2026-07-09追加)",
+      "uiName": "並び順=新しい順(探す=シリーズ/マイリスト時)",
+      "verifyUrl": "https://www.nicovideo.jp/series_search/%E7%8C%AB?sort=startTime&order=desc",
+      "expected": "シリーズが作成日の新しい順に並ぶ。ドロップダウンが「作成日」を示す。既定「ニコニコで人気」は明示選択でも`sort=_hotTotalScore`という特殊値を送るだけと確認、指定なし(auto)に畳み込み",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=videoCount&order=desc`(シリーズ/マイリストの並び順=登録動画数、2026-07-09追加)",
+      "uiName": "並び順=動画数順(探す=シリーズ/マイリスト時)",
+      "verifyUrl": "https://www.nicovideo.jp/series_search/%E7%8C%AB?sort=videoCount&order=desc",
+      "expected": "収録動画数の多い順に並ぶ。ドロップダウンが「登録動画数」を示す。シリーズ・マイリスト共通のパラメータ名と確認",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=lastAddedTime&order=desc`(シリーズ/マイリストの並び順=動画追加日時、2026-07-09追加)",
+      "uiName": "並び順=動画追加日時順(探す=シリーズ/マイリスト時)",
+      "verifyUrl": "https://www.nicovideo.jp/mylist_search/%E7%8C%AB?sort=lastAddedTime&order=desc",
+      "expected": "最後に動画が追加された順に並ぶ。ドロップダウンが「動画追加日時」を示す",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=followerCount&order=desc`(ユーザー検索の並び順=フォロワー数、2026-07-09追加)",
+      "uiName": "並び順=フォロワー数順(探す=ユーザー時)",
+      "verifyUrl": "https://www.nicovideo.jp/user_search/%E7%8C%AB?sort=followerCount&order=desc",
+      "expected": "フォロワー数の多い順に並ぶ",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=liveCount&order=desc`(ユーザー検索の並び順=生放送番組数、2026-07-09追加)",
+      "uiName": "並び順=生放送番組数順(探す=ユーザー時)",
+      "verifyUrl": "https://www.nicovideo.jp/user_search/%E7%8C%AB?sort=liveCount&order=desc",
+      "expected": "生放送番組数の多い順に並ぶ。無指定時の既定は`sort=_personalized`(あなたへのおすすめ、ログイン依存)で、未訪問クエリで確認し指定なし(auto)に畳み込み",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "twitch": [
+    {
+      "priority": "中",
+      "target": "`type=videos` / `type=channels`",
+      "uiName": "探すもの",
+      "verifyUrl": "https://www.twitch.tv/search?term=minecraft&type=videos",
+      "expected": "「過去のビデオ」だけの結果",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "検索URL",
+      "uiName": "キーワード",
+      "verifyUrl": "https://www.twitch.tv/search?term=%E3%83%9D%E3%82%B1%E3%83%A2%E3%83%B3",
+      "expected": "検索結果が表示される",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    }
+  ],
+  "bilibili": [
+    {
+      "priority": "中",
+      "target": "`order=pubdate`(最新发布)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://search.bilibili.com/all?keyword=%E7%8C%AB&order=pubdate",
+      "expected": "「刚刚」「N分钟前」と数分前の投稿が先頭に並ぶ(実測)。「最新发布」ボタンがアクティブになる",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=click`(最多播放/最多点击)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB&order=click",
+      "expected": "再生数の多い動画が先頭に並ぶ。フィルタUIの実操作でこのパラメータが生成されることを確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`order=dm`(最多弹幕)",
+      "uiName": "並び順=弾幕数順",
+      "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB&order=dm",
+      "expected": "弾幕数の多い動画が先頭に並ぶ(GUI操作で採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`order=stow`(最多收藏)",
+      "uiName": "並び順=収蔵数順",
+      "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB&order=stow",
+      "expected": "収蔵(お気に入り)数の多い動画が先頭に並ぶ(GUI操作で採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`order=attention`(最多喜欢)",
+      "uiName": "並び順=いいね順(コラム)",
+      "verifyUrl": "https://search.bilibili.com/article?keyword=%E7%8C%AB&order=attention",
+      "expected": "いいね数の多いコラムが先頭に並ぶ(GUI操作で採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`order=scores`(最多评论)",
+      "uiName": "並び順=コメント数順(コラム)",
+      "verifyUrl": "https://search.bilibili.com/article?keyword=%E7%8C%AB&order=scores",
+      "expected": "コメント数の多いコラムが先頭に並ぶ(GUI操作で採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=live_time`(最新开播)",
+      "uiName": "並び順=新しい順(生放送)",
+      "verifyUrl": "https://search.bilibili.com/live?keyword=%E7%8C%AB&order=live_time",
+      "expected": "配信開始が新しい順に並ぶ(「最新开播」ボタンの実クリックで採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`pubtime_begin_s`/`pubtime_end_s`(日付範囲)",
+      "uiName": "期間",
+      "verifyUrl": "https://search.bilibili.com/all?keyword=%E7%8C%AB&order=pubdate&pubtime_begin_s=1780243200&pubtime_end_s=1782835199",
+      "expected": "新着順の先頭が06-30になり、7月以降の投稿が混ざらない(実測)。値は中国標準時(UTC+8)のエポック秒",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`duration=1〜4`(動画の長さ)",
+      "uiName": "動画の長さ",
+      "verifyUrl": "https://search.bilibili.com/all?keyword=%E7%8C%AB&duration=4",
+      "expected": "1時間超の動画が主体になる(duration=1は10分未満、duration=2は10-30分、duration=3は30-60分、duration=4は60分超。「更多筛选」の実操作で採取)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "タブ切替(`/video`・`/bangumi`・`/pgc`・`/live`・`/article`・`/upuser`)",
+      "uiName": "探すものの種類",
+      "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB",
+      "expected": "それぞれ動画・アニメ番組・コラムの一覧に絞られる。タブの実クリックでパスが切り替わることを確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`-語`(除外) **効かない**",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB%20-%E7%8B%97",
+      "expected": "`-狗`が文字として検索語に混入し、犬の動画が結果に残る(除外は機能しない)。2026-07-08実測につきDialectはexclude非対応(none)で実装",
+      "lastChecked": "2026-07-08",
+      "result": "❌(送信しない)"
+    }
+  ],
+  "pixiv": [
+    {
+      "priority": "高",
+      "target": "`scd=`/`ecd=`(任意期間)",
+      "uiName": "期間",
+      "verifyUrl": "https://www.pixiv.net/tags/%E7%8C%AB/artworks?scd=2026-06-01&ecd=2026-06-30",
+      "expected": "全結果が6月の投稿(scd/ecd単体は有効・1,243件。`order=date_d`併用はエラーになるため送信しない)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=popular_d`(人気順)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://www.pixiv.net/tags/%E7%8C%AB/artworks?order=popular_d",
+      "expected": "プレミアム会員なら人気順(非会員は新着のまま=注記済み)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`(猫 OR 犬)`(このどれかを含む) / `-語`(除外)(公式)",
+      "uiName": "このどれかを含む・除外",
+      "verifyUrl": "https://www.pixiv.net/tags/(%E7%8C%AB%20OR%20%E7%8A%AC",
+      "expected": "猫か犬のタグを含み「腐向け」を除外。2026-07-11にpixiv.netの検索ボックスで`猫 OR 犬`をGUI操作で再確認(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`s_mode=s_tc`(2026-07-04追加)",
+      "uiName": "タイトルだけで探す",
+      "verifyUrl": "https://www.pixiv.net/tags/%E7%8C%AB/artworks?s_mode=s_tc",
+      "expected": "「タイトル・キャプション」検索として結果が出る(pixivは内部で s_mode=tc に正規化)。2026-07-04ブラウザ実測",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`s_mode=s_tag_full`(タグ完全一致、2026-07-06追加)",
+      "uiName": "タグの完全一致",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?s_mode=s_tag_full",
+      "expected": "タグの部分一致でなく完全一致で絞られる(件数が減る)。2026-07-06実測(部分732千→完全724千)",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`{N}users入り`タグ(擬似人気順、2026-07-05追加)",
+      "uiName": "人気の目安",
+      "verifyUrl": "https://www.pixiv.net/tags/%E9%A2%A8%E6%99%AF%2010000users%E5%85%A5%E3%82%8A/artworks",
+      "expected": "キーワードと「{N}users入り」タグ(一定ブクマ数でファンが付与)の複合検索で人気作に絞る(プレミアム限定 order=popular_d 不要)。**タグ実在に依存=ファン付与が廃れると機能不全**(漏れも仕様)。2026-07-05ブラウザ実測(#風景#10000users入りで人気作が並ぶ)",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`mode=safe` / `mode=r18`(年齢制限)(2026-07-05追加)",
+      "uiName": "年齢制限",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?mode=safe",
+      "expected": "safe=全年齢のみ／r18=R18のみに絞られる。`/tags`エンドポイントでも有効・非会員可(R18の表示は要ログイン=注記済み)。2026-07-05 AJAX件数で実測(safe 678,793 + r18 53,163 = 全件 731,956 に一致)",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`ai_type=1`(AI生成除外)(2026-07-05追加)",
+      "uiName": "AI生成作品を除く",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?ai_type=1",
+      "expected": "AI生成作品が結果から外れる。`/tags`でも有効・非会員可(アカウント既定を上書き)。2026-07-05実測(初音ミクで 731,956→670,443、約6.1万件減)",
+      "lastChecked": "2026-07-05",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`s_mode=tag_tc`(タグ・タイトル・キャプション、2026-07-07追加)",
+      "uiName": "タグ・タイトル・キャプションで探す",
+      "verifyUrl": "https://www.pixiv.net/search?q=%E7%8C%AB&s_mode=tag_tc&type=artwork",
+      "expected": "タグ部分一致より広い範囲がヒットする(2026-07-07実測、猫の部分一致24万件→tag_tcで112万件超)。**`/tags/{q}/{section}`パスでは「不正なリクエスト」エラーになり、`/search?q=…&type=…`という別エンドポイントが必要**(他のs_modeと違う)。2026-07-07にpixiv.netの検索オプションGUIで実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "パス `/illustrations` / `/manga`",
+      "uiName": "作品の種類",
+      "verifyUrl": "https://www.pixiv.net/tags/%E7%8C%AB/manga",
+      "expected": "マンガ作品だけが並ぶ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/illustrations?type=ugoira`(うごくイラスト、2026-07-06追加)",
+      "uiName": "作品の種類=うごくイラスト",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/illustrations?type=ugoira",
+      "expected": "うごくイラスト(アニメーション)だけに絞られる。専用パスが無いため illustrations に type=ugoira を付ける。2026-07-06実測(全72万→約7千)",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "パス `/novels`(小説、2026-07-06追加)",
+      "uiName": "作品の種類=小説",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/novels",
+      "expected": "小説作品だけが並ぶ",
+      "lastChecked": "2026-07-06",
+      "result": "✅"
+    }
+  ],
+  "seiga": [
+    {
+      "priority": "低",
+      "target": "スペースAND・`-語`除外・`\"…\"`完全一致",
+      "uiName": "キーワード・除外・完全一致",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB%20-%E7%8A%AC?target=illust",
+      "expected": "AND・除外・完全一致が件数で整合(猫73,566 / 猫 犬1,590 / 猫 -犬71,976=差分が一致 / \"猫 侍\"24<猫 侍75)。2026-07-07実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=image_created`(新着)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=image_created",
+      "expected": "投稿が新しい順に並ぶ(既定はコメント新着順のため明示要)。2026-07-07実測(先頭が最新ID)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=image_view`(閲覧数)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=image_view",
+      "expected": "閲覧数の多い順に並ぶ(人気の代用)。2026-07-07実測(古い殿堂入り作が先頭)",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/tag/`(タグ一致)",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://seiga.nicovideo.jp/tag/%E7%8C%AB?target=illust",
+      "expected": "タグ「猫」一致の一覧。除外・`sort=` も併用可(タグページでも並び替わる)。2026-07-07実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`manga.nicovideo.jp/search?q=`(マンガ)",
+      "uiName": "作品の種類=マンガ",
+      "verifyUrl": "https://manga.nicovideo.jp/search?q=%E7%8C%AB",
+      "expected": "ニコニコ漫画の検索結果(別エンジン)。AND・除外・完全一致が効く(猫2,143 / 猫 犬254 / 猫 -犬1,889 / \"猫 侍\"1<16)。並び順は送ると件数が変わるため送らない。2026-07-07実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "OR並置文法(括弧禁止、このどれかを含む)(2026-07-11追加)",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB%20OR%20%E7%8A%AC%20%E6%89%8B%E8%8A%B8?target=illust",
+      "expected": "(猫 OR 犬) AND 手芸として絞り込まれる(niconico動画と同一の検索基盤・同一文法。括弧を使うとリテラル扱いで壊れる)。2026-07-11にseiga.nicovideo.jpの検索ボックスで`猫 OR 犬`をGUI操作で実測(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "pinterest": [
+    {
+      "priority": "高",
+      "target": "`-語`(除外) **効かない**",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://www.pinterest.com/search/pins/?q=black%20cat%20-orange",
+      "expected": "Pinterest自身が「\"black cat orange\"の検索結果です」と表示し、`-`を除外でなく検索語の一部として扱う(除外は機能しない)。2026-07-08実測につきDialectはexclude非対応(none)で実装",
+      "lastChecked": "2026-07-08",
+      "result": "❌(送信しない)"
+    },
+    {
+      "priority": "中",
+      "target": "`/search/videos/`・`/search/boards/`・`/search/users/`(探すもの)",
+      "uiName": "探すもの",
+      "verifyUrl": "https://www.pinterest.com/search/videos/?q=cats",
+      "expected": "それぞれ動画ピン・ボード・プロフィールの一覧に絞られる。フィルターパネルの選択で実際にパスが切り替わることを確認",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`?q=`(キーワード)",
+      "uiName": "キーワード",
+      "verifyUrl": "https://www.pinterest.com/search/pins/?q=black%20cat",
+      "expected": "黒猫の画像がおおむね並ぶ(関連度ベースのため一部語だけの結果も混ざりうる)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    }
+  ],
+  "fanbox": [
+    {
+      "priority": "中",
+      "target": "`/tags/{タグ}`(タグページ)",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://www.fanbox.cc/tags/%E7%8C%AB",
+      "expected": "タグ「猫」の投稿一覧が未ログインでも表示される(単一タグのみ)",
+      "lastChecked": "2026-07-08",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`?type=tag&q=猫 犬`(複数語) **AND検索にならない**",
+      "uiName": "(該当UIなし)",
+      "verifyUrl": "https://www.fanbox.cc/search?type=tag&q=%E7%8C%AB%20%E7%8A%AC",
+      "expected": "「猫」と「犬」の両方の文字を含むタグ名(例:「犬猫」)の候補一覧が出るだけで、投稿のAND検索にはならない。2026-07-08実測につきDialectは複数タグ入力時は検索不可(null)として実装",
+      "lastChecked": "2026-07-08",
+      "result": "❌(送信しない)"
+    }
+  ],
+  "fantia": [
+    {
+      "priority": "高",
+      "target": "`keyword_type=all`(タイトルと本文)",
+      "uiName": "タイトルだけで探す(OFF)",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&keyword_type=all",
+      "expected": "本文にのみ「猫」を含む投稿もヒットする(タイトルのみのときより件数が増える)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`keyword_type=title_only`(タイトルのみ、既定)",
+      "uiName": "タイトルだけで探す(ON)",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&keyword_type=title_only",
+      "expected": "タイトルに「猫」を含む投稿だけがヒットする",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "高",
+      "target": "`category=illust`(カテゴリー)",
+      "uiName": "カテゴリー",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&category=illust",
+      "expected": "イラストカテゴリーの投稿だけに絞られる(詳細検索パネルの「イラスト」チップの実クリックで採取したパラメータ名・値)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`brand_type=0`(男性向け)",
+      "uiName": "対象読者=男性向け(R18)",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=0&keyword=%E7%8C%AB",
+      "expected": "男性向けR18タブの投稿だけに絞られる(タブの実クリックで採取)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`brand_type=2`(女性向け)",
+      "uiName": "対象読者=女性向け(R18)",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=2&keyword=%E7%8C%AB",
+      "expected": "女性向けR18タブの投稿だけに絞られる(タブの実クリックで採取)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=newer`(投稿の新しい順)",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&order=newer",
+      "expected": "投稿日時が新しい順に並ぶ(並び順セレクトの実操作で採取)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=popular`(お気に入り数順)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&order=popular",
+      "expected": "お気に入り(★)数の多い投稿が先頭に並ぶ(並び順セレクトの実操作で採取)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`-語`(除外) **効かない**",
+      "uiName": "除外するキーワード",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB%20-%E7%8A%AC&keyword_type=all",
+      "expected": "`-犬`が文字として検索語に混入し0件になる(除外は機能しない)。2026-07-09実測につきDialectはexclude非対応(none)で実装",
+      "lastChecked": "2026-07-09",
+      "result": "❌(送信しない)"
+    },
+    {
+      "priority": "低",
+      "target": "`\"...\"`(完全一致) **効かない**",
+      "uiName": "完全一致で探す",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%22%E7%8C%AB%E8%80%B3%E3%83%A1%E3%82%A4%E3%83%89%22&keyword_type=all",
+      "expected": "引用符ごと文字列として要求され0件になる(引用符なしの同じ語では多数ヒット)。2026-07-09実測につきDialectはexactPhrase非対応(none)で実装",
+      "lastChecked": "2026-07-09",
+      "result": "❌(送信しない)"
+    }
+  ],
+  "note": [
+    {
+      "priority": "中",
+      "target": "`from:@noteID`(公式)",
+      "uiName": "このユーザーの投稿だけ",
+      "verifyUrl": "https://note.com/search?context=note&q=from%3A%40info&sort=new",
+      "expected": "note公式アカウントの記事だけが並ぶ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=new`",
+      "uiName": "並び順=新しい順",
+      "verifyUrl": "https://note.com/search?context=note&q=%E5%8F%B0%E9%A2%A8&sort=new",
+      "expected": "新着順で並ぶ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=hot`(急上昇)(2026-07-04追加)",
+      "uiName": "並び順=急上昇",
+      "verifyUrl": "https://note.com/search?context=note&q=%E7%8C%AB&sort=hot",
+      "expected": "「急上昇」タブが選択され急上昇の記事が並ぶ。2026-07-04ブラウザ実測",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`context=note_for_sale`(有料のみ)(2026-07-09追加)",
+      "uiName": "有料の記事だけ",
+      "verifyUrl": "https://note.com/search?context=note_for_sale&q=%E7%8C%AB",
+      "expected": "「すべての記事」ドロップダウンで「有料の記事」を選ぶとcontextがnote_for_saleに切替。全結果が有料記事(価格表示)に絞られる。2026-07-09 GUI採取(セレクトを実操作)",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "ハッシュタグページ",
+      "uiName": "ハッシュタグ",
+      "verifyUrl": "https://note.com/hashtag/%E8%AA%AD%E6%9B%B8%E8%A8%98%E9%8C%B2",
+      "expected": "タグの記事一覧が開く(コンテスト系タグは/contestへ転送されるが記事一覧は表示される)",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`context=user`(検索結果タブ「クリエイター」、2026-07-09追加)",
+      "uiName": "探す=プロフィール",
+      "verifyUrl": "https://note.com/search?context=user&q=%E7%8C%AB",
+      "expected": "クリエイター(ユーザー)一覧になる。並び順チップ・`from:`演算子・有料フィルタは無い",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`context=magazine`(検索結果タブ「マガジン」、2026-07-09追加)",
+      "uiName": "探す=シリーズ",
+      "verifyUrl": "https://note.com/search?context=magazine&q=%E7%8C%AB",
+      "expected": "マガジン(記事をまとめた企画)一覧になる。並び順チップ・`from:`演算子・有料フィルタは無い",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`context=circle`(検索結果タブ「メンバーシップ」、2026-07-09追加)",
+      "uiName": "探す=メンバーシップ",
+      "verifyUrl": "https://note.com/search?context=circle&q=%E6%8A%95%E8%B3%87",
+      "expected": "メンバーシップ(有料コミュニティ)一覧になる。`from:`演算子は0件になり効かない(none)。有料のみは全件がそもそも有料のため意味を持たない(none)。並び順チップは「人気(既定・sort=popular)/新着(sort=new)」の2値のみで急上昇(hot)は無い",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sort=popular`(メンバーシップの人気順、2026-07-09追加)",
+      "uiName": "並び順=人気順",
+      "verifyUrl": "https://note.com/search?context=circle&q=%E6%8A%95%E8%B3%87&sort=popular",
+      "expected": "「人気」チップが選択された状態と同じ結果になる",
+      "lastChecked": "2026-07-09(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "reddit": [
+    {
+      "priority": "中",
+      "target": "`AND` / `NOT (...)`",
+      "uiName": "キーワード・除外",
+      "verifyUrl": "https://www.reddit.com/search/?q=typhoon%20AND%20japan%20NOT%20%28anime%29",
+      "expected": "両語を含み anime を含まない",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`author:` / `subreddit:`",
+      "uiName": "ユーザー指定・コミュニティ",
+      "verifyUrl": "https://www.reddit.com/search/?q=subreddit%3Ajapan%20typhoon",
+      "expected": "r/japan 内の結果のみ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sort=new` / `t=week`",
+      "uiName": "並び順・期間の丸め",
+      "verifyUrl": "https://www.reddit.com/search/?q=typhoon&sort=new&t=week",
+      "expected": "新着順・1週間以内",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`self:no` **復活チェック**(現状は効かないので送っていない)",
+      "uiName": "リンクを含む投稿だけ",
+      "verifyUrl": "https://www.reddit.com/search/?q=typhoon%20AND%20self%3Ayes",
+      "expected": "現状は `self:` が無視される(self:yes でも画像投稿が並び self:no と結果同一。2026-07-04実測)。テキスト投稿だけに絞れるようになったら linksOnly を復活",
+      "lastChecked": "2026-07-04",
+      "result": "❌(送信しない)"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=comments`(2026-07-07追加)",
+      "uiName": "コメント数順",
+      "verifyUrl": "https://www.reddit.com/search/?q=typhoon&sort=comments",
+      "expected": "コメント数の多い順に並ぶ",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`type=posts` / `type=communities` / `type=comments` / `type=media` / `type=people`(2026-07-07追加)",
+      "uiName": "探すものの種類",
+      "verifyUrl": "https://www.reddit.com/search/?q=typhoon&type=media",
+      "expected": "「メディア」タブに絞られる(他の値もそれぞれ投稿/コミュニティ/コメント/プロフィールタブに対応)。無指定は「すべて」タブ(投稿+コミュニティ+コメント+メディア+プロフィールが混在)のまま。2026-07-07にreddit.com/searchのタブをGUI操作で実測",
+      "lastChecked": "2026-07-07",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`(cats OR dogs)`(このどれかを含む、2026-07-11追加)",
+      "uiName": "このどれかを含む",
+      "verifyUrl": "https://www.reddit.com/search/?q=yarn%20%28cats%20OR%20dogs%29",
+      "expected": "「yarn」を含み、かつ「cats」か「dogs」のどちらかを含む投稿(スコープ限定OR)。2026-07-11にreddit.comの検索ボックスに`cats OR dogs`を直接入力してGUI操作で実測(issue #26)",
+      "lastChecked": "2026-07-11(GUI操作)",
+      "result": "✅"
+    }
+  ],
+  "hatebu": [
+    {
+      "priority": "中",
+      "target": "`-語` / `date_begin`/`date_end`",
+      "uiName": "除外・期間",
+      "verifyUrl": "https://b.hatena.ne.jp/search/text?q=python%20-%E5%85%A5%E9%96%80&date_begin=2024-01-01&date_end=2024-06-30",
+      "expected": "「入門」を含まず期間内のみ",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`users=`",
+      "uiName": "最低いいね数",
+      "verifyUrl": "https://b.hatena.ne.jp/search/text?q=python&users=100",
+      "expected": "全結果が100users以上",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`\"...\"`(未文書化)",
+      "uiName": "完全一致",
+      "verifyUrl": "https://b.hatena.ne.jp/search/text?q=%22machine%20learning%22",
+      "expected": "引用符なしより件数が絞られる",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`/search/title` / `/search/tag` / `sort=recent`",
+      "uiName": "タイトルだけ・ハッシュタグ・並び順",
+      "verifyUrl": "https://b.hatena.ne.jp/search/tag?q=python%20%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92&sort=recent",
+      "expected": "両タグつきが新着順",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`safe=off`(セーフサーチ解除、2026-07-09追加)",
+      "uiName": "セーフサーチを解除",
+      "verifyUrl": "https://b.hatena.ne.jp/search/text?q=%E7%8C%AB&safe=off",
+      "expected": "サイドバーの「セーフサーチ」が「オフ」を選んだ状態になる。未ログインでも既定・挙動は同じ(WebFetchで確認)",
+      "lastChecked": "2026-07-09",
+      "result": "✅"
+    }
+  ],
+  "fivech": [
+    {
+      "priority": "高",
+      "target": "サービス存続+AND",
+      "uiName": "キーワード",
+      "verifyUrl": "https://ff5ch.syoboi.jp/?q=%E3%83%86%E3%82%B9%E3%83%88%20%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%81%BF",
+      "expected": "全結果のスレタイに両語を含む",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`-語` / `@板ID`",
+      "uiName": "除外・コミュニティ",
+      "verifyUrl": "https://ff5ch.syoboi.jp/?q=%E3%83%86%E3%82%B9%E3%83%88%20-%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%81%BF%20%40sony",
+      "expected": "sony板のみ・除外語を含まない",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "複数 `@板ID`(OR、先頭のみ→全部送信に変更)",
+      "uiName": "コミュニティ(複数)",
+      "verifyUrl": "https://ff5ch.syoboi.jp/?q=%E3%83%86%E3%82%B9%E3%83%88%20%40sony%20%40news4plus",
+      "expected": "sony板とnews4plus板の和集合(いずれかの板)。2026-07-04実測で確認済",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "公式find.5ch.ioのAND **復活チェック**",
+      "uiName": "(キーワード)",
+      "verifyUrl": "https://find.5ch.io/search?q=Python%20%E5%88%9D%E5%BF%83%E8%80%85",
+      "expected": "現状は片方の語だけの結果が混ざる(関連度ベース)。ANDになったら公式への切替を検討",
+      "lastChecked": "2026-07-04",
+      "result": "❌(ff5chを継続)"
+    }
+  ],
+  "animanch": [
+    {
+      "priority": "中",
+      "target": "`/searchRes/`(レス本文β)",
+      "uiName": "キーワード",
+      "verifyUrl": "https://bbs.animanch.com/searchRes/%E3%82%A2%E3%83%8B%E3%83%A1%20%E6%98%A0%E7%94%BB",
+      "expected": "本文に両語を含むスレ一覧",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`/search2/`(過去ログタイトル)",
+      "uiName": "タイトルだけで探す",
+      "verifyUrl": "https://bbs.animanch.com/search2/%E3%82%A2%E3%83%8B%E3%83%A1%20%E6%98%A0%E7%94%BB",
+      "expected": "タイトルに両語を含む全期間の一覧",
+      "lastChecked": "2026-07-04",
+      "result": "✅"
+    }
+  ]
+}

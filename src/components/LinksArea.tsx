@@ -6,7 +6,8 @@ import { translationParts, specialtyOwner } from '@/core/preview'
 import { rawQuery } from '@/core/rawQuery'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type { ConceptId, PlatformDef, QueryState, Resolution } from '@/core/types'
-import { t, tf, type MessageKey } from '@/i18n'
+import { getLang, t, tf, type MessageKey } from '@/i18n'
+import { pt } from '@/i18n/pageCopy'
 import { readableInk } from '@/lib/color'
 import { conceptColors } from '@/lib/conceptColors'
 import { GROUPS } from '@/lib/platformGroups'
@@ -445,8 +446,16 @@ export function LinksArea({
             )
           })}
 
-          <div className="px-0.5 pt-7 pb-1.5 text-[11.5px] leading-[1.6] text-faint">
-            {t('footer.privacy')}
+          <div className="flex flex-col gap-2 px-0.5 pt-7 pb-1.5 text-[11.5px] leading-[1.6] text-faint">
+            <span>{t('footer.privacy')}</span>
+            <span className="flex flex-wrap gap-x-3 gap-y-1">
+              <a href="./health.html" className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted">
+                {pt(getLang(), 'footer.health')}
+              </a>
+              <a href="./matrix.html" className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted">
+                {pt(getLang(), 'footer.matrix')}
+              </a>
+            </span>
           </div>
         </div>
       </div>

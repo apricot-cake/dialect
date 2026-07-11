@@ -15,7 +15,9 @@
     "check:parts": "npx --no-install esbuild scripts/check-parts.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-parts.mjs && node node_modules/.cache/check-parts.mjs",
     "check:smart": "npx --no-install esbuild scripts/check-smart.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-smart.mjs && node node_modules/.cache/check-smart.mjs",
     "check:props": "npx --no-install esbuild scripts/check-props.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-props.mjs && node node_modules/.cache/check-props.mjs",
-    "gen:readings": "npx --no-install esbuild scripts/gen-readings.ts --bundle --platform=node --format=esm --alias:@=./src --external:kuromoji --log-level=warning --outfile=node_modules/.cache/gen-readings.mjs && node node_modules/.cache/gen-readings.mjs"
+    "gen:readings": "npx --no-install esbuild scripts/gen-readings.ts --bundle --platform=node --format=esm --alias:@=./src --external:kuromoji --log-level=warning --outfile=node_modules/.cache/gen-readings.mjs && node node_modules/.cache/gen-readings.mjs",
+    "gen:health": "npx --no-install esbuild scripts/gen-health.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/gen-health.mjs && node node_modules/.cache/gen-health.mjs",
+    "check:health": "npx --no-install esbuild scripts/check-health.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/check-health.mjs && node node_modules/.cache/check-health.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

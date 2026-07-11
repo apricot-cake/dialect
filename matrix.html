@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Dialectが対応する各検索条件(除外・完全一致など)が、X・Bluesky・YouTubeなど20のサイトのどれで使えるかの一覧表。"
+    />
+    <title>Dialect — 条件×対応サイト表</title>
+    <!-- 描画前にテーマを確定してダークモードのちらつきを防ぐ(index.htmlと同じ処理) -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved
+            ? saved === 'dark'
+            : matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/matrix-main.tsx"></script>
+  </body>
+</html>
