@@ -72,7 +72,6 @@ export const instagram: PlatformDef = {
   // グラデーションの代表色はsimple-iconsの公式値(現行ブランドのピンク)を使う
   brandColor: '#FF0069',
   requiresLogin: true,
-  googleSite: 'instagram.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },

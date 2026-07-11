@@ -185,7 +185,6 @@ export const x: PlatformDef = {
   group: 'sns',
   brandColor: '#0f1419',
   requiresLogin: true,
-  googleSite: 'x.com',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },

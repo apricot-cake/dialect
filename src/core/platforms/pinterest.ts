@@ -69,7 +69,6 @@ export const pinterest: PlatformDef = {
   group: 'image',
   brandColor: '#E60023',
   requiresLogin: false,
-  googleSite: 'pinterest.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.loose.and' },
     exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },

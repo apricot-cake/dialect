@@ -122,7 +122,6 @@ export const mastodon: PlatformDef = {
   group: 'sns',
   brandColor: '#6364FF',
   requiresLogin: true,
-  googleSite: 'mastodon.social',
   support: {
     keywords: { level: 'full', noteKey: 'note.mastodon.keywords' },
     exactPhrase: { level: 'full' },

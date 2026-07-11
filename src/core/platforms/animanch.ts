@@ -50,7 +50,6 @@ export const animanch: PlatformDef = {
   group: 'text',
   brandColor: '#104CD0',
   requiresLogin: false,
-  googleSite: 'bbs.animanch.com',
   support: {
     keywords: { level: 'partial', noteKey: 'note.animanch.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.substring' },

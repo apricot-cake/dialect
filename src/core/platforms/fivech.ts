@@ -51,7 +51,6 @@ export const fivech: PlatformDef = {
   group: 'text',
   brandColor: '#8A6D3B',
   requiresLogin: false,
-  googleSite: '5ch.io',
   support: {
     keywords: { level: 'partial', noteKey: 'note.fivech.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.substring' },

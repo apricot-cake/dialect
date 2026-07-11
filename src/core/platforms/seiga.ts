@@ -124,7 +124,6 @@ export const seiga: PlatformDef = {
   group: 'image',
   brandColor: '#252525',
   requiresLogin: false,
-  googleSite: 'seiga.nicovideo.jp',
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },

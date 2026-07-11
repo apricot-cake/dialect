@@ -194,7 +194,6 @@ export const pixiv: PlatformDef = {
   group: 'image',
   brandColor: '#0096FA',
   requiresLogin: false,
-  googleSite: 'pixiv.net',
   support: {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.pixiv.exactPhrase' },

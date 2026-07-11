@@ -104,7 +104,6 @@ export const misskey: PlatformDef = {
   // 黄緑は輝度判定だと黒字になるが、Misskey本家の配色に合わせて白字で固定する
   ink: '#ffffff',
   requiresLogin: true,
-  googleSite: 'misskey.io',
   support: {
     keywords: { level: 'partial', noteKey: 'note.misskey.keywords' },
     exactPhrase: { level: 'none', noteKey: 'note.exactPhrase.dropped' },
