@@ -388,6 +388,13 @@ export const ja = {
   'group.image': 'イラスト・画像',
   'group.text': 'ブログ・掲示板',
 
+  // Smart input (build conditions from one line)
+  'smart.label': 'スマート入力欄',
+  'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ 今週',
+  'smart.commit': '条件にする',
+  'smart.preview': 'こう分かれます:',
+  'smart.suggest': 'もしかして:',
+
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',
   'ui.clearConditions': 'すべてクリア',

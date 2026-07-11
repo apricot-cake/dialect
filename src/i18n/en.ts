@@ -425,6 +425,13 @@ export const en = {
   'group.image': 'Illustration & Images',
   'group.text': 'Blogs & Forums',
 
+  // Smart input (build conditions from one line)
+  'smart.label': 'Smart input',
+  'smart.placeholder': 'e.g. cat -dog @user #tag today',
+  'smart.commit': 'Add as conditions',
+  'smart.preview': 'Splits into:',
+  'smart.suggest': 'Did you mean:',
+
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
   'ui.clearConditions': 'Clear all',

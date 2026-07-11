@@ -161,19 +161,18 @@ export function ConditionPicker({
   let searchTier: MatchTier | null = null
   if (searching) {
     const hits = searchConcepts(index, q).filter(
-      (h) => h.id !== 'keywords' && matchesFilter(h.id) && matchesCategory(h.id),
+      (h) => matchesFilter(h.id) && matchesCategory(h.id),
     )
     searchTier = hits[0]?.tier ?? null
     rows = hits.map((h) => CONCEPT_MAP[h.id])
   } else {
-    rows = CONCEPT_DEFS.filter((d) => d.id !== 'keywords')
-      .filter(
-        (d) =>
-          matchesCategory(d.id) &&
-          (matchesFilter(d.id) || addedSet.has(d.id)) &&
-          !relatedIds.has(d.id),
-      )
-      .sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
+    // keywords is a regular pickable concept since the smart-input demotion
+    rows = CONCEPT_DEFS.filter(
+      (d) =>
+        matchesCategory(d.id) &&
+        (matchesFilter(d.id) || addedSet.has(d.id)) &&
+        !relatedIds.has(d.id),
+    ).sort((a, b) => SUPPORT_COUNT[b.id] - SUPPORT_COUNT[a.id])
   }
   // fuzzy 段でしか当たらなかったとき(表記ゆれ・タイポ)は「もしかして」として弱く見せる
   const fuzzyMode = searchTier === 'fuzzy'
