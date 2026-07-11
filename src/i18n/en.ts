@@ -439,6 +439,16 @@ export const en = {
   'saved.save.confirm': 'Save',
   'saved.save.cancel': 'Cancel',
 
+  // Search history (auto-recorded, localStorage)
+  'saved.tab.saved': 'Saved',
+  'saved.tab.history': 'History',
+  'history.hint':
+    'When you open a site, that search is kept here automatically (this device only, last 50).',
+  'history.empty': 'No history yet. Build a search and open a site, and it will appear here.',
+  'history.promote': 'Save with a name',
+  'history.clearAll': 'Delete all',
+  'history.disable': 'Don’t keep history',
+
   'support.full': 'Full support',
   'support.partial': 'Partial support',
   'picker.title': 'Add a condition',

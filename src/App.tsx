@@ -7,8 +7,14 @@ import { paramsToQuery, permalinkUrl, stateToParams } from '@/core/permalink'
 import { PLATFORMS } from '@/core/platforms'
 import { searchSummary } from '@/core/preview'
 import {
+  clearHistory,
+  deleteHistory,
   deleteSaved,
+  loadHistory,
+  loadHistoryEnabled,
   loadSaved,
+  persistHistoryEnabled,
+  recordHistory,
   saveSearch,
   toQuery,
   type StoredQuery,
@@ -150,8 +156,14 @@ export default function App() {
   const [pickerOpen, setPickerOpen] = useState(false)
   // 名前付きで保存した検索(この端末のlocalStorage)。保存ダイアログ・一覧ダイアログ
   const [saved, setSaved] = useState<StoredQuery[]>(loadSaved)
-  const [saveOpen, setSaveOpen] = useState(false)
+  // What the save dialog would save: the current conditions (from the save
+  // button) or a history entry being promoted to a named saved search
+  const [saveTarget, setSaveTarget] = useState<QueryState | null>(null)
   const [savedListOpen, setSavedListOpen] = useState(false)
+  // Automatically recorded search history (this device's localStorage).
+  // Named searchHistory to avoid shadowing window.history used below
+  const [searchHistory, setSearchHistory] = useState(loadHistory)
+  const [historyEnabled, setHistoryEnabledState] = useState(loadHistoryEnabled)
   // 検索URLの読み込み(逆翻訳)ダイアログ
   const [reverseOpen, setReverseOpen] = useState(false)
 
@@ -287,14 +299,24 @@ export default function App() {
   // 入力中テキストも emitChips で query に即反映されるため activeConcepts で拾える
   const canClear = added.length > 0 || activeConcepts(query).length > 0
 
-  // ---- 検索の保存・復元 ----
+  // ---- 検索の保存・復元・履歴 ----
   const handleSave = (name: string) => {
-    setSaved(saveSearch(name, query, Date.now()))
-    setSaveOpen(false)
+    if (saveTarget) setSaved(saveSearch(name, saveTarget, Date.now()))
+    setSaveTarget(null)
   }
   const handleDelete = (params: string) => setSaved(deleteSaved(params))
+  // Record an executed search when a launch link is opened. Skipped when the
+  // user opted out or when there are no conditions to remember
+  const recordLaunch = () => {
+    if (!historyEnabled || activeConcepts(query).length === 0) return
+    setSearchHistory(recordHistory(query, Date.now()))
+  }
+  const toggleHistoryEnabled = (enabled: boolean) => {
+    persistHistoryEnabled(enabled)
+    setHistoryEnabledState(enabled)
+  }
   // 保存した検索を復元。バー構成・チップも条件から組み直す(起動時の復元と同じ手順)
-  const restoreSaved = (entry: StoredQuery) => {
+  const restoreSaved = (entry: { params: string }) => {
     const restored = toQuery(entry)
     setQuery(restored)
     setAdded([
@@ -341,7 +363,7 @@ export default function App() {
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}
-          onSave={canClear ? () => setSaveOpen(true) : undefined}
+          onSave={canClear ? () => setSaveTarget(query) : undefined}
           onOpenReverse={() => setReverseOpen(true)}
           onOpenPicker={() => setPickerOpen(true)}
           onGoLinks={() => setArea('links')}
@@ -350,6 +372,7 @@ export default function App() {
           query={query}
           dark={dark}
           onGoConditions={() => setArea('conditions')}
+          onLaunch={recordLaunch}
         />
       </div>
       <ConditionPicker
@@ -366,17 +389,25 @@ export default function App() {
         onSetFilter={setFilterId}
       />
       <SaveSearchDialog
-        open={saveOpen}
-        onOpenChange={setSaveOpen}
-        defaultName={searchSummary(query)}
+        open={saveTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setSaveTarget(null)
+        }}
+        defaultName={saveTarget ? searchSummary(saveTarget) : ''}
         onSave={handleSave}
       />
       <SavedListDialog
         open={savedListOpen}
         onOpenChange={setSavedListOpen}
         saved={saved}
+        history={searchHistory}
+        historyEnabled={historyEnabled}
         onRestore={restoreSaved}
         onDelete={handleDelete}
+        onDeleteHistory={(params) => setSearchHistory(deleteHistory(params))}
+        onClearHistory={() => setSearchHistory(clearHistory())}
+        onToggleHistoryEnabled={toggleHistoryEnabled}
+        onPromote={(entry) => setSaveTarget(toQuery(entry))}
       />
       <ReverseDialog
         open={reverseOpen}
