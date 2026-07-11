@@ -499,6 +499,9 @@ export const en = {
   'history.promote': 'Save with a name',
   'history.clearAll': 'Delete all',
   'history.disable': 'Don’t keep history',
+  'history.promoteSuggest.message': 'You use this search a lot. Save it?',
+  'history.promoteSuggest.save': 'Save',
+  'history.promoteSuggest.dismiss': 'Dismiss',
 
   'support.full': 'Full support',
   'support.partial': 'Partial support',

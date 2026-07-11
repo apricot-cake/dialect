@@ -14,17 +14,19 @@ import {
   loadHistory,
   loadHistoryEnabled,
   loadSaved,
+  markHistorySuggested,
   persistHistoryEnabled,
   recordConceptUsage,
   recordHistory,
   saveSearch,
   toQuery,
+  type HistoryEntry,
   type StoredQuery,
 } from '@/core/storage'
 import { mergeFragments, type SmartFragments } from '@/core/smartInput'
 import type { SmartSuggestion } from '@/core/smartSuggest'
 import { andTerms, exactPhrases, words } from '@/core/text'
-import { getLang, setLang, subscribe, type Lang } from '@/i18n'
+import { getLang, setLang, subscribe, t, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
 import { DotsCanvas } from '@/components/DotsCanvas'
 import { ConditionsArea, type ChipsApi } from '@/components/ConditionsArea'
@@ -166,6 +168,8 @@ export default function App() {
   const [searchHistory, setSearchHistory] = useState(loadHistory)
   // ピッカーの既定並びを底上げする使用頻度(frecency)。追加操作でのみ更新
   const [conceptUsage, setConceptUsage] = useState(loadConceptUsage)
+  // 同じ検索を3回実行したときに一度だけ出す「保存しますか?」サジェスト
+  const [promoteSuggestion, setPromoteSuggestion] = useState<HistoryEntry | null>(null)
   const [historyEnabled, setHistoryEnabledState] = useState(loadHistoryEnabled)
   // 検索URLの読み込み(逆翻訳)ダイアログ
   const [reverseOpen, setReverseOpen] = useState(false)
@@ -318,7 +322,15 @@ export default function App() {
   // user opted out or when there are no conditions to remember
   const recordLaunch = () => {
     if (!historyEnabled || activeConcepts(query).length === 0) return
-    setSearchHistory(recordHistory(query, Date.now()))
+    const updated = recordHistory(query, Date.now())
+    setSearchHistory(updated)
+    // 3回目の実行で一度だけ「保存しますか?」を出す(それ以降は二度と出さない)
+    const params = stateToParams(query).toString()
+    const entry = updated.find((e) => e.params === params)
+    if (entry && entry.count === 3 && !entry.suggested) {
+      setPromoteSuggestion(entry)
+      setSearchHistory(markHistorySuggested(params))
+    }
   }
   const toggleHistoryEnabled = (enabled: boolean) => {
     persistHistoryEnabled(enabled)
@@ -446,6 +458,48 @@ export default function App() {
         onOpenChange={setQrOpen}
         url={canClear ? permalinkUrl(query) : undefined}
       />
+      {promoteSuggestion && (
+        <div
+          className="fixed inset-x-0 bottom-5 z-[70] flex justify-center px-4"
+          style={{ animation: 'dl-fade 180ms ease both' }}
+        >
+          <div className="flex items-center gap-3 rounded-full border border-border bg-card py-2 pr-2 pl-4 shadow-[0_10px_30px_oklch(0_0_0_/_0.18)]">
+            <span className="text-[12.5px] font-medium text-muted">
+              {t('history.promoteSuggest.message')}
+            </span>
+            <button
+              type="button"
+              data-noscale
+              className="inline-flex h-8 cursor-pointer items-center rounded-full bg-accent px-3.5 text-[12.5px] font-semibold text-white"
+              onClick={() => {
+                setSaveTarget(query)
+                setPromoteSuggestion(null)
+              }}
+            >
+              {t('history.promoteSuggest.save')}
+            </button>
+            <button
+              type="button"
+              data-noscale
+              aria-label={t('history.promoteSuggest.dismiss')}
+              className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full text-faint hover:text-fg"
+              onClick={() => setPromoteSuggestion(null)}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              >
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -498,6 +498,9 @@ export const ja = {
   'history.promote': '名前を付けて保存',
   'history.clearAll': '全削除',
   'history.disable': '履歴を残さない',
+  'history.promoteSuggest.message': 'この検索をよく使っています。保存しますか？',
+  'history.promoteSuggest.save': '保存する',
+  'history.promoteSuggest.dismiss': '閉じる',
 
   'support.full': '完全対応',
   'support.partial': '一部対応',

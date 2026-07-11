@@ -75,6 +75,8 @@ export interface HistoryEntry {
   lastUsedAt: number
   /** How many times this exact search was executed */
   count: number
+  /** Whether the "save this search?" suggestion has already been shown once */
+  suggested?: boolean
 }
 
 function isHistoryEntry(e: unknown): e is HistoryEntry {
@@ -83,7 +85,9 @@ function isHistoryEntry(e: unknown): e is HistoryEntry {
     e !== null &&
     typeof (e as HistoryEntry).params === 'string' &&
     typeof (e as HistoryEntry).lastUsedAt === 'number' &&
-    typeof (e as HistoryEntry).count === 'number'
+    typeof (e as HistoryEntry).count === 'number' &&
+    ((e as HistoryEntry).suggested === undefined ||
+      typeof (e as HistoryEntry).suggested === 'boolean')
   )
 }
 
@@ -114,9 +118,22 @@ function storeHistory(entries: HistoryEntry[]): HistoryEntry[] {
 export function recordHistory(state: QueryState, now: number): HistoryEntry[] {
   const params = stateToParams(state).toString()
   const prev = loadHistory()
-  const count = (prev.find((e) => e.params === params)?.count ?? 0) + 1
+  const existing = prev.find((e) => e.params === params)
+  const count = (existing?.count ?? 0) + 1
   const rest = prev.filter((e) => e.params !== params)
-  return storeHistory([{ params, lastUsedAt: now, count }, ...rest].slice(0, HISTORY_MAX))
+  return storeHistory(
+    [{ params, lastUsedAt: now, count, suggested: existing?.suggested }, ...rest].slice(
+      0,
+      HISTORY_MAX,
+    ),
+  )
+}
+
+/** 昇格サジェストを表示したことを記録する(以後そのエントリでは二度と出さない) */
+export function markHistorySuggested(params: string): HistoryEntry[] {
+  return storeHistory(
+    loadHistory().map((e) => (e.params === params ? { ...e, suggested: true } : e)),
+  )
 }
 
 export function deleteHistory(params: string): HistoryEntry[] {
