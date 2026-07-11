@@ -47,6 +47,10 @@ export const ja = {
   'concept.mentionsUser.placeholder': '例: user.bsky.social',
   'concept.mentionsUser.help':
     '指定したユーザーへのメンションを含む投稿だけを探します',
+  'concept.excludeMentions.label': 'このユーザーへのメンションを除く',
+  'concept.excludeMentions.placeholder': '例: user.bsky.social',
+  'concept.excludeMentions.help':
+    '指定したユーザーへのメンションを含む投稿を検索結果から除きます（Blueskyのみ対応）',
   'concept.subreddit.label': 'このコミュニティの中だけ',
   'concept.subreddit.placeholder': '例: japan',
   'concept.subreddit.help':
@@ -55,6 +59,18 @@ export const ja = {
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.domain.help':
     '指定したサイトへのリンクを含む投稿だけを探します',
+  'concept.excludeDomain.label': 'このサイトへのリンクを除く',
+  'concept.excludeDomain.placeholder': '例: nhk.or.jp',
+  'concept.excludeDomain.help':
+    '指定したサイトへのリンクを含む投稿を検索結果から除きます（Blueskyのみ対応）',
+  'concept.linkUrl.label': 'このURLへのリンクを含む',
+  'concept.linkUrl.placeholder': '例: example.com/article',
+  'concept.linkUrl.help':
+    '指定したURLへの埋め込みリンク・カードを含む投稿だけを探します（Blueskyのみ対応）',
+  'concept.excludeLinkUrl.label': 'このURLへのリンクを除く',
+  'concept.excludeLinkUrl.placeholder': '例: example.com/article',
+  'concept.excludeLinkUrl.help':
+    '指定したURLへの埋め込みリンク・カードを含む投稿を検索結果から除きます（Blueskyのみ対応）',
   'concept.xList.label': 'Xのリスト内を検索',
   'concept.xList.placeholder': 'リストのURL、またはID',
   'concept.xList.help':
@@ -63,11 +79,22 @@ export const ja = {
   'concept.hashtag.placeholder': '例: 読書記録',
   'concept.hashtag.help':
     '指定したハッシュタグがついた投稿を探します。#はつけません',
+  'concept.hashtagOr.label': 'このハッシュタグのどれかを含む',
+  'concept.hashtagOr.placeholder': '例: cat',
+  'concept.hashtagOr.help':
+    '指定したハッシュタグのうち、どれか1つでもついた投稿を探します（Blueskyのみ対応）。#はつけません',
+  'concept.excludeHashtag.label': 'このハッシュタグを除く',
+  'concept.excludeHashtag.placeholder': '例: 広告',
+  'concept.excludeHashtag.help':
+    '指定したハッシュタグがついた投稿を検索結果から除きます（Blueskyのみ対応）。#はつけません',
   'concept.period.label': '期間',
   'concept.period.help':
     '投稿された日付で絞り込みます。どちらか片方だけの指定もできます',
   'concept.mediaOnly.label': '画像・動画つきの投稿だけ',
   'concept.mediaOnly.help': '画像または動画がついた投稿だけに絞り込みます',
+  'concept.videoOnly.label': '動画つきの投稿だけ',
+  'concept.videoOnly.help':
+    'Blueskyで、動画がついた投稿だけに絞り込みます（画像だけの投稿は含みません）',
   'concept.liveOnly.label': 'ライブ配信だけ',
   'concept.liveOnly.help': 'YouTubeで、ライブ配信（生放送・アーカイブ）だけに絞り込みます',
   'concept.fourK.label': '4Kの動画だけ',
@@ -104,6 +131,11 @@ export const ja = {
   'concept.verifiedOnly.help': '認証済みアカウントの投稿だけに絞り込みます',
   'concept.excludeReplies.label': 'リプライを除く',
   'concept.excludeReplies.help': '返信(リプライ)を検索結果から除きます',
+  'concept.repliesOnly.label': 'リプライだけ',
+  'concept.repliesOnly.help': 'Blueskyで、返信(リプライ)だけに絞り込みます',
+  'concept.followingOnly.label': 'フォロー中の人だけ',
+  'concept.followingOnly.help':
+    'Blueskyで、自分がフォローしているアカウントの投稿だけに絞り込みます',
   'concept.minLikes.label': '最低いいね数',
   'concept.minLikes.placeholder': '例: 100',
   'concept.minLikes.help':
@@ -280,8 +312,15 @@ export const ja = {
   'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
   'note.niconico.resultTypeConflict': 'シリーズ・マイリスト・ユーザー検索では、この絞り込みは使えません',
   'note.niconico.hashtagAsKeyword': 'タグ専用ページが無いため、ふつうのキーワードとして検索されます',
-  'note.bluesky.fromUser': 'ユーザー名は「user.bsky.social」の形式です',
+  'note.bluesky.fromUser':
+    'ユーザー名は「user.bsky.social」の形式です。複数指定はスペース区切りで、いずれか一致で判定します',
+  'note.bluesky.domainMulti':
+    'ドメインは「nhk.or.jp」のように入力します。複数指定はスペース区切りで、いずれか一致で判定します',
   'note.bluesky.peopleConflict': 'アカウント検索では、この絞り込みは使えません',
+  'note.bluesky.followingOnly':
+    'フォロー中かどうかは、リンクを開くBlueskyアカウントに依存します',
+  'note.bluesky.repliesConflict':
+    '「リプライを除く」と同時に選ぶと、リプライを除く方が優先されます',
   'note.youtube.exactPhrase': '完全一致で探しますが、言葉がバラバラに含まれる投稿も多く混ざります',
   'note.youtube.exclude': '除外した言葉を含む投稿が、結果に残ることがあります',
   'note.youtube.fromUser': 'チャンネル内検索ページを開きます',

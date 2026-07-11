@@ -33,7 +33,7 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 | 中 | `(@nhk)`(メンション)(2026-07-07追加) | このユーザーへのメンションだけ | [x.com/search?q=(@nhk) 天気&f=live](https://x.com/search?q=%28%40nhk%29%20%E5%A4%A9%E6%B0%97&f=live) | 「@nhk」への言及を含む投稿＋キーワードでAND絞り込み(演算子でなくカッコ付きの素の@テキスト)。2026-07-07にx.com/search-advancedのGUI操作で実測(1件=`(@user)`、複数件=`(@user1 OR @user2)`) | 2026-07-07 | ✅ |
 | 中 | `(猫 OR 犬)`(このどれかを含む、2026-07-11追加) | このどれかを含む | [x.com/search?q=手芸 (猫 OR 犬)&f=live](https://x.com/search?q=%E6%89%8B%E8%8A%B8%20%28%E7%8C%AB%20OR%20%E7%8A%AC%29&f=live) | 「手芸」を含み、かつ「猫」か「犬」のどちらかを含む投稿(スコープ限定OR)。2026-07-11にx.com/search-advancedの「次のキーワードのいずれかを含む」欄をGUI操作で実測(issue #26) | 2026-07-11(GUI操作) | ✅ |
 
-## Bluesky(ログイン不要)
+## Bluesky(ログイン必須。2026-07-11に仕様変更で未ログイン検索が不可になったため`requiresLogin: true`へ変更、issue #27)
 
 演算子は公式ドキュメントがある(唯一)。除外と tab= だけが未文書化。
 
@@ -45,6 +45,15 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 | 低 | `&lang=ja`(言語フィルタ、2026-07-09 GUIドロップダウンをフォーム採取) | 言語 | [bsky.app/search?q=猫&lang=ja](https://bsky.app/search?q=%E7%8C%AB&lang=ja) | 検索ページの「すべての言語」ドロップダウンが「日本語」になり日本語投稿に絞られる。旧実装はクエリ内 `lang:` 演算子だったが、実プロダクトが生成する `&lang=` パラメータへ揃えた(UIは `lang:` をクエリ文字扱いする) | 2026-07-09(GUI操作) | ✅ |
 | 中 | `&media=true`(未文書化。検索フォームにトグルは無い) | メディア | [bsky.app/search?q=猫&media=true](https://bsky.app/search?q=%E7%8C%AB&media=true) | 結果に文章だけの投稿がなくなり、ユーザー/フィードタブが非表示になる(サーバー側がパラメータを認識している証拠) | 2026-07-09(URL叩き。GUIトグルが無いため未露出のまま機能する挙動の確認) | ✅ |
 | 中 | `tab=user`(未文書化。ユーザータブをクリックすると同じ結果になる) | 探す=プロフィール | [bsky.app/search?q=猫&tab=user](https://bsky.app/search?q=%E7%8C%AB&tab=user) | アカウント検索結果(投稿ではなくプロフィール一覧)が表示される。`-語`・引用符など本文演算子は効かない(GUI操作で確認) | 2026-07-09(GUI操作。ユーザータブをクリックして同結果を確認) | ✅ |
+| 中 | `video=true`(高度な検索オプション「メディア」→「動画付きの投稿のみ」、2026-07-11追加) | 動画付きのみ | [bsky.app/search?q=猫&video=true](https://bsky.app/search?q=%E7%8C%AB&video=true) | 結果が動画付き投稿のみに絞られる。既存の`media=true`(画像+動画)とは別の3値目。2026-07-11にフィルターモーダルのドロップダウンから採取 | 2026-07-11(GUI操作) | ✅ |
+| 中 | `replies=none`(「含める」→「返信を含まない」、2026-07-11追加) | 返信を除く | [bsky.app/search?q=猫&replies=none](https://bsky.app/search?q=%E7%8C%AB&replies=none) | 投稿のみに絞られ返信が結果から消える | 2026-07-11(GUI操作) | ✅ |
+| 中 | `replies=only`(「含める」→「返信のみ」、2026-07-11追加) | 返信のみ | [bsky.app/search?q=猫&replies=only](https://bsky.app/search?q=%E7%8C%AB&replies=only) | 返信のみに絞られる | 2026-07-11(GUI操作) | ✅ |
+| 中 | `following=true`(「通知対象」→「フォロー中の人」、2026-07-11追加) | フォロー中のみ | [bsky.app/search?q=猫&following=true](https://bsky.app/search?q=%E7%8C%AB&following=true) | 閲覧アカウントがフォローしている相手の投稿のみに絞られる(ビューア依存) | 2026-07-11(GUI操作) | ✅ |
+| 中 | `author=`/`excludeAuthor=`(追加フィルタ「これらの人から」、2026-07-11追加) | ユーザー指定(複数) | [bsky.app/search?q=猫&author=jay.bsky.team+pfrazee.com](https://bsky.app/search?q=%E7%8C%AB&author=jay.bsky.team+pfrazee.com) | 指定した複数アカウントいずれかの投稿が混在して返る(OR)。既存の単一値`from:`とは別径路 | 2026-07-11(GUI操作) | ✅ |
+| 中 | `mentions=`/`excludeMentions=`(追加フィルタ「これらの人にメンション」、2026-07-11追加) | メンション先(複数) | [bsky.app/search?q=猫&mentions=alice.bsky.social](https://bsky.app/search?q=%E7%8C%AB&mentions=alice.bsky.social) | 指定アカウントへのメンションを含む投稿に絞られる。複数値はOR | 2026-07-11(GUI操作) | ✅ |
+| 中 | `domain=`/`excludeDomain=`(追加フィルタ「これらのドメイン」、2026-07-11追加) | リンク先ドメイン(複数) | [bsky.app/search?q=猫&domain=example.com+foo.org](https://bsky.app/search?q=%E7%8C%AB&domain=example.com+foo.org) | 指定ドメインいずれかへのリンクを含む投稿に絞られる(OR)。既存の単一値`domain:`とは別径路 | 2026-07-11(GUI操作) | ✅ |
+| 中 | `tag=`/`excludeTag=`(追加フィルタ「これらのハッシュタグ」、2026-07-11追加) | ハッシュタグ(OR) | [bsky.app/search?q=猫&tag=cat+dog](https://bsky.app/search?q=%E7%8C%AB&tag=cat+dog) | `#cat`のみ・`#dog`のみの投稿がどちらも混在して返る(OR)。既存の`hashtag`概念(空白区切り複数=AND)とは意味論が異なる別物 | 2026-07-11(GUI操作) | ✅ |
+| 低 | `url=`/`excludeUrl=`(追加フィルタ「これらのURL」、2026-07-11追加・完全新規概念) | 埋め込みURL指定 | [bsky.app/search?q=猫&url=example.com/test](https://bsky.app/search?q=%E7%8C%AB&url=example.com%2Ftest) | 埋め込みリンク・カード先が指定URLの投稿に絞られる。既存の対応する概念なし | 2026-07-11(GUI操作) | ✅ |
 
 ## YouTube(ログイン不要)
 

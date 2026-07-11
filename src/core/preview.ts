@@ -41,16 +41,28 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return tf('sum.to', { v: words(state.toUser).map((u) => `@${u}`).join('・') })
     case 'mentionsUser':
       return tf('sum.mentions', { v: `@${state.mentionsUser.trim()}` })
+    case 'excludeMentions':
+      return tf('sum.exclude', { v: words(state.excludeMentions).map((u) => `@${u}`).join('・') })
     case 'subreddit':
       return tf('sum.community', { v: words(state.subreddit).join('・') })
     case 'domain':
       return tf('sum.domain', { v: state.domain.trim() })
+    case 'excludeDomain':
+      return tf('sum.exclude', { v: words(state.excludeDomain).join('・') })
+    case 'linkUrl':
+      return tf('sum.domain', { v: state.linkUrl.trim() })
+    case 'excludeLinkUrl':
+      return tf('sum.exclude', { v: state.excludeLinkUrl.trim() })
     case 'xList':
       return t('sum.xList')
     case 'hashtag':
       return words(state.hashtag)
         .map((w) => `#${w}`)
         .join(' ')
+    case 'hashtagOr':
+      return tf('sum.anyOf', { v: words(state.hashtagOr).map((w) => `#${w}`).join('・') })
+    case 'excludeHashtag':
+      return tf('sum.exclude', { v: words(state.excludeHashtag).map((w) => `#${w}`).join('・') })
     case 'period':
       if (state.since && state.until) return tf('sum.between', { a: state.since, b: state.until })
       if (state.since) return tf('sum.since', { v: state.since })

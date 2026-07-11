@@ -38,17 +38,26 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.excludeUser.trim()) params.set('exfr', state.excludeUser.trim())
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
+  if (state.excludeMentions.trim()) params.set('exmen', state.excludeMentions.trim())
   if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
   if (state.domain.trim()) params.set('dom', state.domain.trim())
+  if (state.excludeDomain.trim()) params.set('exdom', state.excludeDomain.trim())
+  if (state.linkUrl.trim()) params.set('url', state.linkUrl.trim())
+  if (state.excludeLinkUrl.trim()) params.set('exurl', state.excludeLinkUrl.trim())
   if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
+  if (state.hashtagOr.trim()) params.set('tagor', state.hashtagOr.trim())
+  if (state.excludeHashtag.trim()) params.set('extag', state.excludeHashtag.trim())
   if (state.since) params.set('since', state.since)
   if (state.until) params.set('until', state.until)
   if (state.mediaOnly) params.set('media', '1')
+  if (state.videoOnly) params.set('vidon', '1')
   if (state.videoLength) params.set('vlen', state.videoLength)
   if (state.linksOnly) params.set('links', '1')
   if (state.verifiedOnly) params.set('ver', '1')
   if (state.excludeReplies) params.set('norep', '1')
+  if (state.repliesOnly) params.set('rponly', '1')
+  if (state.followingOnly) params.set('follo', '1')
   if (state.liveOnly) params.set('live', '1')
   if (state.fourK) params.set('k4', '1')
   if (state.hdOnly) params.set('hd', '1')
@@ -118,13 +127,20 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.excludeUser = params.get('exfr') ?? ''
   state.toUser = params.get('to') ?? ''
   state.mentionsUser = params.get('men') ?? ''
+  state.excludeMentions = params.get('exmen') ?? ''
   state.subreddit = params.get('sub') ?? ''
   state.domain = params.get('dom') ?? ''
+  state.excludeDomain = params.get('exdom') ?? ''
+  state.linkUrl = params.get('url') ?? ''
+  state.excludeLinkUrl = params.get('exurl') ?? ''
   state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
+  state.hashtagOr = params.get('tagor') ?? ''
+  state.excludeHashtag = params.get('extag') ?? ''
   state.since = params.get('since') ?? ''
   state.until = params.get('until') ?? ''
   state.mediaOnly = params.get('media') === '1'
+  state.videoOnly = params.get('vidon') === '1'
   const vlen = params.get('vlen')
   if (vlen === 'short' || vlen === 'medium' || vlen === 'long') {
     state.videoLength = vlen
@@ -132,6 +148,8 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.linksOnly = params.get('links') === '1'
   state.verifiedOnly = params.get('ver') === '1'
   state.excludeReplies = params.get('norep') === '1'
+  state.repliesOnly = params.get('rponly') === '1'
+  state.followingOnly = params.get('follo') === '1'
   state.liveOnly = params.get('live') === '1'
   state.fourK = params.get('k4') === '1'
   state.hdOnly = params.get('hd') === '1'

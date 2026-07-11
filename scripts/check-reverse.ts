@@ -71,18 +71,28 @@ const CASES: Record<PlatformId, Patch[]> = {
       terms: ['猫'],
       exactPhrase: ['青い 空'],
       exclude: 'dog',
-      fromUser: 'alice.bsky.social',
-      mentionsUser: 'bob.bsky.social',
-      domain: 'example.com',
+      fromUser: 'alice.bsky.social bob.bsky.social',
+      excludeUser: 'spam1.bsky.social spam2.bsky.social',
+      mentionsUser: 'bob.bsky.social carol.bsky.social',
+      excludeMentions: 'dave.bsky.social',
+      domain: 'example.com foo.org',
+      excludeDomain: 'spam.example',
+      linkUrl: 'example.com/article',
+      excludeLinkUrl: 'example.com/spam',
       hashtag: 'art cat',
+      hashtagOr: 'cat dog',
+      excludeHashtag: 'ad',
       since: '2026-01-01',
       until: '2026-06-30',
       mediaOnly: true,
+      videoOnly: true,
+      followingOnly: true,
       language: 'en',
       sort: 'new',
     },
     { terms: ['ai', 'art'], resultType: 'people' },
     { terms: ['cat'], sort: 'top' },
+    { terms: ['cat'], repliesOnly: true },
   ],
   youtube: [
     {
@@ -390,6 +400,20 @@ const WILD: Array<{
     url: 'bsky.app/search?q=cat+-dog&tab=latest',
     platform: 'bluesky',
     expect: { terms: ['cat'], exclude: 'dog', sort: 'new' },
+  },
+  {
+    // 旧q内トークン形式(from:/mentions:/domain:/#tag)の後方互換読み込み(issue #27で
+    // author=/mentions=/domain=/tag= の新パラメータへ移行後も、過去に生成されたリンクや
+    // 手打ちのクエリを読めることを確認する)
+    url: 'https://bsky.app/search?q=%E7%8C%AB%20from%3Aalice.bsky.social%20mentions%3Abob.bsky.social%20domain%3Aexample.com%20%23cat',
+    platform: 'bluesky',
+    expect: {
+      terms: ['猫'],
+      fromUser: 'alice.bsky.social',
+      mentionsUser: 'bob.bsky.social',
+      domain: 'example.com',
+      hashtag: 'cat',
+    },
   },
   {
     url: 'https://b.hatena.ne.jp/search/text?q=rust&users=3&safe=off',

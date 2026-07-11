@@ -112,6 +112,10 @@ function singleOverrides(): Array<Partial<QueryState>> {
       if (f === 'subreddit') out.push({ subreddit: 'japan tokyo' })
       if (f === 'excludeUser') out.push({ excludeUser: 'nhk asahi' })
       if (f === 'exclude') out.push({ exclude: '犬 うさぎ' })
+      if (f === 'hashtagOr') out.push({ hashtagOr: 'cat dog' })
+      if (f === 'excludeHashtag') out.push({ excludeHashtag: 'cat dog' })
+      if (f === 'excludeMentions') out.push({ excludeMentions: 'nhk asahi' })
+      if (f === 'excludeDomain') out.push({ excludeDomain: 'nhk.or.jp example.org' })
     }
   }
   // 特殊形: フレーズ入りキーワード、タグ単独(タグページ分岐)、除外単独、送信者単独

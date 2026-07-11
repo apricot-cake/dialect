@@ -50,6 +50,15 @@ export type ConceptId =
   | 'fantiaCategory'
   | 'fantiaAudience'
   | 'safeSearchOff'
+  | 'videoOnly'
+  | 'repliesOnly'
+  | 'followingOnly'
+  | 'hashtagOr'
+  | 'excludeHashtag'
+  | 'excludeMentions'
+  | 'excludeDomain'
+  | 'linkUrl'
+  | 'excludeLinkUrl'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -223,20 +232,54 @@ export interface QueryState {
   /** スペース区切りで複数可(どれか宛て=OR) */
   toUser: string
   mentionsUser: string
+  /**
+   * Bluesky専用。メンション先を除外(excludeMentions=)。スペース区切りで複数可
+   * (除外対象を空白区切りで複数=excludeUserと同じ意味論)。2026-07-11にGUI操作で実測(issue #27)
+   */
+  excludeMentions: string
   /** スペース区切りで複数可(どれか=OR) */
   subreddit: string
   domain: string
+  /**
+   * Bluesky専用。リンク先ドメインを除外(excludeDomain=)。スペース区切りで複数可
+   * (除外対象を空白区切りで複数=excludeUserと同じ意味論)。2026-07-11にGUI操作で実測(issue #27)
+   */
+  excludeDomain: string
+  /**
+   * Bluesky専用。埋め込みリンク・カード先のURLで絞り込む(url=)。既存の対応する概念が無い
+   * 完全新規。単一値のみ確認済み(複数値のOR/AND挙動は未検証)。2026-07-11にGUI操作で実測(issue #27)
+   */
+  linkUrl: string
+  /** Bluesky専用。linkUrlの除外版(excludeUrl=)。単一値のみ確認済み。2026-07-11にGUI操作で実測(issue #27) */
+  excludeLinkUrl: string
   /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
   xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */
   hashtag: string
+  /**
+   * スコープ限定OR(「このハッシュタグのどれかを含む」)。keywordsOrのハッシュタグ版。
+   * スペース区切りで複数可、どれか1つを含めばよい(既存hashtag概念のAND意味論とは別物)。
+   * 2026-07-11時点でBluesky(tag=)のみ対応。GUI操作で実測(issue #27)
+   */
+  hashtagOr: string
+  /** Bluesky専用。ハッシュタグを除外(excludeTag=)。スペース区切りで複数可(除外対象=exclude-each)。2026-07-11にGUI操作で実測(issue #27) */
+  excludeHashtag: string
   since: string // YYYY-MM-DD
   until: string // YYYY-MM-DD
   mediaOnly: boolean
+  /** Bluesky専用。動画つきの投稿だけに絞る(video=true)。既存のmediaOnly(画像+動画)とは別の3値目。2026-07-11にGUI操作で実測(issue #27) */
+  videoOnly: boolean
   videoLength: VideoLength
   linksOnly: boolean
   verifiedOnly: boolean
   excludeReplies: boolean
+  /** Bluesky専用。返信(リプライ)だけに絞る(replies=only)。excludeReplies(replies=none)の逆方向。2026-07-11にGUI操作で実測(issue #27) */
+  repliesOnly: boolean
+  /**
+   * Bluesky専用。フォロー中のアカウントの投稿だけに絞る(following=true)。実在するURLパラメータだが
+   * 結果はリンクを開くアカウントのフォロー関係に依存する。2026-07-11にGUI操作で実測(issue #27)
+   */
+  followingOnly: boolean
   /** YouTube専用。ライブ配信だけに絞る(sp のfilterサブメッセージ field8=1) */
   liveOnly: boolean
   /**

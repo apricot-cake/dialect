@@ -46,6 +46,10 @@ export const en = {
   'concept.mentionsUser.placeholder': 'e.g. user.bsky.social',
   'concept.mentionsUser.help':
     'Finds only posts that mention the given user.',
+  'concept.excludeMentions.label': 'Exclude mentions of this user',
+  'concept.excludeMentions.placeholder': 'e.g. user.bsky.social',
+  'concept.excludeMentions.help':
+    'Removes posts that mention the given user from the results (Bluesky only).',
   'concept.subreddit.label': 'Within this community only',
   'concept.subreddit.placeholder': 'e.g. japan',
   'concept.subreddit.help':
@@ -53,6 +57,18 @@ export const en = {
   'concept.domain.label': 'Links to this site',
   'concept.domain.placeholder': 'e.g. nhk.or.jp',
   'concept.domain.help': 'Finds only posts that link to the given site.',
+  'concept.excludeDomain.label': 'Exclude links to this site',
+  'concept.excludeDomain.placeholder': 'e.g. nhk.or.jp',
+  'concept.excludeDomain.help':
+    'Removes posts that link to the given site from the results (Bluesky only).',
+  'concept.linkUrl.label': 'Links to this URL',
+  'concept.linkUrl.placeholder': 'e.g. example.com/article',
+  'concept.linkUrl.help':
+    'Finds only posts with an embedded link or card pointing to the given URL (Bluesky only).',
+  'concept.excludeLinkUrl.label': 'Exclude links to this URL',
+  'concept.excludeLinkUrl.placeholder': 'e.g. example.com/article',
+  'concept.excludeLinkUrl.help':
+    'Removes posts with an embedded link or card pointing to the given URL from the results (Bluesky only).',
   'concept.xList.label': 'Search within an X List',
   'concept.xList.placeholder': 'List URL or ID',
   'concept.xList.help':
@@ -61,11 +77,22 @@ export const en = {
   'concept.hashtag.placeholder': 'e.g. booklog',
   'concept.hashtag.help':
     'Finds posts with the given hashtag. Do not include #.',
+  'concept.hashtagOr.label': 'Match any of these hashtags',
+  'concept.hashtagOr.placeholder': 'e.g. cat',
+  'concept.hashtagOr.help':
+    'Finds posts tagged with at least one of the given hashtags (Bluesky only). Do not include #.',
+  'concept.excludeHashtag.label': 'Exclude this hashtag',
+  'concept.excludeHashtag.placeholder': 'e.g. ad',
+  'concept.excludeHashtag.help':
+    'Removes posts tagged with the given hashtag from the results (Bluesky only). Do not include #.',
   'concept.period.label': 'Date range',
   'concept.period.help':
     'Filters by post date. You can set just one side.',
   'concept.mediaOnly.label': 'With image or video only',
   'concept.mediaOnly.help': 'Keeps only posts that include an image or video.',
+  'concept.videoOnly.label': 'With video only',
+  'concept.videoOnly.help':
+    'On Bluesky, keeps only posts that include a video (image-only posts are excluded).',
   'concept.liveOnly.label': 'Live streams only',
   'concept.liveOnly.help': 'On YouTube, keeps only live streams (live and their archives).',
   'concept.fourK.label': '4K videos only',
@@ -102,6 +129,11 @@ export const en = {
   'concept.verifiedOnly.help': 'Keeps only posts from verified accounts.',
   'concept.excludeReplies.label': 'Exclude replies',
   'concept.excludeReplies.help': 'Removes replies from the results.',
+  'concept.repliesOnly.label': 'Replies only',
+  'concept.repliesOnly.help': 'On Bluesky, keeps only replies.',
+  'concept.followingOnly.label': 'From people you follow only',
+  'concept.followingOnly.help':
+    'On Bluesky, keeps only posts from accounts you follow.',
   'concept.minLikes.label': 'Minimum likes',
   'concept.minLikes.placeholder': 'e.g. 100',
   'concept.minLikes.help':
@@ -289,8 +321,15 @@ export const en = {
     'This filter has no effect on series, mylist, or user search.',
   'note.niconico.hashtagAsKeyword':
     'There’s no dedicated tag page for this result type, so it’s searched as a plain keyword.',
-  'note.bluesky.fromUser': 'The username is in the form “user.bsky.social”.',
+  'note.bluesky.fromUser':
+    'Usernames are in the form “user.bsky.social”. For multiple values, separate with spaces — any match counts.',
+  'note.bluesky.domainMulti':
+    'Enter domains like “nhk.or.jp”. For multiple values, separate with spaces — any match counts.',
   'note.bluesky.peopleConflict': 'This filter has no effect on account search.',
+  'note.bluesky.followingOnly':
+    'Whether an account counts as “followed” depends on the Bluesky account that opens the link.',
+  'note.bluesky.repliesConflict':
+    'Selecting this together with “Exclude replies” gives priority to excluding replies.',
   'note.youtube.exactPhrase':
     'Searches for the exact phrase, but many results may have the words scattered apart.',
   'note.youtube.exclude': 'Words you exclude may still appear in the results.',

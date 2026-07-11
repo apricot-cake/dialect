@@ -15,16 +15,25 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.excludeUser.trim()) active.push('excludeUser')
   if (state.toUser.trim()) active.push('toUser')
   if (state.mentionsUser.trim()) active.push('mentionsUser')
+  if (state.excludeMentions.trim()) active.push('excludeMentions')
   if (state.subreddit.trim()) active.push('subreddit')
   if (state.domain.trim()) active.push('domain')
+  if (state.excludeDomain.trim()) active.push('excludeDomain')
+  if (state.linkUrl.trim()) active.push('linkUrl')
+  if (state.excludeLinkUrl.trim()) active.push('excludeLinkUrl')
   if (state.xList.trim()) active.push('xList')
   if (state.hashtag.trim()) active.push('hashtag')
+  if (state.hashtagOr.trim()) active.push('hashtagOr')
+  if (state.excludeHashtag.trim()) active.push('excludeHashtag')
   if (state.since || state.until) active.push('period')
   if (state.mediaOnly) active.push('mediaOnly')
+  if (state.videoOnly) active.push('videoOnly')
   if (state.videoLength) active.push('videoLength')
   if (state.linksOnly) active.push('linksOnly')
   if (state.verifiedOnly) active.push('verifiedOnly')
   if (state.excludeReplies) active.push('excludeReplies')
+  if (state.repliesOnly) active.push('repliesOnly')
+  if (state.followingOnly) active.push('followingOnly')
   if (state.liveOnly) active.push('liveOnly')
   if (state.fourK) active.push('fourK')
   if (state.hdOnly) active.push('hdOnly')
@@ -71,17 +80,26 @@ export function defaultState(): QueryState {
     excludeUser: '',
     toUser: '',
     mentionsUser: '',
+    excludeMentions: '',
     subreddit: '',
     domain: '',
+    excludeDomain: '',
+    linkUrl: '',
+    excludeLinkUrl: '',
     xList: '',
     hashtag: '',
+    hashtagOr: '',
+    excludeHashtag: '',
     since: '',
     until: '',
     mediaOnly: false,
+    videoOnly: false,
     videoLength: '',
     linksOnly: false,
     verifiedOnly: false,
     excludeReplies: false,
+    repliesOnly: false,
+    followingOnly: false,
     liveOnly: false,
     fourK: false,
     hdOnly: false,

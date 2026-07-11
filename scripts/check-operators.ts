@@ -31,51 +31,15 @@ import { CONCEPT_DEFS, CONCEPT_MAP, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/
 import { supportOf } from '@/core/types'
 import { buildUrl } from '@/core/urlParts'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
+import { CHECKLIST_HEADING, sectionFor } from './lib/checklistParser'
 
-// ---- チェックリストの読み込みとサイト節への分割 --------------------------------
+// ---- チェックリストの読み込み ---------------------------------------------------
+// セクション分割ロジック(CHECKLIST_HEADING・sectionFor)は scripts/gen-health.ts と共用
+// するため scripts/lib/checklistParser.ts へ抽出済み。
 
 // npm run から起動されるとき cwd はプロジェクトルート(バンドル先の node_modules/.cache ではない)
 const CHECKLIST_PATH = pathResolve(process.cwd(), 'docs/operator-checklist.md')
 const checklist = readFileSync(CHECKLIST_PATH, 'utf8')
-
-/**
- * 各サイトの operator-checklist.md 上の見出し断片。`## ` 見出し行にこの文字列を含む節を
- * そのサイトの照合対象テキストにする(YouTube/pixiv は本節＋「追加分」節の複数がまとまる)。
- * 見出しが改名されると節が見つからずエラーになる=表と文書の食い違いに気づける。
- */
-const CHECKLIST_HEADING: Record<PlatformId, string> = {
-  x: 'X(',
-  bluesky: 'Bluesky',
-  youtube: 'YouTube',
-  note: 'note(',
-  niconico: 'niconico',
-  seiga: 'ニコニコ静画',
-  instagram: 'Instagram',
-  reddit: 'Reddit',
-  pixiv: 'pixiv',
-  misskey: 'Misskey',
-  hatebu: 'はてなブックマーク',
-  twitch: 'Twitch',
-  fivech: '5ちゃんねる',
-  animanch: 'あにまん',
-  tumblr: 'tumblr',
-  mastodon: 'Mastodon',
-  pinterest: 'Pinterest',
-  fanbox: 'FANBOX',
-  bilibili: 'bilibili',
-  fantia: 'Fantia',
-}
-
-/** `## 見出し ... 次の ## まで` を節に切り、見出し断片ごとに本文を返す */
-function sectionFor(headingFragment: string): string {
-  // 先頭の "## " ごとに分割し、見出し行に断片を含むブロックを連結
-  const blocks = checklist.split(/\n(?=## )/)
-  const hit = blocks.filter((b) => {
-    const firstLine = b.split('\n', 1)[0]
-    return firstLine.startsWith('## ') && firstLine.includes(headingFragment)
-  })
-  return hit.join('\n')
-}
 
 // ---- 宣言表(PROBES): 各サイトが送る演算子 -------------------------------------
 
@@ -130,9 +94,22 @@ const PROBES: Probe[] = [
   { platform: 'x', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '(猫 OR 犬)' },
 
   // ---- Bluesky ----
-  { platform: 'bluesky', concept: 'fromUser', label: '送信者', state: { fromUser: 'nhk.bsky.social' }, token: 'from:' },
-  { platform: 'bluesky', concept: 'mentionsUser', label: 'メンション先', state: { mentionsUser: 'nhk.bsky.social' }, token: 'mentions:' },
-  { platform: 'bluesky', concept: 'domain', label: 'リンク先', state: { domain: 'nhk.or.jp' }, token: 'domain:' },
+  // 2026-07-11、issue #27の全項目監査でfromUser/mentionsUser/domainは高度な検索オプションの
+  // 新パラメータ形式(author=/mentions=/domain=)へ移行(旧q内トークンはparseUrlが後方互換で読むのみ)
+  { platform: 'bluesky', concept: 'fromUser', label: '送信者', state: { fromUser: 'nhk.bsky.social' }, token: 'author=' },
+  { platform: 'bluesky', concept: 'excludeUser', label: '除外送信者', state: { excludeUser: 'nhk.bsky.social' }, token: 'excludeAuthor=' },
+  { platform: 'bluesky', concept: 'mentionsUser', label: 'メンション先', state: { mentionsUser: 'nhk.bsky.social' }, token: 'mentions=' },
+  { platform: 'bluesky', concept: 'excludeMentions', label: '除外メンション先', state: { excludeMentions: 'nhk.bsky.social' }, token: 'excludeMentions=' },
+  { platform: 'bluesky', concept: 'domain', label: 'リンク先', state: { domain: 'nhk.or.jp' }, token: 'domain=' },
+  { platform: 'bluesky', concept: 'excludeDomain', label: '除外リンク先', state: { excludeDomain: 'nhk.or.jp' }, token: 'excludeDomain=' },
+  { platform: 'bluesky', concept: 'linkUrl', label: '埋め込みURL', state: { linkUrl: 'example.com/test' }, token: 'url=' },
+  { platform: 'bluesky', concept: 'excludeLinkUrl', label: '除外埋め込みURL', state: { excludeLinkUrl: 'example.com/test' }, token: 'excludeUrl=' },
+  { platform: 'bluesky', concept: 'hashtagOr', label: 'ハッシュタグ(OR)', state: { hashtagOr: 'cat dog' }, token: 'tag=' },
+  { platform: 'bluesky', concept: 'excludeHashtag', label: 'ハッシュタグ除外', state: { excludeHashtag: 'cat' }, token: 'excludeTag=' },
+  { platform: 'bluesky', concept: 'videoOnly', label: '動画付きのみ', state: { videoOnly: true }, token: 'video=true' },
+  { platform: 'bluesky', concept: 'excludeReplies', label: '返信除外', state: { excludeReplies: true }, token: 'replies=none' },
+  { platform: 'bluesky', concept: 'repliesOnly', label: '返信のみ', state: { repliesOnly: true }, token: 'replies=only' },
+  { platform: 'bluesky', concept: 'followingOnly', label: 'フォロー中のみ', state: { followingOnly: true }, token: 'following=true' },
   { platform: 'bluesky', concept: 'period', label: '期間(以降)', state: { since: '2026-06-01' }, token: 'since:' },
   { platform: 'bluesky', concept: 'period', label: '期間(以前)', state: { until: '2026-06-08' }, token: 'until:' },
   { platform: 'bluesky', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'lang=ja' },
@@ -473,7 +450,7 @@ const exemptLines: string[] = []
 for (const platform of PLATFORMS) {
   const probes = PROBES.filter((pr) => pr.platform === platform.id)
   if (probes.length === 0) continue
-  const section = sectionFor(CHECKLIST_HEADING[platform.id])
+  const section = sectionFor(checklist, CHECKLIST_HEADING[platform.id])
   if (!section) {
     fails.push({ kind: 'drift', platform: platform.id, detail: `チェックリストに「${CHECKLIST_HEADING[platform.id]}」の節が見つからない` })
     continue
