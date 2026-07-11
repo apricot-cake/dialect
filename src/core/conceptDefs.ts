@@ -23,6 +23,7 @@ export interface ConceptDef {
 export const CONCEPT_DEFS: ConceptDef[] = [
   { id: 'keywords', field: 'terms', widget: 'chips', phrase: true, labelKey: 'concept.keywords.label', helpKey: 'concept.keywords.help', placeholderKey: 'concept.keywords.placeholder' },
   { id: 'exactPhrase', field: 'exactPhrase', widget: 'chips', phrase: true, labelKey: 'concept.exactPhrase.label', helpKey: 'concept.exactPhrase.help', placeholderKey: 'concept.exactPhrase.placeholder' },
+  { id: 'keywordsOr', field: 'keywordsOr', widget: 'chips', labelKey: 'concept.keywordsOr.label', helpKey: 'concept.keywordsOr.help', placeholderKey: 'concept.keywordsOr.placeholder' },
   { id: 'exclude', field: 'exclude', widget: 'chips', labelKey: 'concept.exclude.label', helpKey: 'concept.exclude.help', placeholderKey: 'concept.exclude.placeholder' },
   { id: 'fromUser', field: 'fromUser', widget: 'plain', labelKey: 'concept.fromUser.label', helpKey: 'concept.fromUser.help', placeholderKey: 'concept.fromUser.placeholder' },
   { id: 'hashtag', field: 'hashtag', widget: 'chips', labelKey: 'concept.hashtag.label', helpKey: 'concept.hashtag.help', placeholderKey: 'concept.hashtag.placeholder' },

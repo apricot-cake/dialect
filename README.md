@@ -31,15 +31,15 @@ https://apricot-cake.github.io/dialect/
 
 | | 検索ページ | ログイン | 演算子対応 |
 |---|---|---|---|
-| X | `x.com/search` | 必要 | 豊富(全て非公式) |
+| X | `x.com/search` | 必要 | 豊富(全て非公式)・スコープ限定OR |
 | Bluesky | `bsky.app/search` | 不要 | 豊富(公式ドキュメントあり) |
 | Instagram | `instagram.com/explore/search` | 必要 | キーワードのみ |
-| YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さなど |
-| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別) |
+| YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さ・スコープ限定ORなど |
+| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別・スコープ限定OR) |
 | note | `note.com/search` | 不要 | ユーザー指定・並び順・有料絞り込み |
-| Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子) |
-| pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索) |
-| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替 |
+| Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子)・スコープ限定OR |
+| pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索)・スコープ限定OR |
+| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替・スコープ限定OR |
 | Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
 | はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
 | Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |

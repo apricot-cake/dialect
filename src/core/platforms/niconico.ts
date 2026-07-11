@@ -2,7 +2,7 @@ import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, 
 import { limitSort, NICO_GENRES } from '../types'
 import { stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
-import { applyBins, emptyBins, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import { applyBins, emptyBins, extractBareOrChain, hostIs, isIsoDate, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md(2026-07-02追加調査27パターン+2026-07-09ログイン済みGUI操作)
 // ログイン不要。AND/完全一致/除外(-)/任意期間(start=/end=)/並び順が全てURLで効く。
@@ -75,6 +75,15 @@ const SERIES_LIKE_RESULT_TYPES: ReadonlySet<QueryState['resultType']> = new Set(
 
 function buildParts(state: QueryState): UrlPart[] | null {
   const textToks = quotedTermTokens(state)
+  // スコープ限定OR(「このどれかを含む」)。括弧は使えない(リテラル扱いで検索が壊れる)ため
+  // 並置文法(a OR b)にする。OR連鎖はスペースANDより強く結合するため、直後に続く通常の語との
+  // ANDが自然に成立する(「猫 OR 犬 手芸」=(猫 OR 犬) AND 手芸。2026-07-11に
+  // nicovideo.jpの検索ボックスをGUI操作で実測、issue #26)。1語は通常の語と同じ扱い
+  const orWords = words(state.keywordsOr)
+  const orToks =
+    orWords.length >= 2
+      ? [tok(orWords.join(' OR '), 'keywordsOr')]
+      : orWords.map((w) => tok(w, 'keywordsOr'))
   const tagToks = words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag'))
   const excludeToks = minusExcludeTokens(state)
   const isVideoLike = VIDEO_LIKE_RESULT_TYPES.has(state.resultType)
@@ -113,8 +122,8 @@ function buildParts(state: QueryState): UrlPart[] | null {
   }
 
   // タグ単独(+除外)ならタグ検索。動画(既定)のときだけ(シリーズ等にタグページは無い)。
-  // 除外はタグページでも有効(実測)
-  if (state.resultType === '' && tagToks.length > 0 && textToks.length === 0) {
+  // OR指定があるときはタグの厳密一致ではなくキーワード検索が要るので対象外。除外はタグページでも有効(実測)
+  if (state.resultType === '' && tagToks.length > 0 && textToks.length === 0 && orToks.length === 0) {
     return [
       lit('https://www.nicovideo.jp/tag/'),
       ...encodeTokens([...tagToks, ...excludeToks]),
@@ -122,9 +131,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
     ]
   }
 
-  // 除外語は正の条件に数えない。キーワード/完全一致/タグが空で除外だけの入力では
+  // 除外語は正の条件に数えない。キーワード/完全一致/OR/タグが空で除外だけの入力では
   // 検索として成立しない(「足す=絞る」原則。他サイトと揃える)
-  const positive = [...textToks, ...tagToks]
+  const positive = [...orToks, ...textToks, ...tagToks]
   if (positive.length === 0) return null
 
   // タブ切り替えのパスは「探すもの」の指定が生む断片(既定の /search/ は無帰属。
@@ -235,14 +244,19 @@ function parseUrl(url: URL): ParsedSearch | null {
   const resultType = PATH_RESULT_TYPE[head]
   if (resultType) patch.resultType = resultType
 
+  // タグページ(head==='tag')はOR構文を送らない(buildParts参照)ので、そのままトークン化する。
+  // それ以外は括弧なし並置OR(a OR b)の最初の1連なりをkeywordsOrとして抜き出す
+  const rawTokens = tokenize(rawQuery)
+  const { orTerms, rest } = head === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
   const bins = emptyBins()
-  for (const token of tokenize(rawQuery)) {
+  for (const token of rest) {
     if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
     else if (token.startsWith('"')) bins.phrases.push(unquote(token))
     else if (head === 'tag') bins.hashtags.push(token)
     else bins.terms.push(token)
   }
   applyBins(patch, bins)
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 
   const consumed = new Set(['sort', 'order'])
   const isVideoLike = head === 'search' || head === 'tag' || head === 'search_shorts'
@@ -308,6 +322,7 @@ export const niconico: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },
+    keywordsOr: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'none' },
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },

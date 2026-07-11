@@ -30,6 +30,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const toks: Token[] = andTerms(state).map((t) => tok(t, 'keywords'))
   // 引用符構文は無いが、語句はつながったままタグへの部分一致で効く(スペース入りは語ごとに分かれる)
   toks.push(...exactPhrases(state).map((p) => tok(p, 'exactPhrase')))
+  // スコープ限定OR(「このどれかを含む」)。2語以上は(a OR b)、1語は通常の語と同じ扱い
+  // (2026-07-11にpixiv.netの検索ボックスをGUI操作で実測、issue #26。公式ヘルプにもOR記載あり)
+  const orWords = words(state.keywordsOr)
+  if (orWords.length >= 2) toks.push(tok(`(${orWords.join(' OR ')})`, 'keywordsOr'))
+  else toks.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   toks.push(...words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag')))
   // 人気の目安=「{N}users入り」タグの部分パターン(例: 000users)を語として足す。
   // 先頭の桁を固定しないので 1000/5000/10000…users入り をまとめて拾える。
@@ -143,13 +148,20 @@ function parseUrl(url: URL): ParsedSearch | null {
 
   const terms: string[] = []
   const excludes: string[] = []
+  const orTerms: string[] = []
   for (const token of tokenize(q)) {
     if (token.startsWith('-') && token.length > 1) excludes.push(token.slice(1))
     else if (/^0+users$/.test(token)) patch.pixivPopular = token as QueryState['pixivPopular']
-    else terms.push(token)
+    else if (token.startsWith('(') && token.endsWith(')')) {
+      // (a OR b OR ...): スコープ限定OR(「このどれかを含む」)
+      const inner = token.slice(1, -1).split(/\s+OR\s+/i).map((s) => s.trim()).filter(Boolean)
+      if (inner.length >= 2) orTerms.push(...inner)
+      else terms.push(token)
+    } else terms.push(token)
   }
   if (terms.length > 0) patch.terms = terms
   if (excludes.length > 0) patch.exclude = excludes.join(' ')
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 
   const order = url.searchParams.get('order')
   if (order === 'popular_d') patch.sort = 'top'
@@ -186,6 +198,7 @@ export const pixiv: PlatformDef = {
   support: {
     keywords: { level: 'partial', noteKey: 'note.pixiv.keywords' },
     exactPhrase: { level: 'partial', noteKey: 'note.pixiv.exactPhrase' },
+    keywordsOr: { level: 'full' },
     titleOnly: { level: 'partial', noteKey: 'note.pixiv.titleOnly' },
     exactTag: { level: 'full' },
     tagTitleCaption: { level: 'full' },

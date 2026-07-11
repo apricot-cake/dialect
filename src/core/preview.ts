@@ -29,6 +29,8 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
       return exactPhrases(state)
         .map((p) => `「${p}」`)
         .join(' ')
+    case 'keywordsOr':
+      return tf('sum.anyOf', { v: words(state.keywordsOr).join('・') })
     case 'exclude':
       return tf('sum.exclude', { v: words(state.exclude).join('・') })
     case 'fromUser':

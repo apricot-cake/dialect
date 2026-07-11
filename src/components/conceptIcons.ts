@@ -9,6 +9,7 @@ import {
   Captions,
   CircleMinus,
   Clock,
+  Combine,
   Contrast,
   Copyright,
   Cuboid,
@@ -57,6 +58,7 @@ import type { ConceptId } from '@/core/types'
 export const CONCEPT_ICONS: Record<ConceptId, LucideIcon> = {
   keywords: Search,
   exactPhrase: Quote,
+  keywordsOr: Combine,
   exclude: CircleMinus,
   fromUser: User,
   excludeUser: UserX,

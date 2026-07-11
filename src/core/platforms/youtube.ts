@@ -120,7 +120,7 @@ function spPart(state: QueryState): UrlPart | null {
 }
 
 function buildParts(state: QueryState): UrlPart[] | null {
-  if (!hasPositiveTerm(state)) return null
+  if (!hasPositiveTerm(state) && !state.keywordsOr.trim()) return null
 
   const toks: Token[] = []
   toks.push(...quotedTermTokens(state))
@@ -134,6 +134,12 @@ function buildParts(state: QueryState): UrlPart[] | null {
       }
     }
   }
+  // スコープ限定OR(「このどれかを含む」)。2語以上は a|b (パイプ、公式Data APIに記載)、
+  // 1語は通常の語と同じ扱い。intitle:は付けない(2026-07-11に「手芸 猫|犬」の組み合わせを
+  // youtube.comの検索結果で実機確認、issue #26)
+  const orWords = words(state.keywordsOr)
+  if (orWords.length >= 2) toks.push(tok(orWords.join('|'), 'keywordsOr'))
+  else toks.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
   if (state.since) toks.push(tok(`after:${state.since}`, 'period'))
   if (state.until) toks.push(tok(`before:${state.until}`, 'period'))
@@ -162,6 +168,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
 function parseQueryTokens(q: string, patch: Partial<QueryState>, ignored: string[]): void {
   const bins = emptyBins()
   let titleOnly = false
+  const orTerms: string[] = []
   for (let token of tokenize(q)) {
     if (token.startsWith('intitle:')) {
       titleOnly = true
@@ -178,10 +185,16 @@ function parseQueryTokens(q: string, patch: Partial<QueryState>, ignored: string
     } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
     else if (token.startsWith('"')) bins.phrases.push(unquote(token))
     else if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
-    else if (token) bins.terms.push(token)
+    else if (token.includes('|')) {
+      // a|b|...: スコープ限定OR(「このどれかを含む」)
+      const parts = token.split('|').map((s) => s.trim()).filter(Boolean)
+      if (parts.length >= 2) orTerms.push(...parts)
+      else if (token) bins.terms.push(token)
+    } else if (token) bins.terms.push(token)
   }
   applyBins(patch, bins)
   if (titleOnly) patch.titleOnly = true
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 }
 
 /** protobufのvarintを読む。[値, 次の位置] を返し、壊れていれば null */
@@ -402,6 +415,7 @@ export const youtube: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.youtube.exactPhrase' },
+    keywordsOr: { level: 'full' },
     exclude: { level: 'partial', noteKey: 'note.youtube.exclude' },
     titleOnly: { level: 'partial' },
     fromUser: { level: 'partial', noteKey: 'note.youtube.fromUser' },

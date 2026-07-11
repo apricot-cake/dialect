@@ -4,6 +4,7 @@ import type { MessageKey } from '@/i18n'
 export type ConceptId =
   | 'keywords'
   | 'exactPhrase'
+  | 'keywordsOr'
   | 'exclude'
   | 'titleOnly'
   | 'exactTag'
@@ -201,6 +202,13 @@ export interface QueryState {
    * 語句どうしは常にAND。常に1要素以上(terms と同じ扱い)
    */
   exactPhrase: string[]
+  /**
+   * スコープ限定OR(「このどれかを含む」)。スペース区切りで複数可、どれか1つを含めばよい
+   * (toUser/subreddit と同じ「複数指定=OR」の枠)。対応6サイト(X/Reddit/pixiv/YouTube/
+   * niconico動画・静画)のみ有効。「足す=絞る」原則の例外として2026-07-11導入(issue #26)。
+   * 1語だけの指定はOR構文を送らず通常のキーワードと同じ扱いになる
+   */
+  keywordsOr: string
   exclude: string
   titleOnly: boolean
   /** pixiv専用。検索語をタグとして完全一致で探す(s_mode=s_tag_full。既定の部分一致を無効化) */

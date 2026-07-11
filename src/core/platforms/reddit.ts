@@ -26,7 +26,8 @@ function buildParts(state: QueryState): UrlPart[] | null {
       exactPhrases(state).length > 0 ||
       state.fromUser.trim() ||
       // コミュニティ単独(subreddit:のみ)の検索もRedditでは成立する
-      state.subreddit.trim()
+      state.subreddit.trim() ||
+      state.keywordsOr.trim()
     )
   ) {
     return null
@@ -38,6 +39,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const fieldConcepts: ConceptId[] = state.titleOnly ? ['titleOnly'] : []
   clauses.push(...andTerms(state).map((w) => tok(`${field}${quoteIfPhrase(w)}`, 'keywords', ...fieldConcepts)))
   clauses.push(...exactPhrases(state).map((p) => tok(`${field}"${stripQuerySyntax(p)}"`, 'exactPhrase', ...fieldConcepts)))
+  // スコープ限定OR(「このどれかを含む」)。2語以上は(a OR b)、1語は通常の語と同じ扱い
+  // (2026-07-11にreddit.comの検索ボックスをGUI操作で実測、issue #26)
+  const orWords = words(state.keywordsOr)
+  if (orWords.length >= 2) clauses.push(tok(`(${orWords.join(' OR ')})`, 'keywordsOr'))
+  else clauses.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   if (state.fromUser.trim()) clauses.push(tok(`author:${stripAt(state.fromUser)}`, 'fromUser'))
   // コミュニティは複数指定で「どれか」(OR)
   const subs = words(state.subreddit).map(
@@ -91,6 +97,7 @@ function parseUrl(url: URL): ParsedSearch | null {
   const patch: Partial<QueryState> = {}
   const ignored: string[] = []
   const subs: string[] = []
+  const orTerms: string[] = []
 
   if (segs[0] === 'r' && segs[1] && segs[2] === 'search') {
     // コミュニティ内検索。restrict_sr が立っているときだけ板の絞り込みとして読む
@@ -109,7 +116,9 @@ function parseUrl(url: URL): ParsedSearch | null {
     let token = tokens[i]
     if (/^AND$/i.test(token)) continue
     if (/^OR$/i.test(token)) {
-      // 語どうしのORはDialectに無い(全AND)。ANDとして読み込んだと正直に残す
+      // 括弧なしの裸のORは、直前の語がAND側とOR側のどちらに属すか位置だけでは
+      // 決め切れないため読み取らない(Dialect自身のkeywordsOrは常に括弧付きで送るので
+      // このORはこの分岐に来ない)。ANDとして読み込んだと正直に残す
       ignored.push('OR')
       continue
     }
@@ -133,6 +142,9 @@ function parseUrl(url: URL): ParsedSearch | null {
         .filter(Boolean)
       if (inner.length > 0 && inner.every((p) => p.startsWith('subreddit:'))) {
         subs.push(...inner.map((p) => p.slice('subreddit:'.length)))
+      } else if (inner.length >= 2 && inner.every((p) => !p.includes(':'))) {
+        // (a OR b OR ...): スコープ限定OR(「このどれかを含む」)
+        orTerms.push(...inner)
       } else ignored.push(token)
       continue
     }
@@ -159,6 +171,7 @@ function parseUrl(url: URL): ParsedSearch | null {
   applyBins(patch, bins)
   if (titleOnly) patch.titleOnly = true
   if (subs.length > 0) patch.subreddit = subs.join(' ')
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 
   const sort = url.searchParams.get('sort')
   if (sort === 'new' || sort === 'top' || sort === 'hot' || sort === 'comments') patch.sort = sort
@@ -221,6 +234,7 @@ export const reddit: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'partial', noteKey: 'note.exact.unreliable' },
+    keywordsOr: { level: 'full' },
     exclude: { level: 'full' },
     titleOnly: { level: 'full' },
     fromUser: { level: 'full' },

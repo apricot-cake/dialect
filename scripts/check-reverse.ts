@@ -63,6 +63,8 @@ const CASES: Record<PlatformId, Patch[]> = {
     { mentionsUser: 'bob' },
     { domain: 'example.com' },
     { terms: ['猫'], xList: 'https://x.com/i/lists/9876' },
+    { terms: ['手芸'], keywordsOr: 'cat dog' },
+    { keywordsOr: 'cat' },
   ],
   bluesky: [
     {
@@ -111,6 +113,8 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['cat'], resultType: 'playlist', sort: 'new' },
     { terms: ['cat'], resultType: 'channel' },
     { terms: ['cat'], videoLength: 'medium' },
+    { terms: ['手芸'], keywordsOr: '猫 犬' },
+    { keywordsOr: 'cat' },
   ],
   note: [
     { terms: ['猫'], fromUser: '@kensuu', sort: 'hot' },
@@ -144,11 +148,15 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['猫'], resultType: 'playlist', sort: 'videoAdded' },
     { terms: ['猫'], resultType: 'people', sort: 'followerCount' },
     { terms: ['猫'], resultType: 'people', sort: 'liveCount' },
+    { terms: ['手芸'], keywordsOr: '猫 犬' },
+    { keywordsOr: '猫' },
   ],
   seiga: [
     { terms: ['猫'], exactPhrase: ['子 猫'], exclude: '犬', sort: 'new' },
     { hashtag: '東方', sort: 'top' },
     { terms: ['猫'], workType: 'manga' },
+    { terms: ['手芸'], keywordsOr: '猫 犬' },
+    { keywordsOr: '猫', workType: 'manga' },
   ],
   instagram: [
     { hashtag: 'ねこ' },
@@ -175,6 +183,8 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['cat'], since: daysAgoIso(0) },
     { terms: ['cat'], since: daysAgoIso(30) },
     { terms: ['cat'], since: daysAgoIso(365) },
+    { terms: ['yarn'], keywordsOr: 'cats dogs' },
+    { keywordsOr: 'cats' },
   ],
   pixiv: [
     {
@@ -197,6 +207,8 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['猫'], tagTitleCaption: true, workType: 'novel' },
     { terms: ['猫'], pixivPopular: '000users' },
     { terms: ['猫'], ageRating: 'r18' },
+    { terms: ['手芸'], keywordsOr: '猫 犬' },
+    { keywordsOr: '猫' },
   ],
   misskey: [
     { terms: ['猫'], exclude: '犬', fromUser: 'alice' },

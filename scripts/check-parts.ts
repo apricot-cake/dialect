@@ -106,6 +106,7 @@ function singleOverrides(): Array<Partial<QueryState>> {
       out.push({ [f]: sentinel })
       // 複数値の枠はスペース区切りの2値も(OR括弧・複数タグ等の別経路を踏む)
       if (f === 'hashtag') out.push({ hashtag: 'ゲーム 実況' })
+      if (f === 'keywordsOr') out.push({ keywordsOr: 'nhk asahi' })
       if (f === 'toUser') out.push({ toUser: 'nhk asahi' })
       if (f === 'mentionsUser') out.push({ mentionsUser: 'nhk asahi' })
       if (f === 'subreddit') out.push({ subreddit: 'japan tokyo' })

@@ -13,6 +13,10 @@ export const en = {
   'concept.exactPhrase.placeholder': 'e.g. planned service suspension',
   'concept.exactPhrase.help':
     'Finds only posts containing this exact wording, including word order and spacing.',
+  'concept.keywordsOr.label': 'Match any of these',
+  'concept.keywordsOr.placeholder': 'e.g. dog',
+  'concept.keywordsOr.help':
+    'Finds posts containing at least one of the words you enter (X, Reddit, pixiv, YouTube, niconico, and niconico Seiga only).',
   'concept.exclude.label': 'Exclude keywords',
   'concept.exclude.placeholder': 'e.g. ad',
   'concept.exclude.help':
@@ -396,6 +400,7 @@ export const en = {
     "{n} could not be opened (browsers only allow one new tab per click by default). To open them all, open your address bar's lock or tune icon, allow \"Pop-ups and redirects\", reload the page, then click again.",
 
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
+  'sum.anyOf': 'any of {v}',
   'sum.exclude': 'excluding {v}',
   'sum.from': 'from {v}',
   'sum.to': 'to {v}',

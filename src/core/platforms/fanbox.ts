@@ -11,7 +11,10 @@ import { hostMatches, leftoverParams, pathSegments } from '../parse'
 // 一切無い(操作可能な要素は検索ボックスのみ)。タグページ自体は未ログインで閲覧可能(投稿の中身は
 // 支援額に応じてロックされるが、これは検索機能とは別のコンテンツ課金)。
 function buildParts(state: QueryState): UrlPart[] | null {
-  const tagNames = words(state.hashtag).map(stripHash)
+  // stripHash後に空文字になる語(例: "#"だけの入力)は実質タグ無しなので除く。
+  // 除かずに通すと空タグの /tags/ (末尾スラッシュのみ)を生成し、自分自身のparseUrlが
+  // pathSegmentsの空セグメント除去で読み戻せない(2026-07-11 check:props で発見)
+  const tagNames = words(state.hashtag).map(stripHash).filter(Boolean)
   if (tagNames.length !== 1) return null
   return [
     lit('https://www.fanbox.cc/tags/'),
@@ -43,7 +46,7 @@ export const fanbox: PlatformDef = {
   buildParts,
   parseUrl,
   dynamicSupport: (state): Partial<Record<ConceptId, ConceptSupport>> => {
-    const tagNames = words(state.hashtag).map(stripHash)
+    const tagNames = words(state.hashtag).map(stripHash).filter(Boolean)
     if (tagNames.length !== 1) {
       return { hashtag: { level: 'none', noteKey: 'note.fanbox.hashtagOnly' } }
     }

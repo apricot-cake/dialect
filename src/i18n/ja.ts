@@ -15,6 +15,10 @@ export const ja = {
   'concept.exactPhrase.placeholder': '例: 計画運休のお知らせ',
   'concept.exactPhrase.help':
     '語順や区切りも含めて、一字一句このままの文を含む投稿だけを探します',
+  'concept.keywordsOr.label': 'このどれかを含む',
+  'concept.keywordsOr.placeholder': '例: 犬',
+  'concept.keywordsOr.help':
+    '入力した語のうち、どれか1つでも含む投稿を探します（X・Reddit・pixiv・YouTube・niconico・ニコニコ静画のみ対応）',
   'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告',
   'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',
@@ -359,6 +363,7 @@ export const ja = {
     '{n}件は開けませんでした（ブラウザは既定で1クリックにつき1枚までしか開けません）。すべて開くには、アドレスバーの鍵または調整アイコンを開き「ポップアップとリダイレクト」を許可にしてページを再読み込みしてから、もう一度押してください',
 
   // 起動カードの翻訳プレビュー(効く条件を読みやすいラベルに畳む)。{v}に値が入る
+  'sum.anyOf': '{v}のいずれか',
   'sum.exclude': '{v}を除く',
   'sum.from': '{v}から',
   'sum.to': '{v}宛て',

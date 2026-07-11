@@ -41,13 +41,19 @@ function buildParts(state: QueryState): UrlPart[] | null {
     !state.toUser.trim() &&
     !state.mentionsUser.trim() &&
     !state.domain.trim() &&
-    !list
+    !list &&
+    !state.keywordsOr.trim()
   ) {
     return null
   }
 
   const toks: Token[] = []
   toks.push(...quotedTermTokens(state))
+  // スコープ限定OR(「このどれかを含む」)。2語以上は(a OR b)、1語は通常の語と同じ扱い
+  // (2026-07-11にx.com/search-advancedのGUI操作で実測、issue #26)
+  const orWords = words(state.keywordsOr)
+  if (orWords.length >= 2) toks.push(tok(`(${orWords.join(' OR ')})`, 'keywordsOr'))
+  else toks.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   toks.push(...minusExcludeTokens(state))
   if (state.fromUser.trim()) toks.push(tok(`from:${stripAt(state.fromUser)}`, 'fromUser'))
   toks.push(...words(state.excludeUser).map((u) => tok(`-from:${stripAt(u)}`, 'excludeUser')))
@@ -100,6 +106,7 @@ function parseUrl(url: URL): ParsedSearch | null {
   const toUsers: string[] = []
   const mentions: string[] = []
   const excludeUsers: string[] = []
+  const orTerms: string[] = []
   for (const token of tokenize(q)) {
     if (token === '-filter:replies') patch.excludeReplies = true
     else if (token === 'filter:media') patch.mediaOnly = true
@@ -146,6 +153,10 @@ function parseUrl(url: URL): ParsedSearch | null {
         toUsers.push(...inner.map((p) => p.slice('to:'.length)))
       } else if (inner.length > 0 && inner.every((p) => p.startsWith('@'))) {
         mentions.push(...inner.map((p) => p.slice(1)))
+      } else if (inner.length >= 2 && inner.every((p) => !p.includes(':') && !p.startsWith('@') && !p.startsWith('-'))) {
+        // (a OR b OR ...): スコープ限定OR(「このどれかを含む」)。to:/@ 以外の素の語だけの
+        // グループをkeywordsOrとして読む
+        orTerms.push(...inner)
       } else ignored.push(token)
     } else if (token.startsWith('#') && token.length > 1) bins.hashtags.push(token.slice(1))
     // 素の @user もメンション扱い(公式フォームはカッコ付きで生成するが単体でも同義)
@@ -158,6 +169,7 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (toUsers.length > 0) patch.toUser = toUsers.join(' ')
   if (mentions.length > 0) patch.mentionsUser = mentions.join(' ')
   if (excludeUsers.length > 0) patch.excludeUser = excludeUsers.join(' ')
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 
   const f = url.searchParams.get('f')
   if (f === 'live') patch.sort = 'new'
@@ -177,6 +189,7 @@ export const x: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },
+    keywordsOr: { level: 'full' },
     exclude: { level: 'full' },
     fromUser: { level: 'full' },
     excludeUser: { level: 'full' },

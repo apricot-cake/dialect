@@ -108,6 +108,35 @@ export function applyBins(patch: Partial<QueryState>, bins: TokenBins): void {
 }
 
 /**
+ * 括弧禁止・並置文法(niconico/セイガ)のOR連鎖を読む。`token (OR token)+` という
+ * 最初の1連なりを keywordsOr の候補として抜き出し、残りのトークンをそのまま返す。
+ * 2つ目以降のOR連鎖(サイト自身が出せる複数グループ表現)はDialectに対応する枠が
+ * 1つしか無いため対象外とし、rest 側にリテラルの語として残す(Reddit の裸のORと同じ簡略化)
+ */
+export function extractBareOrChain(tokens: string[]): { orTerms: string[]; rest: string[] } {
+  const rest: string[] = []
+  const orTerms: string[] = []
+  let i = 0
+  while (i < tokens.length) {
+    const token = tokens[i]
+    if (orTerms.length === 0 && tokens[i + 1] === 'OR' && i + 2 < tokens.length) {
+      const chain = [token]
+      let j = i + 1
+      while (tokens[j] === 'OR' && j + 1 < tokens.length) {
+        chain.push(tokens[j + 1])
+        j += 2
+      }
+      orTerms.push(...chain)
+      i = j
+      continue
+    }
+    rest.push(token)
+    i++
+  }
+  return { orTerms, rest }
+}
+
+/**
  * consumed に無いクエリパラメータを ignored へ集める。トラッキング用の付属品
  * (utm_* 等)も含め、読めなかった指定は黙って捨てずに全部残す
  */

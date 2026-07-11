@@ -28,6 +28,8 @@ export function stateToParams(state: QueryState): URLSearchParams {
   for (const phrase of state.exactPhrase) {
     if (phrase.trim()) params.append('ph', phrase.trim())
   }
+  // 廃止済みの or= とは別物(スコープ限定OR。旧「または」指定の復活ではない)
+  if (state.keywordsOr.trim()) params.set('kwor', state.keywordsOr.trim())
   if (state.exclude.trim()) params.set('ex', state.exclude.trim())
   if (state.titleOnly) params.set('title', '1')
   if (state.exactTag) params.set('xtag', '1')
@@ -107,6 +109,7 @@ function paramsToState(params: URLSearchParams): QueryState {
     state.exactPhrase = phrases
   }
   if (terms.length > 0) state.terms = terms
+  state.keywordsOr = params.get('kwor') ?? ''
   state.exclude = params.get('ex') ?? ''
   state.titleOnly = params.get('title') === '1'
   state.exactTag = params.get('xtag') === '1'

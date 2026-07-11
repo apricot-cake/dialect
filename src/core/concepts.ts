@@ -6,6 +6,7 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   const active: ConceptId[] = []
   if (andTerms(state).length > 0) active.push('keywords')
   if (exactPhrases(state).length > 0) active.push('exactPhrase')
+  if (state.keywordsOr.trim()) active.push('keywordsOr')
   if (state.exclude.trim()) active.push('exclude')
   if (state.titleOnly) active.push('titleOnly')
   if (state.exactTag) active.push('exactTag')
@@ -61,6 +62,7 @@ export function defaultState(): QueryState {
   return {
     terms: [''],
     exactPhrase: [''],
+    keywordsOr: '',
     exclude: '',
     titleOnly: false,
     exactTag: false,

@@ -31,15 +31,15 @@ It never fetches or displays results itself. It only opens each site's own real 
 
 | | Search page | Login | Operator support |
 |---|---|---|---|
-| X | `x.com/search` | Required | Rich (all unofficial) |
+| X | `x.com/search` | Required | Rich (all unofficial), scoped OR |
 | Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
 | Instagram | `instagram.com/explore/search` | Required | Keywords only |
-| YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, etc. |
-| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source) |
+| YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, scoped OR, etc. |
+| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source, scoped OR) |
 | note | `note.com/search` | Not required | User / sort / paid-only |
-| Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators) |
-| pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search) |
-| Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch |
+| Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators), scoped OR |
+| pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search), scoped OR |
+| Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch, scoped OR |
 | Misskey.io | `misskey.io/search` | Required | Keywords / user only |
 | Hatena Bookmark | `b.hatena.ne.jp/search` | Not required | Rich (exclusion, date, bookmark count, sort, title/tag) |
 | Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |

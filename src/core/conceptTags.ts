@@ -187,6 +187,7 @@ export const TAG_DEFS: Record<TagId, TagDef> = {
 export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   keywords: ['word'],
   exactPhrase: ['word'],
+  keywordsOr: ['word'],
   exclude: ['exclude', 'word'],
   titleOnly: ['word'],
   exactTag: ['tag', 'word'],
@@ -291,6 +292,7 @@ export const CATEGORIES: CategoryDef[] = [
 export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   keywords: 'word',
   exactPhrase: 'word',
+  keywordsOr: 'word',
   exclude: 'word',
   titleOnly: 'word',
   exactTag: 'word',

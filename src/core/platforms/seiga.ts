@@ -2,7 +2,7 @@ import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, 
 import { limitSort } from '../types'
 import { stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, ParamParts, part, quotedTermTokens, tok } from '../urlParts'
-import { applyBins, emptyBins, hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import { applyBins, emptyBins, extractBareOrChain, hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
 // 出典: docs/operator-research.md + 2026-07-07 実機再確認(件数比較)。ログイン不要。
 // イラストは seiga.nicovideo.jp/search/{クエリ}?target=illust、タグ単独は /tag/{タグ}。
@@ -13,12 +13,19 @@ import { applyBins, emptyBins, hostIs, leftoverParams, pathSegments, tokenize, u
 // マンガは並び順パラメータを送ると結果集合が変わる癖があるため送らない(既定=関連度)。
 function buildParts(state: QueryState): UrlPart[] | null {
   const textToks = quotedTermTokens(state)
+  // スコープ限定OR(「このどれかを含む」)。niconico動画と同じ基盤・同じ文法
+  // (括弧禁止・並置)。2026-07-11に issue #26 で導入
+  const orWords = words(state.keywordsOr)
+  const orToks =
+    orWords.length >= 2
+      ? [tok(orWords.join(' OR '), 'keywordsOr')]
+      : orWords.map((w) => tok(w, 'keywordsOr'))
   const tagToks = words(state.hashtag).map((t) => tok(stripHash(t), 'hashtag'))
   const excludeToks = minusExcludeTokens(state)
 
   // マンガ(ニコニコ漫画)。別ドメイン・別エンジンで、並び順は送らない
   if (state.workType === 'manga') {
-    const positive = [...textToks, ...tagToks]
+    const positive = [...orToks, ...textToks, ...tagToks]
     if (positive.length === 0) return null
     // 別ドメインへの切り替えは「マンガ」の指定が生む断片なので、URL土台を workType に帰属。
     // q= は1ペアに全トークンが畳み込まれるため、含まれる概念すべての複合断片になる
@@ -38,8 +45,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.sort === 'new') params.set('sort', 'image_created', 'sortOrder')
   else if (state.sort === 'top') params.set('sort', 'image_view', 'sortOrder')
 
-  // タグ単独(+除外)ならタグ一致検索。除外・並び順はタグページでも有効(実測)
-  if (tagToks.length > 0 && textToks.length === 0) {
+  // タグ単独(+除外)ならタグ一致検索。OR指定があるときはキーワード検索が要るので対象外。
+  // 除外・並び順はタグページでも有効(実測)
+  if (tagToks.length > 0 && textToks.length === 0 && orToks.length === 0) {
     return [
       lit('https://seiga.nicovideo.jp/tag/'),
       ...encodeTokens([...tagToks, ...excludeToks]),
@@ -48,7 +56,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   }
 
   // 除外語は正の条件に数えない(「足す=絞る」原則。他サイトと揃える)
-  const positive = [...textToks, ...tagToks]
+  const positive = [...orToks, ...textToks, ...tagToks]
   if (positive.length === 0) return null
   return [
     lit('https://seiga.nicovideo.jp/search/'),
@@ -68,13 +76,15 @@ function parseUrl(url: URL): ParsedSearch | null {
     const q = url.searchParams.get('q')
     if (!q) return null
     patch.workType = 'manga'
+    const { orTerms, rest } = extractBareOrChain(tokenize(q))
     const bins = emptyBins()
-    for (const token of tokenize(q)) {
+    for (const token of rest) {
       if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
       else if (token.startsWith('"')) bins.phrases.push(unquote(token))
       else bins.terms.push(token)
     }
     applyBins(patch, bins)
+    if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
     leftoverParams(url, new Set(['q']), ignored)
     return { patch, ignored }
   }
@@ -82,14 +92,18 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (!hostIs(url, 'seiga.nicovideo.jp')) return null
   const segs = pathSegments(url)
   if ((segs[0] !== 'search' && segs[0] !== 'tag') || !segs[1]) return null
+  // タグページ(segs[0]==='tag')はOR構文を送らない(buildParts参照)ので、そのままトークン化する
+  const rawTokens = tokenize(segs[1])
+  const { orTerms, rest } = segs[0] === 'tag' ? { orTerms: [], rest: rawTokens } : extractBareOrChain(rawTokens)
   const bins = emptyBins()
-  for (const token of tokenize(segs[1])) {
+  for (const token of rest) {
     if (token.startsWith('-') && token.length > 1) bins.excludes.push(token.slice(1))
     else if (token.startsWith('"')) bins.phrases.push(unquote(token))
     else if (segs[0] === 'tag') bins.hashtags.push(token)
     else bins.terms.push(token)
   }
   applyBins(patch, bins)
+  if (orTerms.length > 0) patch.keywordsOr = orTerms.join(' ')
 
   const target = url.searchParams.get('target')
   if (target === 'manga') patch.workType = 'manga'
@@ -114,6 +128,7 @@ export const seiga: PlatformDef = {
   support: {
     keywords: { level: 'full' },
     exactPhrase: { level: 'full' },
+    keywordsOr: { level: 'full' },
     exclude: { level: 'full' },
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     // イラスト(target=illust)とマンガ(manga.nicovideo.jp)を切り替える。

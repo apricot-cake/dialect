@@ -127,6 +127,7 @@ const PROBES: Probe[] = [
   { platform: 'x', concept: 'language', label: '言語', state: { language: 'ja' }, token: 'lang:' },
   { platform: 'x', concept: 'sortOrder', label: '新しい順', state: { sort: 'new' }, token: 'f=live' },
   { platform: 'x', concept: 'sortOrder', label: '人気順(タブ)', state: { sort: 'top' }, token: 'f=top', tracked: false, note: '既定タブ(人気/話題)。公式・安定なので確認リスト対象外' },
+  { platform: 'x', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '(猫 OR 犬)' },
 
   // ---- Bluesky ----
   { platform: 'bluesky', concept: 'fromUser', label: '送信者', state: { fromUser: 'nhk.bsky.social' }, token: 'from:' },
@@ -161,6 +162,7 @@ const PROBES: Probe[] = [
   { platform: 'youtube', concept: 'resultType', label: '探す=チャンネル', state: { sort: 'auto', resultType: 'channel' }, token: 'EgIQAg' },
   { platform: 'youtube', concept: 'resultType', label: '探す=ショート', state: { sort: 'auto', resultType: 'short' }, token: 'EgIQCQ' },
   { platform: 'youtube', concept: 'resultType', label: '探す=再生リスト', state: { sort: 'auto', resultType: 'playlist' }, token: 'EgIQAw' },
+  { platform: 'youtube', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '%7C', emit: '猫|犬' },
 
   // ---- note ----
   { platform: 'note', concept: 'fromUser', label: '送信者', state: { fromUser: 'info' }, token: 'from:@' },
@@ -187,6 +189,7 @@ const PROBES: Probe[] = [
   { platform: 'niconico', concept: 'videoLength', label: '長さ(長)', state: { videoLength: 'long' }, token: 'l_range=2' },
   { platform: 'niconico', concept: 'genre', label: 'ジャンル', state: { genre: 'game' }, token: 'genre=' },
   { platform: 'niconico', concept: 'nicoKind', label: '動画種別(ユーザー)', state: { nicoKind: 'user' }, token: 'kind=user' },
+  { platform: 'niconico', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '猫 OR 犬' },
   { platform: 'niconico', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('ゲーム'), token: '/tag/' },
   { platform: 'niconico', concept: 'resultType', label: '探す=ショート', state: { resultType: 'short' }, token: '/search_shorts/' },
   { platform: 'niconico', concept: 'resultType', label: '探す=シリーズ', state: { resultType: 'series' }, token: '/series_search/' },
@@ -205,6 +208,7 @@ const PROBES: Probe[] = [
   { platform: 'seiga', concept: 'sortOrder', label: '閲覧数順', state: { sort: 'top' }, token: 'sort=image_view' },
   { platform: 'seiga', concept: 'hashtag', label: 'タグページ', state: TAG_ONLY('猫'), token: '/tag/' },
   { platform: 'seiga', concept: 'workType', label: '作品=マンガ', state: { workType: 'manga' }, token: 'manga.nicovideo.jp' },
+  { platform: 'seiga', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '猫 OR 犬' },
 
   // ---- Reddit ----
   { platform: 'reddit', concept: 'fromUser', label: '送信者', state: { fromUser: 'spez' }, token: 'author:' },
@@ -218,6 +222,7 @@ const PROBES: Probe[] = [
   { platform: 'reddit', concept: 'resultType', label: '探す=コメント', state: { resultType: 'comments' }, token: 'type=comments' },
   { platform: 'reddit', concept: 'resultType', label: '探す=メディア', state: { resultType: 'media' }, token: 'type=media' },
   { platform: 'reddit', concept: 'resultType', label: '探す=プロフィール', state: { resultType: 'people' }, token: 'type=people' },
+  { platform: 'reddit', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['yarn'], keywordsOr: 'cats dogs' }, token: '(cats OR dogs)', emit: '(cats+OR+dogs)' },
 
   // ---- pixiv ----
   { platform: 'pixiv', concept: 'titleOnly', label: 'タイトルだけ', state: { titleOnly: true }, token: 's_mode=s_tc' },
@@ -234,6 +239,7 @@ const PROBES: Probe[] = [
   { platform: 'pixiv', concept: 'workType', label: '作品=イラスト', state: { workType: 'illust' }, token: '/illustrations' },
   { platform: 'pixiv', concept: 'workType', label: '作品=うごく', state: { workType: 'ugoira' }, token: 'type=ugoira' },
   { platform: 'pixiv', concept: 'workType', label: '作品=小説', state: { workType: 'novel' }, token: '/novels' },
+  { platform: 'pixiv', concept: 'keywordsOr', label: 'このどれかを含む', state: { terms: ['手芸'], keywordsOr: '猫 犬' }, token: '(猫 OR 犬)' },
 
   // ---- Misskey ----
   { platform: 'misskey', concept: 'fromUser', label: '送信者', state: { fromUser: 'syuilo' }, token: 'username=' },
