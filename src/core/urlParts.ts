@@ -1,5 +1,5 @@
 import type { ConceptId, PlatformDef, QueryState, UrlPart } from './types'
-import { andTerms, exactPhrases, quoteIfPhrase, words } from './text'
+import { andTerms, exactPhrases, quoteIfPhrase, stripQuerySyntax, words } from './text'
 
 /**
  * UrlPart 組み立てのヘルパー。buildParts(各サイトの翻訳)はURLを不透明な文字列で
@@ -60,7 +60,7 @@ export function quotedTermTokens(state: {
 }): Token[] {
   return [
     ...andTerms(state).map((t) => tok(quoteIfPhrase(t), 'keywords')),
-    ...exactPhrases(state).map((p) => tok(`"${p}"`, 'exactPhrase')),
+    ...exactPhrases(state).map((p) => tok(`"${stripQuerySyntax(p)}"`, 'exactPhrase')),
   ]
 }
 

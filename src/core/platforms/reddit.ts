@@ -1,6 +1,6 @@
 import type { ConceptId, ConceptSupport, ParsedSearch, PlatformDef, QueryState, UrlPart } from '../types'
 import { limitSort } from '../types'
-import { andTerms, exactPhrases, quoteIfPhrase, stripAt, words } from '../text'
+import { andTerms, exactPhrases, quoteIfPhrase, stripAt, stripQuerySyntax, words } from '../text'
 import { formEncode, lit, ParamParts, part, tok, type Token } from '../urlParts'
 import { applyBins, daysAgoIso, emptyBins, hostMatches, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
@@ -37,7 +37,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const field = state.titleOnly ? 'title:' : ''
   const fieldConcepts: ConceptId[] = state.titleOnly ? ['titleOnly'] : []
   clauses.push(...andTerms(state).map((w) => tok(`${field}${quoteIfPhrase(w)}`, 'keywords', ...fieldConcepts)))
-  clauses.push(...exactPhrases(state).map((p) => tok(`${field}"${p}"`, 'exactPhrase', ...fieldConcepts)))
+  clauses.push(...exactPhrases(state).map((p) => tok(`${field}"${stripQuerySyntax(p)}"`, 'exactPhrase', ...fieldConcepts)))
   if (state.fromUser.trim()) clauses.push(tok(`author:${stripAt(state.fromUser)}`, 'fromUser'))
   // コミュニティは複数指定で「どれか」(OR)
   const subs = words(state.subreddit).map(

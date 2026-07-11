@@ -5,6 +5,7 @@ import {
   hasPositiveTerm,
   stripAt,
   stripHash,
+  stripQuerySyntax,
   words,
 } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
@@ -33,7 +34,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // 返る(除外が効かない)、引用符も無視して同じ結果になる(完全一致にならない)。
   // よって語だけをそのまま連結し、完全一致は送らない(非対応)・他の演算子も使わない
   if (state.resultType === 'people') {
-    const toks = andTerms(state).map((t) => tok(t, 'keywords'))
+    const toks = andTerms(state).map((t) => tok(stripQuerySyntax(t), 'keywords'))
     if (toks.length === 0) return null
     return [
       lit('https://bsky.app/search?q='),
@@ -52,7 +53,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   toks.push(...minusExcludeTokens(state))
   if (state.fromUser.trim()) toks.push(tok(`from:${stripAt(state.fromUser)}`, 'fromUser'))
   if (state.mentionsUser.trim()) toks.push(tok(`mentions:${stripAt(state.mentionsUser)}`, 'mentionsUser'))
-  if (state.domain.trim()) toks.push(tok(`domain:${state.domain.trim()}`, 'domain'))
+  if (state.domain.trim()) toks.push(tok(`domain:${stripQuerySyntax(state.domain.trim())}`, 'domain'))
   toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
   if (state.since) toks.push(tok(`since:${state.since}`, 'period'))
   if (state.until) toks.push(tok(`until:${state.until}`, 'period'))

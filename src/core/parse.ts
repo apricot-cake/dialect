@@ -45,9 +45,17 @@ export function unquote(s: string): string {
 
 /**
  * 検索クエリ文字列を語に分割する。"…" は空白を含んでも1語として保ち、
- * (…) のグループ(to:/メンションのOR結合など)も1語として保つ。全角スペース対応
+ * (…) のグループ(to:/メンションのOR結合など)も1語として保つ。全角スペース対応。
+ *
+ * 引用符の対応が奇数(閉じ忘れ)のときは引用符を、丸カッコの対応が崩れている
+ * (開きと閉じの数が異なる)ときは丸カッコを、それぞれ特別扱いしない。素の値に
+ * 混入した単独の " や ( を区切り記号の開始とみなすと、閉じが来ないまま文字列の
+ * 残り全体(以降のスペースも無視)を1トークンへ飲み込み、後続のハッシュタグ・
+ * メンション等が丸ごと消える(2026-07-11 check:props のプロパティテストで発見)。
  */
 export function tokenize(q: string): string[] {
+  const honorQuotes = (q.match(/"/g)?.length ?? 0) % 2 === 0
+  const honorParens = (q.match(/\(/g)?.length ?? 0) === (q.match(/\)/g)?.length ?? 0)
   const tokens: string[] = []
   let cur = ''
   let inQuote = false
@@ -58,13 +66,13 @@ export function tokenize(q: string): string[] {
       if (ch === '"') inQuote = false
       continue
     }
-    if (ch === '"') {
+    if (honorQuotes && ch === '"') {
       inQuote = true
       cur += ch
       continue
     }
-    if (ch === '(') depth++
-    if (ch === ')' && depth > 0) depth--
+    if (honorParens && ch === '(') depth++
+    if (honorParens && ch === ')' && depth > 0) depth--
     if (/[\s　]/.test(ch) && depth === 0) {
       if (cur) tokens.push(cur)
       cur = ''

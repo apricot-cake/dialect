@@ -1,6 +1,6 @@
 import type { ParsedSearch, PlatformDef, PostLanguage, QueryState, UrlPart } from '../types'
 import { limitSort, POST_LANGUAGE_CODES } from '../types'
-import { hasPositiveTerm, stripAt, stripHash, words } from '../text'
+import { hasPositiveTerm, stripAt, stripHash, stripQuerySyntax, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, quotedTermTokens, tok, type Token } from '../urlParts'
 import {
   applyBins,
@@ -60,7 +60,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const mentions = words(state.mentionsUser).map((u) => `@${stripAt(u)}`)
   if (mentions.length > 0) toks.push(tok(`(${mentions.join(' OR ')})`, 'mentionsUser'))
   // リンク先ドメインは url: で絞る(部分一致)
-  if (state.domain.trim()) toks.push(tok(`url:${state.domain.trim()}`, 'domain'))
+  if (state.domain.trim()) toks.push(tok(`url:${stripQuerySyntax(state.domain.trim())}`, 'domain'))
   // リスト内検索。list:<id> でそのリストのメンバーの投稿だけに絞る(他条件とAND可)
   if (list) toks.push(tok(`list:${list}`, 'xList'))
   toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
@@ -70,9 +70,13 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.linksOnly) toks.push(tok('filter:links', 'linksOnly'))
   if (state.verifiedOnly) toks.push(tok('filter:blue_verified', 'verifiedOnly'))
   if (state.excludeReplies) toks.push(tok('-filter:replies', 'excludeReplies'))
-  if (state.minLikes.trim()) toks.push(tok(`min_faves:${state.minLikes.trim()}`, 'minLikes'))
-  if (state.minReposts.trim()) toks.push(tok(`min_retweets:${state.minReposts.trim()}`, 'minReposts'))
-  if (state.minReplies.trim()) toks.push(tok(`min_replies:${state.minReplies.trim()}`, 'minReplies'))
+  if (state.minLikes.trim()) toks.push(tok(`min_faves:${stripQuerySyntax(state.minLikes.trim())}`, 'minLikes'))
+  if (state.minReposts.trim()) {
+    toks.push(tok(`min_retweets:${stripQuerySyntax(state.minReposts.trim())}`, 'minReposts'))
+  }
+  if (state.minReplies.trim()) {
+    toks.push(tok(`min_replies:${stripQuerySyntax(state.minReplies.trim())}`, 'minReplies'))
+  }
   if (state.language) toks.push(tok(`lang:${state.language}`, 'language'))
 
   const parts: UrlPart[] = [lit('https://x.com/search?q='), ...encodeTokens(toks)]
