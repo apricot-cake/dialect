@@ -393,7 +393,7 @@ export const en = {
   'bulk.selectAll': 'Select all',
   'bulk.clearAll': 'Deselect all',
   'bulk.blocked':
-    '{n} were blocked by your browser. Allow pop-ups for this site and click again to open them all.',
+    "{n} could not be opened (browsers only allow one new tab per click by default). To open them all, open your address bar's lock or tune icon, allow \"Pop-ups and redirects\", reload the page, then click again.",
 
   // Launch-card translation preview (effective conditions as readable labels). {v} is the value
   'sum.exclude': 'excluding {v}',
