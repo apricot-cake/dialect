@@ -1,89 +1,89 @@
 # Dialect
 
-**日本語** ・ [English](README.en.md)
+**English** · [日本語](README.ja.md)
 
-条件を組み立てると、各SNS・掲示板それぞれの検索構文(方言)に翻訳して、演算子付きの検索URLをタブで開くツールです。検索演算子を覚えていない人でも、各サイトの検索を使いこなせるようにします。UIは日本語・英語に対応(右上のボタンで切替)。
+Assemble your conditions, and each is translated into every site's own search syntax (its "dialect") and opened as an operator-rich search URL in a new tab. It lets people who don't remember search operators make full use of each site's search. The UI is available in English and Japanese (toggle at the top right).
 
 https://apricot-cake.github.io/dialect/
 
-![Dialect のデモ: キーワードと条件を組み立てて、各サイトの検索を開くまで](docs/demo.gif)
+![Dialect demo: building keywords and conditions, then opening each site's search](docs/demo.gif)
 
-## 使い方
+## How to use
 
-1. 「条件を追加」から、キーワード・期間・ユーザー指定などの条件を選んで組み立てる。条件は対応サイト数の多い順に並び、それぞれ対応しているサイトを確認できる
-2. スクロール(または下部のボタン)で「各サイトで開く」画面へ移り、サイトのボタンを押すと、条件を翻訳した検索結果ページが新しいタブで開く
+1. Add conditions such as keywords, date range, or user from "Add a condition". Conditions are listed in order of how many sites support them, and you can see which sites support each one.
+2. Scroll (or use the button at the bottom) to the "Open on each site" screen, then press a site's button to open that site's real search results — translated from your conditions — in a new tab.
 
-検索結果の取得や表示は行いません。各サイトの本物の検索結果ページを開くだけです。
+It never fetches or displays results itself. It only opens each site's own real search-results page.
 
-## 主な機能
+## Features
 
-- **条件ビルダー** — 完全一致・除外・ユーザー指定・ハッシュタグ・期間・メディア絞り込み・最低いいね数・投稿の言語など約20種類の条件を、演算子構文を知らなくてもフォームで指定できる
-- **Enter区切りの複数ワード** — キーワードはEnterで区切って複数指定でき、すべて含む投稿を探す(AND)。スペースを含む語句(例: React Aria)は分割されず、ひとまとまりのまま各サイトの構文(引用符など)に翻訳される。除外・ハッシュタグなど複数指定できる項目も同じ操作
-- **サイトで使える条件だけ表示** — 条件を追加するとき、特定のサイトが使える条件だけに絞り込める(表示が変わるだけで、検索先のサイトは変わらない)
-- **対応状況の明示** — サイトごとに対応できない条件は自動で外して起動し、何が「使えない/一部だけ効く」かをボタンの上に表示する。ボタンが押せなくなることはない
-- **開くURLの中身が見える** — サイトのボタンにマウスを載せると、実際に開く検索URLの全文が表示される。どの条件がURLのどの部分になったかが同じ色で対応づくので、各サイトの生の演算子を学ぶ手がかりにもなる
-- **URLで共有** — 組み立てた条件はそのままURLに反映されるので、ブラウザのURLをブックマーク・共有すれば同じ条件で開ける
-- **検索URLの読み込み(逆翻訳)** — 「URLを読み込む」に各サイトの検索ページのURLを貼り付けると、条件へ逆変換する。あるサイトで組んだ検索を、そのまま別のサイトへ持ち運べる。読み取れなかった部分は隠さず表示する
-- **まとめて開く** — 「各サイトで開く」画面の「まとめて開く」ボタン1つで、選んだサイトを新しいタブへ連続して開く。開くサイトはチェックボックスで選べ、選択は端末に保存される。ブラウザにポップアップをブロックされた場合は許可を促す案内を表示する
-- **ダークモード / 日本語・英語** — 右上のボタンでテーマと表示言語を切り替えられる
+- **Condition builder** — Specify around 20 conditions (exact phrase, exclusion, user, hashtag, date range, media filter, minimum likes, post language, and more) from a form, without knowing any operator syntax.
+- **Enter-separated multiple words** — Keywords can be split with Enter to set several, finding posts that contain all of them (AND). A phrase with spaces (e.g. "React Aria") is kept as one unit and translated into each site's syntax (quotes, etc.). Fields that allow multiple values (exclusion, hashtags, etc.) work the same way.
+- **Filter conditions by site** — When adding a condition, narrow the list to just the conditions a given site supports (this changes what is listed, not which sites you search).
+- **Clear support status** — Conditions a site can't handle are automatically dropped on launch, and what is "not available / partially works" is shown above the button. Buttons never become unclickable.
+- **See the URL being opened** — Hover over a site's button to see the full search URL it will open. Each condition and the URL fragment it produced share the same color, which also makes it a way to learn each site's raw operators.
+- **Share via URL** — Assembled conditions are reflected in the URL, so bookmarking or sharing the browser URL reopens the same conditions.
+- **Load a search URL (reverse translation)** — Paste a search page URL from any supported site into "Load URL" and it is translated back into conditions, so a search built on one site can be carried to another. Anything that can't be read is shown, not silently dropped.
+- **Open all at once** — One "Open all" button on the "open on each site" screen opens every selected site in its own new tab. Sites to open are chosen with checkboxes, and the selection is remembered on this device. If your browser blocks the pop-ups, a prompt tells you to allow them.
+- **Dark mode / English & Japanese** — Toggle the theme and display language from the buttons at the top right.
 
-## 対応サイト
+## Supported sites
 
-| | 検索ページ | ログイン | 演算子対応 |
+| | Search page | Login | Operator support |
 |---|---|---|---|
-| X | `x.com/search` | 必要 | 豊富(全て非公式)・スコープ限定OR |
-| Bluesky | `bsky.app/search` | 不要 | 豊富(公式ドキュメントあり) |
-| Instagram | `instagram.com/explore/search` | 必要 | キーワードのみ |
-| YouTube | `youtube.com/results` | 不要 | 期間・除外・並び順・動画の長さ・スコープ限定ORなど |
-| niconico | `nicovideo.jp/search` | 不要 | 豊富(任意期間・除外・並び順・ジャンル・動画種別・スコープ限定OR) |
-| note | `note.com/search` | 不要 | ユーザー指定・並び順・有料絞り込み |
-| Reddit | `reddit.com/search` | 不要 | 豊富(公式Boolean演算子)・スコープ限定OR |
-| pixiv | `pixiv.net/tags` | 不要 | 除外・期間・並び順・イラスト/マンガ(タグ検索)・スコープ限定OR |
-| ニコニコ静画 | `seiga.nicovideo.jp/search` | 不要 | 除外・完全一致・並び順・イラスト/マンガ切替・スコープ限定OR |
-| Misskey.io | `misskey.io/search` | 必要 | キーワード・ユーザー指定のみ |
-| はてなブックマーク | `b.hatena.ne.jp/search` | 不要 | 豊富(除外・期間・ブクマ数・並び順・タイトル/タグ) |
-| Twitch | `twitch.tv/search` | 不要 | キーワード・動画/チャンネル切替のみ |
-| 5ちゃんねる | `ff5ch.syoboi.jp`(スレタイ検索) | 不要 | 除外・板指定(公式検索はANDが効かないため外部検索を使用) |
-| あにまん掲示板 | `bbs.animanch.com/searchRes` | 不要 | キーワードのみ(本文/過去ログタイトル切替) |
-| Tumblr | `tumblr.com/search` | 不要 | 豊富(除外・送信者・期間・完全一致・複数タグ・投稿タイプ・並び順) |
-| Mastodon | `mastodon.social/search` | 必要 | 豊富(除外・完全一致・送信者・期間・返信除外・言語・メディア/リンク) |
-| Pinterest | `pinterest.com/search` | 不要 | 探すもの(ピン/動画/ボード/プロフィール)のみ(除外・並び順は非対応) |
-| FANBOX | `fanbox.cc/tags` | 不要 | 単一タグのみ(全文検索・並び順・除外等は非対応) |
-| bilibili | `search.bilibili.com` | 不要 | 豊富(任意期間・長さ・タブ切替・弾幕数/収蔵数などの並び順) |
-| Fantia | `fantia.jp/posts` | 必要 | カテゴリー・対象読者・タイトル/本文切替・並び順(除外・完全一致は非対応) |
+| X | `x.com/search` | Required | Rich (all unofficial), scoped OR |
+| Bluesky | `bsky.app/search` | Not required | Rich (officially documented) |
+| Instagram | `instagram.com/explore/search` | Required | Keywords only |
+| YouTube | `youtube.com/results` | Not required | Date, exclusion, sort, video length, scoped OR, etc. |
+| niconico | `nicovideo.jp/search` | Not required | Rich (arbitrary date, exclusion, sort, genre, video source, scoped OR) |
+| note | `note.com/search` | Not required | User / sort / paid-only |
+| Reddit | `reddit.com/search` | Not required | Rich (official Boolean operators), scoped OR |
+| pixiv | `pixiv.net/tags` | Not required | Exclusion, date, sort, illustration/manga (tag search), scoped OR |
+| Niconico Seiga | `seiga.nicovideo.jp/search` | Not required | Exclusion, exact phrase, sort, illustration/manga switch, scoped OR |
+| Misskey.io | `misskey.io/search` | Required | Keywords / user only |
+| Hatena Bookmark | `b.hatena.ne.jp/search` | Not required | Rich (exclusion, date, bookmark count, sort, title/tag) |
+| Twitch | `twitch.tv/search` | Not required | Keywords, videos/channels toggle only |
+| 5channel | `ff5ch.syoboi.jp` (thread-title search) | Not required | Exclusion, board (official search's AND doesn't work, so an external search is used) |
+| Animanch BBS | `bbs.animanch.com/searchRes` | Not required | Keywords only (body / archived-title toggle) |
+| Tumblr | `tumblr.com/search` | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort) |
+| Mastodon | `mastodon.social/search` | Required | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media/link) |
+| Pinterest | `pinterest.com/search` | Not required | Result type (pins/videos/boards/profiles) only (no exclusion or sort) |
+| FANBOX | `fanbox.cc/tags` | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.) |
+| bilibili | `search.bilibili.com` | Not required | Rich (arbitrary date, length, tab switch, danmaku/favorite-count sorts) |
+| Fantia | `fantia.jp/posts` | Required | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported) |
 
-サイト追加の基準は「キーワード入りの検索URLが開けること」だけです。演算子対応が薄くても、各サイトで打ち直さずに済むことに価値があるためです。
+The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 
-## 仕組み
+## How it works
 
-- 完全静的なSPA。バックエンド・APIキー・外部サービスへの依存は一切なし
-- 検索はすべて「演算子付きディープリンクを開く」方式。データ取得を行わないため、各SNSの規約・レート制限に抵触しない
-- 演算子の対応可否と翻訳ルールは [docs/operator-research.md](docs/operator-research.md) の調査に基づく(2026-07時点)
-- 非公式演算子の動作確認手順と記録は [docs/operator-checklist.md](docs/operator-checklist.md)
+- A fully static SPA. No backend, API keys, or external-service dependencies whatsoever.
+- All searching is "open an operator-rich deep link." Because it fetches no data, it does not run into any site's terms or rate limits.
+- Operator support and translation rules are based on the research in [docs/operator-research.md](docs/operator-research.md) (as of 2026-07).
+- The procedure and records for verifying unofficial operators are in [docs/operator-checklist.md](docs/operator-checklist.md).
 
-## 開発
+## Development
 
 ```bash
 npm install
-npm run dev      # 開発サーバー
-npm run build    # 型チェック + ビルド
+npm run dev      # dev server
+npm run build    # type check + build
 npm run lint     # oxlint
 ```
 
-スタック: Vite + React + TypeScript + Tailwind CSS v4 + Base UI + Motion。main への push で GitHub Actions が GitHub Pages に自動デプロイします。
+Stack: Vite + React + TypeScript + Tailwind CSS v4 + Base UI + Motion. Pushing to `main` auto-deploys to GitHub Pages via GitHub Actions.
 
-### コード構成
+### Code layout
 
-- `src/core/types.ts` — 検索概念(ConceptId)とプラットフォーム定義の型
-- `src/core/platforms/*.ts` — プラットフォームごとの対応表(翻訳辞書)とURLシリアライザ
-- `src/core/resolve.ts` — 検索条件を適用/近似/非対応に仕分け
-- `src/core/permalink.ts` — 検索条件とURLパラメータの相互変換(共有・ブックマークの形式)
-- `src/components/` — 2画面(条件・各サイトで開く)と条件追加モーダルなどのUI
-- `src/i18n/` — 全UI文言(日本語 `ja.ts` / 英語 `en.ts`。右上のボタンで切替、選択は localStorage に保存)
+- `src/core/types.ts` — types for search concepts (ConceptId) and platform definitions
+- `src/core/platforms/*.ts` — each platform's support table (translation dictionary) and URL serializer
+- `src/core/resolve.ts` — sorts conditions into applied / approximated / unsupported
+- `src/core/permalink.ts` — conversion between conditions and URL parameters (the share/bookmark format)
+- `src/components/` — UI for the two screens (conditions / open on each site) and the add-condition modal
+- `src/i18n/` — all UI strings (Japanese `ja.ts` / English `en.ts`; toggle at the top right, choice saved in localStorage)
 
-## 注意
+## Note
 
-検索構文は各SNSの非公式な仕様に基づくため、予告なく動かなくなることがあります。動作しない演算子を見つけたら Issue で教えてください。
+Because search syntax relies on each site's unofficial behavior, it may stop working without notice. If you find an operator that no longer works, please let us know in an Issue.
 
 ## License
 
