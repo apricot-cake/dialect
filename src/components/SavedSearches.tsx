@@ -1,11 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
-import type { StoredQuery } from '@/core/storage'
-import { t } from '@/i18n'
+import type { HistoryEntry, StoredQuery } from '@/core/storage'
+import { toQuery } from '@/core/storage'
+import { searchSummary } from '@/core/preview'
+import { getLang, t } from '@/i18n'
 
 const SCRIM = 'dl-scrim fixed inset-0 z-[60]'
 const POPUP =
   'dl-sheet fixed top-1/2 left-1/2 z-[61] flex max-h-[84vh] w-[min(460px,94vw)] flex-col overflow-hidden rounded-[18px] bg-card shadow-[0_24px_70px_oklch(0_0_0_/_0.32)] outline-none'
+
+/** Same active-chip accent as the picker's filter chips */
+function activeTabStyle(on: boolean): CSSProperties | undefined {
+  if (!on) return undefined
+  return {
+    borderColor: 'color-mix(in oklch, var(--accent-bright) 55%, transparent)',
+    background: 'color-mix(in oklch, var(--accent-bright) 14%, transparent)',
+  }
+}
+
+/**
+ * Relative time for history rows ("3分前" / "3 minutes ago"). Uses the
+ * standard Intl API so no per-language dictionary is needed.
+ */
+function relativeTime(ts: number, now: number): string {
+  const rtf = new Intl.RelativeTimeFormat(getLang(), { numeric: 'auto' })
+  const sec = Math.round((ts - now) / 1000)
+  const abs = Math.abs(sec)
+  if (abs < 60) return rtf.format(sec, 'second')
+  if (abs < 3600) return rtf.format(Math.trunc(sec / 60), 'minute')
+  if (abs < 86400) return rtf.format(Math.trunc(sec / 3600), 'hour')
+  if (abs < 86400 * 30) return rtf.format(Math.trunc(sec / 86400), 'day')
+  if (abs < 86400 * 365) return rtf.format(Math.trunc(sec / (86400 * 30)), 'month')
+  return rtf.format(Math.trunc(sec / (86400 * 365)), 'year')
+}
 
 function CloseButton() {
   return (
@@ -18,6 +45,14 @@ function CloseButton() {
         <path d="M18 6 6 18M6 6l12 12" />
       </svg>
     </Dialog.Close>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+    </svg>
   )
 }
 
@@ -95,20 +130,42 @@ export function SaveSearchDialog({
   )
 }
 
-/** 保存した検索の一覧ダイアログ。行クリックで復元、×で削除 */
+/**
+ * 保存した検索と自動記録の履歴を「保存 / 履歴」の2タブで見せる一覧ダイアログ。
+ * 行クリックで復元、履歴行は名前を付けて保存(昇格)もできる
+ */
 export function SavedListDialog({
   open,
   onOpenChange,
   saved,
+  history,
+  historyEnabled,
   onRestore,
   onDelete,
+  onDeleteHistory,
+  onClearHistory,
+  onToggleHistoryEnabled,
+  onPromote,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   saved: StoredQuery[]
-  onRestore: (entry: StoredQuery) => void
+  history: HistoryEntry[]
+  historyEnabled: boolean
+  onRestore: (entry: { params: string }) => void
   onDelete: (params: string) => void
+  onDeleteHistory: (params: string) => void
+  onClearHistory: () => void
+  onToggleHistoryEnabled: (enabled: boolean) => void
+  onPromote: (entry: HistoryEntry) => void
 }) {
+  const [tab, setTab] = useState<'saved' | 'history'>('saved')
+  // Reopening always starts on the saved tab (the primary, user-curated list)
+  useEffect(() => {
+    if (open) setTab('saved')
+  }, [open])
+  const now = Date.now()
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -120,45 +177,142 @@ export function SavedListDialog({
             </Dialog.Title>
             <CloseButton />
           </div>
-          <div className="dl-modal-scroll flex min-h-0 flex-col overflow-y-auto px-[18px] pt-2 pb-5">
-            {/* 仕組みの説明: localStorage はこの端末ローカル。持ち運びは URL コピーで */}
-            <p className="mx-1.5 mb-3 text-[11.5px] leading-[1.5] text-muted">
-              {t('saved.hint')}
-            </p>
-            {saved.length === 0 ? (
-              <div className="px-3 py-10 text-center text-[13px] leading-[1.6] text-muted">
-                {t('saved.empty')}
-              </div>
-            ) : (
-              <ul className="flex flex-col gap-1">
-                {saved.map((entry) => (
-                  <li key={entry.params} className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      data-noscale
-                      className="dl-pick-row min-w-0 flex-1 truncate rounded-[10px] border border-transparent px-3 py-2.5 text-left text-[14px] font-semibold text-label hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]"
-                      title={t('saved.restore')}
-                      onClick={() => onRestore(entry)}
-                    >
-                      {entry.name}
-                    </button>
-                    <button
-                      type="button"
-                      data-noscale
-                      aria-label={t('saved.delete')}
-                      title={t('saved.delete')}
-                      className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-[10px] text-faint hover:text-fg"
-                      onClick={() => onDelete(entry.params)}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                      </svg>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="flex gap-1.5 px-6 pt-2 pb-1">
+            {(
+              [
+                ['saved', t('saved.tab.saved')],
+                ['history', t('saved.tab.history')],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                data-noscale
+                aria-pressed={tab === id}
+                className="h-[32px] cursor-pointer rounded-full border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
+                style={activeTabStyle(tab === id)}
+                onClick={() => setTab(id)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
+          {tab === 'saved' ? (
+            <div className="dl-modal-scroll flex min-h-0 flex-col overflow-y-auto px-[18px] pt-2 pb-5">
+              {/* 仕組みの説明: localStorage はこの端末ローカル。持ち運びは URL コピーで */}
+              <p className="mx-1.5 mb-3 text-[11.5px] leading-[1.5] text-muted">
+                {t('saved.hint')}
+              </p>
+              {saved.length === 0 ? (
+                <div className="px-3 py-10 text-center text-[13px] leading-[1.6] text-muted">
+                  {t('saved.empty')}
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-1">
+                  {saved.map((entry) => (
+                    <li key={entry.params} className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        data-noscale
+                        className="dl-pick-row min-w-0 flex-1 truncate rounded-[10px] border border-transparent px-3 py-2.5 text-left text-[14px] font-semibold text-label hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]"
+                        title={t('saved.restore')}
+                        onClick={() => onRestore(entry)}
+                      >
+                        {entry.name}
+                      </button>
+                      <button
+                        type="button"
+                        data-noscale
+                        aria-label={t('saved.delete')}
+                        title={t('saved.delete')}
+                        className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-[10px] text-faint hover:text-fg"
+                        onClick={() => onDelete(entry.params)}
+                      >
+                        <TrashIcon />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : (
+            <div className="dl-modal-scroll flex min-h-0 flex-col overflow-y-auto px-[18px] pt-2 pb-5">
+              <p className="mx-1.5 mb-3 text-[11.5px] leading-[1.5] text-muted">
+                {t('history.hint')}
+              </p>
+              {history.length === 0 ? (
+                <div className="px-3 py-10 text-center text-[13px] leading-[1.6] text-muted">
+                  {t('history.empty')}
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-1">
+                  {history.map((entry) => (
+                    <li key={entry.params} className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        data-noscale
+                        className="dl-pick-row flex min-w-0 flex-1 flex-col items-start gap-[3px] rounded-[10px] border border-transparent px-3 py-2 text-left hover:border-border hover:bg-card hover:shadow-[0_2px_10px_oklch(0_0_0_/_0.05)]"
+                        title={t('saved.restore')}
+                        onClick={() => onRestore(entry)}
+                      >
+                        <span className="w-full truncate text-[14px] font-semibold text-label">
+                          {searchSummary(toQuery(entry))}
+                        </span>
+                        <span className="text-[11px] text-muted">
+                          {relativeTime(entry.lastUsedAt, now)}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        data-noscale
+                        aria-label={t('history.promote')}
+                        title={t('history.promote')}
+                        className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-[10px] text-faint hover:text-fg"
+                        onClick={() => onPromote(entry)}
+                      >
+                        {/* bookmark-plus: promote a history row into a named saved search */}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                          <path d="M12 7v6M9 10h6" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        data-noscale
+                        aria-label={t('saved.delete')}
+                        title={t('saved.delete')}
+                        className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-[10px] text-faint hover:text-fg"
+                        onClick={() => onDeleteHistory(entry.params)}
+                      >
+                        <TrashIcon />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mx-1.5 mt-4 flex items-center justify-between gap-3">
+                <label className="flex cursor-pointer items-center gap-2 text-[12px] font-medium text-muted">
+                  <input
+                    type="checkbox"
+                    checked={!historyEnabled}
+                    onChange={(e) => onToggleHistoryEnabled(!e.target.checked)}
+                    className="size-4 accent-[var(--accent)]"
+                  />
+                  {t('history.disable')}
+                </label>
+                {history.length > 0 && (
+                  <button
+                    type="button"
+                    data-noscale
+                    className="inline-flex h-8 cursor-pointer items-center rounded-full border border-border bg-card px-3.5 text-[12px] font-semibold text-muted hover:text-fg"
+                    onClick={onClearHistory}
+                  >
+                    {t('history.clearAll')}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>

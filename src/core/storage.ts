@@ -55,7 +55,90 @@ export function deleteSaved(params: string): StoredQuery[] {
   return store(loadSaved().filter((e) => e.params !== params))
 }
 
-/** 保存した検索を復元用の条件へ戻す */
-export function toQuery(entry: StoredQuery): QueryState {
+/** 保存した検索・履歴を復元用の条件へ戻す */
+export function toQuery(entry: { params: string }): QueryState {
   return paramsToQuery(new URLSearchParams(entry.params))
+}
+
+// Search history: recorded automatically when a launch link is opened. Entries
+// reuse the same params string as saved searches, so the unique key and the
+// restore path are shared with StoredQuery.
+const HISTORY_KEY = 'dialect.history.v1'
+const HISTORY_ENABLED_KEY = 'dialect.history.enabled'
+const HISTORY_MAX = 50
+
+export interface HistoryEntry {
+  /** Conditions folded into a permalink query string; doubles as the unique key */
+  params: string
+  /** Last time this search was executed (ms) */
+  lastUsedAt: number
+  /** How many times this exact search was executed */
+  count: number
+}
+
+function isHistoryEntry(e: unknown): e is HistoryEntry {
+  return (
+    typeof e === 'object' &&
+    e !== null &&
+    typeof (e as HistoryEntry).params === 'string' &&
+    typeof (e as HistoryEntry).lastUsedAt === 'number' &&
+    typeof (e as HistoryEntry).count === 'number'
+  )
+}
+
+export function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (!raw) return []
+    const parsed: unknown = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.filter(isHistoryEntry) : []
+  } catch {
+    return []
+  }
+}
+
+function storeHistory(entries: HistoryEntry[]): HistoryEntry[] {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(entries))
+  } catch {
+    /* keep the in-memory list usable even when persisting fails */
+  }
+  return entries
+}
+
+/**
+ * Record an executed search. Re-running the same conditions bumps its count
+ * and moves it to the front; the list is capped at HISTORY_MAX (oldest dropped).
+ */
+export function recordHistory(state: QueryState, now: number): HistoryEntry[] {
+  const params = stateToParams(state).toString()
+  const prev = loadHistory()
+  const count = (prev.find((e) => e.params === params)?.count ?? 0) + 1
+  const rest = prev.filter((e) => e.params !== params)
+  return storeHistory([{ params, lastUsedAt: now, count }, ...rest].slice(0, HISTORY_MAX))
+}
+
+export function deleteHistory(params: string): HistoryEntry[] {
+  return storeHistory(loadHistory().filter((e) => e.params !== params))
+}
+
+export function clearHistory(): HistoryEntry[] {
+  return storeHistory([])
+}
+
+/** Whether automatic history recording is on (defaults to on) */
+export function loadHistoryEnabled(): boolean {
+  try {
+    return localStorage.getItem(HISTORY_ENABLED_KEY) !== 'false'
+  } catch {
+    return true
+  }
+}
+
+export function persistHistoryEnabled(enabled: boolean): void {
+  try {
+    localStorage.setItem(HISTORY_ENABLED_KEY, String(enabled))
+  } catch {
+    /* the toggle still applies for this session */
+  }
 }

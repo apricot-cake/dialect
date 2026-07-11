@@ -138,6 +138,7 @@ function LaunchCard({
   query,
   dark,
   colors,
+  onLaunch,
 }: {
   platform: PlatformDef
   resolution: Resolution
@@ -145,6 +146,8 @@ function LaunchCard({
   dark: boolean
   /** 概念→識別色(全カード共通=同じ条件は同じ色)。条件ラベルと生URL断片の対応付け */
   colors: Map<ConceptId, string>
+  /** Called when the link is opened (search executed); records history */
+  onLaunch: () => void
 }) {
   const [hover, setHover] = useState(false)
   const [openUpward, setOpenUpward] = useState(false)
@@ -197,6 +200,11 @@ function LaunchCard({
         rel="noopener noreferrer"
         aria-disabled={enabled ? undefined : true}
         tabIndex={enabled ? undefined : -1}
+        onClick={onLaunch}
+        // Middle-click opens a background tab without firing click; count it too
+        onAuxClick={(e) => {
+          if (e.button === 1) onLaunch()
+        }}
         className="inline-flex h-[42px] w-full items-center justify-center gap-2 rounded-[10px] text-sm font-semibold tracking-[-0.01em] no-underline"
         style={{
           background: platform.brandColor,
@@ -320,10 +328,13 @@ export function LinksArea({
   query,
   dark,
   onGoConditions,
+  onLaunch,
 }: {
   query: QueryState
   dark: boolean
   onGoConditions: () => void
+  /** Called when a launch link is opened; App records it as search history */
+  onLaunch: () => void
 }) {
   const resolutions = useMemo(() => {
     const map = new Map<string, Resolution>()
@@ -377,6 +388,7 @@ export function LinksArea({
                       query={query}
                       dark={dark}
                       colors={colors}
+                      onLaunch={onLaunch}
                     />
                   ))}
                 </div>

@@ -404,6 +404,17 @@ export const ja = {
   'saved.save.confirm': '保存',
   'saved.save.cancel': 'キャンセル',
 
+  // 検索履歴(自動記録・localStorage)
+  'saved.tab.saved': '保存',
+  'saved.tab.history': '履歴',
+  'history.hint':
+    'サイトを開くと、その検索がここに自動で残ります（この端末のみ・最新50件）。',
+  'history.empty':
+    'まだ履歴はありません。条件を組んでサイトを開くと、ここに残ります。',
+  'history.promote': '名前を付けて保存',
+  'history.clearAll': '全削除',
+  'history.disable': '履歴を残さない',
+
   'support.full': '完全対応',
   'support.partial': '一部対応',
   'picker.title': '条件を追加',
