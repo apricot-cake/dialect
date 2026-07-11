@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 import { NICO_GENRES, POST_LANGUAGE_CODES } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
@@ -22,7 +22,7 @@ import {
 import { mergeFragments, type SmartFragments } from '@/core/smartInput'
 import type { SmartSuggestion } from '@/core/smartSuggest'
 import { andTerms, exactPhrases, words } from '@/core/text'
-import { getLang, setLang, type Lang } from '@/i18n'
+import { getLang, setLang, subscribe, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
 import { DotsCanvas } from '@/components/DotsCanvas'
 import { ConditionsArea, type ChipsApi } from '@/components/ConditionsArea'
@@ -148,8 +148,9 @@ export default function App() {
   const [chips, setChips] = useState<ChipMap>(() => seedChips(init.query))
   const [raw, setRaw] = useState<RawMap>({})
   const [filterId, setFilterId] = useState(init.filterId)
-  // t() はモジュールの現在言語を読むだけなので、切替時はこのstate更新で全体を再描画する
-  const [lang, setLangState] = useState<Lang>(getLang)
+  // t() はモジュールの現在言語を読むだけなので、useSyncExternalStoreの購読で
+  // setLang() 呼び出し1回だけから全体の再描画が伝播する(手動の二重呼び出しをやめた)
+  const lang: Lang = useSyncExternalStore(subscribe, getLang)
   // ダークモード。初期値は index.html の先読みスクリプトが付けた class から拾う
   const [dark, setDark] = useState(() =>
     document.documentElement.classList.contains('dark'),
@@ -175,9 +176,7 @@ export default function App() {
     setQuery((q) => ({ ...q, ...patch }))
 
   const toggleLang = () => {
-    const next: Lang = lang === 'ja' ? 'en' : 'ja'
-    setLang(next)
-    setLangState(next)
+    setLang(lang === 'ja' ? 'en' : 'ja')
   }
 
   useEffect(() => {

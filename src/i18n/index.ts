@@ -21,11 +21,22 @@ function detectInitial(): Lang {
 let currentLang: Lang = detectInitial()
 document.documentElement.lang = currentLang
 
+const listeners = new Set<() => void>()
+
 export function getLang(): Lang {
   return currentLang
 }
 
-/** 言語を切り替えて保存する。呼び出し側で再描画をトリガーすること */
+/**
+ * useSyncExternalStore 用の購読登録。App がこれで現在言語を読むことで、setLang() の
+ * 呼び出しだけで再描画がReact標準の仕組みで伝播する(手動の二重呼び出しをここに閉じる)
+ */
+export function subscribe(listener: () => void): () => void {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+/** 言語を切り替えて保存する。購読者(App)への再描画通知もここで完結する */
 export function setLang(lang: Lang): void {
   currentLang = lang
   try {
@@ -34,6 +45,7 @@ export function setLang(lang: Lang): void {
     /* 保存できなくても表示切替は成立する */
   }
   document.documentElement.lang = lang
+  for (const listener of listeners) listener()
 }
 
 /** 明示した言語で翻訳する(現在言語に依存しない)。言語別に索引を作るときなどに使う */
