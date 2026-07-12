@@ -384,8 +384,10 @@ export const ja = {
   'note.note.hashtag': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.note.period': 'note には期間で絞る機能がありません',
   'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
-  'note.note.paidOnly.tagPage': '単一タグのタグページでは有料の記事に絞れません',
-  'note.note.sort.tagPage': '単一タグのタグページでは並び順を指定できません',
+  'note.note.paidOnly.tagPage':
+    '単一タグのタグページでは有料の記事に絞れません。開いた後、ページ内の切替でできます',
+  'note.note.sort.tagPage':
+    '単一タグのタグページでは並び順を指定できません。開いた後、ページ内の切替でできます',
   'note.note.resultTypeConflict':
     'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
   'note.note.paidOnly.circle': 'メンバーシップはすべて有料のため、この絞り込みは意味を持ちません',
@@ -421,6 +423,7 @@ export const ja = {
   'note.hatebu.fromUser':
     'ブックマーク内検索は自分自身のブックマークだけが対象で、他のユーザーの投稿を指定して探すことはできません',
   'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
+  'note.twitch.language': 'URLでは指定できません。開いた後、言語フィルタで絞り込めます',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.resultType.otherSite': 'この種類は、このサイトでは指定できません',
   'note.fivech.keywords':

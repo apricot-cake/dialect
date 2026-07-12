@@ -67,6 +67,7 @@ export const twitch: PlatformDef = {
     resultType: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },
+    language: { level: 'none', noteKey: 'note.twitch.language' },
   },
   buildParts,
   parseUrl,

@@ -383,8 +383,10 @@ export const en = {
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.note.period': 'note has no date filter.',
   'note.note.mediaOnly': 'note has no way to filter by image/video.',
-  'note.note.paidOnly.tagPage': "A single tag's tag page can't be limited to paid articles.",
-  'note.note.sort.tagPage': "A single tag's tag page can't be sorted.",
+  'note.note.paidOnly.tagPage':
+    "A single tag's tag page can't be limited to paid articles. After opening it, you can use the in-page toggle.",
+  'note.note.sort.tagPage':
+    "A single tag's tag page can't be sorted. After opening it, you can use the in-page sort tabs.",
   'note.note.resultTypeConflict':
     'This filter has no effect on creator, magazine, or membership search.',
   'note.note.paidOnly.circle': 'Every membership is already paid, so this filter has no meaning.',
@@ -421,6 +423,8 @@ export const en = {
   'note.hatebu.fromUser':
     "Bookmark search only covers your own bookmarks — there's no way to search a specific other user's bookmarks.",
   'note.twitch.resultType': 'Twitch can only search videos and channels.',
+  'note.twitch.language':
+    "Can't be set via the URL. After opening the page, narrow down with the language filter.",
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.resultType.otherSite': 'This type is not available on this site.',
   'note.fivech.keywords':
