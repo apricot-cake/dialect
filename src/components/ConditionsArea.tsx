@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { ConceptId, QueryState } from '@/core/types'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
@@ -63,6 +63,34 @@ function usePillCompact(): boolean {
     }
   })
   return compact
+}
+
+/**
+ * Stable React keys for bar slots. When one bar is removed and another added
+ * in the same update — the pristine keywords bar being swapped for a newly
+ * added condition, clear-all, or restoring a saved search — the newcomer
+ * inherits the outgoing bar's key, so React updates that bar in place instead
+ * of playing exit + enter + layout-shift animations. Pure additions and
+ * removals keep their own keys and animate as before.
+ */
+function useSlotKeys(added: ConceptId[]): Map<ConceptId, number> {
+  const ref = useRef<{ keys: Map<ConceptId, number>; next: number }>({ keys: new Map(), next: 0 })
+  const state = ref.current
+  const freed = [...state.keys.keys()].filter((c) => !added.includes(c))
+  const fresh = added.filter((c) => !state.keys.has(c))
+  if (freed.length > 0 || fresh.length > 0) {
+    // Idempotent under StrictMode double-render: the second pass sees the
+    // already-updated map and both diff lists come out empty
+    const next = new Map(state.keys)
+    const freeSlots = fresh.length > 0 ? freed.map((c) => state.keys.get(c)!) : []
+    for (const c of freed) next.delete(c)
+    for (const c of fresh) {
+      const reused = freeSlots.shift()
+      next.set(c, reused ?? state.next++)
+    }
+    state.keys = next
+  }
+  return state.keys
 }
 
 function MouseIcon({ up }: { up?: boolean }) {
@@ -145,6 +173,7 @@ export function ConditionsArea({
   onGoLinks: () => void
 }) {
   const pillCompact = usePillCompact()
+  const slotKeys = useSlotKeys(added)
   // URLコピーの一時フィードバック(「コピーしました」表示)。少し経つと元へ戻す
   const [copied, setCopied] = useState(false)
   const copyLink = async () => {
@@ -178,7 +207,7 @@ export function ConditionsArea({
           <AnimatePresence initial={false}>
             {barDefs.map((def) => (
               <motion.div
-                key={def.id}
+                key={slotKeys.get(def.id) ?? def.id}
                 layout
                 data-bar={def.id}
                 className="relative flex w-full flex-col gap-2"
@@ -236,8 +265,11 @@ export function ConditionsArea({
             </div>
           )}
 
+          {/* layout="position": the row only translates during FLIP. Plain
+              `layout` also interpolates size with scale, which visibly
+              stretches the buttons when the row grows/wraps */}
           <motion.div
-            layout
+            layout="position"
             transition={SPRING}
             data-add-btn
             className="flex flex-wrap items-center justify-center gap-2.5 pt-1.5"

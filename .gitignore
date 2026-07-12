@@ -17,6 +17,7 @@ check-urls-report.json
 .scratch-mobile-check/
 .scratch-bulk-open-check/
 .scratch-conflicts-check/
+.scratch-anim-check/
 
 # Editor directories and files
 .vscode/*
