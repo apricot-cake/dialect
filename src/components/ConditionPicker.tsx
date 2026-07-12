@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
-import { Search } from 'lucide-react'
+import { RotateCcw, Search } from 'lucide-react'
 import { PLATFORMS } from '@/core/platforms'
+import { GROUPS } from '@/lib/platformGroups'
 import { supportOf } from '@/core/types'
 import type { ConceptId, PlatformId, QueryState } from '@/core/types'
 import {
@@ -352,41 +353,56 @@ export function ConditionPicker({
             {/* サイトフィルタ(スティッキーではない=リストと一緒にスクロールで流れる) */}
             {showSiteFilter && (
               <div className="flex flex-col gap-2.5 px-[26px] pt-1 pb-4">
-                <span
-                  data-tip={t('builder.filter.help')}
-                  className="cursor-help self-start text-[11.5px] font-medium text-muted"
-                >
-                  {t('builder.filter.label')}
-                </span>
-                <div className="flex flex-wrap items-center gap-[9px]">
+                <div className="flex items-center justify-between">
+                  <span
+                    data-tip={t('builder.filter.help')}
+                    className="cursor-help self-start text-[11.5px] font-medium text-muted"
+                  >
+                    {t('builder.filter.label')}
+                  </span>
                   <button
                     type="button"
-                    className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                    style={activeChipStyle(filterIds.length === 0)}
+                    title={t('builder.filter.all')}
+                    aria-label={t('builder.filter.all')}
+                    disabled={filterIds.length === 0}
                     onClick={() => onSetFilter([])}
+                    className="inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-muted hover:text-fg disabled:pointer-events-none disabled:opacity-30"
                   >
-                    {t('builder.filter.all')}
+                    <RotateCcw className="size-[15px]" />
                   </button>
-                  {PLATFORMS.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      data-noscale
-                      data-tip={p.name}
-                      aria-pressed={filterIds.includes(p.id)}
-                      className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
-                      style={activeChipStyle(filterIds.includes(p.id))}
-                      onClick={() =>
-                        onSetFilter(
-                          filterIds.includes(p.id)
-                            ? filterIds.filter((id) => id !== p.id)
-                            : [...filterIds, p.id],
-                        )
-                      }
-                    >
-                      <PlatformBadge platform={p} dark={dark} size={17} />
-                    </button>
-                  ))}
+                </div>
+                <div className="flex flex-wrap items-start gap-2">
+                  {GROUPS.map(({ group }) => {
+                    const groupPlatforms = PLATFORMS.filter((p) => p.group === group)
+                    if (groupPlatforms.length === 0) return null
+                    return (
+                      <div
+                        key={group}
+                        className="grid grid-flow-col grid-rows-2 gap-[7px] rounded-[10px] border border-border p-[7px]"
+                      >
+                        {groupPlatforms.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            data-noscale
+                            data-tip={p.name}
+                            aria-pressed={filterIds.includes(p.id)}
+                            className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
+                            style={activeChipStyle(filterIds.includes(p.id))}
+                            onClick={() =>
+                              onSetFilter(
+                                filterIds.includes(p.id)
+                                  ? filterIds.filter((id) => id !== p.id)
+                                  : [...filterIds, p.id],
+                              )
+                            }
+                          >
+                            <PlatformBadge platform={p} dark={dark} size={17} />
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
