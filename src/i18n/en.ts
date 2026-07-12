@@ -330,7 +330,7 @@ export const en = {
   // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
   'builder.filter.help':
-    'Shows only the conditions the chosen site supports. This changes what is listed, not which sites you search.',
+    'Shows only the conditions the chosen sites support. Choosing more than one narrows the list to conditions common to all of them. This changes what is listed, not which sites you search.',
   'builder.filter.all': 'All',
   'builder.support.label': 'Sites',
 
@@ -596,6 +596,7 @@ export const en = {
   'picker.scrollTop': 'Back to top',
   'picker.search.placeholder': 'Search conditions (e.g. buzz, quality, replies)',
   'picker.search.empty': 'No matching conditions',
+  'picker.filter.empty': 'No conditions common to the chosen sites and category',
   'picker.search.didYouMean': 'Did you mean',
   'picker.category.label': 'Filter by category',
   'cat.word': 'Words',

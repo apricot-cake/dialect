@@ -335,7 +335,7 @@ export const ja = {
   // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
   'builder.filter.help':
-    '選んだサイトで使える条件だけを一覧に表示します。表示が変わるだけで、検索先のサイトは変わりません',
+    '選んだサイトで使える条件だけを一覧に表示します。複数選ぶと、選んだすべてのサイトで使える条件だけに絞ります。表示が変わるだけで、検索先のサイトは変わりません',
   'builder.filter.all': 'すべて',
   'builder.support.label': '対応',
 
@@ -594,6 +594,7 @@ export const ja = {
   'picker.scrollTop': '最上部へ戻る',
   'picker.search.placeholder': '条件を検索（例: バズ、画質、宛先）',
   'picker.search.empty': '一致する条件がありません',
+  'picker.filter.empty': '選んだサイト・種類すべてに共通する条件がありません',
   'picker.search.didYouMean': 'もしかして',
   'picker.category.label': '種類でしぼる',
   'cat.word': 'ことば',

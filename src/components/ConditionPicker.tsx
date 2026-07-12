@@ -77,7 +77,7 @@ export function ConditionPicker({
   open,
   onOpenChange,
   added,
-  filterId,
+  filterIds,
   query,
   conceptUsage,
   dark,
@@ -90,7 +90,7 @@ export function ConditionPicker({
   open: boolean
   onOpenChange: (open: boolean) => void
   added: ConceptId[]
-  filterId: PlatformId | null
+  filterIds: PlatformId[]
   query: QueryState
   conceptUsage: ConceptUsageMap
   dark: boolean
@@ -98,7 +98,7 @@ export function ConditionPicker({
   onAdd: (concept: ConceptId) => void
   onAddMany: (concepts: ConceptId[]) => void
   onRemove: (concept: ConceptId) => void
-  onSetFilter: (id: PlatformId | null) => void
+  onSetFilter: (ids: PlatformId[]) => void
 }) {
   const [hover, setHover] = useState<ConceptId | null>(null)
   const [queryText, setQueryText] = useState('')
@@ -121,9 +121,10 @@ export function ConditionPicker({
   // ラベル・ヘルプ・値ラベルは言語依存なので、言語が変わったら索引を作り直す
   const index = useMemo(() => buildSearchIndex(lang), [lang])
   const addedSet = new Set(added)
-  const filterPlatform = filterId ? (PLATFORMS.find((p) => p.id === filterId) ?? null) : null
+  const filterPlatforms = PLATFORMS.filter((p) => filterIds.includes(p.id))
+  // 複数選んだときは積集合=選んだ全サイトで対応(完全でも一部でも)している条件だけ残す
   const matchesFilter = (id: ConceptId) =>
-    !filterPlatform || supportOf(filterPlatform, id).level !== 'none'
+    filterPlatforms.every((p) => supportOf(p, id).level !== 'none')
   const matchesCategory = (id: ConceptId) => !categoryId || CONCEPT_CATEGORY[id] === categoryId
 
   const q = queryText.trim()
@@ -131,9 +132,9 @@ export function ConditionPicker({
 
   // 検索中はフィルタの2ブロックを畳んで、一致結果を検索ボックス直下へ引き上げる
   // (狭幅では両ブロックが1画面を占め、結果が画面外に押し出されるため)。ただし
-  // 有効な絞り込みは隠さない=filterId(localStorage永続)/categoryId が効いたまま
+  // 有効な絞り込みは隠さない=filterIds(localStorage永続)/categoryId が効いたまま
   // 見えなくなる「気づけない絞り込み」を防ぐ。解除もそのブロックからできる
-  const showSiteFilter = !searching || filterId !== null
+  const showSiteFilter = !searching || filterIds.length > 0
   const showCategoryFilter = !searching || categoryId !== null
 
   // 「関連する条件」= 追加済み条件と同じ意図の家族で、まだ足していないメンバー。
@@ -361,8 +362,8 @@ export function ConditionPicker({
                   <button
                     type="button"
                     className="h-[34px] cursor-pointer rounded-[9px] border border-border bg-card px-3.5 text-[13px] font-semibold text-fg"
-                    style={activeChipStyle(filterId === null)}
-                    onClick={() => onSetFilter(null)}
+                    style={activeChipStyle(filterIds.length === 0)}
+                    onClick={() => onSetFilter([])}
                   >
                     {t('builder.filter.all')}
                   </button>
@@ -372,10 +373,16 @@ export function ConditionPicker({
                       type="button"
                       data-noscale
                       data-tip={p.name}
-                      aria-pressed={filterId === p.id}
+                      aria-pressed={filterIds.includes(p.id)}
                       className="inline-flex size-[34px] cursor-pointer items-center justify-center rounded-[9px] border border-border bg-card"
-                      style={activeChipStyle(filterId === p.id)}
-                      onClick={() => onSetFilter(filterId === p.id ? null : p.id)}
+                      style={activeChipStyle(filterIds.includes(p.id))}
+                      onClick={() =>
+                        onSetFilter(
+                          filterIds.includes(p.id)
+                            ? filterIds.filter((id) => id !== p.id)
+                            : [...filterIds, p.id],
+                        )
+                      }
                     >
                       <PlatformBadge platform={p} dark={dark} size={17} />
                     </button>
@@ -455,6 +462,11 @@ export function ConditionPicker({
               {searching && rows.length === 0 && (
                 <div className="py-12 text-center text-[13px] text-muted">
                   {t('picker.search.empty')}
+                </div>
+              )}
+              {!searching && rows.length === 0 && relatedFamilies.length === 0 && (
+                <div className="py-12 text-center text-[13px] text-muted">
+                  {t('picker.filter.empty')}
                 </div>
               )}
               {fuzzyMode && (

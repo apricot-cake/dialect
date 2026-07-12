@@ -85,7 +85,7 @@ function sanitizeQuery(parsed: unknown): QueryState {
 function loadInitial(): {
   query: QueryState
   added: ConceptId[]
-  filterId: PlatformId | null
+  filterIds: PlatformId[]
 } {
   let query = defaultState()
   if (location.search) {
@@ -120,17 +120,31 @@ function loadInitial(): {
     if (!added.includes(concept)) added.push(concept)
   }
 
-  let filterId: PlatformId | null = null
+  // 新形式=PlatformId配列のJSON。旧形式(単一選択時代の生文字列 "x"/"null")は
+  // JSONとして不正なのでparseが例外を投げる→そちらを単一IDとして読み替える
+  let filterIds: PlatformId[] = []
   try {
     const saved = localStorage.getItem(FILTER_KEY)
-    if (saved && saved !== 'null' && PLATFORMS.some((p) => p.id === saved)) {
-      filterId = saved as PlatformId
+    if (saved) {
+      let parsed: unknown
+      try {
+        parsed = JSON.parse(saved)
+      } catch {
+        parsed = saved
+      }
+      if (Array.isArray(parsed)) {
+        filterIds = [
+          ...new Set(parsed.filter((id): id is PlatformId => PLATFORMS.some((p) => p.id === id))),
+        ]
+      } else if (typeof parsed === 'string' && PLATFORMS.some((p) => p.id === parsed)) {
+        filterIds = [parsed as PlatformId]
+      }
     }
   } catch {
     /* 読めなければ絞り込みなし */
   }
 
-  return { query, added, filterId }
+  return { query, added, filterIds }
 }
 
 /** チップ入力の確定リストをqueryの値から初期化する(起動時のみ) */
@@ -151,7 +165,7 @@ export default function App() {
   const [added, setAdded] = useState(init.added)
   const [chips, setChips] = useState<ChipMap>(() => seedChips(init.query))
   const [raw, setRaw] = useState<RawMap>({})
-  const [filterId, setFilterId] = useState(init.filterId)
+  const [filterIds, setFilterIds] = useState(init.filterIds)
   // t() はモジュールの現在言語を読むだけなので、useSyncExternalStoreの購読で
   // setLang() 呼び出し1回だけから全体の再描画が伝播する(手動の二重呼び出しをやめた)
   const lang: Lang = useSyncExternalStore(subscribe, getLang)
@@ -225,11 +239,11 @@ export default function App() {
     try {
       localStorage.setItem(QUERY_KEY, JSON.stringify(query))
       localStorage.setItem(ADDED_KEY, JSON.stringify(added))
-      localStorage.setItem(FILTER_KEY, filterId ?? 'null')
+      localStorage.setItem(FILTER_KEY, JSON.stringify(filterIds))
     } catch {
       /* 保存できなくても動作は続行 */
     }
-  }, [query, added, filterId])
+  }, [query, added, filterIds])
 
   useSnapAreas(area, pickerOpen, setArea)
 
@@ -314,7 +328,7 @@ export default function App() {
   }
 
   // 検索条件をまとめて初期状態へ戻す。バー構成・チップ・入力中テキストも空にする。
-  // サイト絞り込み(filterId)は検索条件ではなくモーダルの表示設定なので残す
+  // サイト絞り込み(filterIds)は検索条件ではなくモーダルの表示設定なので残す
   const clearAll = () => {
     setQuery(defaultState())
     setAdded([])
@@ -429,7 +443,7 @@ export default function App() {
         open={pickerOpen}
         onOpenChange={setPickerOpen}
         added={added}
-        filterId={filterId}
+        filterIds={filterIds}
         query={query}
         conceptUsage={conceptUsage}
         dark={dark}
@@ -437,7 +451,7 @@ export default function App() {
         onAdd={addConcept}
         onAddMany={addConcepts}
         onRemove={removeConcept}
-        onSetFilter={setFilterId}
+        onSetFilter={setFilterIds}
       />
       <SaveSearchDialog
         open={saveTarget !== null}
