@@ -677,6 +677,17 @@ export const ja = {
   'smart.commit': '条件にする',
   'smart.preview': 'こう分かれます:',
   'smart.suggest': 'もしかして:',
+  // Focus-time hint panel: shown while the empty input is focused.
+  // Example lists are |-separated; each example becomes a tappable chip
+  'smart.hint.title': '使える書き方(タップで試せます):',
+  'smart.hint.natural': '自然な言葉でも',
+  'smart.hint.exclude.ex': '-犬',
+  'smart.hint.phrase.ex': '"猫カフェ"',
+  'smart.hint.user.ex': '@ユーザー名',
+  'smart.hint.tag.ex': '#タグ',
+  'smart.hint.period.ex': '今週|先週|since:2026-01-01',
+  'smart.hint.likes.ex': 'いいね>1000|1万いいね以上',
+  'smart.hint.natural.ex': 'バズった|動画|ライブ',
 
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',

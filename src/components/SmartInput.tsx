@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import type { QueryState } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
@@ -12,7 +12,22 @@ import {
 } from '@/core/smartInput'
 import { suggestFor, type SmartSuggestion } from '@/core/smartSuggest'
 import { conceptColors } from '@/lib/conceptColors'
-import { t } from '@/i18n'
+import { t, type MessageKey } from '@/i18n'
+
+/**
+ * Focus-time hint rows (one per grammar item). Labels reuse the concept
+ * label keys so the panel and the live-preview chips speak the same words;
+ * examples live in i18n as |-separated lists and insert on tap
+ */
+const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
+  { labelKey: 'concept.exclude.label', exKey: 'smart.hint.exclude.ex' },
+  { labelKey: 'concept.exactPhrase.label', exKey: 'smart.hint.phrase.ex' },
+  { labelKey: 'concept.fromUser.label', exKey: 'smart.hint.user.ex' },
+  { labelKey: 'concept.hashtag.label', exKey: 'smart.hint.tag.ex' },
+  { labelKey: 'concept.period.label', exKey: 'smart.hint.period.ex' },
+  { labelKey: 'concept.minLikes.label', exKey: 'smart.hint.likes.ex' },
+  { labelKey: 'smart.hint.natural', exKey: 'smart.hint.natural.ex' },
+]
 
 /**
  * The smart input (issue #16): one always-visible line that is a pure entry
@@ -35,6 +50,7 @@ export function SmartInput({
   onAdopt: (suggestion: SmartSuggestion) => void
 }) {
   const [input, setInput] = useState('')
+  const [focused, setFocused] = useState(false)
   // One clock per keystroke is plenty for resolving 今週/today
   const now = useMemo(() => new Date(), [input]) // eslint-disable-line react-hooks/exhaustive-deps
   const fragments = useMemo(() => parseSmartInput(input, now), [input, now])
@@ -68,6 +84,12 @@ export function SmartInput({
     const state = { ...defaultState(), ...s.patch }
     return `${t(CONCEPT_MAP[s.concept].labelKey)}: ${conceptSummary(s.concept, state)}`
   }
+  // The hint panel only competes with emptiness: once anything is typed the
+  // live preview takes over as the tutorial
+  const showHints = focused && input.trim() === ''
+  const insertExample = (ex: string) => {
+    setInput((prev) => (prev && !/[\s　]$/.test(prev) ? `${prev} ` : prev) + ex)
+  }
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -92,12 +114,15 @@ export function SmartInput({
           aria-label={t('smart.label')}
           placeholder={t('smart.placeholder')}
           onChange={(e) => setInput(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           onKeyDown={(e) => {
             // isComposing guards against IME conversion commits (ja input)
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
               e.preventDefault()
               submit()
             }
+            if (e.key === 'Escape') e.currentTarget.blur()
           }}
           className="h-9 min-w-0 flex-1 border-none bg-transparent text-[15px] text-fg outline-none placeholder:text-faint"
         />
@@ -112,6 +137,37 @@ export function SmartInput({
           </button>
         )}
       </div>
+      {showHints && (
+        <div className="rounded-[10px] border border-border bg-card px-3.5 py-3 text-[12px] leading-[1.6]">
+          <div className="mb-2 text-faint">{t('smart.hint.title')}</div>
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5">
+            {HINT_ROWS.map((row) => (
+              <Fragment key={row.exKey}>
+                <span className="font-semibold whitespace-nowrap text-label">
+                  {t(row.labelKey)}
+                </span>
+                <span className="flex flex-wrap items-center gap-1.5">
+                  {t(row.exKey)
+                    .split('|')
+                    .map((ex) => (
+                      <button
+                        key={ex}
+                        type="button"
+                        data-noscale
+                        // Keep the input focused through the tap (no blur flicker)
+                        onPointerDown={(e) => e.preventDefault()}
+                        onClick={() => insertExample(ex)}
+                        className="inline-flex cursor-pointer items-center rounded-full border border-border bg-bg px-2.5 py-0.5 text-fg"
+                      >
+                        {ex}
+                      </button>
+                    ))}
+                </span>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      )}
       {input.trim() !== '' && filled && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-2 text-[12px] leading-[1.5]">
           <span className="text-faint">{t('smart.preview')}</span>

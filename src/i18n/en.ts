@@ -675,6 +675,17 @@ export const en = {
   'smart.commit': 'Add as conditions',
   'smart.preview': 'Splits into:',
   'smart.suggest': 'Did you mean:',
+  // Focus-time hint panel: shown while the empty input is focused.
+  // Example lists are |-separated; each example becomes a tappable chip
+  'smart.hint.title': 'What you can type (tap to try):',
+  'smart.hint.natural': 'Plain words too',
+  'smart.hint.exclude.ex': '-dog',
+  'smart.hint.phrase.ex': '"cat cafe"',
+  'smart.hint.user.ex': '@username',
+  'smart.hint.tag.ex': '#tag',
+  'smart.hint.period.ex': 'today|yesterday|since:2026-01-01',
+  'smart.hint.likes.ex': 'likes>1000|min_faves:10000',
+  'smart.hint.natural.ex': 'viral|video|live',
 
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
