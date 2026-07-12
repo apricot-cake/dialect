@@ -54,6 +54,12 @@ export function detectConflicts(query: QueryState): Conflict[] {
   if (query.since && query.until && query.since > query.until) {
     conflicts.push({ messageKey: 'conflict.periodReversed' })
   }
+  if (query.pushedSince && query.pushedUntil && query.pushedSince > query.pushedUntil) {
+    conflicts.push({ messageKey: 'conflict.pushedPeriodReversed' })
+  }
+  if (query.updatedSince && query.updatedUntil && query.updatedSince > query.updatedUntil) {
+    conflicts.push({ messageKey: 'conflict.updatedPeriodReversed' })
+  }
 
   return conflicts
 }

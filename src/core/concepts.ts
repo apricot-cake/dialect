@@ -68,6 +68,32 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
   if (state.excludeAi) active.push('excludeAi')
+  if (state.minForks.trim()) active.push('minForks')
+  if (state.minSizeKb.trim()) active.push('minSizeKb')
+  if (state.pushedSince || state.pushedUntil) active.push('pushedPeriod')
+  if (state.codeLicense) active.push('codeLicense')
+  if (state.includeForks) active.push('includeForks')
+  if (state.visibility) active.push('visibility')
+  if (state.topic.trim()) active.push('topic')
+  if (state.searchInName) active.push('searchInName')
+  if (state.searchInDescription) active.push('searchInDescription')
+  if (state.searchInReadme) active.push('searchInReadme')
+  if (state.archived) active.push('archived')
+  if (state.mirror) active.push('mirror')
+  if (state.org.trim()) active.push('org')
+  if (state.fileExtension.trim()) active.push('fileExtension')
+  if (state.filePath.trim()) active.push('filePath')
+  if (state.fileName.trim()) active.push('fileName')
+  if (state.issueState) active.push('issueState')
+  if (state.issueReason) active.push('issueReason')
+  if (state.minComments.trim()) active.push('minComments')
+  if (state.label.trim()) active.push('label')
+  if (state.assignee.trim()) active.push('assignee')
+  if (state.updatedSince || state.updatedUntil) active.push('updatedPeriod')
+  if (state.fullName.trim()) active.push('fullName')
+  if (state.userLocation.trim()) active.push('userLocation')
+  if (state.minFollowers.trim()) active.push('minFollowers')
+  if (state.minRepos.trim()) active.push('minRepos')
   // 並び順は既定の「指定なし(auto)」のままなら条件として数えない(サイトの標準の
   // 並びのまま=何も課していないため)。ユーザーが意図的に選んだ並び順
   // (新しい順・人気順など)だけを注記・件数の対象にする
@@ -143,5 +169,33 @@ export function defaultState(): QueryState {
     pixivPopular: '',
     ageRating: '',
     excludeAi: false,
+    minForks: '',
+    minSizeKb: '',
+    pushedSince: '',
+    pushedUntil: '',
+    codeLicense: '',
+    includeForks: '',
+    visibility: '',
+    topic: '',
+    searchInName: false,
+    searchInDescription: false,
+    searchInReadme: false,
+    archived: '',
+    mirror: '',
+    org: '',
+    fileExtension: '',
+    filePath: '',
+    fileName: '',
+    issueState: '',
+    issueReason: '',
+    minComments: '',
+    label: '',
+    assignee: '',
+    updatedSince: '',
+    updatedUntil: '',
+    fullName: '',
+    userLocation: '',
+    minFollowers: '',
+    minRepos: '',
   }
 }

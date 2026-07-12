@@ -67,6 +67,32 @@ export type ConceptId =
   | 'minStars'
   | 'minStocks'
   | 'semanticSearch'
+  | 'minForks'
+  | 'minSizeKb'
+  | 'pushedPeriod'
+  | 'codeLicense'
+  | 'includeForks'
+  | 'visibility'
+  | 'topic'
+  | 'searchInName'
+  | 'searchInDescription'
+  | 'searchInReadme'
+  | 'archived'
+  | 'mirror'
+  | 'org'
+  | 'fileExtension'
+  | 'filePath'
+  | 'fileName'
+  | 'issueState'
+  | 'issueReason'
+  | 'minComments'
+  | 'label'
+  | 'assignee'
+  | 'updatedPeriod'
+  | 'fullName'
+  | 'userLocation'
+  | 'minFollowers'
+  | 'minRepos'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -210,6 +236,80 @@ export type GoogleFileType = '' | (typeof GOOGLE_FILE_TYPES)[number]
  * f=自由に使用・共有できる/fc=+営利目的も可/fm=+変更も可/fmc=+営利目的の変更も可
  */
 export type GoogleLicense = '' | 'f' | 'fc' | 'fm' | 'fmc'
+
+/**
+ * GitHubのリポジトリライセンス(license:、SPDX相当ID)。詳細検索フォームの
+ * 「ライセンス」プルダウン(50件)から全件を採取(2026-07-12にGUI操作で実測、issue #64)
+ */
+export const GITHUB_LICENSES = [
+  '0bsd',
+  'afl-3.0',
+  'agpl-3.0',
+  'apache-2.0',
+  'artistic-2.0',
+  'blueoak-1.0.0',
+  'bsd-2-clause',
+  'bsd-2-clause-patent',
+  'bsd-3-clause',
+  'bsd-3-clause-clear',
+  'bsd-4-clause',
+  'bsl-1.0',
+  'cc-by-4.0',
+  'cc-by-sa-4.0',
+  'cc0-1.0',
+  'cecill-2.1',
+  'cern-ohl-p-2.0',
+  'cern-ohl-s-2.0',
+  'cern-ohl-w-2.0',
+  'ecl-2.0',
+  'epl-1.0',
+  'epl-2.0',
+  'eupl-1.1',
+  'eupl-1.2',
+  'gfdl-1.3',
+  'gpl-2.0',
+  'gpl-3.0',
+  'isc',
+  'lgpl-2.1',
+  'lgpl-3.0',
+  'lppl-1.3c',
+  'mit',
+  'mit-0',
+  'mpl-2.0',
+  'ms-pl',
+  'ms-rl',
+  'mulanpsl-2.0',
+  'ncsa',
+  'odbl-1.0',
+  'ofl-1.1',
+  'osl-3.0',
+  'postgresql',
+  'unlicense',
+  'upl-1.0',
+  'vim',
+  'wtfpl',
+  'zlib',
+  'cc',
+  'gpl',
+  'lgpl',
+] as const
+
+export type GithubLicense = '' | (typeof GITHUB_LICENSES)[number]
+
+/** GitHub専用。フォークの包含(fork:)。空=フォークを除外(既定)、true=含む、only=フォークのみ */
+export type ForkInclusion = '' | 'true' | 'only'
+
+/** GitHub専用。公開範囲(is:public/private)。空=指定なし */
+export type GithubVisibility = '' | 'public' | 'private'
+
+/** GitHub専用。真偽3値の絞り込み(archived:/mirror:)。空=指定なし */
+export type GithubTriState = '' | 'true' | 'false'
+
+/** GitHub専用。Issue/PRの状態(state:)。空=指定なし */
+export type IssueState = '' | 'open' | 'closed'
+
+/** GitHub専用。Issue/PRのクローズ理由(reason:、state_reason)。空=指定なし */
+export type IssueReason = '' | 'completed' | 'not planned' | 'reopened'
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
@@ -382,6 +482,66 @@ export interface QueryState {
    * 近さで探すモード。2026-07-12にGUI操作で実測(issue #55)
    */
   semanticSearch: boolean
+  /** GitHub専用。最低フォーク数(forks:)。数値文字列。2026-07-12にGUI操作で実測(issue #64) */
+  minForks: string
+  /** GitHub専用。最低サイズ、KB単位(size:)。数値文字列。2026-07-12にGUI操作で実測(issue #64) */
+  minSizeKb: string
+  /**
+   * GitHub専用。最終pushの期間(pushed:)。既存の period(created:)とは別軸の日付範囲。
+   * 2026-07-12にGUI操作で実測(issue #64)
+   */
+  pushedSince: string
+  pushedUntil: string
+  /** GitHub専用。リポジトリのライセンス(license:、SPDX相当ID)。空=指定なし */
+  codeLicense: GithubLicense
+  /** GitHub専用。フォークの包含(fork:)。リポジトリ・コード検索で共用 */
+  includeForks: ForkInclusion
+  /** GitHub専用。公開範囲(is:public/private)。リポジトリ・コード検索で共用 */
+  visibility: GithubVisibility
+  /** GitHub専用。リポジトリのトピック(topic:)。スペース区切りで複数可(すべて含む=AND) */
+  topic: string
+  /** GitHub専用。検索範囲にリポジトリ名を含める(in:name)。既定はfalseでもname/descriptionが対象 */
+  searchInName: boolean
+  /** GitHub専用。検索範囲にDescriptionを含める(in:description) */
+  searchInDescription: boolean
+  /** GitHub専用。検索範囲にREADMEを含める(in:readme) */
+  searchInReadme: boolean
+  /** GitHub専用。アーカイブ済みで絞る(archived:)。空=指定なし */
+  archived: GithubTriState
+  /** GitHub専用。ミラーリポジトリで絞る(mirror:)。空=指定なし */
+  mirror: GithubTriState
+  /** GitHub専用。組織名で絞る(org:)。リポジトリ・コード検索で共用 */
+  org: string
+  /** GitHub専用。コード検索の拡張子(path:*.{ext}へ変換)。2026-07-12にGUI操作で実測(issue #64) */
+  fileExtension: string
+  /** GitHub専用。コード検索のパス(path:、globパターンをそのまま渡す) */
+  filePath: string
+  /** GitHub専用。コード検索のファイル名(pathへ、ディレクトリ非依存のワイルドカード付きで変換) */
+  fileName: string
+  /** GitHub専用。Issue/PRの状態(state:)。空=指定なし */
+  issueState: IssueState
+  /** GitHub専用。Issue/PRのクローズ理由(reason:)。空=指定なし */
+  issueReason: IssueReason
+  /** GitHub専用。最低コメント数(comments:)。数値文字列 */
+  minComments: string
+  /** GitHub専用。ラベル(label:)。スペース区切りで複数可(すべて持つ=AND)。空白を含むラベル名は非対応 */
+  label: string
+  /** GitHub専用。担当者(assignee:)。スペース区切りで複数可(すべてに割当=AND) */
+  assignee: string
+  /**
+   * GitHub専用。Issue/PRの最終更新日の期間(updated:)。既存のperiod(created:)・
+   * pushedSince/Until(pushed:)とは別軸の日付範囲。2026-07-12にGUI操作で実測(issue #64)
+   */
+  updatedSince: string
+  updatedUntil: string
+  /** GitHub専用。ユーザーの表示名(fullname:、要引用符)。2026-07-12にGUI操作で実測(issue #64) */
+  fullName: string
+  /** GitHub専用。ユーザーの所在地(location:、常に引用符で1つの値として扱う) */
+  userLocation: string
+  /** GitHub専用。最低フォロワー数(followers:)。数値文字列 */
+  minFollowers: string
+  /** GitHub専用。最低公開リポジトリ数(repos:)。数値文字列 */
+  minRepos: string
   /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
   xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */

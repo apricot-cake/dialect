@@ -1,12 +1,19 @@
 import type {
   FantiaCategory,
+  GithubLicense,
   GoogleFileType,
   GoogleLicense,
   NicoGenre,
   PostLanguage,
   QueryState,
 } from './types'
-import { FANTIA_CATEGORIES, GOOGLE_FILE_TYPES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
+import {
+  FANTIA_CATEGORIES,
+  GITHUB_LICENSES,
+  GOOGLE_FILE_TYPES,
+  NICO_GENRES,
+  POST_LANGUAGE_CODES,
+} from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
 
@@ -99,6 +106,34 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
   if (state.excludeAi) params.set('noai', '1')
+  if (state.minForks.trim()) params.set('forks', state.minForks.trim())
+  if (state.minSizeKb.trim()) params.set('size', state.minSizeKb.trim())
+  if (state.pushedSince) params.set('psince', state.pushedSince)
+  if (state.pushedUntil) params.set('puntil', state.pushedUntil)
+  if (state.codeLicense) params.set('glic', state.codeLicense)
+  if (state.includeForks) params.set('fork', state.includeForks)
+  if (state.visibility) params.set('vis', state.visibility)
+  if (state.topic.trim()) params.set('topic', state.topic.trim())
+  if (state.searchInName) params.set('inname', '1')
+  if (state.searchInDescription) params.set('indesc', '1')
+  if (state.searchInReadme) params.set('inreadme', '1')
+  if (state.archived) params.set('arch', state.archived)
+  if (state.mirror) params.set('mirror', state.mirror)
+  if (state.org.trim()) params.set('org', state.org.trim())
+  if (state.fileExtension.trim()) params.set('ext', state.fileExtension.trim())
+  if (state.filePath.trim()) params.set('fpath', state.filePath.trim())
+  if (state.fileName.trim()) params.set('fname', state.fileName.trim())
+  if (state.issueState) params.set('istate', state.issueState)
+  if (state.issueReason) params.set('ireason', state.issueReason)
+  if (state.minComments.trim()) params.set('comments', state.minComments.trim())
+  if (state.label.trim()) params.set('label', state.label.trim())
+  if (state.assignee.trim()) params.set('assignee', state.assignee.trim())
+  if (state.updatedSince) params.set('usince', state.updatedSince)
+  if (state.updatedUntil) params.set('uuntil', state.updatedUntil)
+  if (state.fullName.trim()) params.set('fullname', state.fullName.trim())
+  if (state.userLocation.trim()) params.set('uloc', state.userLocation.trim())
+  if (state.minFollowers.trim()) params.set('followers', state.minFollowers.trim())
+  if (state.minRepos.trim()) params.set('repos', state.minRepos.trim())
   // 既定の「指定なし(auto)」のときは省略。条件に数えない(activeConcepts)選択をURLに
   // 出すと、他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ復元されない
   // 非対称が起きるため。v4からは新しい順(new)も意図的な選択なので明示的に持つ
@@ -263,6 +298,45 @@ function paramsToState(params: URLSearchParams): QueryState {
   const age = params.get('age')
   if (age === 'safe' || age === 'r18') state.ageRating = age
   state.excludeAi = params.get('noai') === '1'
+  state.minForks = params.get('forks') ?? ''
+  state.minSizeKb = params.get('size') ?? ''
+  state.pushedSince = params.get('psince') ?? ''
+  state.pushedUntil = params.get('puntil') ?? ''
+  const glic = params.get('glic')
+  if (glic && (GITHUB_LICENSES as readonly string[]).includes(glic)) {
+    state.codeLicense = glic as GithubLicense
+  }
+  const fork = params.get('fork')
+  if (fork === 'true' || fork === 'only') state.includeForks = fork
+  const vis = params.get('vis')
+  if (vis === 'public' || vis === 'private') state.visibility = vis
+  state.topic = params.get('topic') ?? ''
+  state.searchInName = params.get('inname') === '1'
+  state.searchInDescription = params.get('indesc') === '1'
+  state.searchInReadme = params.get('inreadme') === '1'
+  const arch = params.get('arch')
+  if (arch === 'true' || arch === 'false') state.archived = arch
+  const mirror = params.get('mirror')
+  if (mirror === 'true' || mirror === 'false') state.mirror = mirror
+  state.org = params.get('org') ?? ''
+  state.fileExtension = params.get('ext') ?? ''
+  state.filePath = params.get('fpath') ?? ''
+  state.fileName = params.get('fname') ?? ''
+  const istate = params.get('istate')
+  if (istate === 'open' || istate === 'closed') state.issueState = istate
+  const ireason = params.get('ireason')
+  if (ireason === 'completed' || ireason === 'not planned' || ireason === 'reopened') {
+    state.issueReason = ireason
+  }
+  state.minComments = params.get('comments') ?? ''
+  state.label = params.get('label') ?? ''
+  state.assignee = params.get('assignee') ?? ''
+  state.updatedSince = params.get('usince') ?? ''
+  state.updatedUntil = params.get('uuntil') ?? ''
+  state.fullName = params.get('fullname') ?? ''
+  state.userLocation = params.get('uloc') ?? ''
+  state.minFollowers = params.get('followers') ?? ''
+  state.minRepos = params.get('repos') ?? ''
   const sort = params.get('sort')
   if (
     sort === 'new' ||
