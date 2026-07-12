@@ -162,7 +162,7 @@ export function ConditionPicker({
     searchTier = hits[0]?.tier ?? null
     rows = hits.map((h) => CONCEPT_MAP[h.id])
   } else {
-    // keywords is a regular pickable concept since the smart-input demotion
+    // keywords is a regular pickable concept, same as any other
     const candidates = CONCEPT_DEFS.filter(
       (d) =>
         matchesCategory(d.id) &&

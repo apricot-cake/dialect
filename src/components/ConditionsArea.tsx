@@ -4,10 +4,8 @@ import type { ConceptId, QueryState } from '@/core/types'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import { detectConflicts } from '@/core/conflicts'
 import { t } from '@/i18n'
-import type { SmartFragments } from '@/core/smartInput'
 import { useCoarsePointer } from '@/hooks/useCoarsePointer'
 import { ConditionBar } from './ConditionBar'
-import { SmartInput } from './SmartInput'
 
 // バー追加・削除時のFLIPと降ってくる出現(デザインの motionFeel='spring' 相当)
 const SPRING = { duration: 0.64, ease: [0.16, 1, 0.3, 1] as const }
@@ -118,7 +116,6 @@ export function ConditionsArea({
   dark,
   chipsApi,
   patch,
-  onApplySmart,
   removeConcept,
   onClear,
   shareUrl,
@@ -133,7 +130,6 @@ export function ConditionsArea({
   dark: boolean
   chipsApi: ChipsApi
   patch: (patch: Partial<QueryState>) => void
-  onApplySmart: (fragments: SmartFragments) => void
   removeConcept: (concept: ConceptId) => void
   /** 条件が1つでもあるときだけ渡る。undefined ならクリアボタンを出さない */
   onClear?: () => void
@@ -161,9 +157,6 @@ export function ConditionsArea({
       /* クリップボードが使えない環境では何もしない(アドレスバーから手動コピー可) */
     }
   }
-  // Keywords are no longer a fixed slot (demoted to a regular concept by the
-  // smart input): bars follow `added` alone, so an empty search shows zero
-  // bars and just the input line
   const barDefs = added.map((c) => CONCEPT_MAP[c])
   // 必ず0件になる条件の組み合わせを事前に警告する(ブロックはしない。issue #44)
   const conflicts = detectConflicts(query)
@@ -182,13 +175,6 @@ export function ConditionsArea({
         style={{ justifyContent: 'safe center' }}
       >
         <div data-bars-list className="flex w-full max-w-[620px] flex-col items-stretch gap-4">
-          {/* The single pure entry line: committing drops chips onto the
-              bars below and the line goes back to empty */}
-          <motion.div layout transition={SPRING} className="flex w-full items-start gap-2.5">
-            <div className="dl-bar-spacer w-[30px] shrink-0" />
-            <SmartInput dark={dark} onApply={onApplySmart} />
-            <div className="dl-remove-outer-slot w-[30px] shrink-0" />
-          </motion.div>
           <AnimatePresence initial={false}>
             {barDefs.map((def) => (
               <motion.div
@@ -198,6 +184,7 @@ export function ConditionsArea({
                 className="relative flex w-full flex-col gap-2"
                 initial={{ opacity: 0, y: -14 }}
                 animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -14 }}
                 transition={SPRING}
               >
                 <div className="flex w-full items-center gap-2.5">
@@ -211,7 +198,11 @@ export function ConditionsArea({
                     onCommit={() => chipsApi.onCommit(def.id)}
                     onRemoveChip={(index) => chipsApi.onRemoveChip(def.id, index)}
                     patch={patch}
-                    onRemove={() => removeConcept(def.id)}
+                    onRemove={
+                      def.id === 'keywords' && added.length === 1
+                        ? undefined
+                        : () => removeConcept(def.id)
+                    }
                   />
                 </div>
               </motion.div>

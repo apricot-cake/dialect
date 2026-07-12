@@ -25,7 +25,6 @@ import {
   type HistoryEntry,
   type StoredQuery,
 } from '@/core/storage'
-import { mergeFragments, type SmartFragments } from '@/core/smartInput'
 import { andTerms, exactPhrases, words } from '@/core/text'
 import { getLang, setLang, subscribe, t, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
@@ -118,6 +117,8 @@ function loadInitial(): {
   for (const concept of activeConcepts(query)) {
     if (!added.includes(concept)) added.push(concept)
   }
+  // 条件が何も無いときの初期フィールドはワード検索(常に最低1本は入口を出す)
+  if (added.length === 0) added = ['keywords']
 
   // 新形式=PlatformId配列のJSON。旧形式(単一選択時代の生文字列 "x"/"null")は
   // JSONとして不正なのでparseが例外を投げる→そちらを単一IDとして読み替える
@@ -286,13 +287,20 @@ export default function App() {
   }
 
   // ---- 条件バーの追加・削除 ----
+  // まだ何も触っていないワード検索1本だけの状態(初期フィールド)かどうか
+  const isPristineKeywordSlot = (a: ConceptId[]) =>
+    a.length === 1 && a[0] === 'keywords' && !activeConcepts(query).includes('keywords')
+  // バーが0本にならないよう、最後の1本まで無くなったら初期フィールドへ戻す
+  const withKeywordsFloor = (a: ConceptId[]): ConceptId[] => (a.length === 0 ? ['keywords'] : a)
   const addConcept = (concept: ConceptId) => {
     setPickerOpen(false)
     if (added.includes(concept)) return
     // トグル系はOFFのバーを置いても意味がないので、追加した時点でONにする
     const def = CONCEPT_MAP[concept]
     if (def.widget === 'toggle') patchQuery({ [def.field]: true })
-    setAdded((a) => [...a, concept])
+    // 初期フィールドが空のまま条件を追加したときは、そのフィールドを追加した
+    // 条件へ差し替える(空のワード検索バーと新しいバーが並ぶのを避ける)
+    setAdded((a) => (isPristineKeywordSlot(a) ? [concept] : [...a, concept]))
     setConceptUsage(recordConceptUsage([concept], Date.now()))
   }
   // 家族の「まとめて追加」。未追加のものだけをまとめて足し、トグル系はONにする
@@ -307,7 +315,10 @@ export default function App() {
       }
     }
     if (Object.keys(toggles).length > 0) patchQuery(toggles)
-    setAdded((a) => [...a, ...fresh.filter((c) => !a.includes(c))])
+    setAdded((a) => {
+      const base = isPristineKeywordSlot(a) ? [] : a
+      return [...base, ...fresh.filter((c) => !base.includes(c))]
+    })
     setConceptUsage(recordConceptUsage(fresh, Date.now()))
   }
   const removeConcept = (concept: ConceptId) => {
@@ -319,7 +330,7 @@ export default function App() {
     else if (concept === 'sortOrder') patchQuery({ sort: 'auto' })
     else if (def.widget === 'toggle') patchQuery({ [def.field]: false })
     else patchQuery({ [def.field]: '' })
-    setAdded((a) => a.filter((c) => c !== concept))
+    setAdded((a) => withKeywordsFloor(a.filter((c) => c !== concept)))
     if (def.widget === 'chips') {
       setChips((c) => ({ ...c, [concept]: [] }))
       setRaw((r) => ({ ...r, [concept]: '' }))
@@ -330,13 +341,14 @@ export default function App() {
   // サイト絞り込み(filterIds)は検索条件ではなくモーダルの表示設定なので残す
   const clearAll = () => {
     setQuery(defaultState())
-    setAdded([])
+    setAdded(['keywords'])
     setChips({})
     setRaw({})
   }
-  // 消すものが何も無い(初期状態)ときはクリアを出さない。
+  // 消すものが何も無い(初期フィールドが空のままの状態)ときはクリアを出さない。
   // 入力中テキストも emitChips で query に即反映されるため activeConcepts で拾える
-  const canClear = added.length > 0 || activeConcepts(query).length > 0
+  const isPristineAdded = added.length === 0 || (added.length === 1 && added[0] === 'keywords')
+  const canClear = activeConcepts(query).length > 0 || !isPristineAdded
 
   // ---- 検索の保存・復元・履歴 ----
   const handleSave = (name: string) => {
@@ -366,7 +378,7 @@ export default function App() {
   const restoreSaved = (entry: { params: string }) => {
     const restored = toQuery(entry)
     setQuery(restored)
-    setAdded([...new Set(activeConcepts(restored))])
+    setAdded(withKeywordsFloor([...new Set(activeConcepts(restored))]))
     setChips(seedChips(restored))
     setRaw({})
     setSavedListOpen(false)
@@ -374,22 +386,12 @@ export default function App() {
   // 貼り付けた検索URLの逆翻訳結果を適用。保存の復元と同じ手順でバー・チップを組み直す
   const applyReverse = (state: QueryState) => {
     setQuery(state)
-    setAdded([...new Set(activeConcepts(state))])
+    setAdded(withKeywordsFloor([...new Set(activeConcepts(state))]))
     setChips(seedChips(state))
     setRaw({})
     setReverseOpen(false)
   }
 
-  // Commit of the smart input: append the fragments to the current
-  // conditions, raise bars for every valued concept, and rebuild chips
-  // (same path as applying a reverse translation, but additive, not replace)
-  const applySmart = (fragments: SmartFragments) => {
-    const next = mergeFragments(query, fragments)
-    setQuery(next)
-    setAdded((a) => [...a, ...activeConcepts(next).filter((c) => !a.includes(c))])
-    setChips(seedChips(next))
-    setRaw({})
-  }
   return (
     <div className="fixed inset-0 overflow-hidden bg-bg text-fg">
       <DotsCanvas dark={dark} />
@@ -413,7 +415,6 @@ export default function App() {
           dark={dark}
           chipsApi={chipsApi}
           patch={patchQuery}
-          onApplySmart={applySmart}
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}

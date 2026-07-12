@@ -481,20 +481,6 @@ export const ja = {
   'group.text': 'ブログ・掲示板',
   'group.web': 'Web検索',
 
-  // Smart input (build conditions from one line)
-  'smart.label': 'スマート入力欄',
-  'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ',
-  'smart.commit': '条件にする',
-  'smart.preview': 'この条件になります:',
-  // Hint panel: opened from the "?" button while the input is empty.
-  // Example lists are |-separated; each example renders as a read-only chip
-  'smart.hint.toggle': '書き方のヒント',
-  'smart.hint.title': '使える書き方:',
-  'smart.hint.exclude.ex': '-犬',
-  'smart.hint.phrase.ex': '"猫カフェ"',
-  'smart.hint.user.ex': '@ユーザー名',
-  'smart.hint.tag.ex': '#タグ',
-
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',
   'ui.clearConditions': 'すべてクリア',

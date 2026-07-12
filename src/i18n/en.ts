@@ -484,20 +484,6 @@ export const en = {
   'group.text': 'Blogs & Forums',
   'group.web': 'Web Search',
 
-  // Smart input (build conditions from one line)
-  'smart.label': 'Smart input',
-  'smart.placeholder': 'e.g. cat -dog @user #tag',
-  'smart.commit': 'Add as conditions',
-  'smart.preview': 'Turns into:',
-  // Hint panel: opened from the "?" button while the input is empty.
-  // Example lists are |-separated; each example renders as a read-only chip
-  'smart.hint.toggle': 'Typing hints',
-  'smart.hint.title': 'What you can type:',
-  'smart.hint.exclude.ex': '-dog',
-  'smart.hint.phrase.ex': '"cat cafe"',
-  'smart.hint.user.ex': '@username',
-  'smart.hint.tag.ex': '#tag',
-
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
   'ui.clearConditions': 'Clear all',
