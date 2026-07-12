@@ -345,10 +345,27 @@ export default function App() {
     setChips({})
     setRaw({})
   }
-  // 消すものが何も無い(初期フィールドが空のままの状態)ときはクリアを出さない。
-  // 入力中テキストも emitChips で query に即反映されるため activeConcepts で拾える
+  // Action buttons (clear all / copy link / QR / save) appear only once some
+  // condition holds a committed value — adding an empty bar is not enough.
+  // Live (uncommitted) chip text is excluded by rebuilding chip-widget fields
+  // from committed chips before counting active concepts
+  const committedQuery: QueryState = { ...query }
+  for (const def of CONCEPT_DEFS) {
+    if (def.widget !== 'chips') continue
+    const committed = chips[def.id] ?? []
+    if (def.id === 'keywords') {
+      committedQuery.terms = committed.length > 0 ? committed : ['']
+    } else if (def.id === 'exactPhrase') {
+      committedQuery.exactPhrase = committed.length > 0 ? committed : ['']
+    } else {
+      ;(committedQuery as unknown as Record<string, unknown>)[def.field] = committed.join(' ')
+    }
+  }
+  const canClear = activeConcepts(committedQuery).length > 0
+  // The reverse dialog's "will replace" note still counts live text and extra
+  // empty bars, because applying a pasted URL wipes those too
   const isPristineAdded = added.length === 0 || (added.length === 1 && added[0] === 'keywords')
-  const canClear = activeConcepts(query).length > 0 || !isPristineAdded
+  const hasAnyConditions = activeConcepts(query).length > 0 || !isPristineAdded
 
   // ---- 検索の保存・復元・履歴 ----
   const handleSave = (name: string) => {
@@ -473,7 +490,7 @@ export default function App() {
         open={reverseOpen}
         onOpenChange={setReverseOpen}
         dark={dark}
-        hasConditions={canClear}
+        hasConditions={hasAnyConditions}
         onApply={applyReverse}
         instanceHosts={instanceHosts}
       />
