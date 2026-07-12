@@ -45,9 +45,6 @@ export const CHECKLIST_HEADING: Record<PlatformId, string> = {
   bilibili: 'bilibili',
   fantia: 'Fantia',
   google: 'Google',
-  github: 'GitHub',
-  qiita: 'Qiita',
-  zenn: 'Zenn',
 }
 
 /** Split `checklist` at every `## ` heading and return the blocks whose heading line contains `headingFragment`, concatenated. */

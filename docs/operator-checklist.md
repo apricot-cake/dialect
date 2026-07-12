@@ -368,73 +368,6 @@ UI全面リプレース時に撤去済みで、この節はその復活ではな
 GUI操作で確証できていない(URL叩きではエラーなく結果は返るが、結果ページ内リンクへの引き継ぎが最後の1系統に
 縮退する挙動を確認)。実装は各値を素直にカンマ結合して送るが、次回定期確認で要再検証。
 
-## GitHub
-
-演算子点数が既存サイト中最多のため、issue #53でPhase 1(探す種類・キーワード・完全一致・除外・ユーザー指定・
-プログラミング言語・最低スター数・期間)を実装し、issue #64(本節の追加分)で残りを実装した。resultTypeの
-うち5種(commits/registrypackages/wikis/topics/marketplace)は#64の調査中に判明した調査漏れのため
-issue #65(第3弾)へ切り出し済み(docs/operator-research.md参照)。
-
-| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
-|---|---|---|---|---|---|---|
-| 中 | `user:`(所有者)[GUI操作] | このユーザーの投稿だけ | [github.com/search?q=猫 user:octocat&type=repositories](https://github.com/search?q=%E7%8C%AB%20user%3Aoctocat&type=repositories) | octocatが所有するリポジトリのみ | 2026-07-12 | ✅ |
-| 中 | `author:`(Issue/PR投稿者)[GUI操作] | このユーザーの投稿だけ(Issue/PR) | [github.com/search?q=猫 author:octocat&type=issues](https://github.com/search?q=%E7%8C%AB%20author%3Aoctocat&type=issues) | octocatが開いたIssueのみ | 2026-07-12 | ✅ |
-| 高 | `language:`(700種超)[GUI操作] | プログラミング言語 | [github.com/search?q=猫 language:TypeScript&type=repositories](https://github.com/search?q=%E7%8C%AB%20language%3ATypeScript&type=repositories) | TypeScriptで書かれたリポジトリのみ | 2026-07-12 | ✅ |
-| 高 | `stars:>=N`(範囲構文)[GUI操作/doc] | 最低スター数 | [github.com/search?q=猫 stars:>=100&type=repositories](https://github.com/search?q=%E7%8C%AB%20stars%3A%3E%3D100&type=repositories) | 100スター以上のリポジトリのみ(GUI操作では`stars:>100`のみ実測、`>=`はdoc補完) | 2026-07-12 | ✅ |
-| 中 | `created:`(範囲構文)[GUI操作/doc] | 期間 | [github.com/search?q=猫 created:>=2024-01-01&type=repositories](https://github.com/search?q=%E7%8C%AB%20created%3A%3E%3D2024-01-01&type=repositories) | 2024年以降作成のリポジトリのみ(GUI操作では`created:>YYYY-MM-DD`のみ実測、`>=`/`..`範囲はdoc補完) | 2026-07-12 | ✅ |
-| 低 | `type=`(6種)[GUI操作] | 探す種類 | [github.com/search?q=猫&type=code](https://github.com/search?q=%E7%8C%AB&type=code) | コード検索結果 | 2026-07-12 | ✅ |
-| 中 | `forks:>=N`(範囲構文)[GUI操作/doc] | 最低フォーク数 | [github.com/search?q=猫 forks:>=10&type=repositories](https://github.com/search?q=%E7%8C%AB%20forks%3A%3E%3D10&type=repositories) | 10フォーク以上のリポジトリのみ(GUI操作実測は`forks:10..50`型の範囲構文、`>=`はdoc補完) | 2026-07-12 | ✅ |
-| 低 | `size:>=N`(KB)[GUI操作] | 最低サイズ（KB） | [github.com/search?q=猫 size:>=500&type=repositories](https://github.com/search?q=%E7%8C%AB%20size%3A%3E%3D500&type=repositories) | 500KB以上のリポジトリのみ | 2026-07-12 | ✅ |
-| 中 | `pushed:`(範囲構文)[GUI操作/doc] | 最終update日 | [github.com/search?q=猫 pushed:>=2024-01-01&type=repositories](https://github.com/search?q=%E7%8C%AB%20pushed%3A%3E%3D2024-01-01&type=repositories) | 2024年以降pushされたリポジトリのみ(GUI操作実測は`pushed:2024-01-01`の裸値、範囲構文はdoc補完) | 2026-07-12 | ✅ |
-| 中 | `license:`(50種のSPDX ID)[GUI操作] | ライセンス（GitHub） | [github.com/search?q=猫 license:mit&type=repositories](https://github.com/search?q=%E7%8C%AB%20license%3Amit&type=repositories) | MITライセンスのリポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `fork:true/only`[GUI操作] | フォークの扱い | [github.com/search?q=猫 fork:true&type=repositories](https://github.com/search?q=%E7%8C%AB%20fork%3Atrue&type=repositories) | フォークも含めたリポジトリ | 2026-07-12 | ✅ |
-| 低 | `is:public/private`[GUI操作(Phase1で記録済み)] | 公開範囲 | [github.com/search?q=猫 is:public&type=repositories](https://github.com/search?q=%E7%8C%AB%20is%3Apublic&type=repositories) | 公開リポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `org:`[doc] | 組織名 | [github.com/search?q=猫 org:github&type=repositories](https://github.com/search?q=%E7%8C%AB%20org%3Agithub&type=repositories) | github組織が持つリポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `topic:`(複数=AND)[doc] | トピック | [github.com/search?q=猫 topic:react&type=repositories](https://github.com/search?q=%E7%8C%AB%20topic%3Areact&type=repositories) | reactトピックを持つリポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `in:name,description,readme`[doc] | 検索範囲(名前/説明文/README) | [github.com/search?q=猫 in:readme&type=repositories](https://github.com/search?q=%E7%8C%AB%20in%3Areadme&type=repositories) | READMEに「猫」を含むリポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `archived:true/false`[doc] | アーカイブ済み | [github.com/search?q=猫 archived:true&type=repositories](https://github.com/search?q=%E7%8C%AB%20archived%3Atrue&type=repositories) | アーカイブ済みリポジトリのみ | 2026-07-12 | ✅ |
-| 低 | `mirror:true/false`[doc] | ミラーリポジトリ | [github.com/search?q=猫 mirror:false&type=repositories](https://github.com/search?q=%E7%8C%AB%20mirror%3Afalse&type=repositories) | ミラーでないリポジトリのみ | 2026-07-12 | ✅ |
-| 中 | `path:`(拡張子/パス/ファイル名の3欄すべてpath:へ合成)[GUI操作] | 拡張子／パス／ファイル名 | [github.com/search?q=猫 path:*.rb&type=code](https://github.com/search?q=%E7%8C%AB%20path%3A*.rb&type=code) | .rbファイルのコード検索のみ | 2026-07-12 | ✅ |
-| 中 | `state:open/closed`[GUI操作] | 状態 | [github.com/search?q=猫 state:open&type=issues](https://github.com/search?q=%E7%8C%AB%20state%3Aopen&type=issues) | オープン中のIssueのみ | 2026-07-12 | ✅ |
-| 低 | `reason:`(要引用符)[GUI操作] | クローズ理由 | [github.com/search?q=猫 reason:"not planned"&type=issues](https://github.com/search?q=%E7%8C%AB%20reason%3A%22not%20planned%22&type=issues) | 「対応しない」でクローズされたIssueのみ | 2026-07-12 | ✅ |
-| 中 | `comments:>=N`(範囲構文)[GUI操作/doc] | 最低コメント数 | [github.com/search?q=猫 comments:>=5&type=issues](https://github.com/search?q=%E7%8C%AB%20comments%3A%3E%3D5&type=issues) | 5件以上コメントが付いたIssueのみ(GUI操作実測は`comments:>5`型、`>=`はdoc補完) | 2026-07-12 | ✅ |
-| 中 | `label:`(複数=AND、要引用符)[GUI操作] | ラベル | [github.com/search?q=猫 label:bug&type=issues](https://github.com/search?q=%E7%8C%AB%20label%3Abug&type=issues) | bugラベルが付いたIssueのみ | 2026-07-12 | ✅ |
-| 低 | `assignee:`(複数=AND)[GUI操作] | 担当者 | [github.com/search?q=猫 assignee:octocat&type=issues](https://github.com/search?q=%E7%8C%AB%20assignee%3Aoctocat&type=issues) | octocatが担当のIssueのみ | 2026-07-12 | ✅ |
-| 低 | `mentions:`(既存mentionsUser概念を流用)[GUI操作] | 宛先・メンション | [github.com/search?q=猫 mentions:octocat&type=issues](https://github.com/search?q=%E7%8C%AB%20mentions%3Aoctocat&type=issues) | octocatにメンションされたIssueのみ | 2026-07-12 | ✅ |
-| 中 | `updated:`(範囲構文)[GUI操作/doc] | 最終更新日 | [github.com/search?q=猫 updated:>=2024-01-01&type=issues](https://github.com/search?q=%E7%8C%AB%20updated%3A%3E%3D2024-01-01&type=issues) | 2024年以降更新されたIssueのみ(GUI操作実測は裸値、範囲構文はdoc補完) | 2026-07-12 | ✅ |
-| 低 | `fullname:`(要引用符)[GUI操作] | 表示名 | [github.com/search?q=fullname:"Grace Hopper"&type=users](https://github.com/search?q=fullname%3A%22Grace%20Hopper%22&type=users) | 表示名がGrace Hopperのユーザーのみ | 2026-07-12 | ✅ |
-| 低 | `location:`(要引用符)[GUI操作] | 所在地 | [github.com/search?q=location:"Tokyo"&type=users](https://github.com/search?q=location%3A%22Tokyo%22&type=users) | 所在地がTokyoのユーザーのみ | 2026-07-12 | ✅ |
-| 低 | `followers:>=N`(範囲構文)[GUI操作/doc] | 最低フォロワー数 | [github.com/search?q=followers:>=100&type=users](https://github.com/search?q=followers%3A%3E%3D100&type=users) | フォロワー100人以上のユーザーのみ(GUI操作実測は`followers:>100`型、`>=`はdoc補完) | 2026-07-12 | ✅ |
-| 低 | `repos:>=N`(範囲構文)[GUI操作/doc] | 最低公開リポジトリ数 | [github.com/search?q=repos:>=10&type=users](https://github.com/search?q=repos%3A%3E%3D10&type=users) | 公開リポジトリ10件以上のユーザーのみ(GUI操作実測は`repos:>10`型、`>=`はdoc補完) | 2026-07-12 | ✅ |
-
-## Qiita
-
-詳細検索パネル(tuneアイコン)は未ログインだとログインモーダルが開くため中身は見られないが、演算子自体は
-検索ボックスへ直接入力すれば未ログインでも機能する(下記URLはいずれも未ログインで確認)。
-
-| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
-|---|---|---|---|---|---|---|
-| 高 | `tag:`[GUI操作] | ハッシュタグ | [qiita.com/search?q=tag:Python 猫](https://qiita.com/search?q=tag%3APython%20%E7%8C%AB) | Pythonタグがついた記事のみ(6348→1128件に絞り込み確認) | 2026-07-12 | ✅ |
-| 中 | `user:`[GUI操作] | このユーザーの投稿だけ | [qiita.com/search?q=user:qiita](https://qiita.com/search?q=user%3Aqiita) | @qiitaアカウントの記事のみ | 2026-07-12 | ✅ |
-| 中 | `title:`(語ごとに付与)[GUI操作] | タイトルだけで探す | [qiita.com/search?q=title:猫](https://qiita.com/search?q=title%3A%E7%8C%AB) | タイトルに「猫」を含む記事のみ | 2026-07-12 | ✅ |
-| 中 | `stocks:>=N`[GUI操作] | 最低ストック数 | [qiita.com/search?q=title:猫 stocks:>10](https://qiita.com/search?q=title%3A%E7%8C%AB%20stocks%3A%3E10) | ストック10以上の記事のみ(52件) | 2026-07-12 | ✅ |
-| 低 | `created:`[GUI操作] | 期間 | [qiita.com/search?q=user:qiita created:>2024-01-01](https://qiita.com/search?q=user%3Aqiita%20created%3A%3E2024-01-01) | 2024年以降の記事のみ(38件) | 2026-07-12 | ✅ |
-| 低 | `sort=created/stock`[GUI操作] | 並び順 | [qiita.com/search?q=猫&sort=created](https://qiita.com/search?q=%E7%8C%AB&sort=created) | 新着順で表示 | 2026-07-12 | ✅ |
-
-**ログイン差分**: 「ストックのみ」トグル・質問タブの「購読のみ」トグルはいずれも未ログインだとログインページへの
-リンクになり、パラメータ名を確認できなかった(ビューア依存の個人フィルタと推定)。別issueへ切り出し済み。
-
-## Zenn
-
-| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
-|---|---|---|---|---|---|---|
-| 中 | `source=books/scraps/users/publications`[GUI操作] | 探す種類 | [zenn.dev/search?q=Python&source=books](https://zenn.dev/search?q=Python&source=books) | 本(Books)タブの結果 | 2026-07-12 | ✅ |
-| 低 | `order=daily/alltime/latest`[GUI操作] | 並び順 | [zenn.dev/search?q=Python&order=latest](https://zenn.dev/search?q=Python&order=latest) | 最新順で表示 | 2026-07-12 | ✅ |
-| 低 | `mode=semantic`[GUI操作] | 意味検索 | [zenn.dev/search?q=Python&mode=semantic](https://zenn.dev/search?q=Python&mode=semantic) | 意味検索(ベータ)結果に切り替わる | 2026-07-12 | ✅ |
-
-**非対応の確認**: 除外(`-語`)は「Python」5939件→「Python -Django」が全カテゴリ0件になったことから非対応と確定
-(効くなら微減するはずが全滅)。完全一致は未確認のため未実装。
-
 ## 確認履歴
 
 | 日付 | 実施内容 |
@@ -449,3 +382,4 @@ issue #65(第3弾)へ切り出し済み(docs/operator-research.md参照)。
 | 2026-07-04 | 共通概念を拡張。resultTypeに**ショート(sp種別=9、フィルタUIから実測✅)**・再生リスト(=3)、sortOrderに**急上昇(note `sort=hot`、実測✅)**を追加。他サイトは dynamicSupport(`limitSort`)で非対応の並び順を落とす。note `sort=like`・YouTube映画・Twitchカテゴリは見送り |
 | 2026-07-05 | バグ/リファクタ監査(ultracode)の残件を実装(niconico除外only・sort=auto・Reddit until単独・5ch titleOnly)。**niconico `/tag/` ページで sort/期間/l_range が /search/ と同様に効くことをブラウザ実測**(監査のuncertain項目をクローズ・変更不要)。チェックリストにniconico /tag/行を追加。加えて**pixiv「人気の目安」(`{N}users入り`タグ、2026-07-05実装分)がチェックリスト未収録だったため実測して追加**。全13サイトの送信パラメータとチェックリストを突合し、非公式で未収録だった **X `filter:links`・`-from:`** も実測して追加(公式・安定なsort系等は簡潔さ優先で見送り) |
 | 2026-07-07 | **フェーズ0(コードが送る演算子⇄チェックリストの照合)を機械化**: `npm run check:operators`([scripts/check-operators.ts](../scripts/check-operators.ts))を追加しCIのマージゲートに載せた。既存演算子は全て自己検証(buildUrl出力に実在)を通過。**第2次採用(2026-07-06)で行の追加が漏れていた niconico `genre=`・pixiv `s_mode=s_tag_full`(タグ完全一致)・`type=ugoira`(うごくイラスト)・`/novels`(小説) の4件を、実装時の実測値を根拠に遡って追加**(この照合スクリプトが自動検出した) |
+| 2026-07-12 | **GitHub・Qiita・Zennの対応を撤去**(ユーザー層基準の再評価。第一ターゲット=日本語圏のオタク・ファンダム検索者に対し、開発者向け3サイトの専用フィールド群は横断翻訳に寄与しないため。issue #53〜#55・#64で実装した3節をチェックリストからも削除) |

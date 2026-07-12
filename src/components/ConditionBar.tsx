@@ -151,22 +151,9 @@ export function ConditionBar({
         />
       )
       break
-    case 'period': {
-      const untilField = (def.untilField ?? 'until') as keyof QueryState
-      widget = (
-        <PeriodField
-          since={query[def.field] as string}
-          until={query[untilField] as string}
-          onChange={(p) =>
-            patch({
-              ...(p.since !== undefined ? { [def.field]: p.since } : {}),
-              ...(p.until !== undefined ? { [untilField]: p.until } : {}),
-            } as Partial<QueryState>)
-          }
-        />
-      )
+    case 'period':
+      widget = <PeriodField since={query.since} until={query.until} onChange={patch} />
       break
-    }
   }
 
   const { full, partial } = supHover ? splitSupporters(def.id, query) : { full: [], partial: [] }

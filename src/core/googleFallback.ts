@@ -33,9 +33,6 @@ const SITE_DOMAINS: Partial<Record<PlatformId, string>> = {
   pinterest: 'pinterest.com',
   fivech: '5ch.net',
   animanch: 'bbs.animanch.com',
-  github: 'github.com',
-  qiita: 'qiita.com',
-  zenn: 'zenn.dev',
 }
 
 function fallbackDomain(platformId: PlatformId, ctx?: PlatformCtx): string | null {

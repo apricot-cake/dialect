@@ -18,9 +18,6 @@ function extractText(platformId: PlatformId, url: URL): string | null {
     case 'fivech':
     case 'pinterest':
     case 'google':
-    case 'github':
-    case 'qiita':
-    case 'zenn':
       return url.searchParams.get('q')
     case 'twitch':
       return url.searchParams.get('term')
@@ -113,9 +110,6 @@ const STRUCTURAL_EXCLUDE: Partial<Record<PlatformId, ReadonlySet<ConceptId>>> = 
     'safeSearchOff',
     'resultType',
   ]),
-  github: new Set(['resultType']),
-  qiita: new Set(['resultType', 'sortOrder']),
-  zenn: new Set(['resultType', 'sortOrder', 'semanticSearch']),
 }
 
 export interface RawQuery {
