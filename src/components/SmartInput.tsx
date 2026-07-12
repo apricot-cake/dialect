@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useMemo, useRef, useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
 import type { QueryState } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
@@ -52,6 +52,9 @@ export function SmartInput({
 }) {
   const [input, setInput] = useState('')
   const [helpOpen, setHelpOpen] = useState(false)
+  // The hint popover is anchored to the whole bar (not the "?" trigger) so
+  // its offset clears the bar's rounded edge instead of the button inside it
+  const barRef = useRef<HTMLDivElement>(null)
   // One clock per keystroke is plenty for resolving 今週/today
   const now = useMemo(() => new Date(), [input]) // eslint-disable-line react-hooks/exhaustive-deps
   const fragments = useMemo(() => parseSmartInput(input, now), [input, now])
@@ -94,7 +97,7 @@ export function SmartInput({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="dl-bar">
+      <div className="dl-bar" ref={barRef}>
         <svg
           width="18"
           height="18"
@@ -157,9 +160,13 @@ export function SmartInput({
               </svg>
             </Popover.Trigger>
             <Popover.Portal>
-              {/* Positioner flips to the top edge automatically when short on space */}
+              {/* Open upward: in the hero layout the space above the bar is
+                  empty, while below sit the action buttons the panel would
+                  half-cover. Flips to the bottom automatically when short
+                  on space */}
               <Popover.Positioner
-                side="bottom"
+                anchor={barRef}
+                side="top"
                 align="end"
                 sideOffset={6}
                 collisionPadding={12}
