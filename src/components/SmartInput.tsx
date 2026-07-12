@@ -1,4 +1,5 @@
 import { Fragment, useMemo, useState } from 'react'
+import { Popover } from '@base-ui/react/popover'
 import type { QueryState } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
@@ -85,10 +86,10 @@ export function SmartInput({
     const state = { ...defaultState(), ...s.patch }
     return `${t(CONCEPT_MAP[s.concept].labelKey)}: ${conceptSummary(s.concept, state)}`
   }
-  // The hint panel opens only from the "?" button (auto-opening on focus
-  // proved intrusive), and only competes with emptiness: once anything is
-  // typed the live preview takes over as the tutorial
-  const showHints = helpOpen && input.trim() === ''
+  // The hint panel is an anchored popover on the "?" button (hover or tap;
+  // auto-opening on focus proved intrusive, and an in-flow panel shoved the
+  // layout down). It only competes with emptiness: once anything is typed
+  // the live preview takes over as the tutorial
   const insertExample = (ex: string) => {
     setInput((prev) => (prev && !/[\s　]$/.test(prev) ? `${prev} ` : prev) + ex)
     // Close for real, not just visually — otherwise clearing the input
@@ -134,34 +135,71 @@ export function SmartInput({
           className="h-9 min-w-0 flex-1 border-none bg-transparent text-[15px] text-fg outline-none placeholder:text-faint"
         />
         {input.trim() === '' && (
-          <button
-            type="button"
-            data-noscale
-            aria-label={t('smart.hint.toggle')}
-            title={t('smart.hint.toggle')}
-            aria-expanded={showHints}
-            // Keep the input focused through the tap (no blur flicker)
-            onPointerDown={(e) => e.preventDefault()}
-            onClick={() => setHelpOpen((v) => !v)}
-            className={`inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full ${
-              showHints ? 'text-accent' : 'text-faint'
-            }`}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <Popover.Root open={helpOpen} onOpenChange={setHelpOpen}>
+            <Popover.Trigger
+              data-noscale
+              openOnHover
+              delay={150}
+              aria-label={t('smart.hint.toggle')}
+              title={t('smart.hint.toggle')}
+              className={`inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full ${
+                helpOpen ? 'text-accent' : 'text-faint'
+              }`}
             >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <path d="M12 17h.01" />
-            </svg>
-          </button>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+            </Popover.Trigger>
+            <Popover.Portal>
+              {/* Positioner flips to the top edge automatically when short on space */}
+              <Popover.Positioner
+                side="bottom"
+                align="end"
+                sideOffset={6}
+                collisionPadding={12}
+                className="z-50"
+              >
+                <Popover.Popup className="dl-glass dl-drop-in w-[min(360px,calc(100vw-24px))] rounded-[14px] px-3.5 py-3 text-[12px] leading-[1.6]">
+                  <div className="mb-2 text-faint">{t('smart.hint.title')}</div>
+                  <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5">
+                    {HINT_ROWS.map((row) => (
+                      <Fragment key={row.exKey}>
+                        <span className="font-semibold whitespace-nowrap text-label">
+                          {t(row.labelKey)}
+                        </span>
+                        <span className="flex flex-wrap items-center gap-1.5">
+                          {t(row.exKey)
+                            .split('|')
+                            .map((ex) => (
+                              <button
+                                key={ex}
+                                type="button"
+                                data-noscale
+                                onClick={() => insertExample(ex)}
+                                className="inline-flex cursor-pointer items-center rounded-full border border-border bg-bg px-2.5 py-0.5 text-fg"
+                              >
+                                {ex}
+                              </button>
+                            ))}
+                        </span>
+                      </Fragment>
+                    ))}
+                  </div>
+                </Popover.Popup>
+              </Popover.Positioner>
+            </Popover.Portal>
+          </Popover.Root>
         )}
         {filled && (
           <button
@@ -174,37 +212,6 @@ export function SmartInput({
           </button>
         )}
       </div>
-      {showHints && (
-        <div className="rounded-[10px] border border-border bg-card px-3.5 py-3 text-[12px] leading-[1.6]">
-          <div className="mb-2 text-faint">{t('smart.hint.title')}</div>
-          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5">
-            {HINT_ROWS.map((row) => (
-              <Fragment key={row.exKey}>
-                <span className="font-semibold whitespace-nowrap text-label">
-                  {t(row.labelKey)}
-                </span>
-                <span className="flex flex-wrap items-center gap-1.5">
-                  {t(row.exKey)
-                    .split('|')
-                    .map((ex) => (
-                      <button
-                        key={ex}
-                        type="button"
-                        data-noscale
-                        // Keep the input focused through the tap (no blur flicker)
-                        onPointerDown={(e) => e.preventDefault()}
-                        onClick={() => insertExample(ex)}
-                        className="inline-flex cursor-pointer items-center rounded-full border border-border bg-bg px-2.5 py-0.5 text-fg"
-                      >
-                        {ex}
-                      </button>
-                    ))}
-                </span>
-              </Fragment>
-            ))}
-          </div>
-        </div>
-      )}
       {input.trim() !== '' && filled && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-2 text-[12px] leading-[1.5]">
           <span className="text-faint">{t('smart.preview')}</span>
