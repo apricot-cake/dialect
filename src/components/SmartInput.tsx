@@ -18,8 +18,7 @@ import { t, type MessageKey } from '@/i18n'
 /**
  * Hint rows (one per grammar item) for the on-demand help panel. Labels
  * reuse the concept label keys so the panel and the live-preview chips
- * speak the same words; examples live in i18n as |-separated lists and
- * insert on tap
+ * speak the same words; examples live in i18n as |-separated lists
  */
 const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
   { labelKey: 'concept.exclude.label', exKey: 'smart.hint.exclude.ex' },
@@ -88,14 +87,10 @@ export function SmartInput({
   }
   // The hint panel is an anchored popover on the "?" button (hover or tap;
   // auto-opening on focus proved intrusive, and an in-flow panel shoved the
-  // layout down). It only competes with emptiness: once anything is typed
-  // the live preview takes over as the tutorial
-  const insertExample = (ex: string) => {
-    setInput((prev) => (prev && !/[\s　]$/.test(prev) ? `${prev} ` : prev) + ex)
-    // Close for real, not just visually — otherwise clearing the input
-    // later would make the panel pop back uninvited
-    setHelpOpen(false)
-  }
+  // layout down). It's a read-only cheat sheet: tap-to-insert was dropped
+  // because most examples are placeholders the user would have to retype
+  // anyway. It only competes with emptiness: once anything is typed the
+  // live preview takes over as the tutorial
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -182,15 +177,12 @@ export function SmartInput({
                           {t(row.exKey)
                             .split('|')
                             .map((ex) => (
-                              <button
+                              <span
                                 key={ex}
-                                type="button"
-                                data-noscale
-                                onClick={() => insertExample(ex)}
-                                className="inline-flex cursor-pointer items-center rounded-full border border-border bg-bg px-2.5 py-0.5 text-fg"
+                                className="inline-flex items-center rounded-full border border-border bg-bg px-2.5 py-0.5 text-fg"
                               >
                                 {ex}
-                              </button>
+                              </span>
                             ))}
                         </span>
                       </Fragment>

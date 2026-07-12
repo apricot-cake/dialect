@@ -493,7 +493,7 @@ export const en = {
   // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip
   'smart.hint.toggle': 'Typing hints',
-  'smart.hint.title': 'What you can type (tap to try):',
+  'smart.hint.title': 'What you can type:',
   'smart.hint.natural': 'Plain words too',
   'smart.hint.exclude.ex': '-dog',
   'smart.hint.phrase.ex': '"cat cafe"',

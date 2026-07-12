@@ -490,7 +490,7 @@ export const ja = {
   // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip
   'smart.hint.toggle': '書き方のヒント',
-  'smart.hint.title': '使える書き方(タップで試せます):',
+  'smart.hint.title': '使える書き方:',
   'smart.hint.natural': '自然な言葉でも',
   'smart.hint.exclude.ex': '-犬',
   'smart.hint.phrase.ex': '"猫カフェ"',
