@@ -13,6 +13,7 @@ import type { Lang } from '@/i18n'
 export type PageCopyKey =
   | 'footer.health'
   | 'footer.matrix'
+  | 'footer.about'
   | 'page.backToApp'
   | 'health.title'
   | 'health.intro'
@@ -29,10 +30,23 @@ export type PageCopyKey =
   | 'matrix.legendNone'
   | 'matrix.conceptColumn'
   | 'matrix.closeNote'
+  | 'about.title'
+  | 'about.intro'
+  | 'about.nothingSent.title'
+  | 'about.nothingSent.body'
+  | 'about.localOnly.title'
+  | 'about.localOnly.body'
+  | 'about.openSource.title'
+  | 'about.openSource.body'
+  | 'about.openSource.link'
+  | 'about.qualityControl.title'
+  | 'about.qualityControl.body'
+  | 'about.qualityControl.link'
 
 const ja: Record<PageCopyKey, string> = {
   'footer.health': '演算子の稼働状況',
   'footer.matrix': '対応表',
+  'footer.about': '仕組みとプライバシー',
   'page.backToApp': '← Dialectに戻る',
   'health.title': '演算子の稼働状況',
   'health.intro':
@@ -51,11 +65,29 @@ const ja: Record<PageCopyKey, string> = {
   'matrix.legendNone': '非対応',
   'matrix.conceptColumn': '条件',
   'matrix.closeNote': '閉じる',
+  'about.title': '仕組みとプライバシー',
+  'about.intro':
+    '検索したい内容は、その人の関心そのものです。Dialectがそれをどう扱っているか、誇張せずに説明します。',
+  'about.nothingSent.title': '何も送信しません',
+  'about.nothingSent.body':
+    '入力した条件は、ブラウザの中だけで各サイトの検索URLに変換されます。Dialect側にはそれを受け取るサーバー自体が存在しません（サーバーを持たない静的サイトです）。私たちには、あなたが何を検索したか知りようがありません。もちろん、実際に開いた先の各サイトには、通常の検索と同じようにあなたの検索条件が渡ります。',
+  'about.localOnly.title': '保存はぜんぶ手元に',
+  'about.localOnly.body':
+    '保存した検索・検索履歴・設定（ダークモードや言語など）は、すべてこの端末のブラウザ内（localStorage）にだけ保存されます。他の端末と同期したり、外部に送ったりすることはありません。ブラウザの設定からこのサイトのデータを削除すれば、いつでも消せます。',
+  'about.openSource.title': 'オープンソースです',
+  'about.openSource.body':
+    'Dialectのソースコードはすべて公開されており、誰でも中身を確認できます。「本当に何も送信していないか」を、私たちの言葉を信じる以外の方法で確かめられます。',
+  'about.openSource.link': 'GitHubでソースコードを見る',
+  'about.qualityControl.title': '翻訳の品質管理',
+  'about.qualityControl.body':
+    '各サイトへの検索条件の翻訳は、実際にブラウザで動作確認したうえで実装しています。多くのサイトの検索演算子は非公式（サイトが公式に保証していないもの）で予告なく壊れることがあるため、3か月ごとに再確認し、記録を公開しています。',
+  'about.qualityControl.link': '演算子の稼働状況を見る',
 }
 
 const en: Record<PageCopyKey, string> = {
   'footer.health': 'Operator health',
   'footer.matrix': 'Support matrix',
+  'footer.about': 'How it works & privacy',
   'page.backToApp': '← Back to Dialect',
   'health.title': 'Operator health',
   'health.intro':
@@ -74,6 +106,23 @@ const en: Record<PageCopyKey, string> = {
   'matrix.legendNone': 'None',
   'matrix.conceptColumn': 'Concept',
   'matrix.closeNote': 'Close',
+  'about.title': 'How it works & privacy',
+  'about.intro':
+    "What you search for is inherently personal. Here's an honest account of how Dialect handles it.",
+  'about.nothingSent.title': 'Nothing is sent',
+  'about.nothingSent.body':
+    "Your search conditions are converted into each site's search URL entirely inside your browser. Dialect has no server to receive that data in the first place — it's a static site with no backend. We have no way of knowing what you searched for. Of course, once you open a result, that site receives your search terms just like any normal search there.",
+  'about.localOnly.title': 'Everything is saved locally',
+  'about.localOnly.body':
+    "Saved searches, history, and settings (dark mode, language, etc.) live only in this browser's local storage on this device. Nothing syncs across devices or leaves your machine. Clearing this site's data from your browser settings removes it at any time.",
+  'about.openSource.title': 'Open source',
+  'about.openSource.body':
+    'The full source code is public, so anyone can verify these claims for themselves rather than taking our word for it.',
+  'about.openSource.link': 'View source on GitHub',
+  'about.qualityControl.title': 'Translation quality control',
+  'about.qualityControl.body':
+    "Every translation to a site's search is verified in a real browser before shipping. Many operators are unofficial and can break without notice, so we re-check them every three months and publish the results.",
+  'about.qualityControl.link': 'See operator health',
 }
 
 const DICTS: Record<Lang, Record<PageCopyKey, string>> = { ja, en }

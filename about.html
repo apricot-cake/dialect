@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Dialectがどう動いているかの説明。検索条件がどこにも送信されないこと、保存はすべて手元(localStorage)にあること、オープンソースであることを平易に説明します。"
+    />
+    <title>Dialect — 仕組みとプライバシー</title>
+    <!-- 描画前にテーマを確定してダークモードのちらつきを防ぐ(index.htmlと同じ処理) -->
+    <script>
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/about-main.tsx"></script>
+  </body>
+</html>

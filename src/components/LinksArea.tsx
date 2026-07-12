@@ -544,6 +544,12 @@ export function LinksArea({
             <span>{t('footer.privacy')}</span>
             <span className="flex flex-wrap gap-x-3 gap-y-1">
               <a
+                href="./about.html"
+                className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted"
+              >
+                {pt(getLang(), 'footer.about')}
+              </a>
+              <a
                 href="./health.html"
                 className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted"
               >
