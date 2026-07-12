@@ -3,6 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* prefers-reduced-motion: reduce の利用者向けの一律停止(#37 a11y監査)。
+   motion製アニメーションは main.tsx の MotionConfig reducedMotion="user" で別途対応済み。
+   ここは素のCSS keyframes/transition(dl-drop・dl-fade等)を止める安全網 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @theme inline {
   --font-sans: 'Geist Variable', sans-serif;
 
@@ -20,6 +34,10 @@
   --color-primary: var(--primary);
   --color-primary-fg: var(--primary-fg);
   --color-accent: var(--accent);
+  /* テキスト/アイコンの前景として使うとき用(ダークで沈まない変種)。#37のa11y監査で
+       text-accent が文字色として使われている箇所はダークモードでコントラスト不足に
+       なっていたため、地に沈まないaccent-brightをTailwindユーティリティとしても使えるようにする */
+  --color-accent-bright: var(--accent-bright);
 }
 
 :root {
@@ -57,7 +75,7 @@
   --card: oklch(0.305 0.008 272);
   --tray: oklch(0.275 0.007 272);
   --field: oklch(0.35 0.01 272);
-  --muted: oklch(0.72 0.015 272);
+  --muted: oklch(0.76 0.015 272);
   --faint: oklch(0.6 0.015 272);
   --border: oklch(1 0 0 / 0.13);
   --secondary: oklch(0.37 0.012 272);

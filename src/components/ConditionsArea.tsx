@@ -448,7 +448,7 @@ export function ConditionsArea({
             type="button"
             aria-label={scrollLabel}
             title={scrollLabel}
-            className="pointer-events-auto inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-accent shadow-[0_3px_14px_oklch(0_0_0_/_0.09)]"
+            className="pointer-events-auto inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-accent-bright shadow-[0_3px_14px_oklch(0_0_0_/_0.09)]"
             style={{ animation: 'dl-drop 220ms cubic-bezier(0.22, 1, 0.36, 1)' }}
             onClick={onGoLinks}
           >

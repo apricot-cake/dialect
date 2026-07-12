@@ -80,7 +80,7 @@ function Row({ row, lang }: { row: HealthRow; lang: ReturnType<typeof getLang> }
             href={row.verifyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent no-underline hover:underline"
+            className="text-accent-bright no-underline hover:underline"
           >
             {pt(lang, 'health.verifyLink')}
           </a>

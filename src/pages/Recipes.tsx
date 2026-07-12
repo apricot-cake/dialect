@@ -32,7 +32,7 @@ function Recipe({
       </p>
       <a
         href={permalink}
-        className="self-start text-[13px] font-medium text-accent no-underline hover:underline"
+        className="self-start text-[13px] font-medium text-accent-bright no-underline hover:underline"
       >
         {pt(lang, 'recipes.openLink')} →
       </a>

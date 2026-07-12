@@ -120,7 +120,7 @@ export function BulkOpen({
               <button
                 type="button"
                 onClick={selectAll}
-                className="cursor-pointer border-none bg-transparent p-0 text-[12px] font-semibold text-accent"
+                className="cursor-pointer border-none bg-transparent p-0 text-[12px] font-semibold text-accent-bright"
               >
                 {t('bulk.selectAll')}
               </button>

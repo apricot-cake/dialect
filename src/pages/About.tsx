@@ -22,7 +22,7 @@ function Section({
           href={link.href}
           target={link.href.startsWith('http') ? '_blank' : undefined}
           rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-          className="text-[13px] font-medium text-accent no-underline hover:underline"
+          className="text-[13px] font-medium text-accent-bright no-underline hover:underline"
         >
           {link.label} →
         </a>

@@ -114,7 +114,7 @@ export default function SiteGuide({ platformId }: { platformId: PlatformId }) {
                 <a
                   key={i}
                   href={example.permalink}
-                  className="text-[13px] font-medium text-accent no-underline hover:underline"
+                  className="text-[13px] font-medium text-accent-bright no-underline hover:underline"
                 >
                   {example.label[lang]} →
                 </a>
