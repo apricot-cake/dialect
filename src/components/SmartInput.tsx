@@ -22,8 +22,6 @@ const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
   { labelKey: 'concept.exactPhrase.label', exKey: 'smart.hint.phrase.ex' },
   { labelKey: 'concept.fromUser.label', exKey: 'smart.hint.user.ex' },
   { labelKey: 'concept.hashtag.label', exKey: 'smart.hint.tag.ex' },
-  { labelKey: 'concept.period.label', exKey: 'smart.hint.period.ex' },
-  { labelKey: 'concept.minLikes.label', exKey: 'smart.hint.likes.ex' },
 ]
 
 /**
@@ -45,9 +43,7 @@ export function SmartInput({
   // The hint popover is anchored to the whole bar (not the "?" trigger) so
   // its offset clears the bar's rounded edge instead of the button inside it
   const barRef = useRef<HTMLDivElement>(null)
-  // One clock per keystroke is plenty for resolving 今週/today
-  const now = useMemo(() => new Date(), [input]) // eslint-disable-line react-hooks/exhaustive-deps
-  const fragments = useMemo(() => parseSmartInput(input, now), [input, now])
+  const fragments = useMemo(() => parseSmartInput(input), [input])
   const filled = hasFragments(fragments)
   // Preview against a blank state: shows exactly what this line adds
   const previewState = useMemo(() => mergeFragments(defaultState(), fragments), [fragments])

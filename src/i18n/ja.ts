@@ -483,7 +483,7 @@ export const ja = {
 
   // Smart input (build conditions from one line)
   'smart.label': 'スマート入力欄',
-  'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ 今週',
+  'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ',
   'smart.commit': '条件にする',
   'smart.preview': 'この条件になります:',
   // Hint panel: opened from the "?" button while the input is empty.
@@ -494,8 +494,6 @@ export const ja = {
   'smart.hint.phrase.ex': '"猫カフェ"',
   'smart.hint.user.ex': '@ユーザー名',
   'smart.hint.tag.ex': '#タグ',
-  'smart.hint.period.ex': '今週|先週|since:2026-01-01',
-  'smart.hint.likes.ex': 'いいね>1000|1万いいね以上',
 
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',

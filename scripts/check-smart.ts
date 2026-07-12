@@ -2,20 +2,18 @@
  * Unit tests for the smart input (#16). Deterministic, no browser or network.
  *
  * Why this exists:
- *   The one-line grammar (exclude, exact phrase, sender, tag, period words,
- *   count words) is hand-written branching, so adding vocabulary can quietly
- *   break existing readings. This puts it on the merge gate (CI) in the same
- *   style as check:reverse.
+ *   The one-line grammar (exclude, exact phrase, sender, tag) is hand-written
+ *   branching, so edits can quietly break existing readings. This puts it on
+ *   the merge gate (CI) in the same style as check:reverse.
  *
  * What it checks:
- *   1. Grammar: representative input lines split into the expected fragments.
- *   2. Vocabulary: period words (今週/先週/...) and count words (1万/5千/10k)
- *      against a fixed clock.
- *   3. Additive merge: mergeFragments only appends, never erases.
+ *   1. Grammar: representative input lines split into the expected fragments,
+ *      and removed vocabulary (period words, like counts) stays keywords.
+ *   2. Additive merge: mergeFragments only appends, never erases.
  *
  * Run: npm run check:smart   (executed directly via tsx)
  */
-import { mergeFragments, parseCountWord, parsePeriodWord, parseSmartInput } from '@/core/smartInput'
+import { mergeFragments, parseSmartInput } from '@/core/smartInput'
 import { defaultState } from '@/core/concepts'
 
 let failures = 0
@@ -29,76 +27,37 @@ function eq(label: string, actual: unknown, expected: unknown): void {
   if (a !== e) fail(`${label}: got ${a}, want ${e}`)
 }
 
-// 2026-07-11 is a Saturday; the fixed clock keeps 今週/先週 deterministic
-const NOW = new Date(2026, 6, 11, 12, 0, 0)
-
 // ---- 1. grammar ----------------------------------------------------------------
 
 {
-  const f = parseSmartInput('猫 -犬 "三毛 猫" @nasa #art since:2026-01-01 until:2026/6/30', NOW)
+  const f = parseSmartInput('猫 -犬 "三毛 猫" @nasa #art')
   eq('terms', f.terms, ['猫'])
   eq('excludes', f.excludes, ['犬'])
   eq('phrases', f.phrases, ['三毛 猫'])
   eq('fromUser', f.fromUser, 'nasa')
   eq('hashtags', f.hashtags, ['art'])
-  eq('since', f.since, '2026-01-01')
-  eq('until', f.until, '2026-06-30')
 }
 {
-  // from: form, full-width symbols, min_faves
-  const f = parseSmartInput('from:alice ＃タグ －宣伝 min_faves:100', NOW)
+  // from: form and full-width symbols
+  const f = parseSmartInput('from:alice ＃タグ －宣伝')
   eq('from: form', f.fromUser, 'alice')
   eq('fullwidth hash', f.hashtags, ['タグ'])
   eq('fullwidth minus', f.excludes, ['宣伝'])
-  eq('min_faves', f.minLikes, '100')
 }
 {
-  // like-word + threshold variations
-  eq('likes>', parseSmartInput('いいね>100', NOW).minLikes, '100')
-  eq('bare >', parseSmartInput('>1万', NOW).minLikes, '10000')
-  eq('likes 以上', parseSmartInput('いいね1万以上', NOW).minLikes, '10000')
-  eq('N likes 以上', parseSmartInput('100いいね以上', NOW).minLikes, '100')
-  eq('en likes', parseSmartInput('likes>=5k', NOW).minLikes, '5000')
-}
-{
-  // unreadable fragments stay as keywords (nothing is silently dropped)
-  const f = parseSmartInput('since:いつか なにか', NOW)
-  eq('unreadable date stays', f.terms, ['since:いつか', 'なにか'])
-  eq('no since', f.since, null)
+  // Removed vocabulary stays keywords: period and like-count conditions are
+  // Add Condition picker territory, the input line never interprets them
+  const f = parseSmartInput('今週 since:2026-01-01 いいね>100 min_faves:100')
+  eq('no hidden vocabulary', f.terms, ['今週', 'since:2026-01-01', 'いいね>100', 'min_faves:100'])
 }
 {
   // "..." escape hatch: search symbol-leading words literally
-  const f = parseSmartInput('"-犬" "#タグ"', NOW)
+  const f = parseSmartInput('"-犬" "#タグ"')
   eq('escaped tokens', f.phrases, ['-犬', '#タグ'])
   eq('no excludes', f.excludes, [])
 }
 
-// ---- 2. vocabulary -------------------------------------------------------------
-
-eq('count 1万', parseCountWord('1万'), '10000')
-eq('count 1.5万', parseCountWord('1.5万'), '15000')
-eq('count 5千', parseCountWord('5千'), '5000')
-eq('count 10k', parseCountWord('10k'), '10000')
-eq('count bare fraction rejected', parseCountWord('1.5'), null)
-eq('count words rejected', parseCountWord('たくさん'), null)
-
-eq('今日', parsePeriodWord('今日', NOW), { since: '2026-07-11', until: null })
-eq('昨日', parsePeriodWord('昨日', NOW), { since: '2026-07-10', until: '2026-07-10' })
-eq('今週', parsePeriodWord('今週', NOW), { since: '2026-07-06', until: null })
-eq('先週', parsePeriodWord('先週', NOW), { since: '2026-06-29', until: '2026-07-05' })
-eq('今月', parsePeriodWord('今月', NOW), { since: '2026-07-01', until: null })
-eq('先月', parsePeriodWord('先月', NOW), { since: '2026-06-01', until: '2026-06-30' })
-eq('去年', parsePeriodWord('去年', NOW), { since: '2025-01-01', until: '2025-12-31' })
-eq('yesterday', parsePeriodWord('yesterday', NOW), { since: '2026-07-10', until: '2026-07-10' })
-eq('not a period', parsePeriodWord('猫', NOW), null)
-
-{
-  const f = parseSmartInput('猫 今週', NOW)
-  eq('bare period word consumed', f.terms, ['猫'])
-  eq('bare period word since', f.since, '2026-07-06')
-}
-
-// ---- 3. additive merge ---------------------------------------------------------
+// ---- 2. additive merge ---------------------------------------------------------
 
 {
   const base = {
@@ -106,20 +65,17 @@ eq('not a period', parsePeriodWord('猫', NOW), null)
     terms: ['既存'],
     exclude: '広告',
     fromUser: 'olduser',
-    minLikes: '10',
   }
-  const merged = mergeFragments(base, parseSmartInput('新規 -宣伝 @newuser 今週', NOW))
+  const merged = mergeFragments(base, parseSmartInput('新規 -宣伝 @newuser'))
   eq('terms append', merged.terms, ['既存', '新規'])
   eq('exclude append', merged.exclude, '広告 宣伝')
   eq('fromUser overwrite', merged.fromUser, 'newuser')
-  eq('minLikes kept', merged.minLikes, '10')
-  eq('since set', merged.since, '2026-07-06')
   // additive only: untouched fields keep their values
   eq('sort untouched', merged.sort, base.sort)
 }
 {
   // merging an empty line changes nothing (keeps the [''] invariant of terms)
-  const merged = mergeFragments(defaultState(), parseSmartInput('', NOW))
+  const merged = mergeFragments(defaultState(), parseSmartInput(''))
   eq('empty merge', merged, defaultState())
 }
 

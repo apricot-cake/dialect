@@ -486,7 +486,7 @@ export const en = {
 
   // Smart input (build conditions from one line)
   'smart.label': 'Smart input',
-  'smart.placeholder': 'e.g. cat -dog @user #tag today',
+  'smart.placeholder': 'e.g. cat -dog @user #tag',
   'smart.commit': 'Add as conditions',
   'smart.preview': 'Turns into:',
   // Hint panel: opened from the "?" button while the input is empty.
@@ -497,8 +497,6 @@ export const en = {
   'smart.hint.phrase.ex': '"cat cafe"',
   'smart.hint.user.ex': '@username',
   'smart.hint.tag.ex': '#tag',
-  'smart.hint.period.ex': 'today|yesterday|since:2026-01-01',
-  'smart.hint.likes.ex': 'likes>1000|min_faves:10000',
 
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',
