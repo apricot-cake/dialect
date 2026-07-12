@@ -1,26 +1,27 @@
 import { Globe, Moon, Sun } from 'lucide-react'
 import { siGithub } from 'simple-icons'
 import { t } from '@/i18n'
-import { pt, type PageCopyKey } from '@/i18n/pageCopy'
+import { pt } from '@/i18n/pageCopy'
 import type { Lang } from '@/i18n'
 
 const ROUND_BUTTON =
   'inline-flex size-[34px] cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted'
 
 /**
- * Header shared by the standalone reference pages (health.html / matrix.html).
+ * Header shared by the standalone reference pages (health.html / matrix.html / ...).
  * Mirrors AppHeader's look (same round-button chrome, lang/theme/GitHub controls)
  * but replaces the app tagline with a plain-text "back to the app" link and takes
- * a titleKey so each page can show its own heading.
+ * a plain title string so each page (including per-platform site guides, whose
+ * title isn't a fixed dictionary key) can show its own heading.
  */
 export function StandalonePageHeader({
-  titleKey,
+  title,
   lang,
   dark,
   onToggleDark,
   onToggleLang,
 }: {
-  titleKey: PageCopyKey
+  title: string
   lang: Lang
   dark: boolean
   onToggleDark: () => void
@@ -65,7 +66,7 @@ export function StandalonePageHeader({
           </a>
         </div>
       </div>
-      <h1 className="m-0 text-[22px] font-bold tracking-[-0.01em] text-fg">{pt(lang, titleKey)}</h1>
+      <h1 className="m-0 text-[22px] font-bold tracking-[-0.01em] text-fg">{title}</h1>
     </div>
   )
 }

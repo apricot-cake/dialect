@@ -97,7 +97,7 @@ export default function HealthBoard() {
   return (
     <div className="min-h-dvh bg-bg text-fg">
       <StandalonePageHeader
-        titleKey="health.title"
+        title={pt(lang, 'health.title')}
         lang={lang}
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}

@@ -38,7 +38,7 @@ export default function About() {
   return (
     <div className="min-h-dvh bg-bg text-fg">
       <StandalonePageHeader
-        titleKey="about.title"
+        title={pt(lang, 'about.title')}
         lang={lang}
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}

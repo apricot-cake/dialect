@@ -15,6 +15,7 @@ export type PageCopyKey =
   | 'footer.matrix'
   | 'footer.about'
   | 'footer.recipes'
+  | 'footer.guides'
   | 'page.backToApp'
   | 'health.title'
   | 'health.intro'
@@ -47,12 +48,19 @@ export type PageCopyKey =
   | 'recipes.intro'
   | 'recipes.openLink'
   | 'recipes.noSupport'
+  | 'siteGuide.supportedTitle'
+  | 'siteGuide.notesTitle'
+  | 'siteGuide.examplesTitle'
+  | 'siteGuide.checkedAt'
+  | 'guides.title'
+  | 'guides.intro'
 
 const ja: Record<PageCopyKey, string> = {
   'footer.health': '演算子の稼働状況',
   'footer.matrix': '対応表',
   'footer.about': '仕組みとプライバシー',
   'footer.recipes': '検索レシピ集',
+  'footer.guides': 'サイト別ガイド',
   'page.backToApp': '← Dialectに戻る',
   'health.title': '演算子の稼働状況',
   'health.intro':
@@ -93,6 +101,12 @@ const ja: Record<PageCopyKey, string> = {
     '実際に開けるパーマリンク付きの検索例です。気に入ったものを開いて、そこから条件を書き換えて使ってください。',
   'recipes.openLink': 'この条件で開く',
   'recipes.noSupport': '現在この条件に対応しているサイトはありません',
+  'siteGuide.supportedTitle': '対応している条件',
+  'siteGuide.notesTitle': '検索のクセ・落とし穴',
+  'siteGuide.examplesTitle': '使用例',
+  'siteGuide.checkedAt': '最終確認:',
+  'guides.title': 'サイト別ガイド',
+  'guides.intro': '各サイトでDialectが翻訳できる検索条件の一覧と、検索のクセ・落とし穴の解説です。',
 }
 
 const en: Record<PageCopyKey, string> = {
@@ -100,6 +114,7 @@ const en: Record<PageCopyKey, string> = {
   'footer.matrix': 'Support matrix',
   'footer.about': 'How it works & privacy',
   'footer.recipes': 'Search recipes',
+  'footer.guides': 'Site guides',
   'page.backToApp': '← Back to Dialect',
   'health.title': 'Operator health',
   'health.intro':
@@ -140,6 +155,13 @@ const en: Record<PageCopyKey, string> = {
     'Ready-to-open example searches with permalinks. Open one you like, then tweak the conditions from there.',
   'recipes.openLink': 'Open with these conditions',
   'recipes.noSupport': 'No site currently supports this combination',
+  'siteGuide.supportedTitle': 'Supported conditions',
+  'siteGuide.notesTitle': 'Search quirks & gotchas',
+  'siteGuide.examplesTitle': 'Examples',
+  'siteGuide.checkedAt': 'Last checked:',
+  'guides.title': 'Site guides',
+  'guides.intro':
+    "For each site, the search conditions Dialect can translate, plus notes on that site's search quirks and gotchas.",
 }
 
 const DICTS: Record<Lang, Record<PageCopyKey, string>> = { ja, en }

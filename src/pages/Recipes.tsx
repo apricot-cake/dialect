@@ -55,7 +55,7 @@ export default function Recipes() {
   return (
     <div className="min-h-dvh bg-bg text-fg">
       <StandalonePageHeader
-        titleKey="recipes.title"
+        title={pt(lang, 'recipes.title')}
         lang={lang}
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}

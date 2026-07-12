@@ -71,7 +71,7 @@ export default function SupportMatrix() {
   return (
     <div className="min-h-dvh bg-bg text-fg">
       <StandalonePageHeader
-        titleKey="matrix.title"
+        title={pt(lang, 'matrix.title')}
         lang={lang}
         dark={dark}
         onToggleDark={() => setDark((d) => !d)}
@@ -123,12 +123,13 @@ export default function SupportMatrix() {
                     >
                       <div className="flex flex-col items-center gap-1">
                         <PlatformBadge platform={platform} dark={dark} size={15} />
-                        <span
-                          className="max-w-[60px] truncate text-[10px] font-medium text-muted"
+                        <a
+                          href={`./sites/${platform.id}.html`}
+                          className="max-w-[60px] truncate text-[10px] font-medium text-muted no-underline hover:text-fg hover:underline"
                           title={platform.name}
                         >
                           {platform.name}
-                        </span>
+                        </a>
                       </div>
                     </th>
                   )),

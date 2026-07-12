@@ -56,5 +56,32 @@
     ],
     "gzip": true,
     "limit": "160 KB"
+  },
+  {
+    "name": "guides.html initial load",
+    "path": [
+      "dist/assets/guides-*.js",
+      "dist/assets/platformGroups-*.js",
+      "dist/assets/PlatformBadge-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "160 KB"
+  },
+  {
+    "name": "sites/*.html initial load (shared entry, all 21 site guides)",
+    "path": [
+      "dist/assets/sites-main-*.js",
+      "dist/assets/conceptDefs-*.js",
+      "dist/assets/permalink-*.js",
+      "dist/assets/PlatformBadge-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "180 KB"
   }
 ]
