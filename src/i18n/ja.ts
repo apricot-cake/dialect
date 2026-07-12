@@ -677,8 +677,9 @@ export const ja = {
   'smart.commit': '条件にする',
   'smart.preview': 'こう分かれます:',
   'smart.suggest': 'もしかして:',
-  // Focus-time hint panel: shown while the empty input is focused.
+  // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip
+  'smart.hint.toggle': '書き方のヒント',
   'smart.hint.title': '使える書き方(タップで試せます):',
   'smart.hint.natural': '自然な言葉でも',
   'smart.hint.exclude.ex': '-犬',

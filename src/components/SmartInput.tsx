@@ -15,9 +15,10 @@ import { conceptColors } from '@/lib/conceptColors'
 import { t, type MessageKey } from '@/i18n'
 
 /**
- * Focus-time hint rows (one per grammar item). Labels reuse the concept
- * label keys so the panel and the live-preview chips speak the same words;
- * examples live in i18n as |-separated lists and insert on tap
+ * Hint rows (one per grammar item) for the on-demand help panel. Labels
+ * reuse the concept label keys so the panel and the live-preview chips
+ * speak the same words; examples live in i18n as |-separated lists and
+ * insert on tap
  */
 const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
   { labelKey: 'concept.exclude.label', exKey: 'smart.hint.exclude.ex' },
@@ -50,7 +51,7 @@ export function SmartInput({
   onAdopt: (suggestion: SmartSuggestion) => void
 }) {
   const [input, setInput] = useState('')
-  const [focused, setFocused] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
   // One clock per keystroke is plenty for resolving 今週/today
   const now = useMemo(() => new Date(), [input]) // eslint-disable-line react-hooks/exhaustive-deps
   const fragments = useMemo(() => parseSmartInput(input, now), [input, now])
@@ -84,11 +85,15 @@ export function SmartInput({
     const state = { ...defaultState(), ...s.patch }
     return `${t(CONCEPT_MAP[s.concept].labelKey)}: ${conceptSummary(s.concept, state)}`
   }
-  // The hint panel only competes with emptiness: once anything is typed the
-  // live preview takes over as the tutorial
-  const showHints = focused && input.trim() === ''
+  // The hint panel opens only from the "?" button (auto-opening on focus
+  // proved intrusive), and only competes with emptiness: once anything is
+  // typed the live preview takes over as the tutorial
+  const showHints = helpOpen && input.trim() === ''
   const insertExample = (ex: string) => {
     setInput((prev) => (prev && !/[\s　]$/.test(prev) ? `${prev} ` : prev) + ex)
+    // Close for real, not just visually — otherwise clearing the input
+    // later would make the panel pop back uninvited
+    setHelpOpen(false)
   }
 
   return (
@@ -113,19 +118,51 @@ export function SmartInput({
           value={input}
           aria-label={t('smart.label')}
           placeholder={t('smart.placeholder')}
-          onChange={(e) => setInput(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onChange={(e) => {
+            setInput(e.target.value)
+            // Typing hides the panel; don't let it pop back on later clears
+            if (e.target.value.trim() !== '') setHelpOpen(false)
+          }}
           onKeyDown={(e) => {
             // isComposing guards against IME conversion commits (ja input)
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
               e.preventDefault()
               submit()
             }
-            if (e.key === 'Escape') e.currentTarget.blur()
+            if (e.key === 'Escape') setHelpOpen(false)
           }}
           className="h-9 min-w-0 flex-1 border-none bg-transparent text-[15px] text-fg outline-none placeholder:text-faint"
         />
+        {input.trim() === '' && (
+          <button
+            type="button"
+            data-noscale
+            aria-label={t('smart.hint.toggle')}
+            title={t('smart.hint.toggle')}
+            aria-expanded={showHints}
+            // Keep the input focused through the tap (no blur flicker)
+            onPointerDown={(e) => e.preventDefault()}
+            onClick={() => setHelpOpen((v) => !v)}
+            className={`inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full ${
+              showHints ? 'text-accent' : 'text-faint'
+            }`}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+          </button>
+        )}
         {filled && (
           <button
             type="button"

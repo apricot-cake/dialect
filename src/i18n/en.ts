@@ -675,8 +675,9 @@ export const en = {
   'smart.commit': 'Add as conditions',
   'smart.preview': 'Splits into:',
   'smart.suggest': 'Did you mean:',
-  // Focus-time hint panel: shown while the empty input is focused.
+  // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip
+  'smart.hint.toggle': 'Typing hints',
   'smart.hint.title': 'What you can type (tap to try):',
   'smart.hint.natural': 'Plain words too',
   'smart.hint.exclude.ex': '-dog',
