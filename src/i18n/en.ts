@@ -475,6 +475,10 @@ export const en = {
   'launch.copyQuery': 'Copy search text',
   'launch.copyQueryHint': "Copies text you can paste into the app's own search box",
   'launch.copyExcluded': 'Not included in this text: {list}',
+  'launch.googleFallback': 'Similar search on Google',
+  'launch.googleFallbackRescued': 'Conditions Google can express: {list}',
+  'launch.googleFallbackCaveat':
+    "Results are not the same as this site's own search (only what Google has indexed, possibly stale, and sort order can't be specified).",
 
   // Bulk open
   'bulk.open': 'Open all ({n} sites)',

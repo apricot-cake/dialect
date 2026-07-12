@@ -472,6 +472,10 @@ export const ja = {
   'launch.copyQuery': '検索文字列をコピー',
   'launch.copyQueryHint': 'アプリの検索ボックスに貼れる文字列をコピーします',
   'launch.copyExcluded': 'この文字列には含まれない条件: {list}',
+  'launch.googleFallback': 'Googleで近い検索',
+  'launch.googleFallbackRescued': 'このうちGoogleで表現できる条件: {list}',
+  'launch.googleFallbackCaveat':
+    '結果はサイト内検索とは別物です(Googleが見つけた範囲のみ・反映に遅れあり・並び順は指定できません)',
 
   // まとめて開く
   'bulk.open': 'まとめて開く（{n}サイト）',

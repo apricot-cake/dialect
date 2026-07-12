@@ -4,6 +4,7 @@ import { resolve } from '@/core/resolve'
 import { activeConcepts } from '@/core/concepts'
 import { translationParts, specialtyOwner } from '@/core/preview'
 import { rawQuery } from '@/core/rawQuery'
+import { buildGoogleFallback } from '@/core/googleFallback'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import type { ConceptId, InstanceHosts, PlatformDef, QueryState, Resolution } from '@/core/types'
 import { getLang, t, tf, type MessageKey } from '@/i18n'
@@ -174,6 +175,7 @@ function LaunchCard({
   dark,
   colors,
   onLaunch,
+  instanceHost,
 }: {
   platform: PlatformDef
   resolution: Resolution
@@ -183,6 +185,8 @@ function LaunchCard({
   colors: Map<ConceptId, string>
   /** Called when the link is opened (search executed); records history */
   onLaunch: () => void
+  /** mastodon/misskeyの設定済みインスタンスホスト(Googleフォールバックのsite:先解決に使う。issue #42) */
+  instanceHost?: string
 }) {
   const [hover, setHover] = useState(false)
   const [openUpward, setOpenUpward] = useState(false)
@@ -217,6 +221,15 @@ function LaunchCard({
     if (owner && owner.id !== platform.id) droppedSpecialty.push({ concept: d.concept, owner })
     else droppedReal.push(d)
   }
+
+  // 丸ごと落ちた条件のうちGoogleのsite:検索で救えるものがあれば迂回路を添える(issue #42)
+  const fallback = buildGoogleFallback(
+    platform,
+    query,
+    droppedReal,
+    resolution.url,
+    instanceHost ? { instanceHost } : undefined,
+  )
 
   const popHasContent =
     showLogin ||
@@ -305,29 +318,32 @@ function LaunchCard({
           )}
         </div>
       )}
-      {enabled && (parts.length > 0 || droppedReal.length > 0) && (
+      {((enabled && (parts.length > 0 || droppedReal.length > 0)) || (!enabled && fallback)) && (
         <div className="mt-[7px] px-1">
           {/* 1条件=1トークン。トークンは改行不可にし、区切り(・)でだけ折り返す。
               文字色はホバーポップの生URL断片と対応(同じ概念=同じ色)。近似(弱まって効く)
               条件は斜体にして、そのまま効く条件と見分ける。丸ごと落ちる条件は行に出ない
-              代わりに、「使えない {n}」の文字バッジで件数を明示する */}
+              代わりに、「使えない {n}」の文字バッジで件数を明示する。Googleで救える条件が
+              あれば、バッジの隣に迂回路リンクを添える(issue #42。url=nullのカードでは
+              リンクだけが出る) */}
           <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.45] text-muted">
-            {parts.map((p, i) => {
-              const color = colors.get(p.concept)
-              const approx = approxConcepts.has(p.concept)
-              return (
-                <span key={i} className="whitespace-nowrap">
-                  <span
-                    className={approx ? 'italic' : undefined}
-                    style={color ? { color } : undefined}
-                  >
-                    {p.label}
+            {enabled &&
+              parts.map((p, i) => {
+                const color = colors.get(p.concept)
+                const approx = approxConcepts.has(p.concept)
+                return (
+                  <span key={i} className="whitespace-nowrap">
+                    <span
+                      className={approx ? 'italic' : undefined}
+                      style={color ? { color } : undefined}
+                    >
+                      {p.label}
+                    </span>
+                    {i < parts.length - 1 && <span className="text-faint">・</span>}
                   </span>
-                  {i < parts.length - 1 && <span className="text-faint">・</span>}
-                </span>
-              )
-            })}
-            {droppedReal.length > 0 && (
+                )
+              })}
+            {enabled && droppedReal.length > 0 && (
               <span
                 className="inline-flex items-center gap-1 whitespace-nowrap font-medium"
                 style={{ color: dark ? 'oklch(0.76 0.11 75)' : 'oklch(0.54 0.11 70)' }}
@@ -335,6 +351,17 @@ function LaunchCard({
                 <BanIcon />
                 {tf('launch.droppedBadge', { n: String(droppedReal.length) })}
               </span>
+            )}
+            {fallback && (
+              <a
+                href={fallback.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onLaunch}
+                className="whitespace-nowrap font-medium text-muted underline decoration-[var(--faint)] underline-offset-2 hover:text-fg"
+              >
+                {t('launch.googleFallback')} ↗
+              </a>
             )}
           </div>
         </div>
@@ -405,6 +432,18 @@ function LaunchCard({
             <MetaSection tone="approx" items={resolution.approximated} />
           )}
           {droppedReal.length > 0 && <MetaSection tone="dropped" items={droppedReal} />}
+          {fallback && (
+            <div className="flex flex-col gap-[3px] text-[11px] leading-[1.4] text-muted">
+              {fallback.rescued.length > 0 && (
+                <span>
+                  {tf('launch.googleFallbackRescued', {
+                    list: fallback.rescued.map((c) => t(CONCEPT_MAP[c].labelKey)).join('・'),
+                  })}
+                </span>
+              )}
+              <span className="text-faint">{t('launch.googleFallbackCaveat')}</span>
+            </div>
+          )}
           {droppedSpecialty.length > 0 && <SpecialtySection items={droppedSpecialty} />}
         </div>
       )}
@@ -493,6 +532,7 @@ export function LinksArea({
                       dark={dark}
                       colors={colors}
                       onLaunch={onLaunch}
+                      instanceHost={instanceHosts[p.id]}
                     />
                   ))}
                 </div>

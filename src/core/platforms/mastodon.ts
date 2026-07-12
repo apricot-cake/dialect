@@ -20,7 +20,8 @@ import {
   unquote,
 } from '../parse'
 
-const DEFAULT_HOST = 'mastodon.social'
+// site:検索フォールバック(#42)がインスタンス未設定時の既定ホストとして共用する
+export const DEFAULT_HOST = 'mastodon.social'
 
 // 出典: 2026-07-08 実機確認(ログイン済みブラウザ、GUI操作)。mastodon.social/search?q=&type=statuses
 // はSPAだがURL遷移だけで検索が自動実行される(Misskeyと違い手動ボタン不要)。ハッシュタグ単独は

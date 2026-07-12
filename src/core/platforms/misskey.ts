@@ -3,7 +3,8 @@ import { andTerms, stripAt, stripHash, words } from '../text'
 import { encodeTokens, lit, minusExcludeTokens, part, tok, type Token } from '../urlParts'
 import { hostIs, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
 
-const DEFAULT_HOST = 'misskey.io'
+// site:検索フォールバック(#42)がインスタンス未設定時の既定ホストとして共用する
+export const DEFAULT_HOST = 'misskey.io'
 
 // 出典: docs/operator-research.md(2026-07-03調査、2026-07-08にログイン済みGUI操作で除外・完全一致を再検証)
 // 検索は /search?q=&type=note(要ログイン)。本文検索はMeilisearchで、語ごとのAND・除外(-語)が効く。
