@@ -485,7 +485,7 @@ export const ja = {
   'smart.label': 'スマート入力欄',
   'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ 今週',
   'smart.commit': '条件にする',
-  'smart.preview': 'こう分かれます:',
+  'smart.preview': 'この条件になります:',
   'smart.suggest': 'もしかして:',
   // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip

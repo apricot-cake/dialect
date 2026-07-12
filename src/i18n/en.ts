@@ -488,7 +488,7 @@ export const en = {
   'smart.label': 'Smart input',
   'smart.placeholder': 'e.g. cat -dog @user #tag today',
   'smart.commit': 'Add as conditions',
-  'smart.preview': 'Splits into:',
+  'smart.preview': 'Turns into:',
   'smart.suggest': 'Did you mean:',
   // Hint panel: opened from the "?" button while the input is empty.
   // Example lists are |-separated; each example becomes a tappable chip
