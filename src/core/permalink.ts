@@ -1,4 +1,11 @@
-import type { FantiaCategory, GoogleFileType, GoogleLicense, NicoGenre, PostLanguage, QueryState } from './types'
+import type {
+  FantiaCategory,
+  GoogleFileType,
+  GoogleLicense,
+  NicoGenre,
+  PostLanguage,
+  QueryState,
+} from './types'
 import { FANTIA_CATEGORIES, GOOGLE_FILE_TYPES, NICO_GENRES, POST_LANGUAGE_CODES } from './types'
 import { defaultState } from './concepts'
 import { words } from './text'
@@ -48,6 +55,10 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.region.trim()) params.set('reg', state.region.trim())
   if (state.license) params.set('lic', state.license)
   if (state.exactMatchMode) params.set('exact', '1')
+  if (state.codeLanguage.trim()) params.set('clang', state.codeLanguage.trim())
+  if (state.minStars.trim()) params.set('stars', state.minStars.trim())
+  if (state.minStocks.trim()) params.set('stocks', state.minStocks.trim())
+  if (state.semanticSearch) params.set('sem', '1')
   if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
   if (state.hashtagOr.trim()) params.set('tagor', state.hashtagOr.trim())
@@ -149,8 +160,13 @@ function paramsToState(params: URLSearchParams): QueryState {
   }
   state.region = params.get('reg') ?? ''
   const lic = params.get('lic')
-  if (lic === 'f' || lic === 'fc' || lic === 'fm' || lic === 'fmc') state.license = lic as GoogleLicense
+  if (lic === 'f' || lic === 'fc' || lic === 'fm' || lic === 'fmc')
+    state.license = lic as GoogleLicense
   state.exactMatchMode = params.get('exact') === '1'
+  state.codeLanguage = params.get('clang') ?? ''
+  state.minStars = params.get('stars') ?? ''
+  state.minStocks = params.get('stocks') ?? ''
+  state.semanticSearch = params.get('sem') === '1'
   state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
   state.hashtagOr = params.get('tagor') ?? ''
@@ -228,7 +244,15 @@ function paramsToState(params: URLSearchParams): QueryState {
     rt === 'shopping' ||
     rt === 'news' ||
     rt === 'web' ||
-    rt === 'books'
+    rt === 'books' ||
+    rt === 'repositories' ||
+    rt === 'code' ||
+    rt === 'issues' ||
+    rt === 'pullRequests' ||
+    rt === 'discussions' ||
+    rt === 'questions' ||
+    rt === 'scraps' ||
+    rt === 'publications'
   ) {
     state.resultType = rt
   }

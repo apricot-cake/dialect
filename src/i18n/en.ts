@@ -246,6 +246,14 @@ export const en = {
   'concept.resultType.news': 'News',
   'concept.resultType.web': 'Web only',
   'concept.resultType.books': 'Books',
+  'concept.resultType.repositories': 'Repositories',
+  'concept.resultType.code': 'Code',
+  'concept.resultType.issues': 'Issues',
+  'concept.resultType.pullRequests': 'Pull requests',
+  'concept.resultType.discussions': 'Discussions',
+  'concept.resultType.questions': 'Questions',
+  'concept.resultType.scraps': 'Scraps',
+  'concept.resultType.publications': 'Publications',
   'concept.resultType.help':
     'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
@@ -305,6 +313,19 @@ export const en = {
   'concept.exactMatchMode.label': 'Search exactly as typed',
   'concept.exactMatchMode.help':
     'Searches for your exact terms, without automatic synonym or spelling substitutions (Google only). This is separate from Exact phrase, which matches an exact word order.',
+  'concept.codeLanguage.label': 'Programming language',
+  'concept.codeLanguage.placeholder': 'e.g. TypeScript',
+  'concept.codeLanguage.help':
+    'Keeps only results written in the given programming language (GitHub only).',
+  'concept.minStars.label': 'Minimum stars',
+  'concept.minStars.placeholder': 'e.g. 100',
+  'concept.minStars.help': 'Keeps only repositories with at least this many stars (GitHub only).',
+  'concept.minStocks.label': 'Minimum stocks',
+  'concept.minStocks.placeholder': 'e.g. 10',
+  'concept.minStocks.help': 'Keeps only articles stocked at least this many times (Qiita only).',
+  'concept.semanticSearch.label': 'Semantic search',
+  'concept.semanticSearch.help':
+    'Searches by the meaning of your text rather than exact keyword matches (Zenn only, beta feature).',
 
   // Site filter in the picker, and the supported-sites label on bars
   'builder.filter.label': 'Show conditions a site supports',
@@ -424,10 +445,18 @@ export const en = {
   'note.bilibili.videoLength':
     'Length buckets differ slightly (short = under 10 min, medium = 10–30 min, long = over 60 min).',
   'note.bilibili.tabSort': "This sort order isn't available for the selected result type.",
+  'note.zenn.exclude':
+    'Zenn has no exclude search (the symbol is treated as a literal part of the search term).',
+  'note.github.repoIssueScopeOnly':
+    'Only works for repository, code, issue, and pull request searches (not discussions or user search).',
+  'note.github.repoOrUserScopeOnly':
+    'Only works for repository, code, and user searches (not issues, pull requests, or discussions).',
+  'note.github.repoScopeOnly': 'Only works for repository search.',
   'note.bilibili.tabOnly': 'Only available when the result type is videos (or unspecified).',
   'note.google.titleOnly':
     'Favors pages whose title matches, but some non-matching pages may still appear.',
-  'note.google.zhApprox': 'Searches for Simplified Chinese pages (Traditional Chinese is not selectable).',
+  'note.google.zhApprox':
+    'Searches for Simplified Chinese pages (Traditional Chinese is not selectable).',
   'note.fantia.sort': 'Only newest and most-favorited sort orders are supported (Fantia only).',
 
   // Launch panel. {name} is filled with the site name

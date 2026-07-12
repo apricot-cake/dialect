@@ -366,6 +366,50 @@ UI全面リプレース時に撤去済みで、この節はその復活ではな
 GUI操作で確証できていない(URL叩きではエラーなく結果は返るが、結果ページ内リンクへの引き継ぎが最後の1系統に
 縮退する挙動を確認)。実装は各値を素直にカンマ結合して送るが、次回定期確認で要再検証。
 
+## GitHub
+
+演算子点数が既存サイト中最多のため、今回はPhase 1(探す種類・キーワード・完全一致・除外・ユーザー指定・
+プログラミング言語・最低スター数・期間)のみ実装。残り(forks/size/pushed/license/path系/comments/labels/
+mentions/assignee/updated/fullname/location/followers/repos数/state/reason/is:public,private/topic/
+archived等)は別issueへ切り出し済み(docs/operator-research.md参照)。
+
+| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
+|---|---|---|---|---|---|---|
+| 中 | `user:`(所有者)[GUI操作] | このユーザーの投稿だけ | [github.com/search?q=猫 user:octocat&type=repositories](https://github.com/search?q=%E7%8C%AB%20user%3Aoctocat&type=repositories) | octocatが所有するリポジトリのみ | 2026-07-12 | ✅ |
+| 中 | `author:`(Issue/PR投稿者)[GUI操作] | このユーザーの投稿だけ(Issue/PR) | [github.com/search?q=猫 author:octocat&type=issues](https://github.com/search?q=%E7%8C%AB%20author%3Aoctocat&type=issues) | octocatが開いたIssueのみ | 2026-07-12 | ✅ |
+| 高 | `language:`(700種超)[GUI操作] | プログラミング言語 | [github.com/search?q=猫 language:TypeScript&type=repositories](https://github.com/search?q=%E7%8C%AB%20language%3ATypeScript&type=repositories) | TypeScriptで書かれたリポジトリのみ | 2026-07-12 | ✅ |
+| 高 | `stars:>=N`(範囲構文)[GUI操作/doc] | 最低スター数 | [github.com/search?q=猫 stars:>=100&type=repositories](https://github.com/search?q=%E7%8C%AB%20stars%3A%3E%3D100&type=repositories) | 100スター以上のリポジトリのみ(GUI操作では`stars:>100`のみ実測、`>=`はdoc補完) | 2026-07-12 | ✅ |
+| 中 | `created:`(範囲構文)[GUI操作/doc] | 期間 | [github.com/search?q=猫 created:>=2024-01-01&type=repositories](https://github.com/search?q=%E7%8C%AB%20created%3A%3E%3D2024-01-01&type=repositories) | 2024年以降作成のリポジトリのみ(GUI操作では`created:>YYYY-MM-DD`のみ実測、`>=`/`..`範囲はdoc補完) | 2026-07-12 | ✅ |
+| 低 | `type=`(6種)[GUI操作] | 探す種類 | [github.com/search?q=猫&type=code](https://github.com/search?q=%E7%8C%AB&type=code) | コード検索結果 | 2026-07-12 | ✅ |
+
+## Qiita
+
+詳細検索パネル(tuneアイコン)は未ログインだとログインモーダルが開くため中身は見られないが、演算子自体は
+検索ボックスへ直接入力すれば未ログインでも機能する(下記URLはいずれも未ログインで確認)。
+
+| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
+|---|---|---|---|---|---|---|
+| 高 | `tag:`[GUI操作] | ハッシュタグ | [qiita.com/search?q=tag:Python 猫](https://qiita.com/search?q=tag%3APython%20%E7%8C%AB) | Pythonタグがついた記事のみ(6348→1128件に絞り込み確認) | 2026-07-12 | ✅ |
+| 中 | `user:`[GUI操作] | このユーザーの投稿だけ | [qiita.com/search?q=user:qiita](https://qiita.com/search?q=user%3Aqiita) | @qiitaアカウントの記事のみ | 2026-07-12 | ✅ |
+| 中 | `title:`(語ごとに付与)[GUI操作] | タイトルだけで探す | [qiita.com/search?q=title:猫](https://qiita.com/search?q=title%3A%E7%8C%AB) | タイトルに「猫」を含む記事のみ | 2026-07-12 | ✅ |
+| 中 | `stocks:>=N`[GUI操作] | 最低ストック数 | [qiita.com/search?q=title:猫 stocks:>10](https://qiita.com/search?q=title%3A%E7%8C%AB%20stocks%3A%3E10) | ストック10以上の記事のみ(52件) | 2026-07-12 | ✅ |
+| 低 | `created:`[GUI操作] | 期間 | [qiita.com/search?q=user:qiita created:>2024-01-01](https://qiita.com/search?q=user%3Aqiita%20created%3A%3E2024-01-01) | 2024年以降の記事のみ(38件) | 2026-07-12 | ✅ |
+| 低 | `sort=created/stock`[GUI操作] | 並び順 | [qiita.com/search?q=猫&sort=created](https://qiita.com/search?q=%E7%8C%AB&sort=created) | 新着順で表示 | 2026-07-12 | ✅ |
+
+**ログイン差分**: 「ストックのみ」トグル・質問タブの「購読のみ」トグルはいずれも未ログインだとログインページへの
+リンクになり、パラメータ名を確認できなかった(ビューア依存の個人フィルタと推定)。別issueへ切り出し済み。
+
+## Zenn
+
+| 優先 | 対象 | DialectのUI名 | 検証URL | 期待する結果 | 最終確認 | 結果 |
+|---|---|---|---|---|---|---|
+| 中 | `source=books/scraps/users/publications`[GUI操作] | 探す種類 | [zenn.dev/search?q=Python&source=books](https://zenn.dev/search?q=Python&source=books) | 本(Books)タブの結果 | 2026-07-12 | ✅ |
+| 低 | `order=daily/alltime/latest`[GUI操作] | 並び順 | [zenn.dev/search?q=Python&order=latest](https://zenn.dev/search?q=Python&order=latest) | 最新順で表示 | 2026-07-12 | ✅ |
+| 低 | `mode=semantic`[GUI操作] | 意味検索 | [zenn.dev/search?q=Python&mode=semantic](https://zenn.dev/search?q=Python&mode=semantic) | 意味検索(ベータ)結果に切り替わる | 2026-07-12 | ✅ |
+
+**非対応の確認**: 除外(`-語`)は「Python」5939件→「Python -Django」が全カテゴリ0件になったことから非対応と確定
+(効くなら微減するはずが全滅)。完全一致は未確認のため未実装。
+
 ## 確認履歴
 
 | 日付 | 実施内容 |

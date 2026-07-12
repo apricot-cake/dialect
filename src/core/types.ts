@@ -63,6 +63,10 @@ export type ConceptId =
   | 'region'
   | 'license'
   | 'exactMatchMode'
+  | 'codeLanguage'
+  | 'minStars'
+  | 'minStocks'
+  | 'semanticSearch'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -225,9 +229,13 @@ export type GoogleLicense = '' | 'f' | 'fc' | 'fm' | 'fmc'
  * images=画像(Google専用。udm=2)、shopping=ショッピング(Google専用。udm=28)、
  * news=ニュース(Google専用。tbm=nws。他サイトのresultTypeとは別パラメータ形式)、
  * web=ウェブ(Google専用。udm=web。リッチな要素を除いた素の検索結果一覧)、
- * books=書籍(Google専用。udm=36)。shortはGoogleの「ショート動画」タブ(udm=39)とも共用。
- * いずれも2026-07-11にGUI操作で実測(issue #33)。AIモード(udm=50)は検索結果一覧ではなく
- * 別の対話型体験のため対象外(マップ・フライトと同様の理由で除外)
+ * books=書籍(Google専用。udm=36。Zennの「本」検索(source=books)とも共用)。
+ * shortはGoogleの「ショート動画」タブ(udm=39)とも共用。いずれも2026-07-11にGUI操作で実測(issue #33)。
+ * AIモード(udm=50)は検索結果一覧ではなく別の対話型体験のため対象外(マップ・フライトと同様の理由で除外)。
+ * repositories=リポジトリ・code=コード・issues=Issue・pullRequests=プルリクエスト・
+ * discussions=ディスカッションはいずれもGitHub専用(type=)。peopleはGitHubのユーザー検索とも共用。
+ * questions=質問(Qiita専用。question-search)。scraps=スクラップ・publications=Publication
+ * (企業・組織アカウント)はいずれもZenn専用(source=)。GitHub/Qiita/Zennとも2026-07-12にGUI操作で実測(issue #53〜#55)
  */
 export type ResultType =
   | ''
@@ -252,6 +260,14 @@ export type ResultType =
   | 'news'
   | 'web'
   | 'books'
+  | 'repositories'
+  | 'code'
+  | 'issues'
+  | 'pullRequests'
+  | 'discussions'
+  | 'questions'
+  | 'scraps'
+  | 'publications'
 
 /**
  * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
@@ -352,6 +368,20 @@ export interface QueryState {
    * (クエリ全体の解釈モードの切り替え)。2026-07-11にGUI操作で実測(issue #33)
    */
   exactMatchMode: boolean
+  /**
+   * GitHub専用。プログラミング言語で絞り込む(language:)。詳細検索フォームの言語プルダウンは
+   * 700件超と膨大なため、Google の region と同様に自由入力にした。2026-07-12にGUI操作で実測(issue #53)
+   */
+  codeLanguage: string
+  /** GitHub専用。最低スター数(stars:)。数値文字列。2026-07-12にGUI操作で実測(issue #53) */
+  minStars: string
+  /** Qiita専用。最低ストック数(stocks:)。数値文字列。2026-07-12にGUI操作で実測(issue #54) */
+  minStocks: string
+  /**
+   * Zenn専用。意味検索(mode=semantic、ベータ)。キーワードの字句一致ではなく文章の意味的な
+   * 近さで探すモード。2026-07-12にGUI操作で実測(issue #55)
+   */
+  semanticSearch: boolean
   /** X専用。リスト内検索(list:<id>)。リストのURLまたはIDを生で持ち、buildUrlで数値IDを抽出する */
   xList: string
   /** スペース区切りで複数のタグ(すべて含む=AND) */
@@ -470,6 +500,9 @@ export type PlatformId =
   | 'bilibili'
   | 'fantia'
   | 'google'
+  | 'github'
+  | 'qiita'
+  | 'zenn'
 
 /**
  * 検索URLの1断片。全パーツの text をそのまま連結したものが最終URLになる。

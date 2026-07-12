@@ -246,6 +246,10 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   pixivPopular: ['popular', 'reaction'],
   ageRating: ['age'],
   excludeAi: ['production', 'exclude'],
+  codeLanguage: ['lang', 'genre'],
+  minStars: ['reaction', 'popular'],
+  minStocks: ['reaction', 'popular'],
+  semanticSearch: ['word'],
 }
 
 /**
@@ -364,6 +368,10 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   fantiaAudience: 'age',
   safeSearchOff: 'age',
   language: 'lang',
+  codeLanguage: 'lang',
+  minStars: 'popular',
+  minStocks: 'popular',
+  semanticSearch: 'word',
 }
 
 // ---- 家族(姉妹提案・まとめて追加) ----
@@ -385,7 +393,7 @@ export const FAMILIES: FamilyDef[] = [
     id: 'reaction',
     labelKey: 'family.reaction',
     kind: 'bucket',
-    members: ['minLikes', 'minReposts', 'minReplies', 'pixivPopular'],
+    members: ['minLikes', 'minReposts', 'minReplies', 'pixivPopular', 'minStars', 'minStocks'],
   },
   {
     id: 'mention',

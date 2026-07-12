@@ -337,6 +337,41 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['犬'], keywordsOr: '猫 兎', resultType: 'news' },
     { fileType: 'doc', domain: 'example.org' },
   ],
+  github: [
+    {
+      terms: ['dialect', 'test'],
+      exactPhrase: ['exact phrase here'],
+      exclude: 'excludedword',
+      fromUser: 'octocat',
+      codeLanguage: 'TypeScript',
+      minStars: '100',
+      since: '2024-01-01',
+      until: '2024-12-31',
+      resultType: 'repositories',
+    },
+    { terms: ['猫'], fromUser: 'octocat', resultType: 'issues' },
+    { terms: ['猫'], resultType: 'people' },
+    { terms: ['犬'], minStars: '50' },
+  ],
+  qiita: [
+    {
+      terms: ['dialect', 'test'],
+      exactPhrase: ['exact phrase here'],
+      exclude: 'excludedword',
+      fromUser: 'qiita',
+      hashtag: 'Python Ruby',
+      minStocks: '10',
+      since: '2024-01-01',
+      until: '2024-12-31',
+      sort: 'new',
+    },
+    { terms: ['猫'], titleOnly: true, resultType: 'questions' },
+  ],
+  zenn: [
+    { terms: ['dialect', 'test'], resultType: 'books', sort: 'new', semanticSearch: true },
+    { terms: ['猫'], resultType: 'scraps' },
+    { terms: ['犬'], resultType: 'people', sort: 'hot' },
+  ],
 }
 
 for (const platform of PLATFORMS) {
@@ -578,6 +613,9 @@ const NEGATIVE: string[] = [
   'https://www.nicovideo.jp/watch/sm9', // 動画ページ
   'ただの文章です', // URLではない
   'https://x.com/search?q=', // 中身のない検索
+  'https://github.com/octocat/Hello-World', // リポジトリページ
+  'https://qiita.com/qiita/items/abc123', // 記事ページ
+  'https://zenn.dev/qiita/articles/abc123', // 記事ページ
 ]
 for (const input of NEGATIVE) {
   const result = parseSearchUrl(input)
@@ -595,5 +633,5 @@ if (failures > 0) {
   process.exit(1)
 }
 console.log(
-  `check:reverse — OK(往復 ${total} ケース / instanceHost往復 ${INSTANCE_CASES.length} 件 / ワイルド ${WILD.length} 件 / 拒否 ${NEGATIVE.length} 件、全20サイト)`,
+  `check:reverse — OK(往復 ${total} ケース / instanceHost往復 ${INSTANCE_CASES.length} 件 / ワイルド ${WILD.length} 件 / 拒否 ${NEGATIVE.length} 件、全${PLATFORMS.length}サイト)`,
 )

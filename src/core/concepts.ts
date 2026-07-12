@@ -25,6 +25,10 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.region.trim()) active.push('region')
   if (state.license) active.push('license')
   if (state.exactMatchMode) active.push('exactMatchMode')
+  if (state.codeLanguage.trim()) active.push('codeLanguage')
+  if (state.minStars.trim()) active.push('minStars')
+  if (state.minStocks.trim()) active.push('minStocks')
+  if (state.semanticSearch) active.push('semanticSearch')
   if (state.xList.trim()) active.push('xList')
   if (state.hashtag.trim()) active.push('hashtag')
   if (state.hashtagOr.trim()) active.push('hashtagOr')
@@ -94,6 +98,10 @@ export function defaultState(): QueryState {
     region: '',
     license: '',
     exactMatchMode: false,
+    codeLanguage: '',
+    minStars: '',
+    minStocks: '',
+    semanticSearch: false,
     xList: '',
     hashtag: '',
     hashtagOr: '',

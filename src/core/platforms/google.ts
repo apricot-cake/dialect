@@ -21,7 +21,15 @@ import {
   tok,
   type Token,
 } from '../urlParts'
-import { daysAgoIso, emptyBins, applyBins, leftoverParams, pathSegments, tokenize, unquote } from '../parse'
+import {
+  daysAgoIso,
+  emptyBins,
+  applyBins,
+  leftoverParams,
+  pathSegments,
+  tokenize,
+  unquote,
+} from '../parse'
 
 // 出典: 2026-07-11にGUI操作で実測(issue #33)。詳細検索フォーム(google.com/advanced_search)を
 // 実際に操作しadvanced formがサーバー側でq=内の演算子(引用符・-・site:・filetype:)へ
@@ -41,7 +49,15 @@ const RESULT_TYPE_UDM: Partial<Record<ResultType, string>> = {
 const UDM_RESULT_TYPE: Record<string, ResultType> = Object.fromEntries(
   Object.entries(RESULT_TYPE_UDM).map(([rt, udm]) => [udm, rt as ResultType]),
 )
-const GOOGLE_RESULT_TYPES = new Set<ResultType>(['images', 'shopping', 'short', 'video', 'web', 'books', 'news'])
+const GOOGLE_RESULT_TYPES = new Set<ResultType>([
+  'images',
+  'shopping',
+  'short',
+  'video',
+  'web',
+  'books',
+  'news',
+])
 
 // ツールメニューの期間プリセット(tbs=qdr:h/d/w/m/y)。自前生成では使わないが、
 // Google自身のツールメニューが生成したURLの貼り付け読み込み(逆翻訳)に備えて受ける
@@ -177,7 +193,8 @@ function parseUrl(url: URL): ParsedSearch | null {
   const lr = url.searchParams.get('lr')
   if (lr !== null) {
     const code = lr.replace(/^lang_/, '')
-    if ((POST_LANGUAGE_CODES as readonly string[]).includes(code)) patch.language = code as PostLanguage
+    if ((POST_LANGUAGE_CODES as readonly string[]).includes(code))
+      patch.language = code as PostLanguage
     else if (code === 'zh-CN' || code === 'zh-TW') patch.language = 'zh'
     else ignored.push(`lr=${lr}`)
   }

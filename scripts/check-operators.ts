@@ -1564,6 +1564,107 @@ const PROBES: Probe[] = [
     state: { resultType: 'news' },
     token: 'tbm=nws',
   },
+  // ---- GitHub ----
+  {
+    platform: 'github',
+    concept: 'fromUser',
+    label: '所有者/投稿者',
+    state: { fromUser: 'octocat' },
+    token: 'user:',
+  },
+  {
+    platform: 'github',
+    concept: 'codeLanguage',
+    label: 'プログラミング言語',
+    state: { codeLanguage: 'TypeScript' },
+    token: 'language:',
+  },
+  {
+    platform: 'github',
+    concept: 'minStars',
+    label: '最低スター数',
+    state: { minStars: '100' },
+    token: 'stars:',
+  },
+  {
+    platform: 'github',
+    concept: 'period',
+    label: '期間(開始)',
+    state: { since: '2024-01-01' },
+    token: 'created:',
+  },
+  {
+    platform: 'github',
+    concept: 'resultType',
+    label: '探す=Issue',
+    state: { resultType: 'issues' },
+    token: 'type=',
+  },
+  // ---- Qiita ----
+  {
+    platform: 'qiita',
+    concept: 'hashtag',
+    label: 'タグ',
+    state: { hashtag: 'Python' },
+    token: 'tag:',
+  },
+  {
+    platform: 'qiita',
+    concept: 'fromUser',
+    label: '投稿者',
+    state: { fromUser: 'qiita' },
+    token: 'user:',
+  },
+  {
+    platform: 'qiita',
+    concept: 'titleOnly',
+    label: 'タイトルだけ',
+    state: { titleOnly: true },
+    token: 'title:',
+  },
+  {
+    platform: 'qiita',
+    concept: 'minStocks',
+    label: '最低ストック数',
+    state: { minStocks: '10' },
+    token: 'stocks:',
+  },
+  {
+    platform: 'qiita',
+    concept: 'period',
+    label: '期間(開始)',
+    state: { since: '2024-01-01' },
+    token: 'created:',
+  },
+  {
+    platform: 'qiita',
+    concept: 'sortOrder',
+    label: '新着順',
+    state: { sort: 'new' },
+    token: 'sort=',
+  },
+  // ---- Zenn ----
+  {
+    platform: 'zenn',
+    concept: 'resultType',
+    label: '探す=スクラップ',
+    state: { resultType: 'scraps' },
+    token: 'source=',
+  },
+  {
+    platform: 'zenn',
+    concept: 'sortOrder',
+    label: '新着順',
+    state: { sort: 'new' },
+    token: 'order=',
+  },
+  {
+    platform: 'zenn',
+    concept: 'semanticSearch',
+    label: '意味検索',
+    state: { semanticSearch: true },
+    token: 'mode=',
+  },
 ]
 
 // ---- support 整合(静かな嘘の検知): support が「効く」と言う概念が実際に効くか ----------

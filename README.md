@@ -52,6 +52,9 @@ It never fetches or displays results itself. It only opens each site's own real 
 | bilibili        | `search.bilibili.com`                   | Not required | Rich (arbitrary date, length, tab switch, danmaku/favorite-count sorts)                                                                                        |
 | Fantia          | `fantia.jp/posts`                       | Required     | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported)                                                                     |
 | Google          | `google.com/search`                     | Not required | Rich (file type, region, license, verbatim mode, arbitrary date, scoped OR, result type)                                                                       |
+| GitHub          | `github.com/search`                     | Not required | User, programming language, minimum stars, date, result type (repositories/code/issues/pull requests/discussions/users)                                        |
+| Qiita           | `qiita.com/search`                      | Not required | Tag, user, title-only, minimum stocks, date, sort, result type (articles/questions)                                                                            |
+| Zenn            | `zenn.dev/search`                       | Not required | Result type (articles/books/scraps/users/publications), sort, semantic search                                                                                  |
 
 The only bar for adding a site is "a search URL with a keyword can be opened." Even with thin operator support, there is value in not having to retype the query on each site.
 

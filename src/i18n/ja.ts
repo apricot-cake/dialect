@@ -249,6 +249,14 @@ export const ja = {
   'concept.resultType.news': 'ニュース',
   'concept.resultType.web': 'ウェブのみ',
   'concept.resultType.books': '書籍',
+  'concept.resultType.repositories': 'リポジトリ',
+  'concept.resultType.code': 'コード',
+  'concept.resultType.issues': 'Issue',
+  'concept.resultType.pullRequests': 'プルリクエスト',
+  'concept.resultType.discussions': 'ディスカッション',
+  'concept.resultType.questions': '質問',
+  'concept.resultType.scraps': 'スクラップ',
+  'concept.resultType.publications': 'Publication',
   'concept.resultType.help':
     '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
@@ -309,6 +317,20 @@ export const ja = {
   'concept.exactMatchMode.label': '完全一致で検索',
   'concept.exactMatchMode.help':
     '入力した語をそのまま使って検索し、類義語や表記ゆれへの自動的な言い換えを抑えます（Googleのみ対応。完全一致で探す＝語順を保った句の一致とは別の設定です）',
+  'concept.codeLanguage.label': 'プログラミング言語',
+  'concept.codeLanguage.placeholder': '例: TypeScript',
+  'concept.codeLanguage.help':
+    '指定したプログラミング言語で書かれたものに絞り込みます（GitHubのみ対応）',
+  'concept.minStars.label': '最低スター数',
+  'concept.minStars.placeholder': '例: 100',
+  'concept.minStars.help':
+    '指定した数以上のスターがついたリポジトリだけに絞り込みます（GitHubのみ対応）',
+  'concept.minStocks.label': '最低ストック数',
+  'concept.minStocks.placeholder': '例: 10',
+  'concept.minStocks.help': '指定した数以上ストックされた記事だけに絞り込みます（Qiitaのみ対応）',
+  'concept.semanticSearch.label': '意味検索',
+  'concept.semanticSearch.help':
+    'キーワードの一致ではなく、文章の意味の近さで探します（Zennのみ対応、ベータ機能）',
 
   // 条件追加モーダルのサイト絞り込みと、バーの対応サイト数ラベル
   'builder.filter.label': 'サイトで使える条件だけ表示',
@@ -422,6 +444,12 @@ export const ja = {
   'note.bilibili.videoLength':
     '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
   'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
+  'note.zenn.exclude': 'Zennには除外検索がありません（記号はそのまま検索語の一部として扱われます）',
+  'note.github.repoIssueScopeOnly':
+    'リポジトリ・コード・Issue・プルリクエスト検索でのみ使えます（ディスカッション・ユーザー検索では使えません）',
+  'note.github.repoOrUserScopeOnly':
+    'リポジトリ・コード・ユーザー検索でのみ使えます（Issue・プルリクエスト・ディスカッション検索では使えません）',
+  'note.github.repoScopeOnly': 'リポジトリ検索でのみ使えます',
   'note.fantia.sort': 'この並び順は、新しい順・お気に入り数順のみ対応しています（Fantiaのみ対応）',
   'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
   'note.google.titleOnly':

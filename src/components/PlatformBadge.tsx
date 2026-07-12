@@ -1,6 +1,7 @@
 import {
   siBilibili,
   siBluesky,
+  siGithub,
   siGoogle,
   siHatenabookmark,
   siInstagram,
@@ -10,11 +11,13 @@ import {
   siNote,
   siPinterest,
   siPixiv,
+  siQiita,
   siReddit,
   siTumblr,
   siTwitch,
   siX,
   siYoutube,
+  siZenn,
 } from 'simple-icons'
 import type { PlatformDef, PlatformId } from '@/core/types'
 import { badgeColor } from '@/lib/color'
@@ -37,6 +40,9 @@ const ICONS: Partial<Record<PlatformId, { path: string }>> = {
   pinterest: siPinterest,
   bilibili: siBilibili,
   google: siGoogle,
+  github: siGithub,
+  qiita: siQiita,
+  zenn: siZenn,
 }
 
 const BUBBLE: Partial<Record<PlatformId, string>> = {

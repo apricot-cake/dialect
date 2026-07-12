@@ -937,3 +937,42 @@ X/Reddit/pixiv/YouTubeの4サイトで実装漏れ・未実装の実在演算子
 ### 実装方針
 
 CLAUDE.md「フィールドの採否選定はしない」に従い、上記で実在確認したパラメータはすべて実装対象とする。
+
+## GitHub / Qiita / Zenn 調査(2026-07-12、issue #53〜#55)
+
+技術者クラスタ3サイトの調査。3サイトともログイン状態依存の差分を確認する必要があり、いずれも「未ログインで検索・演算子自体は完結する」ことを確認した(未ログインのin-appブラウザで検証。GitHub/Qiitaはアカウント保有前提でログイン差分の切り分けも行った)。
+
+### GitHub(**出所: GUI操作**、`github.com/search/advanced` の詳細検索フォームへ実際に値を入力し、生成された `q=` 文字列を採取。2026-07-12)
+
+`/search/advanced` は入力するそばから画面下の隠しクエリ入力(`input[name=q]`)へリアルタイムでqualifierを合成する構造。各欄に値を入れて実際に合成された文字列を採取した(フォーム送信もして最終URLが `github.com/search?q=<query>&type=<Type>` になることも確認)。
+
+- **探す種類(resultType)**: 検索結果ページ上部のタブが `type=repositories` / `code` / `issues` / `pullrequests` / `discussions` / `users` に対応(未ログインで確認)
+- **並び順**: `s=stars&o=desc` で「Most stars」表示を確認(リポジトリ検索)。他の探す種類でも `s=`/`o=` が使えると見込まれるが今回はリポジトリのみ実機確認
+- 詳細検索フォームで確認できたqualifier(いずれも同フォームの対応欄に入力し `q=` 内へ実際に合成されることを確認):
+  - リポジトリ: `user:` (from these owners) ・`repo:owner/name`(in these repositories)・`created:>YYYY-MM-DD`(作成日)・`stars:>100` / `10..50`型の範囲構文・`forks:`・`size:`(KB)・`pushed:<YYYY-MM-DD`・`language:TypeScript`・`license:mit`(SPDX ID)・`fork:true/only`(フォークを含む/のみ)
+  - コード検索: 「拡張子」「パス」「ファイル名」の3欄はいずれも内部的に **`path:` のglobパターンへ統一されている**(`extension:rb` ではなく `path:*.rb`、`filename:app.rb` ではなく `path:**/app.rb` と合成されることをGUI操作で確認。2023年のコード検索刷新で `extension:`/`filename:` は廃止され `path:` に一本化された模様。学習知識の「extension:」を鵜呑みにせずGUI確認したことで判明)
+  - Issue検索: `state:open/closed`・`reason:completed/"not planned"/reopened`(state_reason)・`comments:>5`・`label:bug label:"help wanted"`(複数指定=複数qualifier列挙、スペース含む値は要引用符)・`author:`・`mentions:`・`assignee:`・`updated:<YYYY-MM-DD`
+  - ユーザー検索: `fullname:"Grace Hopper"`(要引用符)・`location:`・`followers:>100`・`repos:>10`(公開リポジトリ数)・`language:`(Working in this language、リポジトリと同じ言語プルダウン)
+  - 検索結果サイドバーのファセットから追加確認: `is:public` / `is:private`(未ログインでもリンクとして存在)
+- **doc補完**(GUI未確認・公式ドキュメント記載): `topic:`・`in:name,description,readme`・`archived:true/false`・`mirror:true/false`・`org:`。これらはGUIの詳細検索フォーム自体には専用欄が無く(サイドバーの折りたたみファセットの奥にある可能性はあるが未展開)、qualifierとして直接入力する形式のみ確認できている
+- **ログイン要否**: 詳細検索フォーム・検索結果とも未ログインで完全に機能する。GitHubアカウント自体は開発者(ユーザー)が保有しているが、今回の調査項目(検索フォーム操作)はログイン差分が想定しにくい種類(検索対象がpublicリポジトリ中心)のため、未ログインのみで「ログイン不要」と判定する
+- **実装方針(コスト分割)**: 演算子点数が既存サイト中最多(全部で約20種)なため、今回のPRでは以下のみをPhase 1として実装する: resultType(6種)・keywords/exactPhrase/exclude・`fromUser`→resultTypeに応じ`user:`(リポジトリ/コード)or`author:`(Issue/PR)へ翻訳・`period`→`created:`・新規概念`codeLanguage`(`language:`、自由入力)・新規概念`minStars`(`stars:`、数値文字列)。残り(forks/size/pushed/license/fork inclusion/path系/comments/labels/mentions/assignee/updated/fullname/location/followers/repos/state/reason/is:public,private/topic/archived等)は実装コストが大きい独立した塊のため、別issueとして切り出す(「これは載せない」という取捨選択ではなく、CLAUDE.md掲載の「実装コストのぶんは分割してよい」に基づく作業分割。今回のGUI操作記録は上記の通りここに残したので、次の着手時に再調査は不要)
+- **補記(出所: doc)**: `period`(`created:`)・`minStars`(`stars:`)の範囲構文は、GUI操作では単方向(`created:>YYYY-MM-DD`・`stars:>100`)のみ実測した。実装では期間の両端指定(`created:{since}..{until}`)・以上/以下(`created:>=`/`stars:>=`)も使うが、これらは公式ドキュメント(docs.github.com/search-syntax)記載の標準構文であり、GUI操作そのものでは範囲構文の全パターンまでは踏んでいない
+
+### Qiita(**出所: GUI操作+doc**。詳細検索パネル自体はログイン必須と判明したため、公式ヘルプ記載の演算子を検索ボックスへ直接入力し動作を確認する形で裏取り。2026-07-12)
+
+- 検索結果ページの「検索オプションを表示」ボタン(tuneアイコン)をクリックすると、未ログイン状態では**ログイン/新規登録モーダルが開く**ことを確認(パネルの中身は見られない)。同じく「ストックのみ」トグルは未ログインだと `/login?...` へのリンクになっている。**つまりQiitaの詳細フィルタGUI・ストック機能はログイン必須**
+- 一方、演算子そのものは未ログインでも `q=` へ直接入力すれば機能することを確認: `tag:Python 猫`(6348件→1128件に絞り込み)・`title:猫 stocks:>10`(52件)・`user:qiita created:>2024-01-01`(38件)。**演算子の実行自体はログイン不要**で、ログインが要るのはそれを組み立てる詳細フィルタGUIのみ、という切り分けになる
+- **探す種類(resultType)**: 「記事」タブ=`/search?q=`、「質問」タブ=`/question-search?q=`(同じ演算子がそのまま使えることを確認)
+- **並び順**: 検索結果の並び順メニューから3値を確認: `sort=rel`(関連順・既定)・`sort=created`(新着順)・`sort=stock`(ストック数順)
+- **ストックのみ / 質問タブの「購読のみ」**: いずれもログイン必須のためGUI操作で裏取りできず、パラメータ名は未確認。ビューア依存の個人フィルタ(Blueskyの`following=true`と同種)と推定されるが、確証を得るには実アカウントでのログインが要る。**ユーザーに要相談**(本人によるログイン操作が必要な箇所)
+- **実装方針**: keywords・tag:・title:(titleOnly)・user:(fromUser)・stocks:(min値、新規概念`minStocks`)・created:(period)・resultType(記事/質問)・sortOrder(3値)は今回のPRで実装する。ストックのみ/購読のみの2トグルはパラメータ未確定のため見送り、Issueに調査continuation注記を残す
+
+### Zenn(**出所: GUI操作**、`zenn.dev/search` の各リンク・タブを実操作。2026-07-12)
+
+- 検索欄・意味検索トグル・5タブ・3並び順: `q=`(キーワード)・`mode=semantic`(意味検索、BETA)・`source=articles/books/scraps/users/publications`(探す種類)・`order=daily/alltime/latest`(トレンド当日/全期間/最新)
+- **表層で止めない失敗と訂正**: 検索語「猫」ではBooks/Publicationsの該当件数が0件のためタブ自体が表示されず、初回調査で見落として「3タブのみ(articles/scraps/users)」「source=booksは無視される」と誤って記録した。件数が出る語(Python)で再検証したところ、`source=books`・`source=publications`とも実在しURLが正しく保持されることを確認(タブ見出しの件数表示 Articles/Books/Scraps/Users/Publications で5種そろって出現)。**タブの見た目上の有無を「対応の有無」と早合点しないこと**の実例として記録する
+- `-語`(除外)は非対応と確認: 「Python」単独は5939件(articles)だが「Python -Django」は**全カテゴリ0件**になった。除外が効くなら微減するはずが全滅したことから、`-`はただの文字として字句解析を壊すだけで除外機能自体が存在しないと判定
+- トピック(タグ)ページ `/topics/{name}` は存在するが、`?q=` を付けても絞り込みに反映されない(件数が同じ)ことを確認したため、**キーワード検索とタグ絞り込みは組み合わせられない構造**と判明。既存の`hashtag`概念(他条件と組み合わせて使う前提)とは適合しないため、Zennでは実装対象外とする(取捨選択ではなく構造上組み合わせ不可という事実に基づく)
+- **ログイン要否**: 検索UI内にログイン誘導要素(リンク・トグル)が一切無く、全機能が未ログインで完結すると確信できる(GUI操作で確認)。ログイン差分は無し
+- **実装方針**: keywords(exclude/exactPhraseは非対応と確認済みにつき実装しない)・resultType(articles/books/scraps/users/publications の5値)・sortOrder(daily/alltime/latest)・新規概念`semanticSearch`(mode=semantic)を実装する

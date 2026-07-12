@@ -20,6 +20,9 @@ import { fanbox } from './fanbox'
 import { bilibili } from './bilibili'
 import { fantia } from './fantia'
 import { google } from './google'
+import { github } from './github'
+import { qiita } from './qiita'
+import { zenn } from './zenn'
 
 // 並び順はグループ順(SNS→動画→イラスト・画像→ブログ・掲示板→Web検索)に揃える。
 // この配列順が、起動画面のカード・条件追加モーダルのフィルタ・対応ポップの
@@ -50,6 +53,10 @@ export const PLATFORMS: PlatformDef[] = [
   hatebu,
   fivech,
   animanch,
+  // 技術記事共有
+  github,
+  qiita,
+  zenn,
   // Web検索
   google,
 ]
