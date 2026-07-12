@@ -26,7 +26,6 @@ import {
   type StoredQuery,
 } from '@/core/storage'
 import { mergeFragments, type SmartFragments } from '@/core/smartInput'
-import type { SmartSuggestion } from '@/core/smartSuggest'
 import { andTerms, exactPhrases, words } from '@/core/text'
 import { getLang, setLang, subscribe, t, type Lang } from '@/i18n'
 import { AppHeader } from '@/components/AppHeader'
@@ -391,12 +390,6 @@ export default function App() {
     setChips(seedChips(next))
     setRaw({})
   }
-  // Adopt one "did you mean" suggestion: write its value, raise its bar
-  const adoptSuggestion = (s: SmartSuggestion) => {
-    patchQuery(s.patch)
-    setAdded((a) => (a.includes(s.concept) ? a : [...a, s.concept]))
-  }
-
   return (
     <div className="fixed inset-0 overflow-hidden bg-bg text-fg">
       <DotsCanvas dark={dark} />
@@ -421,7 +414,6 @@ export default function App() {
           chipsApi={chipsApi}
           patch={patchQuery}
           onApplySmart={applySmart}
-          onAdoptSuggestion={adoptSuggestion}
           removeConcept={removeConcept}
           onClear={canClear ? clearAll : undefined}
           shareUrl={canClear ? permalinkUrl(query) : undefined}

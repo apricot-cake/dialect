@@ -489,19 +489,16 @@ export const en = {
   'smart.placeholder': 'e.g. cat -dog @user #tag today',
   'smart.commit': 'Add as conditions',
   'smart.preview': 'Turns into:',
-  'smart.suggest': 'Did you mean:',
   // Hint panel: opened from the "?" button while the input is empty.
-  // Example lists are |-separated; each example becomes a tappable chip
+  // Example lists are |-separated; each example renders as a read-only chip
   'smart.hint.toggle': 'Typing hints',
   'smart.hint.title': 'What you can type:',
-  'smart.hint.natural': 'Plain words too',
   'smart.hint.exclude.ex': '-dog',
   'smart.hint.phrase.ex': '"cat cafe"',
   'smart.hint.user.ex': '@username',
   'smart.hint.tag.ex': '#tag',
   'smart.hint.period.ex': 'today|yesterday|since:2026-01-01',
   'smart.hint.likes.ex': 'likes>1000|min_faves:10000',
-  'smart.hint.natural.ex': 'viral|video|live',
 
   // Two-screen snap layout
   'ui.addCondition': 'Add a condition',

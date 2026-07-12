@@ -1,17 +1,14 @@
 import { Fragment, useMemo, useRef, useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
-import type { QueryState } from '@/core/types'
 import { activeConcepts, defaultState } from '@/core/concepts'
 import { CONCEPT_MAP } from '@/core/conceptDefs'
 import { conceptSummary } from '@/core/preview'
-import { tokenize } from '@/core/parse'
 import {
   hasFragments,
   mergeFragments,
   parseSmartInput,
   type SmartFragments,
 } from '@/core/smartInput'
-import { suggestFor, type SmartSuggestion } from '@/core/smartSuggest'
 import { conceptColors } from '@/lib/conceptColors'
 import { t, type MessageKey } from '@/i18n'
 
@@ -27,7 +24,6 @@ const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
   { labelKey: 'concept.hashtag.label', exKey: 'smart.hint.tag.ex' },
   { labelKey: 'concept.period.label', exKey: 'smart.hint.period.ex' },
   { labelKey: 'concept.minLikes.label', exKey: 'smart.hint.likes.ex' },
-  { labelKey: 'smart.hint.natural', exKey: 'smart.hint.natural.ex' },
 ]
 
 /**
@@ -35,20 +31,14 @@ const HINT_ROWS: { labelKey: MessageKey; exKey: MessageKey }[] = [
  * point. While typing it live-previews how the text will split into
  * conditions (doubling as an operator tutorial); Enter turns everything into
  * chips on the condition bars and empties the line (input = means,
- * conditions = state). Below the preview, "did you mean" suggestions
- * (issue #17) offer semantic leaps as tappable chips — never auto-applied
+ * conditions = state)
  */
 export function SmartInput({
-  query,
   dark,
   onApply,
-  onAdopt,
 }: {
-  query: QueryState
   dark: boolean
   onApply: (fragments: SmartFragments) => void
-  /** Apply one suggestion's patch (the input text is rewritten here) */
-  onAdopt: (suggestion: SmartSuggestion) => void
 }) {
   const [input, setInput] = useState('')
   const [helpOpen, setHelpOpen] = useState(false)
@@ -63,30 +53,11 @@ export function SmartInput({
   const previewState = useMemo(() => mergeFragments(defaultState(), fragments), [fragments])
   const previewConcepts = activeConcepts(previewState)
   const colors = conceptColors(previewConcepts, dark)
-  const suggestions = useMemo(
-    () => (filled ? suggestFor(fragments.terms, query, now) : []),
-    [filled, fragments, query, now],
-  )
 
   const submit = () => {
     if (!filled) return
     onApply(fragments)
     setInput('')
-  }
-  const adopt = (s: SmartSuggestion) => {
-    onAdopt(s)
-    // Peel the matched word out of the line, keeping the rest as typed
-    setInput(
-      tokenize(input)
-        .map((tok) => (tok === s.source ? s.remainder : tok))
-        .filter(Boolean)
-        .join(' '),
-    )
-  }
-  /** Label like 「種類: 動画」 for one suggestion, via the shared summaries */
-  const suggestionLabel = (s: SmartSuggestion): string => {
-    const state = { ...defaultState(), ...s.patch }
-    return `${t(CONCEPT_MAP[s.concept].labelKey)}: ${conceptSummary(s.concept, state)}`
   }
   // The hint panel is an anchored popover on the "?" button (hover or tap;
   // auto-opening on focus proved intrusive, and an in-flow panel shoved the
@@ -232,23 +203,6 @@ export function SmartInput({
               </span>
             )
           })}
-        </div>
-      )}
-      {suggestions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-2 text-[12px] leading-[1.5]">
-          <span className="text-faint">{t('smart.suggest')}</span>
-          {suggestions.map((s) => (
-            <button
-              key={s.key}
-              type="button"
-              data-noscale
-              onClick={() => adopt(s)}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-border bg-card px-2.5 py-0.5 font-semibold text-label"
-            >
-              <span className="text-accent">+</span>
-              {suggestionLabel(s)}
-            </button>
-          ))}
         </div>
       )}
     </div>

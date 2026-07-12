@@ -5,7 +5,6 @@ import { CONCEPT_MAP } from '@/core/conceptDefs'
 import { detectConflicts } from '@/core/conflicts'
 import { t } from '@/i18n'
 import type { SmartFragments } from '@/core/smartInput'
-import type { SmartSuggestion } from '@/core/smartSuggest'
 import { useCoarsePointer } from '@/hooks/useCoarsePointer'
 import { ConditionBar } from './ConditionBar'
 import { SmartInput } from './SmartInput'
@@ -120,7 +119,6 @@ export function ConditionsArea({
   chipsApi,
   patch,
   onApplySmart,
-  onAdoptSuggestion,
   removeConcept,
   onClear,
   shareUrl,
@@ -136,7 +134,6 @@ export function ConditionsArea({
   chipsApi: ChipsApi
   patch: (patch: Partial<QueryState>) => void
   onApplySmart: (fragments: SmartFragments) => void
-  onAdoptSuggestion: (suggestion: SmartSuggestion) => void
   removeConcept: (concept: ConceptId) => void
   /** 条件が1つでもあるときだけ渡る。undefined ならクリアボタンを出さない */
   onClear?: () => void
@@ -189,12 +186,7 @@ export function ConditionsArea({
               bars below and the line goes back to empty */}
           <motion.div layout transition={SPRING} className="flex w-full items-start gap-2.5">
             <div className="dl-bar-spacer w-[30px] shrink-0" />
-            <SmartInput
-              query={query}
-              dark={dark}
-              onApply={onApplySmart}
-              onAdopt={onAdoptSuggestion}
-            />
+            <SmartInput dark={dark} onApply={onApplySmart} />
             <div className="dl-remove-outer-slot w-[30px] shrink-0" />
           </motion.div>
           <AnimatePresence initial={false}>

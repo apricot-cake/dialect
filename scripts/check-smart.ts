@@ -1,6 +1,5 @@
 /**
- * Unit tests for the smart input (#16) and its suggestion vocabulary (#17).
- * Deterministic, no browser or network.
+ * Unit tests for the smart input (#16). Deterministic, no browser or network.
  *
  * Why this exists:
  *   The one-line grammar (exclude, exact phrase, sender, tag, period words,
@@ -13,14 +12,10 @@
  *   2. Vocabulary: period words (今週/先週/...) and count words (1万/5千/10k)
  *      against a fixed clock.
  *   3. Additive merge: mergeFragments only appends, never erases.
- *   4. Suggestions: compound tokens like 「先週バズった猫の動画」 yield
- *      candidates plus the peeled remainder (猫), and are never auto-applied
- *      (they stay out of the fragments).
  *
  * Run: npm run check:smart   (executed directly via tsx)
  */
 import { mergeFragments, parseCountWord, parsePeriodWord, parseSmartInput } from '@/core/smartInput'
-import { suggestFor } from '@/core/smartSuggest'
 import { defaultState } from '@/core/concepts'
 
 let failures = 0
@@ -126,41 +121,6 @@ eq('not a period', parsePeriodWord('猫', NOW), null)
   // merging an empty line changes nothing (keeps the [''] invariant of terms)
   const merged = mergeFragments(defaultState(), parseSmartInput('', NOW))
   eq('empty merge', merged, defaultState())
-}
-
-// ---- 4. suggestions ------------------------------------------------------------
-
-{
-  // The canonical example from issue #17: candidates come out of the
-  // compound token and the remainder is 「猫」
-  const f = parseSmartInput('先週バズった猫の動画', NOW)
-  eq('compound stays a keyword', f.terms, ['先週バズった猫の動画'])
-  const s = suggestFor(f.terms, defaultState(), NOW)
-  const byConcept = Object.fromEntries(s.map((x) => [x.concept, x]))
-  eq('suggests video', byConcept.resultType?.patch, { resultType: 'video' })
-  eq('suggests buzz', byConcept.minLikes?.patch, { minLikes: '10000' })
-  eq('suggests period', byConcept.period?.patch, { since: '2026-06-29', until: '2026-07-05' })
-  // every candidate keeps 猫 in the peeled remainder
-  for (const x of s) {
-    if (!x.remainder.includes('猫')) fail(`remainder keeps 猫: got ${JSON.stringify(x.remainder)}`)
-  }
-}
-{
-  // exact single-token match leaves an empty remainder
-  const s = suggestFor(['イラスト'], defaultState(), NOW)
-  eq('exact match', s[0]?.patch, { workType: 'illust' })
-  eq('exact match remainder', s[0]?.remainder, '')
-}
-{
-  // concepts whose value is already set are not suggested again
-  const state = { ...defaultState(), resultType: 'video' as const }
-  const s = suggestFor(['動画'], state, NOW)
-  eq('no duplicate suggestion', s.length, 0)
-}
-{
-  // English matches whole tokens only (substrings would misfire: delivery→live)
-  eq('en exact', suggestFor(['live'], defaultState(), NOW)[0]?.concept, 'liveOnly')
-  eq('en no substring', suggestFor(['delivery'], defaultState(), NOW).length, 0)
 }
 
 // ---- result --------------------------------------------------------------------

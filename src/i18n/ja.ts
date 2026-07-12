@@ -486,19 +486,16 @@ export const ja = {
   'smart.placeholder': '例: 猫 -犬 @ユーザー #タグ 今週',
   'smart.commit': '条件にする',
   'smart.preview': 'この条件になります:',
-  'smart.suggest': 'もしかして:',
   // Hint panel: opened from the "?" button while the input is empty.
-  // Example lists are |-separated; each example becomes a tappable chip
+  // Example lists are |-separated; each example renders as a read-only chip
   'smart.hint.toggle': '書き方のヒント',
   'smart.hint.title': '使える書き方:',
-  'smart.hint.natural': '自然な言葉でも',
   'smart.hint.exclude.ex': '-犬',
   'smart.hint.phrase.ex': '"猫カフェ"',
   'smart.hint.user.ex': '@ユーザー名',
   'smart.hint.tag.ex': '#タグ',
   'smart.hint.period.ex': '今週|先週|since:2026-01-01',
   'smart.hint.likes.ex': 'いいね>1000|1万いいね以上',
-  'smart.hint.natural.ex': 'バズった|動画|ライブ',
 
   // 2画面スナップ構成の操作まわり
   'ui.addCondition': '条件を追加',
