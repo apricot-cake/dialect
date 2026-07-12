@@ -22,10 +22,7 @@ function Recipe({
 }) {
   const state = useMemo(() => ({ ...defaultState(), ...recipe.patch }), [recipe])
   const permalink = useMemo(() => `./?${stateToParams(state).toString()}`, [state])
-  const supported = useMemo(
-    () => PLATFORMS.filter((p) => resolve(p, state).url !== null),
-    [state],
-  )
+  const supported = useMemo(() => PLATFORMS.filter((p) => resolve(p, state).url !== null), [state])
 
   return (
     <section className="flex flex-col gap-2.5 rounded-[14px] border border-border bg-card p-4">

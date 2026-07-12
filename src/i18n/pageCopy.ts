@@ -137,7 +137,7 @@ const en: Record<PageCopyKey, string> = {
   'about.qualityControl.link': 'See operator health',
   'recipes.title': 'Search recipes',
   'recipes.intro':
-    "Ready-to-open example searches with permalinks. Open one you like, then tweak the conditions from there.",
+    'Ready-to-open example searches with permalinks. Open one you like, then tweak the conditions from there.',
   'recipes.openLink': 'Open with these conditions',
   'recipes.noSupport': 'No site currently supports this combination',
 }
