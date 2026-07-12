@@ -561,6 +561,12 @@ export function LinksArea({
               >
                 {pt(getLang(), 'footer.matrix')}
               </a>
+              <a
+                href="./recipes.html"
+                className="text-faint underline decoration-[var(--faint)] underline-offset-2 hover:text-muted"
+              >
+                {pt(getLang(), 'footer.recipes')}
+              </a>
             </span>
           </div>
         </div>

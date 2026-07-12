@@ -16,6 +16,7 @@
     "check:reverse": "tsx scripts/check-reverse.ts",
     "check:parts": "tsx scripts/check-parts.ts",
     "check:props": "tsx scripts/check-props.ts",
+    "check:recipes": "tsx scripts/check-recipes.ts",
     "gen:readings": "tsx scripts/gen-readings.ts",
     "gen:health": "tsx scripts/gen-health.ts",
     "check:health": "tsx scripts/check-health.ts",

@@ -21,6 +21,7 @@ export default defineConfig({
         health: path.resolve(__dirname, 'health.html'),
         matrix: path.resolve(__dirname, 'matrix.html'),
         about: path.resolve(__dirname, 'about.html'),
+        recipes: path.resolve(__dirname, 'recipes.html'),
       },
     },
   },

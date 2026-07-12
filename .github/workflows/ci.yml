@@ -3,9 +3,10 @@ name: CI
 # main へマージする前のゲート。決定論的なチェック(型・ビルド・lint・演算子ドリフト・読みドリフト・
 # 逆翻訳の往復一致・URL断片帰属)だけを必須にする。外部サイトへ実アクセスする check:urls は不達で
 # 赤くなりマージが詰まるため、ここには入れずリリース前に手元/operator-check で回す運用にしている。
-# check:operators / check:readings / check:reverse / check:parts / check:props はコードと生成物・
-# チェックリストを読むだけでネットワーク不要=決定論的(読みドリフト検査は kuromoji も使わずキー照合
-# だけなので辞書も要らない。check:props はシード固定のプロパティテストなので毎回同じ結果になる)。
+# check:operators / check:readings / check:reverse / check:parts / check:props / check:recipes は
+# コードと生成物・チェックリストを読むだけでネットワーク不要=決定論的(読みドリフト検査は kuromoji も
+# 使わずキー照合だけなので辞書も要らない。check:props はシード固定のプロパティテストなので毎回同じ
+# 結果になる)。
 # check:size はビルド成果物(dist/)のgzipサイズを .size-limit.json の閾値と突き合わせ、
 # 意図しない肥大化を検知する(#60)。
 on:
@@ -46,3 +47,4 @@ jobs:
       - run: npm run check:reverse
       - run: npm run check:parts
       - run: npm run check:props
+      - run: npm run check:recipes

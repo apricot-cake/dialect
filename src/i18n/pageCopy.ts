@@ -14,6 +14,7 @@ export type PageCopyKey =
   | 'footer.health'
   | 'footer.matrix'
   | 'footer.about'
+  | 'footer.recipes'
   | 'page.backToApp'
   | 'health.title'
   | 'health.intro'
@@ -42,11 +43,16 @@ export type PageCopyKey =
   | 'about.qualityControl.title'
   | 'about.qualityControl.body'
   | 'about.qualityControl.link'
+  | 'recipes.title'
+  | 'recipes.intro'
+  | 'recipes.openLink'
+  | 'recipes.noSupport'
 
 const ja: Record<PageCopyKey, string> = {
   'footer.health': '演算子の稼働状況',
   'footer.matrix': '対応表',
   'footer.about': '仕組みとプライバシー',
+  'footer.recipes': '検索レシピ集',
   'page.backToApp': '← Dialectに戻る',
   'health.title': '演算子の稼働状況',
   'health.intro':
@@ -82,12 +88,18 @@ const ja: Record<PageCopyKey, string> = {
   'about.qualityControl.body':
     '各サイトへの検索条件の翻訳は、実際にブラウザで動作確認したうえで実装しています。多くのサイトの検索演算子は非公式（サイトが公式に保証していないもの）で予告なく壊れることがあるため、3か月ごとに再確認し、記録を公開しています。',
   'about.qualityControl.link': '演算子の稼働状況を見る',
+  'recipes.title': '検索レシピ集',
+  'recipes.intro':
+    '実際に開けるパーマリンク付きの検索例です。気に入ったものを開いて、そこから条件を書き換えて使ってください。',
+  'recipes.openLink': 'この条件で開く',
+  'recipes.noSupport': '現在この条件に対応しているサイトはありません',
 }
 
 const en: Record<PageCopyKey, string> = {
   'footer.health': 'Operator health',
   'footer.matrix': 'Support matrix',
   'footer.about': 'How it works & privacy',
+  'footer.recipes': 'Search recipes',
   'page.backToApp': '← Back to Dialect',
   'health.title': 'Operator health',
   'health.intro':
@@ -123,6 +135,11 @@ const en: Record<PageCopyKey, string> = {
   'about.qualityControl.body':
     "Every translation to a site's search is verified in a real browser before shipping. Many operators are unofficial and can break without notice, so we re-check them every three months and publish the results.",
   'about.qualityControl.link': 'See operator health',
+  'recipes.title': 'Search recipes',
+  'recipes.intro':
+    "Ready-to-open example searches with permalinks. Open one you like, then tweak the conditions from there.",
+  'recipes.openLink': 'Open with these conditions',
+  'recipes.noSupport': 'No site currently supports this combination',
 }
 
 const DICTS: Record<Lang, Record<PageCopyKey, string>> = { ja, en }

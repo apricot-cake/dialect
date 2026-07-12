@@ -32,5 +32,29 @@
     ],
     "gzip": true,
     "limit": "140 KB"
+  },
+  {
+    "name": "about.html initial load",
+    "path": [
+      "dist/assets/about-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "140 KB"
+  },
+  {
+    "name": "recipes.html initial load",
+    "path": [
+      "dist/assets/recipes-*.js",
+      "dist/assets/resolve-*.js",
+      "dist/assets/PlatformBadge-*.js",
+      "dist/assets/pageCopy-*.js",
+      "dist/assets/useDarkMode-*.js",
+      "dist/assets/pageCopy-*.css"
+    ],
+    "gzip": true,
+    "limit": "160 KB"
   }
 ]

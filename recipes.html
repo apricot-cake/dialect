@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Dialectで実際に開ける検索レシピ集。「この作者の新作イラストだけ見たい」「今週バズった投稿を探す」のような実用例をパーマリンク付きで紹介します。"
+    />
+    <title>Dialect — 検索レシピ集</title>
+    <!-- 描画前にテーマを確定してダークモードのちらつきを防ぐ(index.htmlと同じ処理) -->
+    <script>
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/recipes-main.tsx"></script>
+  </body>
+</html>
