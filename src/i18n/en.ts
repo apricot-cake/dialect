@@ -440,6 +440,8 @@ export const en = {
   'launch.bgHint': 'Middle-click or Ctrl/⌘-click to open several sites in background tabs.',
   'launch.approxHeading': 'Partially works',
   'launch.droppedHeading': 'Not available',
+  'launch.droppedHint':
+    "This doesn't mean you can't search this site — it searches with this condition left out.",
   'launch.droppedBadge': '{n} not available',
   'launch.specialtyHeading': 'Only on other sites',
   'launch.specialtyOnly': '{name} only',

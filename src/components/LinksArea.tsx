@@ -124,6 +124,9 @@ function MetaSection({
         )}
         {t(tone === 'approx' ? 'launch.approxHeading' : 'launch.droppedHeading')}
       </span>
+      {tone === 'dropped' && (
+        <p className="m-0 text-[11px] leading-[1.4] text-muted">{t('launch.droppedHint')}</p>
+      )}
       <div className="flex flex-col gap-[7px]">
         {items.map(({ concept, noteKey }) => (
           <div key={concept} className="flex flex-col gap-[3px]">

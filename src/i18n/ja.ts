@@ -437,6 +437,7 @@ export const ja = {
     'ホイールクリック、または Ctrl / ⌘ ＋ クリックで、複数サイトを背面タブに連続で開けます',
   'launch.approxHeading': '一部だけ効く',
   'launch.droppedHeading': '使えない',
+  'launch.droppedHint': 'このサイトで検索できなくなるわけではなく、この条件を省いて検索します。',
   'launch.droppedBadge': '使えない {n}',
   'launch.specialtyHeading': '他サイト専用',
   'launch.specialtyOnly': '{name}専用',
