@@ -11,10 +11,13 @@
  * 実行: npm run check:urls   (tsx で直接実行)
  */
 import { appendFileSync, writeFileSync } from 'node:fs'
-import { PLATFORMS } from '@/core/platforms'
-import { defaultState } from '@/core/concepts'
-import { buildUrl } from '@/core/urlParts'
-import type { PlatformDef, QueryState } from '@/core/types'
+import {
+  PLATFORMS,
+  defaultState,
+  buildUrl,
+  type PlatformDef,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36'

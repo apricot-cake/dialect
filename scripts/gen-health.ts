@@ -1,5 +1,5 @@
 /**
- * Generates src/generated/health.json from docs/operator-checklist.md, for the
+ * Generates apps/web/src/generated/health.json from docs/operator-checklist.md, for the
  * health.html operator-health board (issue #14). Each platform gets the list of
  * checklist rows parsed by scripts/lib/checklistParser.ts (priority/target/UI
  * name/verify URL/expected result/last-checked date/pass-fail).
@@ -10,11 +10,11 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve as pathResolve } from 'node:path'
-import { PLATFORMS } from '@/core/platforms'
+import { PLATFORMS } from '@apricot-cake/dialect-core'
 import { parseChecklist, parseRows } from './lib/checklistParser'
 
 const CHECKLIST_PATH = pathResolve(process.cwd(), 'docs/operator-checklist.md')
-const OUT_PATH = pathResolve(process.cwd(), 'src/generated/health.json')
+const OUT_PATH = pathResolve(process.cwd(), 'apps/web/src/generated/health.json')
 
 function main() {
   const checklist = readFileSync(CHECKLIST_PATH, 'utf8')

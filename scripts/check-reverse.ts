@@ -16,11 +16,14 @@
  *
  * 実行: npm run check:reverse   (tsx で直接実行)
  */
-import { PLATFORMS } from '@/core/platforms'
-import { parseSearchUrl } from '@/core/reverse'
-import { defaultState } from '@/core/concepts'
-import { buildUrl } from '@/core/urlParts'
-import type { PlatformId, QueryState } from '@/core/types'
+import {
+  PLATFORMS,
+  parseSearchUrl,
+  defaultState,
+  buildUrl,
+  type PlatformId,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 
 let failures = 0
 function fail(msg: string): void {

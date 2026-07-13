@@ -17,12 +17,18 @@
  *
  * 実行: npm run check:parts   (tsx で直接実行)
  */
-import { PLATFORMS } from '@/core/platforms'
-import { resolve } from '@/core/resolve'
-import { defaultState } from '@/core/concepts'
-import { CONCEPT_DEFS, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
-import { joinParts } from '@/core/urlParts'
-import type { ConceptId, PlatformId, QueryState } from '@/core/types'
+import {
+  PLATFORMS,
+  resolve,
+  defaultState,
+  CONCEPT_DEFS,
+  SELECT_OPTIONS,
+  SORT_OPTIONS,
+  joinParts,
+  type ConceptId,
+  type PlatformId,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 
 const BASE: QueryState = { ...defaultState(), terms: ['猫'] }
 

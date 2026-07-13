@@ -3,7 +3,7 @@
   "singleQuote": true,
   "semi": false,
   "ignorePatterns": [
-    "src/core/readings.generated.ts",
+    "packages/core/src/readings.generated.ts",
     "docs/operator-checklist.md",
     "docs/operator-research.md",
     "README.ja.md"

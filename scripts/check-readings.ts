@@ -11,7 +11,7 @@
  *
  * 実行: npm run check:readings
  */
-import { READINGS } from '@/core/readings.generated'
+import { READINGS } from '@apricot-cake/dialect-core'
 import { collectReadingPhrases } from './readingCorpus'
 
 const required = collectReadingPhrases()

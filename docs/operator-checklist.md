@@ -6,7 +6,7 @@ Dialect が送信する検索演算子・URLパラメータの動作確認手順
 
 - **頻度**: 3か月ごとを目安。加えて「動かない」というユーザー報告があったときは該当項目を即確認する
 - **確認方法**: 「検証URL」をブラウザで開き、「期待する結果」と見比べるだけ。API・ツールは不要
-- **記録**: 確認したら「最終確認」列の日付を更新する。挙動が変わっていたら ✅→❌ に変え、該当プラットフォームの `src/core/platforms/*.ts` の support レベル・注記(`src/i18n/ja.ts`)を直し、[operator-research.md](operator-research.md) に経緯を追記する
+- **記録**: 確認したら「最終確認」列の日付を更新する。挙動が変わっていたら ✅→❌ に変え、該当プラットフォームの `packages/core/src/platforms/*.ts` の support レベル・注記(`packages/core/src/ja.ts`)を直し、[operator-research.md](operator-research.md) に経緯を追記する
 - **優先度**: 表は上ほど壊れやすい(非公式・公式フォーム削除済み・未文書化)。時間がなければ「優先」欄が「高」の行だけでも確認する
 - 検証URLのキーワード(台風・天気など)は時事性があるため、結果が少なすぎる場合は適当な頻出語に読み替えてよい
 - **確認手段の使い分け**: X・Misskey・Instagram・Bluesky・YouTube・pixiv・niconico はクライアント描画のSPA(要ログインを含む)で、curlはガワしか取れないためブラウザで開く
