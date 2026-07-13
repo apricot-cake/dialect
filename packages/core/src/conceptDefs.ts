@@ -1,6 +1,6 @@
 import type { MessageKey } from './i18n.js'
 import type { ConceptId, ConceptSupport, PlatformDef, QueryState } from './types.js'
-import { PIXIV_TOOLS, supportOf } from './types.js'
+import { supportOf } from './types.js'
 import { PLATFORMS } from './platforms/index.js'
 
 /** 統一条件バーに載るウィジェットの種類 */
@@ -289,27 +289,6 @@ export const CONCEPT_DEFS: ConceptDef[] = [
     widget: 'toggle',
     labelKey: 'concept.excludeAi.label',
     helpKey: 'concept.excludeAi.help',
-  },
-  {
-    id: 'resolution',
-    field: 'resolution',
-    widget: 'select',
-    labelKey: 'concept.resolution.label',
-    helpKey: 'concept.resolution.help',
-  },
-  {
-    id: 'aspectRatio',
-    field: 'aspectRatio',
-    widget: 'select',
-    labelKey: 'concept.aspectRatio.label',
-    helpKey: 'concept.aspectRatio.help',
-  },
-  {
-    id: 'productionTool',
-    field: 'productionTool',
-    widget: 'select',
-    labelKey: 'concept.productionTool.label',
-    helpKey: 'concept.productionTool.help',
   },
   {
     id: 'resultType',
@@ -678,25 +657,6 @@ export const SELECT_OPTIONS: Partial<Record<ConceptId, SelectOption[]>> = {
     { value: 'fc', labelKey: 'concept.license.fc' },
     { value: 'fm', labelKey: 'concept.license.fm' },
     { value: 'fmc', labelKey: 'concept.license.fmc' },
-  ],
-  resolution: [
-    { value: '', labelKey: 'concept.resolution.none' },
-    { value: 'large', labelKey: 'concept.resolution.large' },
-    { value: 'medium', labelKey: 'concept.resolution.medium' },
-    { value: 'small', labelKey: 'concept.resolution.small' },
-  ],
-  aspectRatio: [
-    { value: '', labelKey: 'concept.aspectRatio.none' },
-    { value: 'landscape', labelKey: 'concept.aspectRatio.landscape' },
-    { value: 'portrait', labelKey: 'concept.aspectRatio.portrait' },
-    { value: 'square', labelKey: 'concept.aspectRatio.square' },
-  ],
-  productionTool: [
-    { value: '', labelKey: 'concept.productionTool.none' },
-    ...PIXIV_TOOLS.map((v) => ({
-      value: v,
-      labelKey: `concept.productionTool.${v}` as MessageKey,
-    })),
   ],
 }
 

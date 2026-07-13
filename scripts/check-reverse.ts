@@ -185,16 +185,6 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['猫'], ageRating: 'r18' },
     { terms: ['手芸'], keywordsOr: '猫 犬' },
     { keywordsOr: '猫' },
-    {
-      terms: ['猫'],
-      resolution: 'medium',
-      aspectRatio: 'square',
-      productionTool: 'Photoshop',
-    },
-    { terms: ['猫'], resolution: 'large' },
-    { terms: ['猫'], resolution: 'small' },
-    { terms: ['猫'], aspectRatio: 'landscape' },
-    { terms: ['猫'], aspectRatio: 'portrait' },
   ],
   misskey: [
     { terms: ['猫'], exclude: '犬', fromUser: 'alice' },

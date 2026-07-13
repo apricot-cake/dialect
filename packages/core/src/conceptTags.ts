@@ -244,9 +244,6 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   pixivPopular: ['popular', 'reaction'],
   ageRating: ['age'],
   excludeAi: ['production', 'exclude'],
-  resolution: ['size'],
-  aspectRatio: ['size'],
-  productionTool: ['production', 'format'],
 }
 
 /**
@@ -366,9 +363,6 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   fantiaAudience: 'age',
   safeSearchOff: 'age',
   language: 'lang',
-  resolution: 'media',
-  aspectRatio: 'media',
-  productionTool: 'media',
 }
 
 // ---- 家族(姉妹提案・まとめて追加) ----

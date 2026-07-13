@@ -6,13 +6,7 @@ import type {
   PostLanguage,
   QueryState,
 } from './types.js'
-import {
-  FANTIA_CATEGORIES,
-  GOOGLE_FILE_TYPES,
-  NICO_GENRES,
-  PIXIV_TOOLS,
-  POST_LANGUAGE_CODES,
-} from './types.js'
+import { FANTIA_CATEGORIES, GOOGLE_FILE_TYPES, NICO_GENRES, POST_LANGUAGE_CODES } from './types.js'
 import { defaultState } from './concepts.js'
 import { words } from './text.js'
 
@@ -99,9 +93,6 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.pixivPopular) params.set('pxu', state.pixivPopular)
   if (state.ageRating) params.set('age', state.ageRating)
   if (state.excludeAi) params.set('noai', '1')
-  if (state.resolution) params.set('pres', state.resolution)
-  if (state.aspectRatio) params.set('par', state.aspectRatio)
-  if (state.productionTool) params.set('ptool', state.productionTool)
   // 既定の「指定なし(auto)」のときは省略。条件に数えない(activeConcepts)選択をURLに
   // 出すと、他条件ゼロでも hasConditions が立ち、共有先で並び順バーだけ復元されない
   // 非対称が起きるため。v4からは新しい順(new)も意図的な選択なので明示的に持つ
@@ -246,14 +237,6 @@ function paramsToState(params: URLSearchParams): QueryState {
   const age = params.get('age')
   if (age === 'safe' || age === 'r18') state.ageRating = age
   state.excludeAi = params.get('noai') === '1'
-  const pres = params.get('pres')
-  if (pres === 'large' || pres === 'medium' || pres === 'small') state.resolution = pres
-  const par = params.get('par')
-  if (par === 'landscape' || par === 'portrait' || par === 'square') state.aspectRatio = par
-  const ptool = params.get('ptool')
-  if (ptool && (PIXIV_TOOLS as readonly string[]).includes(ptool)) {
-    state.productionTool = ptool as QueryState['productionTool']
-  }
   const sort = params.get('sort')
   if (
     sort === 'new' ||

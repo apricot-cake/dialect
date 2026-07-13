@@ -61,9 +61,6 @@ export type ConceptId =
   | 'region'
   | 'license'
   | 'exactMatchMode'
-  | 'resolution'
-  | 'aspectRatio'
-  | 'productionTool'
 
 export type VideoLength = '' | 'short' | 'medium' | 'long'
 
@@ -81,136 +78,6 @@ export type PixivPopular = '' | '00users' | '000users' | '0000users'
  * safe+r18が件数上ちょうど全件に分割される。R18の表示は未ログインだと出ない
  */
 export type AgeRating = '' | 'safe' | 'r18'
-
-/**
- * pixivの画像解像度バケット(wlt/wgt/hlt/hgt)。pixiv専用。空=指定なし。
- * 「検索オプション」モーダルの「作品の詳細」ドロップダウンから3バケットを採取
- * (2026-07-13にログイン済みGUI操作で実測、issue #70)。wlt/hlt=幅/高さの下限(以上)、
- * wgt/hgt=幅/高さの上限(以下)。large=wlt=3000&hlt=3000(3,000px×3,000px以上)、
- * medium=wlt=1000&wgt=2999&hlt=1000&hgt=2999(1,000px×1,000px〜2,999px×2,999px)、
- * small=wgt=999&hgt=999(999px×999px以下)
- */
-export type PixivResolution = '' | 'large' | 'medium' | 'small'
-
-/**
- * pixivの画像縦横比(ratio=)。pixiv専用。空=指定なし。ドロップダウンが提供するのは
- * この3値のみ(連続値の自由入力は無い)。2026-07-13にログイン済みGUI操作で実測(issue #70)。
- * landscape=横長(ratio=0.5)、portrait=縦長(ratio=-0.5)、square=正方形(ratio=0)
- */
-export type AspectRatio = '' | 'landscape' | 'portrait' | 'square'
-
-/**
- * pixivの制作ツール(tool=)。pixiv専用。「検索オプション」モーダルの「作品の詳細」の
- * 「制作ツール」ドロップダウンから全103種を採取(2026-07-13にログイン済みGUI操作で実測、
- * issue #70)。値はサイトへ生で送る(例: tool=CLIP%20STUDIO%20PAINT)
- */
-export const PIXIV_TOOLS = [
-  'SAI',
-  'Photoshop',
-  'CLIP STUDIO PAINT',
-  'IllustStudio',
-  'ComicStudio',
-  'Pixia',
-  'AzPainter2',
-  'Painter',
-  'Illustrator',
-  'GIMP',
-  'FireAlpaca',
-  'お絵描き掲示板',
-  'AzPainter',
-  'CGillust',
-  'お絵描きチャット',
-  '手書きブログ',
-  'MS_Paint',
-  'PictBear',
-  'openCanvas',
-  'PaintShopPro',
-  'EDGE',
-  'drawr',
-  'COMICWORKS',
-  'AzDrawing',
-  'SketchBookPro',
-  'PhotoStudio',
-  'Paintgraphic',
-  'MediBang Paint',
-  'NekoPaint',
-  'Inkscape',
-  'ArtRage',
-  'AzDrawing2',
-  'Fireworks',
-  'ibisPaint',
-  'AfterEffects',
-  'mdiapp',
-  'GraphicsGale',
-  'Krita',
-  'こくばん.in',
-  'RETAS STUDIO',
-  'えもふり・E-mote',
-  '4thPaint',
-  'コミラボ',
-  'pixiv Sketch',
-  'Pixelmator',
-  'Procreate',
-  'Expression',
-  'PicturePublisher',
-  'Processing',
-  'Live2D',
-  'ドットピクト',
-  'Aseprite',
-  'Pastela',
-  'Poser',
-  'Metasequoia',
-  'Blender',
-  'Shade',
-  '3dsMax',
-  'DAZ Studio',
-  'ZBrush',
-  'コミPo!',
-  'Maya',
-  'Lightwave3D',
-  '六角大王',
-  'Vue',
-  'SketchUp',
-  'CINEMA4D',
-  'XSI',
-  'CARRARA',
-  'Bryce',
-  'STRATA',
-  'Sculptris',
-  'modo',
-  'AnimationMaster',
-  'VistaPro',
-  'Sunny3D',
-  '3D-Coat',
-  'Paint 3D',
-  'VRoid Studio',
-  'シャープペンシル',
-  '鉛筆',
-  'ボールペン',
-  'ミリペン',
-  '色鉛筆',
-  'コピック',
-  'つけペン',
-  '透明水彩',
-  '筆',
-  '筆ペン',
-  'サインペン',
-  'マジック',
-  '水彩色鉛筆',
-  '絵の具',
-  'アクリル',
-  '万年筆',
-  'パステル',
-  'エアブラシ',
-  'カラーインク',
-  'クレヨン',
-  '油彩',
-  'クーピーペンシル',
-  '顔彩',
-  'クレパス',
-] as const
-
-export type ProductionTool = '' | (typeof PIXIV_TOOLS)[number]
 
 /**
  * 投稿の言語コード(ISO 639-1)。lang: 演算子を持つサイト(X/Bluesky)向けの主要言語。
@@ -552,12 +419,6 @@ export interface QueryState {
   ageRating: AgeRating
   /** pixiv専用。AI生成作品を除く(ai_type=1)。false=指定なし(アカウント既定に従う) */
   excludeAi: boolean
-  /** pixiv専用。画像解像度バケット(wlt/wgt/hlt/hgt)。空=指定なし */
-  resolution: PixivResolution
-  /** pixiv専用。画像縦横比(ratio=)。空=指定なし */
-  aspectRatio: AspectRatio
-  /** pixiv専用。制作ツール(tool=)。空=指定なし */
-  productionTool: ProductionTool
 }
 
 /**

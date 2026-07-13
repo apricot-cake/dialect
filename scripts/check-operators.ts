@@ -813,55 +813,6 @@ const PROBES: Probe[] = [
     state: { terms: ['手芸'], keywordsOr: '猫 犬' },
     token: '(猫 OR 犬)',
   },
-  {
-    platform: 'pixiv',
-    concept: 'resolution',
-    label: '解像度(大)',
-    state: { resolution: 'large' },
-    token: 'wlt=3000',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'resolution',
-    label: '解像度(中)',
-    state: { resolution: 'medium' },
-    token: 'wgt=2999',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'resolution',
-    label: '解像度(小)',
-    state: { resolution: 'small' },
-    token: 'wgt=999',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'aspectRatio',
-    label: '縦横比(横長)',
-    state: { aspectRatio: 'landscape' },
-    token: 'ratio=0.5',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'aspectRatio',
-    label: '縦横比(縦長)',
-    state: { aspectRatio: 'portrait' },
-    token: 'ratio=-0.5',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'aspectRatio',
-    label: '縦横比(正方形)',
-    state: { aspectRatio: 'square' },
-    token: 'ratio=0',
-  },
-  {
-    platform: 'pixiv',
-    concept: 'productionTool',
-    label: '制作ツール',
-    state: { productionTool: 'CLIP STUDIO PAINT' },
-    token: 'tool=CLIP+STUDIO+PAINT',
-  },
 
   // ---- Misskey ----
   {
