@@ -25,17 +25,19 @@
  * Run: npm run check:props (executed directly via tsx)
  */
 import fc from 'fast-check'
-import { PLATFORMS } from '@/core/platforms'
-import { defaultState } from '@/core/concepts'
-import { joinParts } from '@/core/urlParts'
-import { stateToParams, paramsToQuery } from '@/core/permalink'
 import {
+  PLATFORMS,
+  defaultState,
+  joinParts,
+  stateToParams,
+  paramsToQuery,
   POST_LANGUAGE_CODES,
   NICO_GENRES,
   FANTIA_CATEGORIES,
   GOOGLE_FILE_TYPES,
-} from '@/core/types'
-import type { PlatformDef, QueryState } from '@/core/types'
+  type PlatformDef,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 
 let failures = 0
 function fail(msg: string): void {

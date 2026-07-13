@@ -13,7 +13,7 @@
  * reuse the exact same section-splitting/row-parsing logic without a duplicate copy
  * silently drifting from it.
  */
-import type { PlatformId } from '@/core/types'
+import type { PlatformId } from '@apricot-cake/dialect-core'
 
 /**
  * Heading fragment for each platform's section in operator-checklist.md. A `## `

@@ -1,5 +1,5 @@
 /**
- * Freshness check for src/generated/health.json: regenerates it in memory from the
+ * Freshness check for apps/web/src/generated/health.json: regenerates it in memory from the
  * current docs/operator-checklist.md and diffs against the committed file. If the
  * checklist was updated (dates/results changed) without re-running gen:health, this
  * fails loudly with instructions, same drift-detection style as check-readings.ts.
@@ -8,11 +8,11 @@
  */
 import { readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
-import { PLATFORMS } from '@/core/platforms'
+import { PLATFORMS } from '@apricot-cake/dialect-core'
 import { parseChecklist } from './lib/checklistParser'
 
 const CHECKLIST_PATH = pathResolve(process.cwd(), 'docs/operator-checklist.md')
-const GENERATED_PATH = pathResolve(process.cwd(), 'src/generated/health.json')
+const GENERATED_PATH = pathResolve(process.cwd(), 'apps/web/src/generated/health.json')
 
 const checklist = readFileSync(CHECKLIST_PATH, 'utf8')
 const fresh = parseChecklist(

@@ -2,9 +2,13 @@
  * 読み辞書(readings.generated.ts)の対象になる日本語テキストの収集ロジック。
  * 生成(gen-readings)と検査(check-readings)で同じ集合を使うため、ここに一本化する。
  */
-import { ja } from '@/i18n/ja'
-import { CONCEPT_DEFS, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
-import { TAG_DEFS } from '@/core/conceptTags'
+import {
+  ja,
+  CONCEPT_DEFS,
+  SELECT_OPTIONS,
+  SORT_OPTIONS,
+  TAG_DEFS,
+} from '@apricot-cake/dialect-core'
 
 /** CJK統合漢字＋々 を含むか(純かな・英字語は正規化側で吸収済みなので読み生成は不要) */
 export function hasKanji(s: string): boolean {

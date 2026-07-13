@@ -59,7 +59,7 @@ export const READINGS: Record<string, string> = {
 ${body}
 }
 `
-  const outPath = pathResolve(process.cwd(), 'src/core/readings.generated.ts')
+  const outPath = pathResolve(process.cwd(), 'packages/core/src/readings.generated.ts')
   writeFileSync(outPath, file, 'utf8')
 
   console.log(`readings.generated.ts を更新: ${phrases.length} 語`)

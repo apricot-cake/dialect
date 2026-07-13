@@ -13,12 +13,15 @@
  *
  * Run: npm run check:recipes   (via tsx)
  */
-import { PLATFORMS } from '@/core/platforms'
-import { resolve } from '@/core/resolve'
-import { defaultState } from '@/core/concepts'
-import { stateToParams, paramsToQuery } from '@/core/permalink'
+import {
+  PLATFORMS,
+  resolve,
+  defaultState,
+  stateToParams,
+  paramsToQuery,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 import { RECIPES } from '@/pages/recipesData'
-import type { QueryState } from '@/core/types'
 
 let failures = 0
 function fail(msg: string): void {

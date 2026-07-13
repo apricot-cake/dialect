@@ -25,12 +25,19 @@
  */
 import { readFileSync } from 'node:fs'
 import { resolve as pathResolve } from 'node:path'
-import { PLATFORMS } from '@/core/platforms'
-import { defaultState } from '@/core/concepts'
-import { CONCEPT_DEFS, CONCEPT_MAP, SELECT_OPTIONS, SORT_OPTIONS } from '@/core/conceptDefs'
-import { supportOf } from '@/core/types'
-import { buildUrl } from '@/core/urlParts'
-import type { ConceptId, PlatformId, QueryState } from '@/core/types'
+import {
+  PLATFORMS,
+  defaultState,
+  CONCEPT_DEFS,
+  CONCEPT_MAP,
+  SELECT_OPTIONS,
+  SORT_OPTIONS,
+  supportOf,
+  buildUrl,
+  type ConceptId,
+  type PlatformId,
+  type QueryState,
+} from '@apricot-cake/dialect-core'
 import { CHECKLIST_HEADING, sectionFor } from './lib/checklistParser'
 
 // ---- チェックリストの読み込み ---------------------------------------------------

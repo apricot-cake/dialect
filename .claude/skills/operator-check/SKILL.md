@@ -91,12 +91,12 @@ curl -sS -L --compressed -m40 \
 
 1. **チェックリスト更新**: docs/operator-checklist.md の各行の「最終確認」を当日日付に、変化した「結果」列も更新する。フェーズ0で見つけた未収録の演算子は、実測できたものだけ行を追加する（優先度・検証URL・期待結果・最終確認・結果を埋める）。
 2. **挙動が変わっていたら実装も直す**:
-   - `src/core/platforms/*.ts` の `support` レベル（full/partial/none）と、必要なら `dynamicSupport`
-   - `src/i18n/ja.ts` / `en.ts` の注記（noteKey）。ja/en は型で対キー強制されるので両方直す
+   - `packages/core/src/platforms/*.ts` の `support` レベル（full/partial/none）と、必要なら `dynamicSupport`
+   - `packages/core/src/ja.ts` / `en.ts` の注記（noteKey）。ja/en は型で対キー強制されるので両方直す
    - 経緯を docs/operator-research.md に追記
 3. **方針判断が要る発見はバックログへ**。「support から削るか注記化するか」など、機能をどう見せるかの判断はユーザーに確認してから（[dialect-backlog] のメモリ経由）。勝手に決めない。1メッセージ1論点で聞く。
 4. **チェックリスト末尾の「確認履歴」に1行**、当日やったことを残す。
-5. **サイト別ガイド(sites/\*.html)の手書き解説を追従**: 確認したサイトに `src/pages/siteGuides/<platformId>.ts` があれば、記述が現状と一致するか確認し、一致していれば各セクションの `checkedAt` を当日日付に更新する（一致していなければ内容も直す）。ガイドが無いサイトは対象外(段階方式のため未着手のまま)。
+5. **サイト別ガイド(sites/\*.html)の手書き解説を追従**: 確認したサイトに `apps/web/src/pages/siteGuides/<platformId>.ts` があれば、記述が現状と一致するか確認し、一致していれば各セクションの `checkedAt` を当日日付に更新する（一致していなければ内容も直す）。ガイドが無いサイトは対象外(段階方式のため未着手のまま)。
 
 ---
 

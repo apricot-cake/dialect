@@ -58,23 +58,26 @@ https://apricot-cake.github.io/dialect/
 
 ## 開発
 
+npm workspaces によるモノレポ構成です。`packages/core` がサイト非依存の翻訳エンジン([`@apricot-cake/dialect-core`](packages/core/README.ja.md)として公開)、`apps/web` が GitHub Pages に配信する React アプリです。
+
 ```bash
 npm install
 npm run dev      # 開発サーバー
-npm run build    # 型チェック + ビルド
-npm run lint     # oxlint
+npm run build    # packages/core → apps/web の順にビルド
+npm run lint     # oxlint(リポジトリ全体)
 ```
 
 スタック: Vite + React + TypeScript + Tailwind CSS v4 + Base UI + Motion。main への push で GitHub Actions が GitHub Pages に自動デプロイします。
 
 ### コード構成
 
-- `src/core/types.ts` — 検索概念(ConceptId)とプラットフォーム定義の型
-- `src/core/platforms/*.ts` — プラットフォームごとの対応表(翻訳辞書)とURLシリアライザ
-- `src/core/resolve.ts` — 検索条件を適用/近似/非対応に仕分け
-- `src/core/permalink.ts` — 検索条件とURLパラメータの相互変換(共有・ブックマークの形式)
-- `src/components/` — 2画面(条件・各サイトで開く)と条件追加モーダルなどのUI
-- `src/i18n/` — 全UI文言(日本語 `ja.ts` / 英語 `en.ts`。右上のボタンで切替、選択は localStorage に保存)
+- `packages/core/src/types.ts` — 検索概念(ConceptId)とプラットフォーム定義の型
+- `packages/core/src/platforms/*.ts` — プラットフォームごとの対応表(翻訳辞書)とURLシリアライザ
+- `packages/core/src/resolve.ts` — 検索条件を適用/近似/非対応に仕分け
+- `packages/core/src/permalink.ts` — 検索条件とURLパラメータの相互変換(共有・ブックマークの形式)
+- `packages/core/src/{ja,en}.ts` — 全UI文言(翻訳エンジン自体の注記文言とアプリのUI文言をキーで一元管理)
+- `apps/web/src/components/` — 2画面(条件・各サイトで開く)と条件追加モーダルなどのUI
+- `apps/web/src/i18n/` — 現在言語の状態管理(右上のボタンで切替、選択は localStorage に保存。辞書自体は packages/core 側)
 
 ## 注意
 
