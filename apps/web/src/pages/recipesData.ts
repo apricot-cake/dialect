@@ -94,13 +94,4 @@ export const RECIPES: Recipe[] = [
     },
     patch: { terms: ['ボカロ'], excludeUser: 'example_official' },
   },
-  {
-    id: 'verified-discussion',
-    title: { ja: '認証済みアカウントの投稿だけ見る', en: 'See only verified accounts' },
-    description: {
-      ja: '認証済みアカウントの投稿だけに絞って、なりすまし・スパムを避けます。検索語を書き換えて使ってください。',
-      en: 'Narrows to verified accounts to avoid impersonation and spam. Swap in your own search term.',
-    },
-    patch: { terms: ['ボカロ'], verifiedOnly: true },
-  },
 ]

@@ -46,7 +46,6 @@ function buildParts(state: QueryState, ctx?: PlatformCtx): UrlPart[] | null {
     Boolean(state.since) ||
     Boolean(state.until) ||
     state.mediaOnly ||
-    state.linksOnly ||
     state.excludeReplies ||
     Boolean(state.language)
   // 単一タグのみ(他の条件が何もない)ならタグページ(ログアウトでも見られる唯一の経路)
@@ -65,7 +64,6 @@ function buildParts(state: QueryState, ctx?: PlatformCtx): UrlPart[] | null {
   if (state.since) toks.push(tok(`after:${state.since}`, 'period'))
   if (state.until) toks.push(tok(`before:${state.until}`, 'period'))
   if (state.mediaOnly) toks.push(tok('has:media', 'mediaOnly'))
-  if (state.linksOnly) toks.push(tok('has:link', 'linksOnly'))
   if (state.excludeReplies) toks.push(tok('-is:reply', 'excludeReplies'))
   if (state.language) toks.push(tok(`language:${state.language}`, 'language'))
 
@@ -96,7 +94,8 @@ function parseUrl(url: URL, ctx?: PlatformCtx): ParsedSearch | null {
   const bins = emptyBins()
   for (const token of tokenize(q)) {
     if (token === 'has:media') patch.mediaOnly = true
-    else if (token === 'has:link') patch.linksOnly = true
+    // has:link(リンクを含む)は概念を剪定済み。演算子として無視へ回す
+    else if (token === 'has:link') ignored.push(token)
     else if (token === '-is:reply') patch.excludeReplies = true
     else if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
     else if (token.startsWith('after:')) {
@@ -136,7 +135,6 @@ export const mastodon: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     period: { level: 'full' },
     mediaOnly: { level: 'full' },
-    linksOnly: { level: 'full' },
     excludeReplies: { level: 'full' },
     language: { level: 'full' },
     sortOrder: { level: 'none', noteKey: 'note.nosort' },

@@ -1,12 +1,5 @@
-import type {
-  FantiaCategory,
-  GoogleFileType,
-  GoogleLicense,
-  NicoGenre,
-  PostLanguage,
-  QueryState,
-} from './types.js'
-import { FANTIA_CATEGORIES, GOOGLE_FILE_TYPES, NICO_GENRES, POST_LANGUAGE_CODES } from './types.js'
+import type { FantiaCategory, NicoGenre, PostLanguage, QueryState } from './types.js'
+import { FANTIA_CATEGORIES, NICO_GENRES, POST_LANGUAGE_CODES } from './types.js'
 import { defaultState } from './concepts.js'
 import { words } from './text.js'
 
@@ -46,13 +39,6 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.excludeMentions.trim()) params.set('exmen', state.excludeMentions.trim())
-  if (state.domain.trim()) params.set('dom', state.domain.trim())
-  if (state.excludeDomain.trim()) params.set('exdom', state.excludeDomain.trim())
-  if (state.linkUrl.trim()) params.set('url', state.linkUrl.trim())
-  if (state.excludeLinkUrl.trim()) params.set('exurl', state.excludeLinkUrl.trim())
-  if (state.fileType) params.set('ftype', state.fileType)
-  if (state.region.trim()) params.set('reg', state.region.trim())
-  if (state.license) params.set('lic', state.license)
   if (state.exactMatchMode) params.set('exact', '1')
   if (state.xList.trim()) params.set('xlist', state.xList.trim())
   if (state.hashtag.trim()) params.set('tag', state.hashtag.trim())
@@ -62,23 +48,9 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.until) params.set('until', state.until)
   if (state.mediaOnly) params.set('media', '1')
   if (state.videoOnly) params.set('vidon', '1')
-  if (state.videoLength) params.set('vlen', state.videoLength)
-  if (state.linksOnly) params.set('links', '1')
-  if (state.verifiedOnly) params.set('ver', '1')
   if (state.excludeReplies) params.set('norep', '1')
   if (state.repliesOnly) params.set('rponly', '1')
-  if (state.followingOnly) params.set('follo', '1')
   if (state.liveOnly) params.set('live', '1')
-  if (state.fourK) params.set('k4', '1')
-  if (state.hdOnly) params.set('hd', '1')
-  if (state.captionsOnly) params.set('cap', '1')
-  if (state.creativeCommons) params.set('cc', '1')
-  if (state.threeSixty) params.set('t360', '1')
-  if (state.vr180) params.set('vr180', '1')
-  if (state.threeD) params.set('t3d', '1')
-  if (state.hdr) params.set('hdr', '1')
-  if (state.locationOnly) params.set('loc', '1')
-  if (state.purchased) params.set('buy', '1')
   if (state.minLikes.trim()) params.set('likes', state.minLikes.trim())
   if (state.minReposts.trim()) params.set('rts', state.minReposts.trim())
   if (state.minReplies.trim()) params.set('reps', state.minReplies.trim())
@@ -143,18 +115,6 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.toUser = params.get('to') ?? ''
   state.mentionsUser = params.get('men') ?? ''
   state.excludeMentions = params.get('exmen') ?? ''
-  state.domain = params.get('dom') ?? ''
-  state.excludeDomain = params.get('exdom') ?? ''
-  state.linkUrl = params.get('url') ?? ''
-  state.excludeLinkUrl = params.get('exurl') ?? ''
-  const ftype = params.get('ftype')
-  if (ftype && (GOOGLE_FILE_TYPES as readonly string[]).includes(ftype)) {
-    state.fileType = ftype as GoogleFileType
-  }
-  state.region = params.get('reg') ?? ''
-  const lic = params.get('lic')
-  if (lic === 'f' || lic === 'fc' || lic === 'fm' || lic === 'fmc')
-    state.license = lic as GoogleLicense
   state.exactMatchMode = params.get('exact') === '1'
   state.xList = params.get('xlist') ?? ''
   state.hashtag = params.get('tag') ?? ''
@@ -164,26 +124,9 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.until = params.get('until') ?? ''
   state.mediaOnly = params.get('media') === '1'
   state.videoOnly = params.get('vidon') === '1'
-  const vlen = params.get('vlen')
-  if (vlen === 'short' || vlen === 'medium' || vlen === 'long') {
-    state.videoLength = vlen
-  }
-  state.linksOnly = params.get('links') === '1'
-  state.verifiedOnly = params.get('ver') === '1'
   state.excludeReplies = params.get('norep') === '1'
   state.repliesOnly = params.get('rponly') === '1'
-  state.followingOnly = params.get('follo') === '1'
   state.liveOnly = params.get('live') === '1'
-  state.fourK = params.get('k4') === '1'
-  state.hdOnly = params.get('hd') === '1'
-  state.captionsOnly = params.get('cap') === '1'
-  state.creativeCommons = params.get('cc') === '1'
-  state.threeSixty = params.get('t360') === '1'
-  state.vr180 = params.get('vr180') === '1'
-  state.threeD = params.get('t3d') === '1'
-  state.hdr = params.get('hdr') === '1'
-  state.locationOnly = params.get('loc') === '1'
-  state.purchased = params.get('buy') === '1'
   state.minLikes = params.get('likes') ?? ''
   state.minReposts = params.get('rts') ?? ''
   state.minReplies = params.get('reps') ?? ''

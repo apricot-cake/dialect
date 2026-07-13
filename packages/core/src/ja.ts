@@ -46,21 +46,6 @@ export const ja = {
   'concept.excludeMentions.placeholder': '例: user.bsky.social',
   'concept.excludeMentions.help':
     '指定したユーザーへのメンションを含む投稿を検索結果から除きます（Blueskyのみ対応）',
-  'concept.domain.label': 'このサイトへのリンクを含む',
-  'concept.domain.placeholder': '例: nhk.or.jp',
-  'concept.domain.help': '指定したサイトへのリンクを含む投稿だけを探します',
-  'concept.excludeDomain.label': 'このサイトへのリンクを除く',
-  'concept.excludeDomain.placeholder': '例: nhk.or.jp',
-  'concept.excludeDomain.help':
-    '指定したサイトへのリンクを含む投稿を検索結果から除きます（Blueskyのみ対応）',
-  'concept.linkUrl.label': 'このURLへのリンクを含む',
-  'concept.linkUrl.placeholder': '例: example.com/article',
-  'concept.linkUrl.help':
-    '指定したURLへの埋め込みリンク・カードを含む投稿だけを探します（Blueskyのみ対応）',
-  'concept.excludeLinkUrl.label': 'このURLへのリンクを除く',
-  'concept.excludeLinkUrl.placeholder': '例: example.com/article',
-  'concept.excludeLinkUrl.help':
-    '指定したURLへの埋め込みリンク・カードを含む投稿を検索結果から除きます（Blueskyのみ対応）',
   'concept.xList.label': 'Xのリスト内を検索',
   'concept.xList.placeholder': 'リストのURL、またはID',
   'concept.xList.help':
@@ -85,46 +70,10 @@ export const ja = {
     'Blueskyで、動画がついた投稿だけに絞り込みます（画像だけの投稿は含みません）',
   'concept.liveOnly.label': 'ライブ配信だけ',
   'concept.liveOnly.help': 'YouTubeで、ライブ配信（生放送・アーカイブ）だけに絞り込みます',
-  'concept.fourK.label': '4Kの動画だけ',
-  'concept.fourK.help': 'YouTubeで、4K画質の動画だけに絞り込みます',
-  'concept.hdOnly.label': 'HDの動画だけ',
-  'concept.hdOnly.help': 'YouTubeで、HD画質の動画だけに絞り込みます',
-  'concept.captionsOnly.label': '字幕つきの動画だけ',
-  'concept.captionsOnly.help':
-    'YouTubeで、字幕（クローズドキャプション）がついた動画だけに絞り込みます',
-  'concept.creativeCommons.label': 'クリエイティブ・コモンズだけ',
-  'concept.creativeCommons.help':
-    'YouTubeで、クリエイティブ・コモンズ・ライセンス（条件付きで再利用が許可された動画）の動画だけに絞り込みます',
-  'concept.threeSixty.label': '360°動画だけ',
-  'concept.threeSixty.help': 'YouTubeで、360°動画だけに絞り込みます',
-  'concept.vr180.label': 'VR180の動画だけ',
-  'concept.vr180.help': 'YouTubeで、VR180形式の動画だけに絞り込みます',
-  'concept.threeD.label': '3D動画だけ',
-  'concept.threeD.help': 'YouTubeで、3D動画だけに絞り込みます',
-  'concept.hdr.label': 'HDRの動画だけ',
-  'concept.hdr.help': 'YouTubeで、HDR（ハイダイナミックレンジ）の動画だけに絞り込みます',
-  'concept.locationOnly.label': '撮影場所つきの動画だけ',
-  'concept.locationOnly.help':
-    'YouTubeで、撮影場所の位置情報がついた動画だけに絞り込みます。地名などと組み合わせて使います',
-  'concept.purchased.label': '購入済みの動画だけ',
-  'concept.purchased.help': 'YouTubeで、自分が購入した映画・番組だけに絞り込みます',
-  'concept.videoLength.label': '動画の長さ',
-  'concept.videoLength.none': '指定なし',
-  'concept.videoLength.short': '短い (〜4分)',
-  'concept.videoLength.medium': 'ふつう (4〜20分)',
-  'concept.videoLength.long': '長い (20分〜)',
-  'concept.videoLength.help': '動画の再生時間で絞り込みます',
-  'concept.linksOnly.label': 'リンクを含む投稿だけ',
-  'concept.linksOnly.help': 'リンク(URL)を含む投稿だけに絞り込みます',
-  'concept.verifiedOnly.label': '認証済みアカウントだけ',
-  'concept.verifiedOnly.help': '認証済みアカウントの投稿だけに絞り込みます',
   'concept.excludeReplies.label': 'リプライを除く',
   'concept.excludeReplies.help': '返信(リプライ)を検索結果から除きます',
   'concept.repliesOnly.label': 'リプライだけ',
   'concept.repliesOnly.help': 'Blueskyで、返信(リプライ)だけに絞り込みます',
-  'concept.followingOnly.label': 'フォロー中の人だけ',
-  'concept.followingOnly.help':
-    'Blueskyで、自分がフォローしているアカウントの投稿だけに絞り込みます',
   'concept.minLikes.label': '最低いいね数',
   'concept.minLikes.placeholder': '例: 100',
   'concept.minLikes.help': 'いいね数が指定した数以上の投稿だけに絞り込みます',
@@ -271,31 +220,6 @@ export const ja = {
     '全年齢の作品だけ、またはR18の作品だけに絞り込みます（pixiv・Fantia対応）',
   'concept.excludeAi.label': 'AI生成作品を除く',
   'concept.excludeAi.help': 'pixivで、AI生成作品を検索結果から除きます',
-  'concept.fileType.label': 'ファイル形式',
-  'concept.fileType.none': '指定なし',
-  'concept.fileType.pdf': 'PDF（.pdf）',
-  'concept.fileType.ps': 'Adobe PostScript（.ps）',
-  'concept.fileType.dwf': 'Autodesk DWF（.dwf）',
-  'concept.fileType.kml': 'Google Earth KML（.kml）',
-  'concept.fileType.kmz': 'Google Earth KMZ（.kmz）',
-  'concept.fileType.xls': 'Excel（.xls）',
-  'concept.fileType.ppt': 'PowerPoint（.ppt）',
-  'concept.fileType.doc': 'Word（.doc）',
-  'concept.fileType.rtf': 'リッチテキスト（.rtf）',
-  'concept.fileType.swf': 'Shockwave Flash（.swf）',
-  'concept.fileType.help': '指定した形式のファイルだけに絞り込みます（Googleのみ対応）',
-  'concept.region.label': '地域',
-  'concept.region.placeholder': '例: JP',
-  'concept.region.help':
-    '指定した国・地域向けのページに絞り込みます（Googleのみ対応）。国名の2文字コード（日本ならJP、アメリカならUS）で入力します',
-  'concept.license.label': 'ライセンス',
-  'concept.license.none': 'フィルタリングしない',
-  'concept.license.f': '自由に使用または共有できる',
-  'concept.license.fc': '営利目的を含め自由に使用または共有できる',
-  'concept.license.fm': '自由に使用、共有、または変更できる',
-  'concept.license.fmc': '営利目的を含め自由に使用、共有、または変更できる',
-  'concept.license.help':
-    '利用が許可されているライセンス（利用権）の範囲でページを絞り込みます（Googleのみ対応）',
   'concept.exactMatchMode.label': '完全一致で検索',
   'concept.exactMatchMode.help':
     '入力した語をそのまま使って検索し、類義語や表記ゆれへの自動的な言い換えを抑えます（Googleのみ対応。完全一致で探す＝語順を保った句の一致とは別の設定です）',
@@ -320,17 +244,13 @@ export const ja = {
   // プラットフォーム別の注記
   'note.x.period': '期間だけの検索はできません。キーワードと組み合わせてください',
   'note.x.listInvalid': 'リストを読み取れませんでした。リストのページのURLを貼り付けてください',
-  'note.niconico.videoLength': '「ふつう(4〜20分)」は指定できず無視されます',
   'note.niconico.resultTypeConflict':
     'シリーズ・マイリスト・ユーザー検索では、この絞り込みは使えません',
   'note.niconico.hashtagAsKeyword':
     'タグ専用ページが無いため、ふつうのキーワードとして検索されます',
   'note.bluesky.fromUser':
     'ユーザー名は「user.bsky.social」の形式です。複数指定はスペース区切りで、いずれか一致で判定します',
-  'note.bluesky.domainMulti':
-    'ドメインは「nhk.or.jp」のように入力します。複数指定はスペース区切りで、いずれか一致で判定します',
   'note.bluesky.peopleConflict': 'アカウント検索では、この絞り込みは使えません',
-  'note.bluesky.followingOnly': 'フォロー中かどうかは、リンクを開くBlueskyアカウントに依存します',
   'note.bluesky.repliesConflict':
     '「リプライを除く」と同時に選ぶと、リプライを除く方が優先されます',
   'note.youtube.exactPhrase': '完全一致で探しますが、言葉がバラバラに含まれる投稿も多く混ざります',
@@ -373,8 +293,6 @@ export const ja = {
   'note.exclude.literal': '除外の記号（-）は効かず、そのまま検索語の一部として扱われます',
   'note.fanbox.hashtagOnly':
     'ハッシュタグを1つだけ指定したときのみ検索できます。キーワードや他の条件は使えません',
-  'note.bilibili.videoLength':
-    '長さの区切りが少し違います（短い=10分未満・ふつう=10〜30分・長い=60分超）',
   'note.bilibili.tabSort': 'この並び順は、選んだ「探すものの種類」では指定できません',
   'note.bilibili.tabOnly': '「探すものの種類」が動画（または指定なし）のときだけ使えます',
   'note.google.titleOnly':
@@ -415,7 +333,6 @@ export const ja = {
   'sum.to': '{v}宛て',
   'sum.excludeUser': '{v}を除く',
   'sum.mentions': '{v}へ',
-  'sum.domain': '{v}へのリンク',
   'sum.xList': 'リスト内',
   'sum.minLikes': '{v}いいね以上',
   'sum.minReposts': '{v}リポスト以上',

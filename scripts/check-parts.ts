@@ -92,15 +92,13 @@ function singleOverrides(): Array<Partial<QueryState>> {
       out.push({ until: '2026-06-30' })
     } else {
       const sentinel =
-        f === 'domain'
-          ? 'nhk.or.jp'
-          : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
-            ? '500'
-            : f === 'xList'
-              ? '1215911364234924032'
-              : f === 'hashtag'
-                ? 'ゲーム'
-                : 'nhk'
+        f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
+          ? '500'
+          : f === 'xList'
+            ? '1215911364234924032'
+            : f === 'hashtag'
+              ? 'ゲーム'
+              : 'nhk'
       out.push({ [f]: sentinel })
       // 複数値の枠はスペース区切りの2値も(OR括弧・複数タグ等の別経路を踏む)
       if (f === 'hashtag') out.push({ hashtag: 'ゲーム 実況' })
@@ -112,7 +110,6 @@ function singleOverrides(): Array<Partial<QueryState>> {
       if (f === 'hashtagOr') out.push({ hashtagOr: 'cat dog' })
       if (f === 'excludeHashtag') out.push({ excludeHashtag: 'cat dog' })
       if (f === 'excludeMentions') out.push({ excludeMentions: 'nhk asahi' })
-      if (f === 'excludeDomain') out.push({ excludeDomain: 'nhk.or.jp example.org' })
     }
   }
   // 特殊形: フレーズ入りキーワード、タグ単独(タグページ分岐)、除外単独、送信者単独

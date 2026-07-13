@@ -13,26 +13,12 @@ export type ConceptId =
   | 'excludeUser'
   | 'toUser'
   | 'mentionsUser'
-  | 'domain'
   | 'xList'
   | 'hashtag'
   | 'period'
   | 'mediaOnly'
-  | 'videoLength'
-  | 'linksOnly'
-  | 'verifiedOnly'
   | 'excludeReplies'
   | 'liveOnly'
-  | 'fourK'
-  | 'hdOnly'
-  | 'captionsOnly'
-  | 'creativeCommons'
-  | 'threeSixty'
-  | 'vr180'
-  | 'threeD'
-  | 'hdr'
-  | 'locationOnly'
-  | 'purchased'
   | 'minLikes'
   | 'minReposts'
   | 'minReplies'
@@ -50,19 +36,10 @@ export type ConceptId =
   | 'safeSearchOff'
   | 'videoOnly'
   | 'repliesOnly'
-  | 'followingOnly'
   | 'hashtagOr'
   | 'excludeHashtag'
   | 'excludeMentions'
-  | 'excludeDomain'
-  | 'linkUrl'
-  | 'excludeLinkUrl'
-  | 'fileType'
-  | 'region'
-  | 'license'
   | 'exactMatchMode'
-
-export type VideoLength = '' | 'short' | 'medium' | 'long'
 
 /**
  * pixivの人気作の目安。「{N}users入り」タグ(一定ブックマーク数で付く)を、先頭の桁を
@@ -180,32 +157,6 @@ export type FantiaCategory = '' | (typeof FANTIA_CATEGORIES)[number]
 export type FantiaAudience = '' | 'male' | 'female'
 
 /**
- * Googleのファイル形式(filetype:)。空=指定なし。詳細検索フォーム(advanced_search)の
- * 「ファイル形式」ドロップダウンから全10種を採取(2026-07-11にGUI操作で実測、issue #33)
- */
-export const GOOGLE_FILE_TYPES = [
-  'pdf',
-  'ps',
-  'dwf',
-  'kml',
-  'kmz',
-  'xls',
-  'ppt',
-  'doc',
-  'rtf',
-  'swf',
-] as const
-
-export type GoogleFileType = '' | (typeof GOOGLE_FILE_TYPES)[number]
-
-/**
- * Googleのライセンス(利用権、tbs=sur:)。空=フィルタリングしない。詳細検索フォームの
- * 「ライセンス」ドロップダウンから全4種を採取(2026-07-11にGUI操作で実測、issue #33)。
- * f=自由に使用・共有できる/fc=+営利目的も可/fm=+変更も可/fmc=+営利目的の変更も可
- */
-export type GoogleLicense = '' | 'f' | 'fc' | 'fm' | 'fmc'
-
-/**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
  * playlist=再生リスト(YouTube専用の値)。
  * people=プロフィール(Bluesky・niconico専用の値。ユーザー検索タブに対応)。
@@ -312,29 +263,6 @@ export interface QueryState {
    * (除外対象を空白区切りで複数=excludeUserと同じ意味論)。2026-07-11にGUI操作で実測(issue #27)
    */
   excludeMentions: string
-  domain: string
-  /**
-   * Bluesky専用。リンク先ドメインを除外(excludeDomain=)。スペース区切りで複数可
-   * (除外対象を空白区切りで複数=excludeUserと同じ意味論)。2026-07-11にGUI操作で実測(issue #27)
-   */
-  excludeDomain: string
-  /**
-   * Bluesky専用。埋め込みリンク・カード先のURLで絞り込む(url=)。既存の対応する概念が無い
-   * 完全新規。単一値のみ確認済み(複数値のOR/AND挙動は未検証)。2026-07-11にGUI操作で実測(issue #27)
-   */
-  linkUrl: string
-  /** Bluesky専用。linkUrlの除外版(excludeUrl=)。単一値のみ確認済み。2026-07-11にGUI操作で実測(issue #27) */
-  excludeLinkUrl: string
-  /** Google専用。ファイル形式で絞り込む(filetype:)。空=指定なし */
-  fileType: GoogleFileType
-  /**
-   * Google専用。地域(cr=country{code})。ISO 3166-1の2文字コード(例: JP・US)を生で持つ。
-   * 詳細検索フォームの「地域」ドロップダウンは240件と膨大なため、他サイトの選択式
-   * (workType等)と違い自由入力にした(domain等と同じplain)。2026-07-11にGUI操作で実測(issue #33)
-   */
-  region: string
-  /** Google専用。ライセンス(利用権、tbs=sur:)。空=フィルタリングしない */
-  license: GoogleLicense
   /**
    * Google専用。完全一致モード(tbs=li:1、ツールメニューの「完全一致」)。表記ゆれ・類義語への
    * 自動展開を抑え、入力した語のとおりに検索する。既存のexactPhrase(語順つき句の一致)とは別物
@@ -358,40 +286,11 @@ export interface QueryState {
   mediaOnly: boolean
   /** Bluesky専用。動画つきの投稿だけに絞る(video=true)。既存のmediaOnly(画像+動画)とは別の3値目。2026-07-11にGUI操作で実測(issue #27) */
   videoOnly: boolean
-  videoLength: VideoLength
-  linksOnly: boolean
-  verifiedOnly: boolean
   excludeReplies: boolean
   /** Bluesky専用。返信(リプライ)だけに絞る(replies=only)。excludeReplies(replies=none)の逆方向。2026-07-11にGUI操作で実測(issue #27) */
   repliesOnly: boolean
-  /**
-   * Bluesky専用。フォロー中のアカウントの投稿だけに絞る(following=true)。実在するURLパラメータだが
-   * 結果はリンクを開くアカウントのフォロー関係に依存する。2026-07-11にGUI操作で実測(issue #27)
-   */
-  followingOnly: boolean
   /** YouTube専用。ライブ配信だけに絞る(sp のfilterサブメッセージ field8=1) */
   liveOnly: boolean
-  /**
-   * YouTube専用。フィルタパネル「特徴」の絞り込み(sp のfilterサブメッセージの各field=1)。
-   * 2026-07-07にGUI操作で実機解析: 4K=field14、HD=field4、字幕=field5、
-   * クリエイティブ・コモンズ=field6(liveOnlyのfield8とは別枠、combine可能)
-   */
-  fourK: boolean
-  hdOnly: boolean
-  captionsOnly: boolean
-  creativeCommons: boolean
-  /**
-   * YouTube専用。「特徴」の残り6項目(2026-07-08にGUI操作で実機解析、いずれも
-   * 他の特徴・タイプ・並び順と自由に組み合わせ可能): 360°=field15、VR180=field26、
-   * 3D=field7、HDR=field25、場所(撮影地の位置情報つき動画に絞る)=field23、
-   * 購入済み(自分が購入した映画・番組)=field9
-   */
-  threeSixty: boolean
-  vr180: boolean
-  threeD: boolean
-  hdr: boolean
-  locationOnly: boolean
-  purchased: boolean
   minLikes: string // 数値文字列
   minReposts: string // 数値文字列
   /** X専用。最低返信数(min_replies:、非公式演算子。2026-07-06実測)。数値文字列 */

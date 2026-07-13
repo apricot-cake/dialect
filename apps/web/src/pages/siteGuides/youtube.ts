@@ -33,8 +33,8 @@ export const youtube: SiteGuide = {
         en: 'Combined filters collapse into a single parameter',
       },
       body: {
-        ja: '「特徴」「並び順」「動画の長さ」などの複数フィルタは、それぞれ独立したパラメータではなく、1つのbase64エンコードされたパラメータ(sp=)に合成されます。Dialectは組み合わせごとに正しい値を持っています。',
-        en: "Multiple filters (features, sort order, video length, etc.) aren't independent parameters — they collapse into a single base64-encoded value (sp=). Dialect carries the correct value for each combination.",
+        ja: '「並び順」「探すもの」「ライブ配信だけ」などの複数フィルタは、それぞれ独立したパラメータではなく、1つのbase64エンコードされたパラメータ(sp=)に合成されます。Dialectは組み合わせごとに正しい値を持っています。',
+        en: "Multiple filters (sort order, result type, live-only, etc.) aren't independent parameters — they collapse into a single base64-encoded value (sp=). Dialect carries the correct value for each combination.",
       },
       checkedAt: '2026-07-08',
       source: 'gui',

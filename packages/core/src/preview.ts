@@ -64,14 +64,6 @@ export function conceptSummary(lang: Lang, concept: ConceptId, state: QueryState
           .map((u) => `@${u}`)
           .join('・'),
       })
-    case 'domain':
-      return tf(lang, 'sum.domain', { v: state.domain.trim() })
-    case 'excludeDomain':
-      return tf(lang, 'sum.exclude', { v: words(state.excludeDomain).join('・') })
-    case 'linkUrl':
-      return tf(lang, 'sum.domain', { v: state.linkUrl.trim() })
-    case 'excludeLinkUrl':
-      return tf(lang, 'sum.exclude', { v: state.excludeLinkUrl.trim() })
     case 'xList':
       return translate(lang, 'sum.xList')
     case 'hashtag':
@@ -102,8 +94,6 @@ export function conceptSummary(lang: Lang, concept: ConceptId, state: QueryState
       return tf(lang, 'sum.minReposts', { v: state.minReposts.trim() })
     case 'minReplies':
       return tf(lang, 'sum.minReplies', { v: state.minReplies.trim() })
-    case 'videoLength':
-      return selectLabel(lang, 'videoLength', state.videoLength)
     case 'workType':
       return selectLabel(lang, 'workType', state.workType)
     case 'genre':

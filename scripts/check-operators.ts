@@ -103,13 +103,6 @@ const PROBES: Probe[] = [
   },
   {
     platform: 'x',
-    concept: 'domain',
-    label: 'リンク先',
-    state: { domain: 'nhk.or.jp' },
-    token: 'url:',
-  },
-  {
-    platform: 'x',
     concept: 'xList',
     label: 'リスト内',
     state: { xList: '1215911364234924032' },
@@ -135,20 +128,6 @@ const PROBES: Probe[] = [
     label: 'メディア',
     state: { mediaOnly: true },
     token: 'filter:media',
-  },
-  {
-    platform: 'x',
-    concept: 'linksOnly',
-    label: 'リンク',
-    state: { linksOnly: true },
-    token: 'filter:links',
-  },
-  {
-    platform: 'x',
-    concept: 'verifiedOnly',
-    label: '認証済み',
-    state: { verifiedOnly: true },
-    token: 'filter:blue_verified',
   },
   {
     platform: 'x',
@@ -204,8 +183,8 @@ const PROBES: Probe[] = [
   },
 
   // ---- Bluesky ----
-  // 2026-07-11、issue #27の全項目監査でfromUser/mentionsUser/domainは高度な検索オプションの
-  // 新パラメータ形式(author=/mentions=/domain=)へ移行(旧q内トークンはparseUrlが後方互換で読むのみ)
+  // 2026-07-11、issue #27の全項目監査でfromUser/mentionsUserは高度な検索オプションの
+  // 新パラメータ形式(author=/mentions=)へ移行(旧q内トークンはparseUrlが後方互換で読むのみ)
   {
     platform: 'bluesky',
     concept: 'fromUser',
@@ -233,34 +212,6 @@ const PROBES: Probe[] = [
     label: '除外メンション先',
     state: { excludeMentions: 'nhk.bsky.social' },
     token: 'excludeMentions=',
-  },
-  {
-    platform: 'bluesky',
-    concept: 'domain',
-    label: 'リンク先',
-    state: { domain: 'nhk.or.jp' },
-    token: 'domain=',
-  },
-  {
-    platform: 'bluesky',
-    concept: 'excludeDomain',
-    label: '除外リンク先',
-    state: { excludeDomain: 'nhk.or.jp' },
-    token: 'excludeDomain=',
-  },
-  {
-    platform: 'bluesky',
-    concept: 'linkUrl',
-    label: '埋め込みURL',
-    state: { linkUrl: 'example.com/test' },
-    token: 'url=',
-  },
-  {
-    platform: 'bluesky',
-    concept: 'excludeLinkUrl',
-    label: '除外埋め込みURL',
-    state: { excludeLinkUrl: 'example.com/test' },
-    token: 'excludeUrl=',
   },
   {
     platform: 'bluesky',
@@ -296,13 +247,6 @@ const PROBES: Probe[] = [
     label: '返信のみ',
     state: { repliesOnly: true },
     token: 'replies=only',
-  },
-  {
-    platform: 'bluesky',
-    concept: 'followingOnly',
-    label: 'フォロー中のみ',
-    state: { followingOnly: true },
-    token: 'following=true',
   },
   {
     platform: 'bluesky',
@@ -380,87 +324,10 @@ const PROBES: Probe[] = [
   },
   {
     platform: 'youtube',
-    concept: 'videoLength',
-    label: '動画の長さ(短)',
-    state: { sort: 'auto', videoLength: 'short' },
-    token: 'EgIYAQ',
-  },
-  {
-    platform: 'youtube',
     concept: 'liveOnly',
     label: 'ライブ',
     state: { sort: 'auto', liveOnly: true },
     token: 'EgJAAQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'fourK',
-    label: '4K',
-    state: { sort: 'auto', fourK: true },
-    token: 'EgJwAQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'hdOnly',
-    label: 'HD',
-    state: { sort: 'auto', hdOnly: true },
-    token: 'EgIgAQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'captionsOnly',
-    label: '字幕',
-    state: { sort: 'auto', captionsOnly: true },
-    token: 'EgIoAQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'creativeCommons',
-    label: 'クリエイティブ・コモンズ',
-    state: { sort: 'auto', creativeCommons: true },
-    token: 'EgIwAQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'threeSixty',
-    label: '360°',
-    state: { sort: 'auto', threeSixty: true },
-    token: 'EgJ4AQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'vr180',
-    label: 'VR180',
-    state: { sort: 'auto', vr180: true },
-    token: 'EgPQAQE',
-  },
-  {
-    platform: 'youtube',
-    concept: 'threeD',
-    label: '3D',
-    state: { sort: 'auto', threeD: true },
-    token: 'EgI4AQ',
-  },
-  {
-    platform: 'youtube',
-    concept: 'hdr',
-    label: 'HDR',
-    state: { sort: 'auto', hdr: true },
-    token: 'EgPIAQE',
-  },
-  {
-    platform: 'youtube',
-    concept: 'locationOnly',
-    label: '場所',
-    state: { sort: 'auto', locationOnly: true },
-    token: 'EgO4AQE',
-  },
-  {
-    platform: 'youtube',
-    concept: 'purchased',
-    label: '購入済み',
-    state: { sort: 'auto', purchased: true },
-    token: 'EgJIAQ',
   },
   {
     platform: 'youtube',
@@ -548,20 +415,6 @@ const PROBES: Probe[] = [
     label: '期間(終了)',
     state: { until: '2026-06-30' },
     token: 'end=',
-  },
-  {
-    platform: 'niconico',
-    concept: 'videoLength',
-    label: '長さ(短)',
-    state: { videoLength: 'short' },
-    token: 'l_range=1',
-  },
-  {
-    platform: 'niconico',
-    concept: 'videoLength',
-    label: '長さ(長)',
-    state: { videoLength: 'long' },
-    token: 'l_range=2',
   },
   {
     platform: 'niconico',
@@ -901,13 +754,6 @@ const PROBES: Probe[] = [
     state: { mediaOnly: true },
     token: 'postTypes=photo',
   },
-  {
-    platform: 'tumblr',
-    concept: 'linksOnly',
-    label: 'リンク',
-    state: { linksOnly: true },
-    token: 'postTypes=link',
-  },
 
   // ---- Mastodon ----
   {
@@ -958,13 +804,6 @@ const PROBES: Probe[] = [
     label: 'メディア',
     state: { mediaOnly: true },
     token: 'has:media',
-  },
-  {
-    platform: 'mastodon',
-    concept: 'linksOnly',
-    label: 'リンク',
-    state: { linksOnly: true },
-    token: 'has:link',
   },
   {
     platform: 'mastodon',
@@ -1039,27 +878,6 @@ const PROBES: Probe[] = [
     label: '新規開始順(直播)',
     state: { resultType: 'live', sort: 'new' },
     token: 'order=live_time',
-  },
-  {
-    platform: 'bilibili',
-    concept: 'videoLength',
-    label: '長さ(短)',
-    state: { videoLength: 'short' },
-    token: 'duration=1',
-  },
-  {
-    platform: 'bilibili',
-    concept: 'videoLength',
-    label: '長さ(中)',
-    state: { videoLength: 'medium' },
-    token: 'duration=2',
-  },
-  {
-    platform: 'bilibili',
-    concept: 'videoLength',
-    label: '長さ(長)',
-    state: { videoLength: 'long' },
-    token: 'duration=4',
   },
   {
     platform: 'bilibili',
@@ -1228,20 +1046,6 @@ const PROBES: Probe[] = [
   },
   {
     platform: 'google',
-    concept: 'domain',
-    label: 'サイト内検索',
-    state: { domain: 'example.com' },
-    token: 'site:example.com',
-  },
-  {
-    platform: 'google',
-    concept: 'fileType',
-    label: 'ファイル形式',
-    state: { fileType: 'pdf' },
-    token: 'filetype:pdf',
-  },
-  {
-    platform: 'google',
     concept: 'period',
     label: '期間(開始)',
     state: { since: '2024-01-01' },
@@ -1263,13 +1067,6 @@ const PROBES: Probe[] = [
   },
   {
     platform: 'google',
-    concept: 'region',
-    label: '地域',
-    state: { region: 'JP' },
-    token: 'cr=countryJP',
-  },
-  {
-    platform: 'google',
     concept: 'safeSearchOff',
     label: 'セーフサーチ解除',
     state: { safeSearchOff: true },
@@ -1281,13 +1078,6 @@ const PROBES: Probe[] = [
     label: '完全一致モード',
     state: { exactMatchMode: true },
     token: 'li:1',
-  },
-  {
-    platform: 'google',
-    concept: 'license',
-    label: 'ライセンス',
-    state: { license: 'f' },
-    token: 'sur:f',
   },
   {
     platform: 'google',
@@ -1388,15 +1178,13 @@ function coverageStatesFor(concept: ConceptId): QueryState[] {
     return (SELECT_OPTIONS[concept] ?? []).filter((o) => o.value).map((o) => mk({ [f]: o.value }))
   // plain / chips: サイトごとに現実的なサンプル値を入れる(sampleStates と同じ選び方)
   const sentinel =
-    f === 'domain'
-      ? 'nhk.or.jp'
-      : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
-        ? '500'
-        : f === 'xList'
-          ? '1215911364234924032'
-          : f === 'hashtag'
-            ? 'ゲーム'
-            : 'nhk'
+    f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
+      ? '500'
+      : f === 'xList'
+        ? '1215911364234924032'
+        : f === 'hashtag'
+          ? 'ゲーム'
+          : 'nhk'
   return [mk({ [f]: sentinel })]
 }
 
@@ -1422,13 +1210,11 @@ function sampleStates(): QueryState[] {
       out.push({ ...BASE, since: '2026-06-01', until: '2026-06-30' })
     else {
       const sentinel =
-        f === 'domain'
-          ? 'nhk.or.jp'
-          : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
-            ? '500'
-            : f === 'xList'
-              ? '1215911364234924032'
-              : 'nhk'
+        f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
+          ? '500'
+          : f === 'xList'
+            ? '1215911364234924032'
+            : 'nhk'
       out.push({ ...BASE, [f]: sentinel })
     }
   }

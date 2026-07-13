@@ -1,8 +1,6 @@
 import type {
   ConceptId,
   ConceptSupport,
-  GoogleFileType,
-  GoogleLicense,
   ParsedSearch,
   PlatformDef,
   PostLanguage,
@@ -10,8 +8,8 @@ import type {
   ResultType,
   UrlPart,
 } from '../types.js'
-import { GOOGLE_FILE_TYPES, POST_LANGUAGE_CODES } from '../types.js'
-import { andTerms, exactPhrases, stripQuerySyntax, words } from '../text.js'
+import { POST_LANGUAGE_CODES } from '../types.js'
+import { andTerms, exactPhrases, words } from '../text.js'
 import {
   encodeTokens,
   lit,
@@ -83,15 +81,20 @@ function isGoogleHost(url: URL): boolean {
 }
 
 function buildParts(state: QueryState): UrlPart[] | null {
+  return buildGoogleParts(state, '')
+}
+
+/**
+ * Google検索URLを組む。siteDomain は site: 検索フォールバック(#42)専用の内部引数で、
+ * 空でなければ site:{domain} を1トークン足す。これはユーザー概念ではなく迂回路の仕組みの
+ * ため概念に帰属させない(通常の翻訳は buildParts が siteDomain='' で呼ぶ)
+ */
+export function buildGoogleParts(state: QueryState, siteDomain: string): UrlPart[] | null {
   const orWords = words(state.keywordsOr)
   // hasPositiveTerm(hashtag/fromUser込み)は使わない。Googleはこの2概念を持たないため、
   // ハッシュタグだけ入力された状態でも「検索が成立する」と誤判定し、空のq=を生む取りこぼしになる
   const hasQuery =
-    andTerms(state).length > 0 ||
-    exactPhrases(state).length > 0 ||
-    state.domain.trim() !== '' ||
-    state.fileType !== '' ||
-    orWords.length > 0
+    andTerms(state).length > 0 || exactPhrases(state).length > 0 || orWords.length > 0
   if (!hasQuery) return null
 
   const toks: Token[] = []
@@ -105,8 +108,7 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (orWords.length >= 2) toks.push(tok(`(${orWords.join(' OR ')})`, 'keywordsOr'))
   else toks.push(...orWords.map((w) => tok(w, 'keywordsOr')))
   toks.push(...minusExcludeTokens(state))
-  if (state.domain.trim()) toks.push(tok(`site:${stripQuerySyntax(state.domain.trim())}`, 'domain'))
-  if (state.fileType) toks.push(tok(`filetype:${state.fileType}`, 'fileType'))
+  if (siteDomain) toks.push(tok(`site:${siteDomain}`))
 
   const params = new ParamParts()
   if (state.language) {
@@ -114,11 +116,10 @@ function buildParts(state: QueryState): UrlPart[] | null {
     const lr = state.language === 'zh' ? 'lang_zh-CN' : `lang_${state.language}`
     params.set('lr', lr, 'language')
   }
-  if (state.region.trim()) params.set('cr', `country${state.region.trim().toUpperCase()}`, 'region')
   if (state.safeSearchOff) params.set('safe', 'off', 'safeSearchOff')
 
   // tbs= はカンマ区切りで複数機能を1つの値に合成する(YouTubeのsp=と同様の複合パラメータ)。
-  // 期間・完全一致・ライセンスを同時指定したときの組み合わせ効果はGUI操作で確証を得られて
+  // 期間・完全一致を同時指定したときの組み合わせ効果はGUI操作で確証を得られて
   // いない(ツールメニュー自体が単一選択のUIのため。docs/operator-checklist.md参照)
   const tbsConcepts: ConceptId[] = []
   const tbsParts: string[] = []
@@ -131,10 +132,6 @@ function buildParts(state: QueryState): UrlPart[] | null {
   if (state.exactMatchMode) {
     tbsConcepts.push('exactMatchMode')
     tbsParts.push('li:1')
-  }
-  if (state.license) {
-    tbsConcepts.push('license')
-    tbsParts.push(`sur:${state.license}`)
   }
   if (tbsParts.length > 0) params.set('tbs', tbsParts.join(','), ...tbsConcepts)
 
@@ -164,12 +161,10 @@ function parseUrl(url: URL): ParsedSearch | null {
 
   for (const token of tokenize(q)) {
     if (token === 'allintitle:') titleOnly = true
-    else if (token.startsWith('site:')) patch.domain = token.slice('site:'.length)
-    else if (token.startsWith('filetype:')) {
-      const v = token.slice('filetype:'.length)
-      if ((GOOGLE_FILE_TYPES as readonly string[]).includes(v)) patch.fileType = v as GoogleFileType
-      else ignored.push(token)
-    } else if (token.startsWith('intitle:')) {
+    // site:/filetype: は演算子として認識するが対応概念が無いため素直に無視へ回す
+    else if (token.startsWith('site:')) ignored.push(token)
+    else if (token.startsWith('filetype:')) ignored.push(token)
+    else if (token.startsWith('intitle:')) {
       titleOnly = true
       const rest = token.slice('intitle:'.length)
       if (rest.startsWith('"')) bins.phrases.push(unquote(rest))
@@ -198,12 +193,6 @@ function parseUrl(url: URL): ParsedSearch | null {
     else if (code === 'zh-CN' || code === 'zh-TW') patch.language = 'zh'
     else ignored.push(`lr=${lr}`)
   }
-  const cr = url.searchParams.get('cr')
-  if (cr !== null) {
-    const m = cr.match(/^country([A-Za-z]{2})$/)
-    if (m) patch.region = m[1].toUpperCase()
-    else ignored.push(`cr=${cr}`)
-  }
   const safe = url.searchParams.get('safe')
   if (safe === 'off') patch.safeSearchOff = true
   else if (safe !== null && safe !== 'active') ignored.push(`safe=${safe}`)
@@ -214,10 +203,6 @@ function parseUrl(url: URL): ParsedSearch | null {
       if (sub === 'li:1') patch.exactMatchMode = true
       else if (sub === 'cdr:1') {
         // カスタム期間の枠マーカーのみ。cd_min/cd_maxが実体を持つ
-      } else if (sub.startsWith('sur:')) {
-        const v = sub.slice('sur:'.length)
-        if (v === 'f' || v === 'fc' || v === 'fm' || v === 'fmc') patch.license = v as GoogleLicense
-        else ignored.push(`tbs=${sub}`)
       } else if (sub.startsWith('cd_min:')) {
         const iso = fromGoogleDate(sub.slice('cd_min:'.length))
         if (iso) patch.since = iso
@@ -244,7 +229,7 @@ function parseUrl(url: URL): ParsedSearch | null {
     else ignored.push(`udm=${udm}`)
   }
 
-  leftoverParams(url, new Set(['q', 'lr', 'cr', 'safe', 'tbs', 'tbm', 'udm']), ignored)
+  leftoverParams(url, new Set(['q', 'lr', 'safe', 'tbs', 'tbm', 'udm']), ignored)
   return { patch, ignored }
 }
 
@@ -276,10 +261,6 @@ export const google: PlatformDef = {
     keywordsOr: { level: 'full' },
     exclude: { level: 'full' },
     titleOnly: { level: 'partial', noteKey: 'note.google.titleOnly' },
-    domain: { level: 'full' },
-    fileType: { level: 'full' },
-    region: { level: 'full' },
-    license: { level: 'full' },
     exactMatchMode: { level: 'full' },
     period: { level: 'full' },
     language: { level: 'full' },

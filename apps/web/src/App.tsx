@@ -5,7 +5,6 @@ import {
   type PlatformId,
   type QueryState,
   FANTIA_CATEGORIES,
-  GOOGLE_FILE_TYPES,
   NICO_GENRES,
   POST_LANGUAGE_CODES,
   activeConcepts,
@@ -79,7 +78,6 @@ function sanitizeQuery(parsed: unknown): QueryState {
     v.every((x) => typeof x === 'string') && v.length > 0 ? v : ['']
   query.terms = strArray(query.terms)
   query.exactPhrase = strArray(query.exactPhrase)
-  if (!['', 'short', 'medium', 'long'].includes(query.videoLength)) query.videoLength = ''
   if (!['', 'illust', 'manga', 'ugoira', 'novel'].includes(query.workType)) query.workType = ''
   if (
     ![
@@ -135,8 +133,6 @@ function sanitizeQuery(parsed: unknown): QueryState {
     query.fantiaCategory = ''
   }
   if (!['', 'male', 'female'].includes(query.fantiaAudience)) query.fantiaAudience = ''
-  if (!(['', ...GOOGLE_FILE_TYPES] as string[]).includes(query.fileType)) query.fileType = ''
-  if (!['', 'f', 'fc', 'fm', 'fmc'].includes(query.license)) query.license = ''
   return query
 }
 

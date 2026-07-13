@@ -2,7 +2,7 @@ import type { ConceptId, PlatformCtx, PlatformDef, PlatformId, QueryState } from
 import { supportOf } from './types.js'
 import { andTerms, exactPhrases, words } from './text.js'
 import { joinParts } from './urlParts.js'
-import { google } from './platforms/google.js'
+import { buildGoogleParts, google } from './platforms/google.js'
 import { DEFAULT_HOST as MASTODON_DEFAULT_HOST } from './platforms/mastodon.js'
 import { DEFAULT_HOST as MISSKEY_DEFAULT_HOST } from './platforms/misskey.js'
 
@@ -41,9 +41,9 @@ export interface GoogleFallback {
 
 /**
  * ネイティブ検索で丸ごと落ちた条件(droppedReal)のうち、Googleのsite:検索で
- * 表現できるものがあれば迂回路のURLを組む(issue #42)。domain概念は、site:を
- * このフォールバックが専有するためユーザー指定のドメイン絞り込みと両立できず、
- * 対象から除く。近似(approximated)は対象外(ネイティブ側で一応動くため)
+ * 表現できるものがあれば迂回路のURLを組む(issue #42)。site:{domain} は
+ * buildGoogleParts の専用引数で足す(ユーザー概念ではなく迂回路の仕組み)。
+ * 近似(approximated)は対象外(ネイティブ側で一応動くため)
  */
 export function buildGoogleFallback(
   platform: PlatformDef,
@@ -58,7 +58,7 @@ export function buildGoogleFallback(
 
   const rescued = droppedReal
     .map((d) => d.concept)
-    .filter((concept) => concept !== 'domain' && supportOf(google, concept).level !== 'none')
+    .filter((concept) => supportOf(google, concept).level !== 'none')
   if (rescued.length === 0 && nativeUrl !== null) return null
 
   // site: 単独で全ページが対象になるのを防ぐため、Googleへ渡せる正の条件が要る
@@ -68,7 +68,7 @@ export function buildGoogleFallback(
     words(state.keywordsOr).length > 0
   if (!hasPositiveQuery) return null
 
-  const parts = google.buildParts({ ...state, domain })
+  const parts = buildGoogleParts(state, domain)
   if (!parts) return null
   return { url: joinParts(parts), rescued }
 }

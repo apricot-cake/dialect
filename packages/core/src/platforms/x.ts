@@ -27,7 +27,6 @@ import {
 // min_faves:/min_retweets:/min_replies: は「高度な検索」フォームの
 // エンゲージメント欄(返信/いいね/リポストの最小件数)に実在する公式演算子と
 // 2026-07-08にGUI操作で確認済み(x.com/search-advancedで入力→生成URLを確認)。
-// filter:blue_verified(認証済みトグル)は同フォームから消滅済みで非公式のまま。
 // メンション検索(「次のアカウントへの@ツイート」欄)は独自演算子ではなく、
 // (@user) というカッコ付きの生テキストをクエリに混ぜる形。2026-07-07にx.com/search-advanced
 // をGUI操作で実測: 1件=`(@user)`、複数件=`(@user1 OR @user2)`(OR結合)。
@@ -43,12 +42,11 @@ function listId(raw: string): string | null {
 
 function buildParts(state: QueryState): UrlPart[] | null {
   const list = listId(state.xList)
-  // 宛先・メンション・リンク先・リスト内だけの検索もXでは成立するので、正の条件に数える
+  // 宛先・メンション・リスト内だけの検索もXでは成立するので、正の条件に数える
   if (
     !hasPositiveTerm(state) &&
     !state.toUser.trim() &&
     !state.mentionsUser.trim() &&
-    !state.domain.trim() &&
     !list &&
     !state.keywordsOr.trim()
   ) {
@@ -73,16 +71,12 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // 常にカッコで囲む(実機確認: 1件でも`(@user)`、複数件は`(@user1 OR @user2)`)
   const mentions = words(state.mentionsUser).map((u) => `@${stripAt(u)}`)
   if (mentions.length > 0) toks.push(tok(`(${mentions.join(' OR ')})`, 'mentionsUser'))
-  // リンク先ドメインは url: で絞る(部分一致)
-  if (state.domain.trim()) toks.push(tok(`url:${stripQuerySyntax(state.domain.trim())}`, 'domain'))
   // リスト内検索。list:<id> でそのリストのメンバーの投稿だけに絞る(他条件とAND可)
   if (list) toks.push(tok(`list:${list}`, 'xList'))
   toks.push(...words(state.hashtag).map((t) => tok(`#${stripHash(t)}`, 'hashtag')))
   if (state.since) toks.push(tok(`since:${state.since}`, 'period'))
   if (state.until) toks.push(tok(`until:${state.until}`, 'period'))
   if (state.mediaOnly) toks.push(tok('filter:media', 'mediaOnly'))
-  if (state.linksOnly) toks.push(tok('filter:links', 'linksOnly'))
-  if (state.verifiedOnly) toks.push(tok('filter:blue_verified', 'verifiedOnly'))
   if (state.excludeReplies) toks.push(tok('-filter:replies', 'excludeReplies'))
   if (state.minLikes.trim())
     toks.push(tok(`min_faves:${stripQuerySyntax(state.minLikes.trim())}`, 'minLikes'))
@@ -119,13 +113,12 @@ function parseUrl(url: URL): ParsedSearch | null {
   for (const token of tokenize(q)) {
     if (token === '-filter:replies') patch.excludeReplies = true
     else if (token === 'filter:media') patch.mediaOnly = true
-    else if (token === 'filter:links') patch.linksOnly = true
-    else if (token === 'filter:blue_verified') patch.verifiedOnly = true
     else if (token.startsWith('filter:') || token.startsWith('-filter:')) ignored.push(token)
     else if (token.startsWith('-from:')) excludeUsers.push(token.slice('-from:'.length))
     else if (token.startsWith('from:')) patch.fromUser = token.slice('from:'.length)
     else if (token.startsWith('to:')) toUsers.push(token.slice('to:'.length))
-    else if (token.startsWith('url:')) patch.domain = token.slice('url:'.length)
+    // url: はリンク先ドメイン絞り込み(概念は剪定済み)なので演算子として無視へ回す
+    else if (token.startsWith('url:')) ignored.push(token)
     else if (token.startsWith('list:')) patch.xList = token.slice('list:'.length)
     else if (token.startsWith('since:')) {
       const v = token.slice('since:'.length)
@@ -207,13 +200,10 @@ export const x: PlatformDef = {
     excludeUser: { level: 'full' },
     toUser: { level: 'full' },
     mentionsUser: { level: 'full' },
-    domain: { level: 'full' },
     xList: { level: 'partial' },
     hashtag: { level: 'full' },
     period: { level: 'full', noteKey: 'note.x.period' },
     mediaOnly: { level: 'full' },
-    linksOnly: { level: 'full' },
-    verifiedOnly: { level: 'partial' },
     excludeReplies: { level: 'full' },
     minLikes: { level: 'full' },
     minReposts: { level: 'full' },

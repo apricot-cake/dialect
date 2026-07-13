@@ -6,7 +6,6 @@ import type {
   QueryState,
   ResultType,
   UrlPart,
-  VideoLength,
 } from '../types.js'
 import { limitSort } from '../types.js'
 import { andTerms, exactPhrases, hasPositiveTerm, stripAt, stripHash, words } from '../text.js'
@@ -54,13 +53,7 @@ const TYPE_BYTE: Partial<Record<Exclude<ResultType, ''>, number>> = {
   channel: 0x02,
   playlist: 0x03,
 }
-const LENGTH_BYTE: Record<Exclude<VideoLength, ''>, number> = {
-  short: 0x01,
-  medium: 0x03,
-  long: 0x02,
-}
-
-// sp= は1つのbase64に並び順・種類・長さ・特徴が合成される複合断片なので、
+// sp= は1つのbase64に並び順・種類・ライブが合成される複合断片なので、
 // 寄与した概念を全部持つ1つの UrlPart として返す(分割不能=base64は3バイト/4文字境界)
 function spPart(state: QueryState): UrlPart | null {
   const concepts: ConceptId[] = []
@@ -73,61 +66,10 @@ function spPart(state: QueryState): UrlPart | null {
     filter.push(0x10, typeByte)
     concepts.push('resultType')
   }
-  if (state.videoLength) {
-    filter.push(0x18, LENGTH_BYTE[state.videoLength])
-    concepts.push('videoLength')
-  }
-  // 「特徴」の各項目はfilterサブメッセージの別フィールドとして合流する(2026-07-07に
-  // フィルタUIから実測、field番号の昇順で並べる): 3D=field7(0x38)・HD=field4(0x20)・
-  // 字幕=field5(0x28)・クリエイティブ・コモンズ=field6(0x30)・ライブ=field8(0x40)・
-  // 購入済み=field9(0x48)・4K=field14(0x70)・360°=field15(0x78)・場所=field23(0xb8,0x01)・
-  // HDR=field25(0xc8,0x01)・VR180=field26(0xd0,0x01)。field23以降は2バイトのvarintタグ
-  // (fieldが16以上でタグが128を超えるため)。いずれも組み合わせ可能(2026-07-08に
-  // 360°/VR180/3D/HDR/場所は実際に絞り込みが効くことをブラウザ実測、購入済みは
-  // このアカウントに購入履歴が無く未検証だがバイト値自体はUIから採取)
-  if (state.hdOnly) {
-    filter.push(0x20, 0x01)
-    concepts.push('hdOnly')
-  }
-  if (state.captionsOnly) {
-    filter.push(0x28, 0x01)
-    concepts.push('captionsOnly')
-  }
-  if (state.creativeCommons) {
-    filter.push(0x30, 0x01)
-    concepts.push('creativeCommons')
-  }
-  if (state.threeD) {
-    filter.push(0x38, 0x01)
-    concepts.push('threeD')
-  }
+  // ライブ配信の絞り込みは filter サブメッセージの field8(0x40)。2026-07-07にフィルタUIから実測
   if (state.liveOnly) {
     filter.push(0x40, 0x01)
     concepts.push('liveOnly')
-  }
-  if (state.purchased) {
-    filter.push(0x48, 0x01)
-    concepts.push('purchased')
-  }
-  if (state.fourK) {
-    filter.push(0x70, 0x01)
-    concepts.push('fourK')
-  }
-  if (state.threeSixty) {
-    filter.push(0x78, 0x01)
-    concepts.push('threeSixty')
-  }
-  if (state.locationOnly) {
-    filter.push(0xb8, 0x01, 0x01)
-    concepts.push('locationOnly')
-  }
-  if (state.hdr) {
-    filter.push(0xc8, 0x01, 0x01)
-    concepts.push('hdr')
-  }
-  if (state.vr180) {
-    filter.push(0xd0, 0x01, 0x01)
-    concepts.push('vr180')
   }
   const bytes: number[] = []
   if (sort) bytes.push(0x08, SORT_BYTE[sort])
@@ -277,21 +219,7 @@ function parseSpFilter(bytes: number[], patch: Partial<QueryState>, ignored: str
       const rt = Object.entries(TYPE_BYTE).find(([, b]) => b === value)?.[0]
       if (rt) patch.resultType = rt as ResultType
       else ignored.push(`sp:type${value}`)
-    } else if (field === 3) {
-      const vl = Object.entries(LENGTH_BYTE).find(([, b]) => b === value)?.[0]
-      if (vl) patch.videoLength = vl as VideoLength
-      else ignored.push(`sp:duration${value}`)
-    } else if (field === 4) patch.hdOnly = true
-    else if (field === 5) patch.captionsOnly = true
-    else if (field === 6) patch.creativeCommons = true
-    else if (field === 7) patch.threeD = true
-    else if (field === 8) patch.liveOnly = true
-    else if (field === 9) patch.purchased = true
-    else if (field === 14) patch.fourK = true
-    else if (field === 15) patch.threeSixty = true
-    else if (field === 23) patch.locationOnly = true
-    else if (field === 25) patch.hdr = true
-    else if (field === 26) patch.vr180 = true
+    } else if (field === 8) patch.liveOnly = true
     else ignored.push(`sp:field${field}`)
   }
 }
@@ -397,19 +325,8 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   const overrides: Partial<Record<ConceptId, ConceptSupport>> = {}
   if (state.fromUser.trim()) {
     overrides.sortOrder = CHANNEL_CONFLICT
-    overrides.videoLength = CHANNEL_CONFLICT
     overrides.resultType = CHANNEL_CONFLICT
     overrides.liveOnly = CHANNEL_CONFLICT
-    overrides.fourK = CHANNEL_CONFLICT
-    overrides.hdOnly = CHANNEL_CONFLICT
-    overrides.captionsOnly = CHANNEL_CONFLICT
-    overrides.creativeCommons = CHANNEL_CONFLICT
-    overrides.threeSixty = CHANNEL_CONFLICT
-    overrides.vr180 = CHANNEL_CONFLICT
-    overrides.threeD = CHANNEL_CONFLICT
-    overrides.hdr = CHANNEL_CONFLICT
-    overrides.locationOnly = CHANNEL_CONFLICT
-    overrides.purchased = CHANNEL_CONFLICT
   } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
     // 他サイト専用の値(プロフィール・シリーズ・ボード等)はYouTubeに無い
     overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
@@ -439,18 +356,7 @@ export const youtube: PlatformDef = {
     hashtag: { level: 'partial', noteKey: 'note.youtube.hashtag' },
     period: { level: 'partial' },
     mediaOnly: { level: 'none', noteKey: 'note.youtube.mediaOnly' },
-    videoLength: { level: 'partial' },
     liveOnly: { level: 'partial' },
-    fourK: { level: 'full' },
-    hdOnly: { level: 'full' },
-    captionsOnly: { level: 'full' },
-    creativeCommons: { level: 'full' },
-    threeSixty: { level: 'full' },
-    vr180: { level: 'full' },
-    threeD: { level: 'full' },
-    hdr: { level: 'full' },
-    locationOnly: { level: 'full' },
-    purchased: { level: 'full' },
     resultType: { level: 'partial', noteKey: 'note.youtube.resultType' },
     sortOrder: { level: 'partial', noteKey: 'note.youtube.sort' },
   },

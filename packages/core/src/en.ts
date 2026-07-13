@@ -45,21 +45,6 @@ export const en = {
   'concept.excludeMentions.placeholder': 'e.g. user.bsky.social',
   'concept.excludeMentions.help':
     'Removes posts that mention the given user from the results (Bluesky only).',
-  'concept.domain.label': 'Links to this site',
-  'concept.domain.placeholder': 'e.g. nhk.or.jp',
-  'concept.domain.help': 'Finds only posts that link to the given site.',
-  'concept.excludeDomain.label': 'Exclude links to this site',
-  'concept.excludeDomain.placeholder': 'e.g. nhk.or.jp',
-  'concept.excludeDomain.help':
-    'Removes posts that link to the given site from the results (Bluesky only).',
-  'concept.linkUrl.label': 'Links to this URL',
-  'concept.linkUrl.placeholder': 'e.g. example.com/article',
-  'concept.linkUrl.help':
-    'Finds only posts with an embedded link or card pointing to the given URL (Bluesky only).',
-  'concept.excludeLinkUrl.label': 'Exclude links to this URL',
-  'concept.excludeLinkUrl.placeholder': 'e.g. example.com/article',
-  'concept.excludeLinkUrl.help':
-    'Removes posts with an embedded link or card pointing to the given URL from the results (Bluesky only).',
   'concept.xList.label': 'Search within an X List',
   'concept.xList.placeholder': 'List URL or ID',
   'concept.xList.help':
@@ -84,44 +69,10 @@ export const en = {
     'On Bluesky, keeps only posts that include a video (image-only posts are excluded).',
   'concept.liveOnly.label': 'Live streams only',
   'concept.liveOnly.help': 'On YouTube, keeps only live streams (live and their archives).',
-  'concept.fourK.label': '4K videos only',
-  'concept.fourK.help': 'On YouTube, keeps only 4K-resolution videos.',
-  'concept.hdOnly.label': 'HD videos only',
-  'concept.hdOnly.help': 'On YouTube, keeps only HD-resolution videos.',
-  'concept.captionsOnly.label': 'Captioned videos only',
-  'concept.captionsOnly.help': 'On YouTube, keeps only videos with closed captions.',
-  'concept.creativeCommons.label': 'Creative Commons only',
-  'concept.creativeCommons.help':
-    'On YouTube, keeps only videos under a Creative Commons license (reuse allowed under conditions).',
-  'concept.threeSixty.label': '360° videos only',
-  'concept.threeSixty.help': 'On YouTube, keeps only 360° videos.',
-  'concept.vr180.label': 'VR180 videos only',
-  'concept.vr180.help': 'On YouTube, keeps only VR180-format videos.',
-  'concept.threeD.label': '3D videos only',
-  'concept.threeD.help': 'On YouTube, keeps only 3D videos.',
-  'concept.hdr.label': 'HDR videos only',
-  'concept.hdr.help': 'On YouTube, keeps only HDR (high dynamic range) videos.',
-  'concept.locationOnly.label': 'Videos with location only',
-  'concept.locationOnly.help':
-    'On YouTube, keeps only videos tagged with a filming location. Combine with a place name.',
-  'concept.purchased.label': 'Purchased videos only',
-  'concept.purchased.help': 'On YouTube, keeps only movies/shows you have purchased.',
-  'concept.videoLength.label': 'Video length',
-  'concept.videoLength.none': 'Any',
-  'concept.videoLength.short': 'Short (under 4 min)',
-  'concept.videoLength.medium': 'Medium (4–20 min)',
-  'concept.videoLength.long': 'Long (over 20 min)',
-  'concept.videoLength.help': 'Filters by video duration.',
-  'concept.linksOnly.label': 'With links only',
-  'concept.linksOnly.help': 'Keeps only posts that contain a link (URL).',
-  'concept.verifiedOnly.label': 'Verified accounts only',
-  'concept.verifiedOnly.help': 'Keeps only posts from verified accounts.',
   'concept.excludeReplies.label': 'Exclude replies',
   'concept.excludeReplies.help': 'Removes replies from the results.',
   'concept.repliesOnly.label': 'Replies only',
   'concept.repliesOnly.help': 'On Bluesky, keeps only replies.',
-  'concept.followingOnly.label': 'From people you follow only',
-  'concept.followingOnly.help': 'On Bluesky, keeps only posts from accounts you follow.',
   'concept.minLikes.label': 'Minimum likes',
   'concept.minLikes.placeholder': 'e.g. 100',
   'concept.minLikes.help': 'Keeps only posts with at least the given number of likes.',
@@ -269,30 +220,6 @@ export const en = {
     'Keeps only all-ages works, or only R-18 works (supported on pixiv and Fantia).',
   'concept.excludeAi.label': 'Exclude AI-generated',
   'concept.excludeAi.help': 'On pixiv, removes AI-generated works from the results.',
-  'concept.fileType.label': 'File type',
-  'concept.fileType.none': 'Any',
-  'concept.fileType.pdf': 'PDF (.pdf)',
-  'concept.fileType.ps': 'Adobe PostScript (.ps)',
-  'concept.fileType.dwf': 'Autodesk DWF (.dwf)',
-  'concept.fileType.kml': 'Google Earth KML (.kml)',
-  'concept.fileType.kmz': 'Google Earth KMZ (.kmz)',
-  'concept.fileType.xls': 'Excel (.xls)',
-  'concept.fileType.ppt': 'PowerPoint (.ppt)',
-  'concept.fileType.doc': 'Word (.doc)',
-  'concept.fileType.rtf': 'Rich Text Format (.rtf)',
-  'concept.fileType.swf': 'Shockwave Flash (.swf)',
-  'concept.fileType.help': 'Keeps only files of the given type (Google only).',
-  'concept.region.label': 'Region',
-  'concept.region.placeholder': 'e.g. US',
-  'concept.region.help':
-    'Keeps only pages meant for a given country or region (Google only). Enter the 2-letter country code (e.g. US, JP).',
-  'concept.license.label': 'License',
-  'concept.license.none': "Don't filter by license",
-  'concept.license.f': 'Free to use or share',
-  'concept.license.fc': 'Free to use or share, even commercially',
-  'concept.license.fm': 'Free to use, share, or modify',
-  'concept.license.fmc': 'Free to use, share, or modify, even commercially',
-  'concept.license.help': 'Keeps only pages with the given usage rights (Google only).',
   'concept.exactMatchMode.label': 'Search exactly as typed',
   'concept.exactMatchMode.help':
     'Searches for your exact terms, without automatic synonym or spelling substitutions (Google only). This is separate from Exact phrase, which matches an exact word order.',
@@ -318,18 +245,13 @@ export const en = {
   // Per-platform notes
   'note.x.period': 'You cannot search by date alone. Combine it with a keyword.',
   'note.x.listInvalid': 'Couldn’t read the List from that input. Paste the URL of the List’s page.',
-  'note.niconico.videoLength': '“Medium (4–20 min)” cannot be set and is ignored.',
   'note.niconico.resultTypeConflict':
     'This filter has no effect on series, mylist, or user search.',
   'note.niconico.hashtagAsKeyword':
     'There’s no dedicated tag page for this result type, so it’s searched as a plain keyword.',
   'note.bluesky.fromUser':
     'Usernames are in the form “user.bsky.social”. For multiple values, separate with spaces — any match counts.',
-  'note.bluesky.domainMulti':
-    'Enter domains like “nhk.or.jp”. For multiple values, separate with spaces — any match counts.',
   'note.bluesky.peopleConflict': 'This filter has no effect on account search.',
-  'note.bluesky.followingOnly':
-    'Whether an account counts as “followed” depends on the Bluesky account that opens the link.',
   'note.bluesky.repliesConflict':
     'Selecting this together with “Exclude replies” gives priority to excluding replies.',
   'note.youtube.exactPhrase':
@@ -375,8 +297,6 @@ export const en = {
     "The exclusion sign (-) has no effect; it's treated as a literal part of the search term.",
   'note.fanbox.hashtagOnly':
     'Only works when exactly one hashtag is given. Keywords and other conditions are not supported.',
-  'note.bilibili.videoLength':
-    'Length buckets differ slightly (short = under 10 min, medium = 10–30 min, long = over 60 min).',
   'note.bilibili.tabSort': "This sort order isn't available for the selected result type.",
   'note.bilibili.tabOnly': 'Only available when the result type is videos (or unspecified).',
   'note.google.titleOnly':
@@ -418,7 +338,6 @@ export const en = {
   'sum.to': 'to {v}',
   'sum.excludeUser': 'excluding {v}',
   'sum.mentions': 'mentioning {v}',
-  'sum.domain': 'links to {v}',
   'sum.xList': 'in a List',
   'sum.minLikes': '{v}+ likes',
   'sum.minReposts': '{v}+ reposts',

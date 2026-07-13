@@ -43,8 +43,7 @@ function singleTagOnly(state: QueryState): string | null {
     state.fromUser.trim().length > 0 ||
     Boolean(state.since) ||
     Boolean(state.until) ||
-    state.mediaOnly ||
-    state.linksOnly
+    state.mediaOnly
   return !hasOtherConditions && tagNames.length === 1 ? tagNames[0] : null
 }
 
@@ -69,20 +68,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // 最新順だけ /recent を付ける。人気順(既定)・指定なしは何も付けない
   if (state.sort === 'new') parts.push(part('/recent', 'sortOrder'))
 
-  // 投稿タイプ。画像・動画つきだけ/リンクだけを postTypes= の値集合で絞る
-  // (両方ONなら1断片が mediaOnly と linksOnly の複合になる)
-  const postTypes: string[] = []
-  const postTypeConcepts: ConceptId[] = []
+  // 投稿タイプ。画像・動画つきだけを postTypes= の値集合で絞る
   if (state.mediaOnly) {
-    postTypes.push('photo', 'gif', 'video')
-    postTypeConcepts.push('mediaOnly')
-  }
-  if (state.linksOnly) {
-    postTypes.push('link')
-    postTypeConcepts.push('linksOnly')
-  }
-  if (postTypes.length > 0) {
-    parts.push(part(`?postTypes=${postTypes.join(',')}`, ...postTypeConcepts))
+    parts.push(part('?postTypes=photo,gif,video', 'mediaOnly'))
   }
 
   return parts
@@ -131,9 +119,9 @@ function parseUrl(url: URL): ParsedSearch | null {
         .map((s) => s.trim())
         .filter(Boolean),
     )
-    if (values.delete('link')) patch.linksOnly = true
     const media = ['photo', 'gif', 'video'].filter((m) => values.delete(m))
     if (media.length > 0) patch.mediaOnly = true
+    // link(リンクだけ)は概念を剪定済み。残った値はまとめて無視へ回す
     for (const rest of values) ignored.push(`postTypes=${rest}`)
   }
   leftoverParams(url, new Set(['postTypes']), ignored)
@@ -154,7 +142,6 @@ export const tumblr: PlatformDef = {
     hashtag: { level: 'full' },
     period: { level: 'full' },
     mediaOnly: { level: 'full' },
-    linksOnly: { level: 'full' },
     sortOrder: { level: 'full' },
   },
   buildParts,

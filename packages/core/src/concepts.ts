@@ -16,13 +16,6 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.toUser.trim()) active.push('toUser')
   if (state.mentionsUser.trim()) active.push('mentionsUser')
   if (state.excludeMentions.trim()) active.push('excludeMentions')
-  if (state.domain.trim()) active.push('domain')
-  if (state.excludeDomain.trim()) active.push('excludeDomain')
-  if (state.linkUrl.trim()) active.push('linkUrl')
-  if (state.excludeLinkUrl.trim()) active.push('excludeLinkUrl')
-  if (state.fileType) active.push('fileType')
-  if (state.region.trim()) active.push('region')
-  if (state.license) active.push('license')
   if (state.exactMatchMode) active.push('exactMatchMode')
   if (state.xList.trim()) active.push('xList')
   if (state.hashtag.trim()) active.push('hashtag')
@@ -31,23 +24,9 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.since || state.until) active.push('period')
   if (state.mediaOnly) active.push('mediaOnly')
   if (state.videoOnly) active.push('videoOnly')
-  if (state.videoLength) active.push('videoLength')
-  if (state.linksOnly) active.push('linksOnly')
-  if (state.verifiedOnly) active.push('verifiedOnly')
   if (state.excludeReplies) active.push('excludeReplies')
   if (state.repliesOnly) active.push('repliesOnly')
-  if (state.followingOnly) active.push('followingOnly')
   if (state.liveOnly) active.push('liveOnly')
-  if (state.fourK) active.push('fourK')
-  if (state.hdOnly) active.push('hdOnly')
-  if (state.captionsOnly) active.push('captionsOnly')
-  if (state.creativeCommons) active.push('creativeCommons')
-  if (state.threeSixty) active.push('threeSixty')
-  if (state.vr180) active.push('vr180')
-  if (state.threeD) active.push('threeD')
-  if (state.hdr) active.push('hdr')
-  if (state.locationOnly) active.push('locationOnly')
-  if (state.purchased) active.push('purchased')
   if (state.minLikes.trim()) active.push('minLikes')
   if (state.minReposts.trim()) active.push('minReposts')
   if (state.minReplies.trim()) active.push('minReplies')
@@ -83,13 +62,6 @@ export function defaultState(): QueryState {
     toUser: '',
     mentionsUser: '',
     excludeMentions: '',
-    domain: '',
-    excludeDomain: '',
-    linkUrl: '',
-    excludeLinkUrl: '',
-    fileType: '',
-    region: '',
-    license: '',
     exactMatchMode: false,
     xList: '',
     hashtag: '',
@@ -99,23 +71,9 @@ export function defaultState(): QueryState {
     until: '',
     mediaOnly: false,
     videoOnly: false,
-    videoLength: '',
-    linksOnly: false,
-    verifiedOnly: false,
     excludeReplies: false,
     repliesOnly: false,
-    followingOnly: false,
     liveOnly: false,
-    fourK: false,
-    hdOnly: false,
-    captionsOnly: false,
-    creativeCommons: false,
-    threeSixty: false,
-    vr180: false,
-    threeD: false,
-    hdr: false,
-    locationOnly: false,
-    purchased: false,
     minLikes: '',
     minReposts: '',
     minReplies: '',

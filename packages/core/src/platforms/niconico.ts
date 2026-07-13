@@ -134,9 +134,6 @@ function buildParts(state: QueryState): UrlPart[] | null {
     }
     if (state.since) params.set('start', state.since, 'period')
     if (state.until) params.set('end', state.until, 'period')
-    // 「ふつう(4〜20分)」に相当する値はniconicoに存在しないため指定しない
-    if (state.videoLength === 'short') params.set('l_range', '1', 'videoLength')
-    if (state.videoLength === 'long') params.set('l_range', '2', 'videoLength')
     // ジャンル。/search・/tag の両方で有効(2026-07-06 実測: ゲーム2万≪音楽29万<無し38万)
     if (state.genre) params.set('genre', state.genre, 'genre')
     // 動画種別(kind=user:ユーザー投稿 / channel:公式チャンネル)。2026-07-09 GUI採取
@@ -211,19 +208,12 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
         ['new', 'top', 'comments', 'likes', 'favorites', 'commentDate'],
         'note.sortOrder.otherSite',
       ),
-      // 「ふつう(4〜20分)」に当たる値は niconico に無く l_range で送れない(buildUrl も出さない)。
-      // その値のときだけ「使えない」に落とし、プレビュー・完全度ドット・ホバーで正直に表す。
-      // short/long は l_range=1/2 で実際に送れるので partial のまま
-      ...(state.videoLength === 'medium'
-        ? { videoLength: { level: 'none', noteKey: 'note.niconico.videoLength' } }
-        : {}),
     }
   }
   const nonVideoOverride: Partial<Record<ConceptId, ConceptSupport>> = {
     ...resultTypeOverride,
     genre: NOT_VIDEO_LIKE,
     nicoKind: NOT_VIDEO_LIKE,
-    videoLength: NOT_VIDEO_LIKE,
     period: NOT_VIDEO_LIKE,
     // タグページが無いため、タグ語も「厳密一致」ではなくキーワードとして扱われる
     hashtag: { level: 'partial', noteKey: 'note.niconico.hashtagAsKeyword' },
@@ -312,10 +302,9 @@ function parseUrl(url: URL): ParsedSearch | null {
       if (isIsoDate(end)) patch.until = end
       else ignored.push(`end=${end}`)
     }
+    // l_range(動画の長さ)は概念を剪定済み。値があれば無視へ回す
     const lRange = url.searchParams.get('l_range')
-    if (lRange === '1') patch.videoLength = 'short'
-    else if (lRange === '2') patch.videoLength = 'long'
-    else if (lRange !== null) ignored.push(`l_range=${lRange}`)
+    if (lRange !== null) ignored.push(`l_range=${lRange}`)
     const genre = url.searchParams.get('genre')
     if (genre !== null) {
       if ((NICO_GENRES as readonly string[]).includes(genre))
@@ -368,7 +357,6 @@ export const niconico: PlatformDef = {
     hashtag: { level: 'full', noteKey: 'note.tagPage.combined' },
     period: { level: 'full' },
     mediaOnly: { level: 'none', noteKey: 'note.videoOnly' },
-    videoLength: { level: 'partial', noteKey: 'note.niconico.videoLength' },
     genre: { level: 'full' },
     nicoKind: { level: 'full' },
     resultType: { level: 'full' },

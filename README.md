@@ -30,22 +30,22 @@ It never fetches or displays results itself. It only opens each site's own real 
 
 ## Supported sites
 
-|                | Search page                    | Login        | Operator support                                                                                                                                               |
-| -------------- | ------------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| X              | `x.com/search`                 | Required     | Rich (all unofficial), scoped OR                                                                                                                               |
-| Bluesky        | `bsky.app/search`              | Required     | Rich (officially documented, plus advanced-filter parameters: multi-value author/mention/domain/hashtag OR, embedded URL, video-only, reply/following filters) |
-| Instagram      | `instagram.com/explore/search` | Required     | Keywords only                                                                                                                                                  |
-| YouTube        | `youtube.com/results`          | Not required | Date, exclusion, sort, video length, scoped OR, etc.                                                                                                           |
-| niconico       | `nicovideo.jp/search`          | Not required | Rich (arbitrary date, exclusion, sort, genre, video source, scoped OR)                                                                                         |
-| pixiv          | `pixiv.net/tags`               | Not required | Exclusion, date, sort, illustration/manga (tag search), scoped OR                                                                                              |
-| Niconico Seiga | `seiga.nicovideo.jp/search`    | Not required | Exclusion, exact phrase, sort, illustration/manga switch, scoped OR                                                                                            |
-| Misskey.io     | `misskey.io/search`            | Required     | Keywords / user only                                                                                                                                           |
-| Tumblr         | `tumblr.com/search`            | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort)                                                                                   |
-| Mastodon       | `mastodon.social/search`       | Required     | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media/link)                                                                            |
-| FANBOX         | `fanbox.cc/tags`               | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.)                                                                                               |
-| bilibili       | `search.bilibili.com`          | Not required | Rich (arbitrary date, length, tab switch, danmaku/favorite-count sorts)                                                                                        |
-| Fantia         | `fantia.jp/posts`              | Required     | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported)                                                                     |
-| Google         | `google.com/search`            | Not required | Rich (file type, region, license, verbatim mode, arbitrary date, scoped OR, result type)                                                                       |
+|                | Search page                    | Login        | Operator support                                                                                                                |
+| -------------- | ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| X              | `x.com/search`                 | Required     | Rich (all unofficial), scoped OR                                                                                                |
+| Bluesky        | `bsky.app/search`              | Required     | Rich (officially documented, plus advanced-filter parameters: multi-value author/mention/hashtag OR, video-only, reply filters) |
+| Instagram      | `instagram.com/explore/search` | Required     | Keywords only                                                                                                                   |
+| YouTube        | `youtube.com/results`          | Not required | Date, exclusion, sort, scoped OR, etc.                                                                                          |
+| niconico       | `nicovideo.jp/search`          | Not required | Rich (arbitrary date, exclusion, sort, genre, video source, scoped OR)                                                          |
+| pixiv          | `pixiv.net/tags`               | Not required | Exclusion, date, sort, illustration/manga (tag search), scoped OR                                                               |
+| Niconico Seiga | `seiga.nicovideo.jp/search`    | Not required | Exclusion, exact phrase, sort, illustration/manga switch, scoped OR                                                             |
+| Misskey.io     | `misskey.io/search`            | Required     | Keywords / user only                                                                                                            |
+| Tumblr         | `tumblr.com/search`            | Not required | Rich (exclusion, sender, date, exact phrase, multiple tags, post type, sort)                                                    |
+| Mastodon       | `mastodon.social/search`       | Required     | Rich (exclusion, exact phrase, sender, date, reply exclusion, language, media)                                                  |
+| FANBOX         | `fanbox.cc/tags`               | Not required | Single hashtag only (no full-text search, sort, exclusion, etc.)                                                                |
+| bilibili       | `search.bilibili.com`          | Not required | Rich (arbitrary date, tab switch, danmaku/favorite-count sorts)                                                                 |
+| Fantia         | `fantia.jp/posts`              | Required     | Category, audience section, title/body toggle, sort (exclusion/exact phrase not supported)                                      |
+| Google         | `google.com/search`            | Not required | Rich (verbatim mode, arbitrary date, scoped OR, result type)                                                                    |
 
 Sites are chosen on one axis: they search a **stream of user posts** (fandom and creative-work searching is the primary use case). Impressions, works, and discussions flow past daily, and a shared vocabulary — author, tag, date, reactions — translates across them (how much of that vocabulary each site shares may vary). Reference works you "look up" (encyclopedias), product catalogs filtered by price and stock (e-commerce), and self-contained ecosystems like code search don't share that vocabulary and are out of scope. Google is the one exception, kept as an escape hatch: a site: fallback that rescues dropped conditions, plus a window onto the whole web. The technical bar is only "a search URL with a keyword can be opened": even with thin operator support, there is value in not having to retype the query on each site.
 

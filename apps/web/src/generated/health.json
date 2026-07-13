@@ -19,15 +19,6 @@
       "result": "✅"
     },
     {
-      "priority": "高",
-      "target": "`filter:blue_verified`",
-      "uiName": "認証済みアカウントだけ",
-      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20filter%3Ablue_verified&f=live",
-      "expected": "全結果が認証済み(青バッジ)",
-      "lastChecked": "2026-07-04",
-      "result": "✅"
-    },
-    {
       "priority": "中",
       "target": "`since:`/`until:`",
       "uiName": "期間",
@@ -64,28 +55,10 @@
       "result": "✅"
     },
     {
-      "priority": "中",
-      "target": "`url:<ドメイン>`(2026-07-04追加)",
-      "uiName": "このサイトへのリンクを含む",
-      "verifyUrl": "https://x.com/search?q=%E5%8F%B0%E9%A2%A8%20url%3Anhk.or.jp&f=live",
-      "expected": "全結果が nhk.or.jp へのリンクを含む。2026-07-04ログイン済みブラウザで実測(結果本文に www2.nhk.or.jp リンク)",
-      "lastChecked": "2026-07-04",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`filter:links`(リンク付き)(2026-07-05追加)",
-      "uiName": "リンク付きだけ",
-      "verifyUrl": "https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks&f=live",
-      "expected": "全結果がリンク(URLカード等)を含む。2026-07-05ログイン済みブラウザ実測",
-      "lastChecked": "2026-07-05",
-      "result": "✅"
-    },
-    {
       "priority": "低",
       "target": "`-from:<ユーザー>`(除外ユーザー)(2026-07-05追加)",
       "uiName": "除外するユーザー",
-      "verifyUrl": "https://x.com/search?q=%E5%A4%A9%E6%B0%97%20filter%3Alinks%20-from%3Azooaqua_5&f=live",
+      "verifyUrl": "https://x.com/search?q=%E5%A4%A9%E6%B0%97%20-from%3Azooaqua_5&f=live",
       "expected": "指定ユーザーの投稿が結果から消える(from:の否定。ユーザー名は適宜読み替え)。2026-07-05実測(除外前に先頭だったアカウントが消えた)",
       "lastChecked": "2026-07-05",
       "result": "✅"
@@ -148,7 +121,7 @@
     },
     {
       "priority": "低",
-      "target": "`from:` / `mentions:` / `domain:` / `since:`/`until:`(公式演算子)",
+      "target": "`from:` / `mentions:` / `since:`/`until:`(公式演算子)",
       "uiName": "ユーザー指定ほか",
       "verifyUrl": "https://bsky.app/search?q=%E5%A4%A9%E6%B0%97%20since%3A2026-06-01",
       "expected": "期間内のみに絞られる",
@@ -211,15 +184,6 @@
     },
     {
       "priority": "中",
-      "target": "`following=true`(「通知対象」→「フォロー中の人」、2026-07-11追加)",
-      "uiName": "フォロー中のみ",
-      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&following=true",
-      "expected": "閲覧アカウントがフォローしている相手の投稿のみに絞られる(ビューア依存)",
-      "lastChecked": "2026-07-11(GUI操作)",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
       "target": "`author=`/`excludeAuthor=`(追加フィルタ「これらの人から」、2026-07-11追加)",
       "uiName": "ユーザー指定(複数)",
       "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&author=jay.bsky.team+pfrazee.com",
@@ -238,28 +202,10 @@
     },
     {
       "priority": "中",
-      "target": "`domain=`/`excludeDomain=`(追加フィルタ「これらのドメイン」、2026-07-11追加)",
-      "uiName": "リンク先ドメイン(複数)",
-      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&domain=example.com+foo.org",
-      "expected": "指定ドメインいずれかへのリンクを含む投稿に絞られる(OR)。既存の単一値`domain:`とは別径路",
-      "lastChecked": "2026-07-11(GUI操作)",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
       "target": "`tag=`/`excludeTag=`(追加フィルタ「これらのハッシュタグ」、2026-07-11追加)",
       "uiName": "ハッシュタグ(OR)",
       "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&tag=cat+dog",
       "expected": "`#cat`のみ・`#dog`のみの投稿がどちらも混在して返る(OR)。既存の`hashtag`概念(空白区切り複数=AND)とは意味論が異なる別物",
-      "lastChecked": "2026-07-11(GUI操作)",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`url=`/`excludeUrl=`(追加フィルタ「これらのURL」、2026-07-11追加・完全新規概念)",
-      "uiName": "埋め込みURL指定",
-      "verifyUrl": "https://bsky.app/search?q=%E7%8C%AB&url=example.com%2Ftest",
-      "expected": "埋め込みリンク・カード先が指定URLの投稿に絞られる。既存の対応する概念なし",
       "lastChecked": "2026-07-11(GUI操作)",
       "result": "✅"
     }
@@ -402,15 +348,6 @@
       "expected": "画像投稿だけに絞られる(`postTypes=video`だと動画投稿に変わることも確認)。GUI操作で採取・実機確認(2026-07-07)",
       "lastChecked": "2026-07-07",
       "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`?postTypes=link`(投稿タイプ)",
-      "uiName": "リンクを含む投稿だけ",
-      "verifyUrl": "https://www.tumblr.com/search/cat?postTypes=link",
-      "expected": "リンクカード付きの投稿に絞られる。GUI操作で採取・実機確認(2026-07-07)",
-      "lastChecked": "2026-07-07",
-      "result": "✅"
     }
   ],
   "mastodon": [
@@ -470,10 +407,10 @@
     },
     {
       "priority": "中",
-      "target": "`has:media`/`has:link`",
-      "uiName": "メディア・リンク",
-      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron%20before%3A2022-01-01%20has%3Alink&type=statuses",
-      "expected": "`has:media`と`has:link`で異なる投稿に絞られる(画像添付 vs リンクカード)",
+      "target": "`has:media`",
+      "uiName": "メディア",
+      "verifyUrl": "https://mastodon.social/search?q=internet%20from%3AGargron%20before%3A2022-01-01%20has%3Amedia&type=statuses",
+      "expected": "画像・動画が添付された投稿に絞られる",
       "lastChecked": "2026-07-08",
       "result": "✅"
     },
@@ -508,15 +445,6 @@
     },
     {
       "priority": "高",
-      "target": "`sp=CAMSAhgB`(視聴回数順+4分未満)",
-      "uiName": "人気順+動画の長さ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=CAMSAhgB",
-      "expected": "全結果が4分未満、かつおおむね視聴回数降順(近似)",
-      "lastChecked": "2026-07-04",
-      "result": "✅"
-    },
-    {
-      "priority": "高",
       "target": "`sp=CAI%3D`(アップロード日順)**復活チェック**",
       "uiName": "並び順=新しい順",
       "verifyUrl": "https://www.youtube.com/results?search_query=%E5%8F%B0%E9%A2%A8&sp=CAI%3D",
@@ -539,15 +467,6 @@
       "uiName": "タイトルだけで探す",
       "verifyUrl": "https://www.youtube.com/results?search_query=intitle%3A%E7%B4%AB%E9%99%BD%E8%8A%B1",
       "expected": "全結果のタイトルに「紫陽花」を含む",
-      "lastChecked": "2026-07-04",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`sp=EgIYAQ%3D%3D`(4分未満、長さ単独)",
-      "uiName": "動画の長さ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=EgIYAQ%3D%3D",
-      "expected": "全結果が4分未満",
       "lastChecked": "2026-07-04",
       "result": "✅"
     },
@@ -577,96 +496,6 @@
       "expected": "チャンネル内の検索結果ページが開く",
       "lastChecked": "2026-07-04",
       "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`sp=EgJwAQ%3D%3D`(4K、特徴単独)(2026-07-07追加)",
-      "uiName": "4Kの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E9%A2%A8%E6%99%AF&sp=EgJwAQ%3D%3D",
-      "expected": "全結果が4K画質(filterサブメッセージ field14=1)。2026-07-07にフィルタUIから実測",
-      "lastChecked": "2026-07-07",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`sp=EgIgAQ%3D%3D`(HD、特徴単独)(2026-07-07追加)",
-      "uiName": "HDの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E9%A2%A8%E6%99%AF&sp=EgIgAQ%3D%3D",
-      "expected": "全結果がHD画質(field4=1)。2026-07-07にフィルタUIから実測",
-      "lastChecked": "2026-07-07",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`sp=EgIoAQ%3D%3D`(字幕、特徴単独)(2026-07-07追加)",
-      "uiName": "字幕つきの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9&sp=EgIoAQ%3D%3D",
-      "expected": "全結果に字幕(クローズドキャプション)がある(field5=1)。2026-07-07にフィルタUIから実測",
-      "lastChecked": "2026-07-07",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgIwAQ%3D%3D`(クリエイティブ・コモンズ、特徴単独)(2026-07-07追加)",
-      "uiName": "クリエイティブ・コモンズだけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%B4%A0%E6%9D%90&sp=EgIwAQ%3D%3D",
-      "expected": "全結果がクリエイティブ・コモンズ・ライセンス(field6=1)。2026-07-07にフィルタUIから実測",
-      "lastChecked": "2026-07-07",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgJ4AQ%3D%3D`(360°、特徴単独)(2026-07-08追加)",
-      "uiName": "360°動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgJ4AQ%3D%3D",
-      "expected": "結果が360°動画・4K動画に絞られる(field15=1)。2026-07-08にフィルタUIから実測、実機で360°バッジつき動画のみ表示を確認",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgPQAQE%3D`(VR180、特徴単独)(2026-07-08追加)",
-      "uiName": "VR180の動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgPQAQE%3D",
-      "expected": "結果がVR180動画に絞られる(field26=1、2バイトvarintタグ)。2026-07-08にフィルタUIから実測、実機でVR180バッジつき動画のみ表示を確認",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgI4AQ%3D%3D`(3D、特徴単独)(2026-07-08追加)",
-      "uiName": "3D動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgI4AQ%3D%3D",
-      "expected": "結果が3D動画に絞られる(field7=1)。2026-07-08にフィルタUIから実測、実機で3Dバッジつき動画のみ表示を確認",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgPIAQE%3D`(HDR、特徴単独)(2026-07-08追加)",
-      "uiName": "HDRの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgPIAQE%3D",
-      "expected": "結果がHDR動画に絞られる(field25=1、2バイトvarintタグ)。2026-07-08にフィルタUIから実測、実機でHDRバッジつき動画のみ表示を確認",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgO4AQE%3D`(場所、特徴単独)(2026-07-08追加)",
-      "uiName": "撮影場所つきの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E6%B8%8B%E8%B0%B7&sp=EgO4AQE%3D",
-      "expected": "地名で検索すると実際にその場所で撮影された動画(旅行記・街歩き等)に絞られる(field23=1、2バイトvarintタグ)。地名以外の一般語では0件になる(位置情報タグつき動画自体が少ないため)。2026-07-08にフィルタUIから実測、渋谷の実写動画で確認",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`sp=EgJIAQ%3D%3D`(購入済み、特徴単独)(2026-07-08追加)",
-      "uiName": "購入済みの動画だけ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=test&sp=EgJIAQ%3D%3D",
-      "expected": "自分が購入した映画・番組に絞られる(field9=1)。2026-07-08にフィルタUIから値を採取(このアカウントは購入履歴が無く0件表示、絞り込み自体の実動作は未検証)",
-      "lastChecked": "2026-07-08",
-      "result": "✅(値採取のみ)"
     },
     {
       "priority": "中",
@@ -701,15 +530,6 @@
       "uiName": "探すもの=再生リスト",
       "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=EgIQAw%3D%3D",
       "expected": "再生リストだけが並ぶ",
-      "lastChecked": "2026-07-04",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
-      "target": "`sp=CAMSBBABGAE%3D`(人気順+動画+短い、合成値)",
-      "uiName": "探すもの+並び順+長さ",
-      "verifyUrl": "https://www.youtube.com/results?search_query=%E7%8C%AB&sp=CAMSBBABGAE%3D",
-      "expected": "動画のみ・4分未満、かつおおむね視聴回数降順(近似)",
       "lastChecked": "2026-07-04",
       "result": "✅"
     }
@@ -825,10 +645,10 @@
     },
     {
       "priority": "低",
-      "target": "`/tag/`ページで並び順・期間・長さ(2026-07-05追加)",
-      "uiName": "ハッシュタグ単独時の並び順・期間・動画の長さ",
-      "verifyUrl": "https://www.nicovideo.jp/tag/%E3%82%B2%E3%83%BC%E3%83%A0?sort=h&start=2015-01-01&end=2015-12-31&l_range=2",
-      "expected": "タグ検索でも sort/start/end/l_range が /search/ と同様に効く(「ニコニコで人気」順・全件2015年・全件20分超に絞られる)。2026-07-05ブラウザ実測。個別も確認済: `sort=f&order=d`=投稿日時順で最新先頭・`l_range=1`=5分未満",
+      "target": "`/tag/`ページで並び順・期間(2026-07-05追加)",
+      "uiName": "ハッシュタグ単独時の並び順・期間",
+      "verifyUrl": "https://www.nicovideo.jp/tag/%E3%82%B2%E3%83%BC%E3%83%A0?sort=h&start=2015-01-01&end=2015-12-31",
+      "expected": "タグ検索でも sort/start/end が /search/ と同様に効く(「ニコニコで人気」順・全件2015年に絞られる)。2026-07-05ブラウザ実測。個別も確認済: `sort=f&order=d`=投稿日時順で最新先頭",
       "lastChecked": "2026-07-05",
       "result": "✅"
     },
@@ -989,15 +809,6 @@
     },
     {
       "priority": "中",
-      "target": "`duration=1〜4`(動画の長さ)",
-      "uiName": "動画の長さ",
-      "verifyUrl": "https://search.bilibili.com/all?keyword=%E7%8C%AB&duration=4",
-      "expected": "1時間超の動画が主体になる(duration=1は10分未満、duration=2は10-30分、duration=3は30-60分、duration=4は60分超。「更多筛选」の実操作で採取)",
-      "lastChecked": "2026-07-08",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
       "target": "タブ切替(`/video`・`/bangumi`・`/pgc`・`/live`・`/article`・`/upuser`)",
       "uiName": "探すものの種類",
       "verifyUrl": "https://search.bilibili.com/video?keyword=%E7%8C%AB",
@@ -1098,6 +909,33 @@
       "result": "✅"
     },
     {
+      "priority": "中",
+      "target": "`wlt=3000&hlt=3000`(解像度=大、2026-07-13発見)",
+      "uiName": "解像度(実装見送り)",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?wlt=3000&hlt=3000",
+      "expected": "3,000px×3,000px以上の作品だけに絞られる(存在は確認済み)。ログイン限定の「検索オプション」モーダル(「作品の詳細」)から採取。他の解像度バケットはwlt=1000&wgt=2999&hlt=1000&hgt=2999(1,000〜2,999px)・wgt=999&hgt=999(999px以下)。2026-07-13、issue #70で実装後、利用文脈適合性テストで却下(詳細はoperator-research.md)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "🚫(実装見送り)"
+    },
+    {
+      "priority": "低",
+      "target": "`ratio=`(縦横比、2026-07-13発見)",
+      "uiName": "縦横比(実装見送り)",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?ratio=0.5",
+      "expected": "横長の作品だけに絞られる(存在は確認済み)。ratio=0.5(横長)/ratio=-0.5(縦長)/ratio=0(正方形)の3値のみドロップダウンが提供。2026-07-13、issue #70で実装後、利用文脈適合性テストで却下(詳細はoperator-research.md)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "🚫(実装見送り)"
+    },
+    {
+      "priority": "低",
+      "target": "`tool=`(制作ツール、2026-07-13発見)",
+      "uiName": "制作ツール(実装見送り)",
+      "verifyUrl": "https://www.pixiv.net/tags/%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF/artworks?tool=CLIP+STUDIO+PAINT",
+      "expected": "CLIP STUDIO PAINTで制作された作品だけに絞られる(存在は確認済み)。「制作ツール」ドロップダウンから全103種(デジタルソフト・アナログ画材)を採取。2026-07-13、issue #70で実装後、利用文脈適合性テストで却下(詳細はoperator-research.md)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "🚫(実装見送り)"
+    },
+    {
       "priority": "低",
       "target": "パス `/illustrations` / `/manga`",
       "uiName": "作品の種類",
@@ -1155,6 +993,42 @@
     },
     {
       "priority": "低",
+      "target": "`sort=image_created_a`(投稿の古い順)",
+      "uiName": "並び順=投稿の古い順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=image_created_a",
+      "expected": "総件数73,618が既定と一致(結果集合は変えず並びのみ変わる)。2026-07-13にGUI操作(セレクトの実測option値)で確認(issue #70)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
+      "target": "`sort=comment_created`(コメントの新しい順、既定と同義)",
+      "uiName": "並び順=コメント新着順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=comment_created",
+      "expected": "総件数73,618が既定と一致。既定の並び(sort省略時)と同じ値を明示指定できることを確認。2026-07-13にGUI操作で確認(issue #70)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=comment_count`(コメントの多い順)",
+      "uiName": "並び順=コメント数順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=comment_count",
+      "expected": "セレクトを実際に切替え→遷移後URLに`sort=comment_count`が実在することを確認。2026-07-13にGUI操作で確認(issue #70)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`sort=clip_count`(クリップの多い順=お気に入り数順)",
+      "uiName": "並び順=お気に入り数順",
+      "verifyUrl": "https://seiga.nicovideo.jp/search/%E7%8C%AB?target=illust&sort=clip_count",
+      "expected": "セレクトを実際に切替え→遷移後URLに`sort=clip_count`が実在することを確認。2026-07-13にGUI操作で確認(issue #70)",
+      "lastChecked": "2026-07-13(GUI操作)",
+      "result": "✅"
+    },
+    {
+      "priority": "低",
       "target": "`/tag/`(タグ一致)",
       "uiName": "ハッシュタグ",
       "verifyUrl": "https://seiga.nicovideo.jp/tag/%E7%8C%AB?target=illust",
@@ -1187,8 +1061,8 @@
       "target": "`/tags/{タグ}`(タグページ)",
       "uiName": "ハッシュタグ",
       "verifyUrl": "https://www.fanbox.cc/tags/%E7%8C%AB",
-      "expected": "タグ「猫」の投稿一覧が未ログインでも表示される(単一タグのみ)",
-      "lastChecked": "2026-07-08",
+      "expected": "タグ「猫」の投稿一覧が未ログインでも表示される(単一タグのみ)。ログイン済みでも同一と再確認",
+      "lastChecked": "2026-07-13",
       "result": "✅"
     },
     {
@@ -1199,6 +1073,15 @@
       "expected": "「猫」と「犬」の両方の文字を含むタグ名(例:「犬猫」)の候補一覧が出るだけで、投稿のAND検索にはならない。2026-07-08実測につきDialectは複数タグ入力時は検索不可(null)として実装",
       "lastChecked": "2026-07-08",
       "result": "❌(送信しない)"
+    },
+    {
+      "priority": "—",
+      "target": "`user/settings`の「R-18コンテンツを表示する」",
+      "uiName": "(該当なし)",
+      "verifyUrl": "https://www.fanbox.cc/user/settings",
+      "expected": "アカウント永続設定であり検索URLに現れないため対象外と確認(要ログイン)",
+      "lastChecked": "2026-07-13",
+      "result": "❌(URL化不可のため対象外)"
     }
   ],
   "fantia": [
@@ -1266,6 +1149,51 @@
       "result": "✅"
     },
     {
+      "priority": "中",
+      "target": "`order=create_old`(投稿の古い順)",
+      "uiName": "並び順=投稿の古い順",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&order=create_old",
+      "expected": "投稿日時が古い順に並ぶ(並び順セレクトの実操作で採取)",
+      "lastChecked": "2026-07-13",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=updater`(更新の新しい順)",
+      "uiName": "並び順=更新の新しい順",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&order=updater",
+      "expected": "更新日時が新しい順に並ぶ(並び順セレクトの実操作で採取)",
+      "lastChecked": "2026-07-13",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`order=update_old`(更新の古い順)",
+      "uiName": "並び順=更新の古い順",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&order=update_old",
+      "expected": "更新日時が古い順に並ぶ(並び順セレクトの実操作で採取)",
+      "lastChecked": "2026-07-13",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`rating=general`(R18指定=全年齢)",
+      "uiName": "年齢制限=全年齢のみ",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&rating=general",
+      "expected": "「詳細検索」パネルの「R18指定」ドロップダウンから採取。全年齢作品だけに絞られる。brand_type(対象読者)とは独立した別軸のフィルタ",
+      "lastChecked": "2026-07-13",
+      "result": "✅"
+    },
+    {
+      "priority": "中",
+      "target": "`rating=adult`(R18指定=R18)",
+      "uiName": "年齢制限=R18のみ",
+      "verifyUrl": "https://fantia.jp/posts?brand_type=3&keyword=%E7%8C%AB&rating=adult",
+      "expected": "同上ドロップダウンから採取。R18作品だけに絞られる",
+      "lastChecked": "2026-07-13",
+      "result": "✅"
+    },
+    {
       "priority": "低",
       "target": "`-語`(除外) **効かない**",
       "uiName": "除外するキーワード",
@@ -1323,24 +1251,6 @@
     },
     {
       "priority": "中",
-      "target": "`site:`(`as_sitesearch`)[GUI操作]",
-      "uiName": "このサイトへのリンクを含む",
-      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20site%3Aexample.com",
-      "expected": "example.comのページのみ",
-      "lastChecked": "2026-07-11",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`filetype:pdf`(`as_filetype`、全10種)[GUI操作]",
-      "uiName": "ファイル形式",
-      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB%20filetype%3Apdf",
-      "expected": "PDFファイルのみ",
-      "lastChecked": "2026-07-11",
-      "result": "✅"
-    },
-    {
-      "priority": "中",
       "target": "`tbs=cdr:1,cd_min:M/D/YYYY,cd_max:M/D/YYYY`(カスタム期間)[GUI操作]",
       "uiName": "期間",
       "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2024%2Ccd_max%3A6%2F30%2F2024",
@@ -1354,15 +1264,6 @@
       "uiName": "投稿の言語",
       "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&lr=lang_ja",
       "expected": "日本語ページのみ(中国語はzh-CN/zh-TW分割のため`zh`はzh-CNへ近似・partial扱い)",
-      "lastChecked": "2026-07-11",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`cr=countryJP`(全240地域)[GUI操作]",
-      "uiName": "地域",
-      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&cr=countryJP",
-      "expected": "日本向けページのみ",
       "lastChecked": "2026-07-11",
       "result": "✅"
     },
@@ -1381,15 +1282,6 @@
       "uiName": "完全一致で検索",
       "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=li%3A1",
       "expected": "類義語展開を抑えた検索(ツールメニュー「完全一致」の実操作で採取)",
-      "lastChecked": "2026-07-11",
-      "result": "✅"
-    },
-    {
-      "priority": "低",
-      "target": "`tbs=sur:f`(ライセンス、全4種)[GUI操作]",
-      "uiName": "ライセンス",
-      "verifyUrl": "https://www.google.com/search?q=%E7%8C%AB&tbs=sur%3Af",
-      "expected": "自由に使用・共有できるページのみ(詳細検索フォームの実操作で全4値=f/fc/fm/fmcを採取)",
       "lastChecked": "2026-07-11",
       "result": "✅"
     },

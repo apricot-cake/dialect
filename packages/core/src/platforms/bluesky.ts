@@ -41,13 +41,12 @@ import {
 // 出所は「URL叩き」(フォーム操作での採取ではない)
 //
 // 2026-07-11、issue #27の全項目監査(GUI操作・ログイン済み)で「高度な検索オプション」
-// モーダルの全項目を採取(docs/operator-research.mdの該当節参照)。author=/mentions=/domain=/
-// tag=(いずれも除外版と対で存在)は、q内の from:/mentions:/domain:/#tag トークン(単一値・
+// モーダルの全項目を採取(docs/operator-research.mdの該当節参照)。author=/mentions=/
+// tag=(いずれも除外版と対で存在)は、q内の from:/mentions:/#tag トークン(単一値・
 // AND限定)とは別径路のURLパラメータで、スペース区切りの複数値=OR(実測で確認済み)。
-// 既存のfromUser/excludeUser/mentionsUser/domain概念をBluesky専用にこの新径路へ流用し
+// 既存のfromUser/excludeUser/mentionsUser概念をBluesky専用にこの新径路へ流用し
 // (概念自体の型・他サイトでの意味論は変えない)、hashtagOrはAND意味論のhashtagとは
 // 別概念として新設(issue #26のkeywordsOr方式を踏襲、ユーザー承認済みの設計判断)。
-// url=/excludeUrl=は対応する既存概念が無い完全新規(linkUrl/excludeLinkUrl)。
 function buildParts(state: QueryState): UrlPart[] | null {
   // ユーザー検索(tab=user)はアカウント名/ハンドルへのゆるい一致で、本文演算子が効かない。
   // 2026-07-09 GUI操作で確認: 「猫 -犬」で検索しても「犬猫」を含むアカウントが普通に
@@ -63,15 +62,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
     ]
   }
 
-  // メンション先・リンク先・ハッシュタグOR・埋め込みURLだけの検索もBlueskyでは成立するので、
+  // メンション先・ハッシュタグORだけの検索もBlueskyでは成立するので、
   // 正の条件に数える(除外系・トグル系は元々のhasPositiveTermの流儀通り単独では不十分)
-  if (
-    !hasPositiveTerm(state) &&
-    !state.mentionsUser.trim() &&
-    !state.domain.trim() &&
-    !state.hashtagOr.trim() &&
-    !state.linkUrl.trim()
-  ) {
+  if (!hasPositiveTerm(state) && !state.mentionsUser.trim() && !state.hashtagOr.trim()) {
     return null
   }
 
@@ -96,10 +89,9 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // excludeReplies(返信を除く)を優先し、repliesOnly側はdynamicSupportでnoneに落として正直に伝える
   if (state.excludeReplies) parts.push(part('&replies=none', 'excludeReplies'))
   else if (state.repliesOnly) parts.push(part('&replies=only', 'repliesOnly'))
-  if (state.followingOnly) parts.push(part('&following=true', 'followingOnly'))
 
-  // 追加フィルタ群(author=/mentions=/domain=/tag=/url= とそれぞれの除外版)。
-  // 既存フィールドを流用する4組はスペース区切りで複数語に割り、スペースをformEncodeで
+  // 追加フィルタ群(author=/mentions=/tag= とそれぞれの除外版)。
+  // 既存フィールドを流用する組はスペース区切りで複数語に割り、スペースをformEncodeで
   // +として結合する(2026-07-11 GUI採取: author=jay.bsky.team+pfrazee.com の実際の形と一致)
   if (state.fromUser.trim()) {
     parts.push(
@@ -127,26 +119,6 @@ function buildParts(state: QueryState): UrlPart[] | null {
       part(
         `&excludeMentions=${formEncode(words(state.excludeMentions).map(stripAt).join(' '))}`,
         'excludeMentions',
-      ),
-    )
-  }
-  if (state.domain.trim()) {
-    parts.push(part(`&domain=${formEncode(words(state.domain).join(' '))}`, 'domain'))
-  }
-  if (state.excludeDomain.trim()) {
-    parts.push(
-      part(`&excludeDomain=${formEncode(words(state.excludeDomain).join(' '))}`, 'excludeDomain'),
-    )
-  }
-  // url=/excludeUrl= は単一値のみ確認済み(複数値は未検証)なので、そのままtrimして送る
-  if (state.linkUrl.trim()) {
-    parts.push(part(`&url=${formEncode(stripQuerySyntax(state.linkUrl.trim()))}`, 'linkUrl'))
-  }
-  if (state.excludeLinkUrl.trim()) {
-    parts.push(
-      part(
-        `&excludeUrl=${formEncode(stripQuerySyntax(state.excludeLinkUrl.trim()))}`,
-        'excludeLinkUrl',
       ),
     )
   }
@@ -185,10 +157,6 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     overrides.excludeUser = PEOPLE_CONFLICT
     overrides.mentionsUser = PEOPLE_CONFLICT
     overrides.excludeMentions = PEOPLE_CONFLICT
-    overrides.domain = PEOPLE_CONFLICT
-    overrides.excludeDomain = PEOPLE_CONFLICT
-    overrides.linkUrl = PEOPLE_CONFLICT
-    overrides.excludeLinkUrl = PEOPLE_CONFLICT
     overrides.hashtag = PEOPLE_CONFLICT
     overrides.hashtagOr = PEOPLE_CONFLICT
     overrides.excludeHashtag = PEOPLE_CONFLICT
@@ -197,7 +165,6 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     overrides.videoOnly = PEOPLE_CONFLICT
     overrides.excludeReplies = PEOPLE_CONFLICT
     overrides.repliesOnly = PEOPLE_CONFLICT
-    overrides.followingOnly = PEOPLE_CONFLICT
     overrides.language = PEOPLE_CONFLICT
     overrides.sortOrder = PEOPLE_CONFLICT
   } else if (state.resultType) {
@@ -219,8 +186,8 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
 }
 
 // 逆翻訳: bsky.app/search?q=…。tab=user(アカウント検索)は語だけ、それ以外はURLパラメータ
-// (author=/mentions=/domain=/tag=/url=とそれぞれの除外版、video=/replies=/following=)を
-// 優先して読み、旧いq内トークン(from:/mentions:/domain:/#tag)は後方互換で読む
+// (author=/mentions=/tag=とそれぞれの除外版、video=/replies=)を
+// 優先して読み、旧いq内トークン(from:/mentions:/#tag)は後方互換で読む
 // (buildParts が出すのは常に新パラメータ形式。2026-07-11 issue #27)
 function parseUrl(url: URL): ParsedSearch | null {
   if (!hostMatches(url, 'bsky.app')) return null
@@ -238,15 +205,10 @@ function parseUrl(url: URL): ParsedSearch | null {
     'media',
     'video',
     'replies',
-    'following',
     'author',
     'excludeAuthor',
     'mentions',
     'excludeMentions',
-    'domain',
-    'excludeDomain',
-    'url',
-    'excludeUrl',
     'tag',
     'excludeTag',
   ])
@@ -267,9 +229,6 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (replies === 'none') patch.excludeReplies = true
   else if (replies === 'only') patch.repliesOnly = true
   else if (replies) ignored.push(`replies=${replies}`)
-  const following = url.searchParams.get('following')
-  if (following === 'true') patch.followingOnly = true
-  else if (following) ignored.push(`following=${following}`)
 
   // 新パラメータ形式(スペース区切り複数値)。旧q内トークンより優先する
   const author = url.searchParams.get('author')
@@ -280,14 +239,6 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (mentions) patch.mentionsUser = words(mentions).join(' ')
   const excludeMentionsParam = url.searchParams.get('excludeMentions')
   if (excludeMentionsParam) patch.excludeMentions = words(excludeMentionsParam).join(' ')
-  const domain = url.searchParams.get('domain')
-  if (domain) patch.domain = words(domain).join(' ')
-  const excludeDomain = url.searchParams.get('excludeDomain')
-  if (excludeDomain) patch.excludeDomain = words(excludeDomain).join(' ')
-  const linkUrl = url.searchParams.get('url')
-  if (linkUrl) patch.linkUrl = linkUrl
-  const excludeLinkUrl = url.searchParams.get('excludeUrl')
-  if (excludeLinkUrl) patch.excludeLinkUrl = excludeLinkUrl
   const tag = url.searchParams.get('tag')
   if (tag) patch.hashtagOr = words(tag).join(' ')
   const excludeTag = url.searchParams.get('excludeTag')
@@ -313,8 +264,6 @@ function parseUrl(url: URL): ParsedSearch | null {
       if (patch.fromUser === undefined) patch.fromUser = token.slice('from:'.length)
     } else if (token.startsWith('mentions:')) {
       if (patch.mentionsUser === undefined) patch.mentionsUser = token.slice('mentions:'.length)
-    } else if (token.startsWith('domain:')) {
-      if (patch.domain === undefined) patch.domain = token.slice('domain:'.length)
     } else if (token.startsWith('since:')) {
       const v = token.slice('since:'.length)
       if (isIsoDate(v)) patch.since = v
@@ -353,10 +302,6 @@ export const bluesky: PlatformDef = {
     excludeUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
     mentionsUser: { level: 'full', noteKey: 'note.bluesky.fromUser' },
     excludeMentions: { level: 'full', noteKey: 'note.bluesky.fromUser' },
-    domain: { level: 'full', noteKey: 'note.bluesky.domainMulti' },
-    excludeDomain: { level: 'full', noteKey: 'note.bluesky.domainMulti' },
-    linkUrl: { level: 'full' },
-    excludeLinkUrl: { level: 'full' },
     hashtag: { level: 'full' },
     hashtagOr: { level: 'full' },
     excludeHashtag: { level: 'full' },
@@ -365,7 +310,6 @@ export const bluesky: PlatformDef = {
     videoOnly: { level: 'full' },
     excludeReplies: { level: 'full' },
     repliesOnly: { level: 'full' },
-    followingOnly: { level: 'full', noteKey: 'note.bluesky.followingOnly' },
     language: { level: 'full' },
     resultType: { level: 'full' },
     sortOrder: { level: 'partial' },

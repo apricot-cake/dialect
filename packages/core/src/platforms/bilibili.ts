@@ -63,11 +63,8 @@ function buildParts(state: QueryState): UrlPart[] | null {
   params.set('keyword', kw.join(' '), 'keywords')
   const order = ORDER_PARAM[tab][state.sort]
   if (order) params.set('order', order, 'sortOrder')
-  // 日付範囲と動画の長さは動画系タブ(総合・动画)だけが受け付ける
+  // 日付範囲は動画系タブ(総合・动画)だけが受け付ける
   if (tab === 'all' || tab === 'video') {
-    if (state.videoLength === 'short') params.set('duration', '1', 'videoLength')
-    else if (state.videoLength === 'medium') params.set('duration', '2', 'videoLength')
-    else if (state.videoLength === 'long') params.set('duration', '4', 'videoLength')
     if (state.since) params.set('pubtime_begin_s', String(cstEpoch(state.since, false)), 'period')
     if (state.until) params.set('pubtime_end_s', String(cstEpoch(state.until, true)), 'period')
   }
@@ -91,9 +88,6 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     overrides.sortOrder = { level: 'none', noteKey: 'note.bilibili.tabSort' }
   }
   if (tab !== 'all' && tab !== 'video') {
-    if (state.videoLength) {
-      overrides.videoLength = { level: 'none', noteKey: 'note.bilibili.tabOnly' }
-    }
     if (state.since || state.until) {
       overrides.period = { level: 'none', noteKey: 'note.bilibili.tabOnly' }
     }
@@ -138,11 +132,6 @@ function parseUrl(url: URL): ParsedSearch | null {
     if (sort) patch.sort = sort as SortOrder
     else ignored.push(`order=${order}`)
   }
-  const duration = url.searchParams.get('duration')
-  if (duration === '1') patch.videoLength = 'short'
-  else if (duration === '2') patch.videoLength = 'medium'
-  else if (duration === '4') patch.videoLength = 'long'
-  else if (duration !== null) ignored.push(`duration=${duration}`)
   const begin = url.searchParams.get('pubtime_begin_s')
   if (begin !== null) {
     if (/^\d+$/.test(begin)) patch.since = isoFromCstEpoch(Number(begin))
@@ -153,11 +142,7 @@ function parseUrl(url: URL): ParsedSearch | null {
     if (/^\d+$/.test(end)) patch.until = isoFromCstEpoch(Number(end))
     else ignored.push(`pubtime_end_s=${end}`)
   }
-  leftoverParams(
-    url,
-    new Set(['keyword', 'order', 'duration', 'pubtime_begin_s', 'pubtime_end_s']),
-    ignored,
-  )
+  leftoverParams(url, new Set(['keyword', 'order', 'pubtime_begin_s', 'pubtime_end_s']), ignored)
   return { patch, ignored }
 }
 
@@ -173,7 +158,6 @@ export const bilibili: PlatformDef = {
     exclude: { level: 'none', noteKey: 'note.exclude.literal' },
     resultType: { level: 'full' },
     sortOrder: { level: 'full' },
-    videoLength: { level: 'partial', noteKey: 'note.bilibili.videoLength' },
     period: { level: 'full' },
   },
   buildParts,

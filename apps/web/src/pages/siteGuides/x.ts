@@ -42,9 +42,5 @@ export const x: SiteGuide = {
       label: { ja: '反応の多い投稿だけ見る', en: 'See only the most-engaged posts' },
       permalink: exampleLink({ terms: ['ボカロ'], minLikes: '100' }),
     },
-    {
-      label: { ja: '認証済みアカウントだけに絞る', en: 'Narrow to verified accounts' },
-      permalink: exampleLink({ terms: ['ボカロ'], verifiedOnly: true }),
-    },
   ],
 }

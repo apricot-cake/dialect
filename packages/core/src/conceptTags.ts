@@ -26,9 +26,7 @@ export type TagId =
   | 'exclude' // 除外
   | 'tag' // タグ・ハッシュタグ
   | 'place' // コミュニティ・場・リスト
-  | 'link' // リンク・ドメイン
   | 'lang' // 言語
-  | 'verified' // 認証済み
   | 'age' // 年齢制限・センシティブ
   | 'production' // 制作(AI・作られ方)
 
@@ -142,25 +140,11 @@ export const TAG_DEFS: Record<TagId, TagDef> = {
       en: ['list', 'group', 'region', 'country'],
     },
   },
-  link: {
-    id: 'link',
-    synonyms: {
-      ja: ['リンク', 'ドメイン', 'サイト', '外部リンク'],
-      en: ['link', 'url', 'domain', 'site'],
-    },
-  },
   lang: {
     id: 'lang',
     synonyms: {
       ja: ['言語', '何語', '日本語', '英語', '中国語'],
       en: ['language', 'lang', 'locale'],
-    },
-  },
-  verified: {
-    id: 'verified',
-    synonyms: {
-      ja: ['認証', '認証済み', '公式', 'バッジ', '青バッジ'],
-      en: ['verified', 'official', 'badge', 'blue'],
     },
   },
   age: {
@@ -197,13 +181,6 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   toUser: ['person', 'target'],
   mentionsUser: ['person', 'target'],
   excludeMentions: ['person', 'exclude', 'target'],
-  domain: ['link', 'place'],
-  excludeDomain: ['link', 'exclude'],
-  linkUrl: ['link'],
-  excludeLinkUrl: ['link', 'exclude'],
-  fileType: ['format'],
-  region: ['place'],
-  license: ['format'],
   exactMatchMode: ['word'],
   xList: ['place', 'person'],
   hashtag: ['tag', 'word'],
@@ -212,23 +189,9 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   period: ['time'],
   mediaOnly: ['media', 'format'],
   videoOnly: ['media', 'format'],
-  videoLength: ['size', 'media'],
-  linksOnly: ['link', 'format'],
-  verifiedOnly: ['verified', 'person'],
   excludeReplies: ['exclude', 'target'],
   repliesOnly: ['target'],
-  followingOnly: ['person'],
   liveOnly: ['media', 'format'],
-  fourK: ['media', 'format'],
-  hdOnly: ['media', 'format'],
-  captionsOnly: ['media', 'format'],
-  creativeCommons: ['media', 'format'],
-  threeSixty: ['media', 'format'],
-  vr180: ['media', 'format'],
-  threeD: ['media', 'format'],
-  hdr: ['media', 'format'],
-  locationOnly: ['place', 'media'],
-  purchased: ['media', 'format'],
   minLikes: ['reaction', 'popular'],
   minReposts: ['reaction', 'popular'],
   minReplies: ['reaction', 'target'],
@@ -276,8 +239,6 @@ export const VALUE_TAGS: Record<string, TagId[]> = {
   'workType:manga': ['media'],
   'workType:ugoira': ['media'],
   'workType:novel': ['word'],
-  'videoLength:short': ['size'],
-  'videoLength:long': ['size'],
 }
 
 // ---- カテゴリ(粗いタグの閲覧軸) ----
@@ -320,9 +281,7 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   mentionsUser: 'person',
   excludeMentions: 'person',
   xList: 'person',
-  verifiedOnly: 'person',
   excludeReplies: 'person',
-  followingOnly: 'person',
   minLikes: 'popular',
   minReposts: 'popular',
   minReplies: 'popular',
@@ -330,26 +289,7 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   mediaOnly: 'media',
   videoOnly: 'media',
   repliesOnly: 'media',
-  videoLength: 'media',
   liveOnly: 'media',
-  fourK: 'media',
-  hdOnly: 'media',
-  captionsOnly: 'media',
-  creativeCommons: 'media',
-  threeSixty: 'media',
-  vr180: 'media',
-  threeD: 'media',
-  hdr: 'media',
-  locationOnly: 'media',
-  purchased: 'media',
-  linksOnly: 'media',
-  domain: 'media',
-  excludeDomain: 'media',
-  linkUrl: 'media',
-  excludeLinkUrl: 'media',
-  fileType: 'media',
-  region: 'lang',
-  license: 'media',
   exactMatchMode: 'word',
   workType: 'media',
   resultType: 'media',
