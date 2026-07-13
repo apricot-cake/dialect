@@ -22,6 +22,7 @@ export function ChipsField({
   chips,
   raw,
   placeholder,
+  ariaLabel,
   onRaw,
   onCommit,
   onRemoveChip,
@@ -29,6 +30,7 @@ export function ChipsField({
   chips: string[]
   raw: string
   placeholder?: string
+  ariaLabel: string
   onRaw: (value: string) => void
   onCommit: () => void
   onRemoveChip: (index: number) => void
@@ -69,6 +71,7 @@ export function ChipsField({
         type="text"
         value={raw}
         placeholder={chips.length === 0 ? placeholder : undefined}
+        aria-label={ariaLabel}
         // size=1: inputの固有幅(既定≈20文字)を消し、実幅はflex-1に任せる。
         // 固有幅が残ると狭幅の min-content 判定が膨らみ、バーが不要に折り返す
         size={1}
@@ -100,11 +103,13 @@ export function PlainField({
   value,
   inputType,
   placeholder,
+  ariaLabel,
   onChange,
 }: {
   value: string
   inputType?: 'number'
   placeholder?: string
+  ariaLabel: string
   onChange: (value: string) => void
 }) {
   return (
@@ -113,6 +118,7 @@ export function PlainField({
       min={inputType === 'number' ? 0 : undefined}
       value={value}
       placeholder={placeholder}
+      aria-label={ariaLabel}
       size={1}
       className="min-w-0 flex-1 border-none bg-transparent py-1 text-[16px] text-fg outline-none"
       onChange={(e) => onChange(e.target.value)}

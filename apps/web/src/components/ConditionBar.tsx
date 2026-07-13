@@ -107,6 +107,7 @@ export function ConditionBar({
           chips={chips}
           raw={raw}
           placeholder={def.placeholderKey ? t(def.placeholderKey) : undefined}
+          ariaLabel={t(def.labelKey)}
           onRaw={onRaw}
           onCommit={onCommit}
           onRemoveChip={onRemoveChip}
@@ -119,6 +120,7 @@ export function ConditionBar({
           value={query[def.field] as string}
           inputType={def.inputType}
           placeholder={def.placeholderKey ? t(def.placeholderKey) : undefined}
+          ariaLabel={t(def.labelKey)}
           onChange={(value) => patch({ [def.field]: value } as Partial<QueryState>)}
         />
       )
