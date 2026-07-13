@@ -32,9 +32,13 @@ import {
 // イラストは seiga.nicovideo.jp/search/{クエリ}?target=illust、タグ単独は /tag/{タグ}。
 // マンガは manga.nicovideo.jp/search?q=(別エンジン。target=manga はここへリダイレクトされる)。
 // スペースAND・除外(-語)・完全一致("…")は両エンジンで実測(件数が整合)。
-// 並び順はイラストのみ: image_created(新着)/image_view(閲覧数=人気の代用)。既定は
-// comment_created(コメント新着)なので、新着順・人気順は必ず明示する。
-// マンガは並び順パラメータを送ると結果集合が変わる癖があるため送らない(既定=関連度)。
+// 並び順はイラストのみ。セレクトの12択をGUI操作で実測(2026-07-13、issue #70)し、
+// 既存概念に対応先がある6つを採用: image_created(新着)/image_created_a(古い順=oldest)/
+// image_view(閲覧数=人気top)/comment_created(コメント新着=commentDate、既定と同義)/
+// comment_count(コメント数順=comments)/clip_count(クリップ数順=favorites、お気に入り相当)。
+// クリップ追加日時(clip_created)や各「少ない順」は対応する既存概念が無いため見送り。
+// マンガ(manga.nicovideo.jp)にも同種の並び順セレクトがあるが、送ると件数自体が変わる
+// (実測: 初音ミク 207件→sort=manga_created で63件)ため、引き続き並び順を送らない(既定=関連度)。
 function buildParts(state: QueryState): UrlPart[] | null {
   const textToks = quotedTermTokens(state)
   // スコープ限定OR(「このどれかを含む」)。niconico動画と同じ基盤・同じ文法
@@ -64,7 +68,11 @@ function buildParts(state: QueryState): UrlPart[] | null {
   const params = new ParamParts()
   params.set('target', 'illust', ...(state.workType === 'illust' ? (['workType'] as const) : []))
   if (state.sort === 'new') params.set('sort', 'image_created', 'sortOrder')
+  else if (state.sort === 'oldest') params.set('sort', 'image_created_a', 'sortOrder')
   else if (state.sort === 'top') params.set('sort', 'image_view', 'sortOrder')
+  else if (state.sort === 'commentDate') params.set('sort', 'comment_created', 'sortOrder')
+  else if (state.sort === 'comments') params.set('sort', 'comment_count', 'sortOrder')
+  else if (state.sort === 'favorites') params.set('sort', 'clip_count', 'sortOrder')
 
   // タグ単独(+除外)ならタグ一致検索。OR指定があるときはキーワード検索が要るので対象外。
   // 除外・並び順はタグページでも有効(実測)
@@ -134,7 +142,11 @@ function parseUrl(url: URL): ParsedSearch | null {
   }
   const sort = url.searchParams.get('sort')
   if (sort === 'image_created') patch.sort = 'new'
+  else if (sort === 'image_created_a') patch.sort = 'oldest'
   else if (sort === 'image_view') patch.sort = 'top'
+  else if (sort === 'comment_created') patch.sort = 'commentDate'
+  else if (sort === 'comment_count') patch.sort = 'comments'
+  else if (sort === 'clip_count') patch.sort = 'favorites'
   else if (sort !== null) ignored.push(`sort=${sort}`)
   leftoverParams(url, new Set(['target', 'sort']), ignored)
   return { patch, ignored }
@@ -162,8 +174,13 @@ export const seiga: PlatformDef = {
   parseUrl,
   dynamicSupport: (state) => {
     const overrides: Partial<Record<ConceptId, ConceptSupport>> = {
-      // 新着/閲覧数以外(急上昇)は静画に無いので落とす
-      ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+      // イラスト検索の並び順セレクトは12択実測(2026-07-13、issue #70)。
+      // クリップ追加日時・各「少ない/古い順」は既存概念に対応先が無いため見送り
+      ...limitSort(
+        state.sort,
+        ['new', 'oldest', 'top', 'commentDate', 'comments', 'favorites'],
+        'note.sortOrder.otherSite',
+      ),
     }
     // 静画にはイラストとマンガしかない。うごく・小説は「使えない」に落として正直に
     if (state.workType === 'ugoira' || state.workType === 'novel') {
