@@ -267,7 +267,8 @@ export const ja = {
   'concept.ageRating.none': '指定なし',
   'concept.ageRating.safe': '全年齢のみ',
   'concept.ageRating.r18': 'R18のみ',
-  'concept.ageRating.help': '全年齢の作品だけ、またはR18の作品だけに絞り込みます（pixiv・Fantia対応）',
+  'concept.ageRating.help':
+    '全年齢の作品だけ、またはR18の作品だけに絞り込みます（pixiv・Fantia対応）',
   'concept.excludeAi.label': 'AI生成作品を除く',
   'concept.excludeAi.help': 'pixivで、AI生成作品を検索結果から除きます',
   'concept.resolution.label': '解像度',

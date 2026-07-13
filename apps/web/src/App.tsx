@@ -4,7 +4,10 @@ import {
   type InstanceHosts,
   type PlatformId,
   type QueryState,
+  FANTIA_CATEGORIES,
+  GOOGLE_FILE_TYPES,
   NICO_GENRES,
+  PIXIV_TOOLS,
   POST_LANGUAGE_CODES,
   activeConcepts,
   defaultState,
@@ -79,16 +82,67 @@ function sanitizeQuery(parsed: unknown): QueryState {
   query.exactPhrase = strArray(query.exactPhrase)
   if (!['', 'short', 'medium', 'long'].includes(query.videoLength)) query.videoLength = ''
   if (!['', 'illust', 'manga', 'ugoira', 'novel'].includes(query.workType)) query.workType = ''
-  if (!['', 'video', 'short', 'channel', 'playlist'].includes(query.resultType)) {
+  if (
+    ![
+      '',
+      'video',
+      'short',
+      'channel',
+      'playlist',
+      'people',
+      'bangumi',
+      'pgc',
+      'live',
+      'article',
+      'series',
+      'images',
+      'shopping',
+      'news',
+      'web',
+      'books',
+    ].includes(query.resultType)
+  ) {
     query.resultType = ''
   }
   if (!['', '00users', '000users', '0000users'].includes(query.pixivPopular)) {
     query.pixivPopular = ''
   }
   if (!['', 'safe', 'r18'].includes(query.ageRating)) query.ageRating = ''
-  if (!['new', 'top', 'auto'].includes(query.sort)) query.sort = 'new'
+  if (
+    ![
+      'new',
+      'top',
+      'comments',
+      'auto',
+      'danmaku',
+      'favorites',
+      'likes',
+      'commentDate',
+      'videoCount',
+      'videoAdded',
+      'followerCount',
+      'liveCount',
+      'oldest',
+      'updated',
+      'updatedOld',
+    ].includes(query.sort)
+  ) {
+    query.sort = 'new'
+  }
   if (!(['', ...POST_LANGUAGE_CODES] as string[]).includes(query.language)) query.language = ''
   if (!(['', ...NICO_GENRES] as string[]).includes(query.genre)) query.genre = ''
+  if (!['', 'user', 'channel'].includes(query.nicoKind)) query.nicoKind = ''
+  if (!(['', ...FANTIA_CATEGORIES] as string[]).includes(query.fantiaCategory)) {
+    query.fantiaCategory = ''
+  }
+  if (!['', 'male', 'female'].includes(query.fantiaAudience)) query.fantiaAudience = ''
+  if (!['', 'large', 'medium', 'small'].includes(query.resolution)) query.resolution = ''
+  if (!['', 'landscape', 'portrait', 'square'].includes(query.aspectRatio)) query.aspectRatio = ''
+  if (!(['', ...PIXIV_TOOLS] as string[]).includes(query.productionTool)) {
+    query.productionTool = ''
+  }
+  if (!(['', ...GOOGLE_FILE_TYPES] as string[]).includes(query.fileType)) query.fileType = ''
+  if (!['', 'f', 'fc', 'fm', 'fmc'].includes(query.license)) query.license = ''
   return query
 }
 
