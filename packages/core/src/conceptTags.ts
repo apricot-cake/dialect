@@ -244,6 +244,9 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   pixivPopular: ['popular', 'reaction'],
   ageRating: ['age'],
   excludeAi: ['production', 'exclude'],
+  resolution: ['size'],
+  aspectRatio: ['size'],
+  productionTool: ['production', 'format'],
 }
 
 /**
@@ -268,6 +271,9 @@ export const VALUE_TAGS: Record<string, TagId[]> = {
   'sortOrder:videoAdded': ['time'],
   'sortOrder:followerCount': ['person', 'popular'],
   'sortOrder:liveCount': ['person', 'size'],
+  'sortOrder:oldest': ['time'],
+  'sortOrder:updated': ['time'],
+  'sortOrder:updatedOld': ['time'],
   'resultType:short': ['size', 'media'],
   'resultType:video': ['media'],
   'workType:manga': ['media'],
@@ -360,6 +366,9 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   fantiaAudience: 'age',
   safeSearchOff: 'age',
   language: 'lang',
+  resolution: 'media',
+  aspectRatio: 'media',
+  productionTool: 'media',
 }
 
 // ---- 家族(姉妹提案・まとめて追加) ----

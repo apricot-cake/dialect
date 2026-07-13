@@ -62,6 +62,9 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.pixivPopular) active.push('pixivPopular')
   if (state.ageRating) active.push('ageRating')
   if (state.excludeAi) active.push('excludeAi')
+  if (state.resolution) active.push('resolution')
+  if (state.aspectRatio) active.push('aspectRatio')
+  if (state.productionTool) active.push('productionTool')
   // 並び順は既定の「指定なし(auto)」のままなら条件として数えない(サイトの標準の
   // 並びのまま=何も課していないため)。ユーザーが意図的に選んだ並び順
   // (新しい順・人気順など)だけを注記・件数の対象にする
@@ -131,5 +134,8 @@ export function defaultState(): QueryState {
     pixivPopular: '',
     ageRating: '',
     excludeAi: false,
+    resolution: '',
+    aspectRatio: '',
+    productionTool: '',
   }
 }

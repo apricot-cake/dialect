@@ -35,6 +35,7 @@ import {
   NICO_GENRES,
   FANTIA_CATEGORIES,
   GOOGLE_FILE_TYPES,
+  PIXIV_TOOLS,
   type PlatformDef,
   type QueryState,
 } from '@apricot-cake/dialect-core'
@@ -194,10 +195,16 @@ const queryStateArb: fc.Arbitrary<QueryState> = fc.record<QueryState>({
     'videoAdded',
     'followerCount',
     'liveCount',
+    'oldest',
+    'updated',
+    'updatedOld',
   ),
   pixivPopular: fc.constantFrom('', '00users', '000users', '0000users'),
   ageRating: fc.constantFrom('', 'safe', 'r18'),
   excludeAi: fc.boolean(),
+  resolution: fc.constantFrom('', 'large', 'medium', 'small'),
+  aspectRatio: fc.constantFrom('', 'landscape', 'portrait', 'square'),
+  productionTool: fc.constantFrom('', ...PIXIV_TOOLS),
 })
 
 const platformArb: fc.Arbitrary<PlatformDef> = fc.constantFrom(...PLATFORMS)

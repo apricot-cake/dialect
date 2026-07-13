@@ -23,16 +23,22 @@ import { hostMatches, leftoverParams, pathSegments } from '../parse.js'
 // Dialectは他の種類系の概念と同じ単一選択で対応する。
 //
 // 並び順は5値実測(投稿の新しい順=newer/古い順=create_old/更新の新しい順=updater/
-// 更新の古い順=update_old/お気に入り数順=popular)。Dialectは新しい順(new)と
-// お気に入り数順(top)のみ対応し、残り3値(更新順・古い順)は未着手のまま残す
-// (docs/operator-research.md 参照)。
+// 更新の古い順=update_old/お気に入り数順=popular)。5値すべてに対応
+// (残り3値=oldest/updated/updatedOldは2026-07-13にGUI操作で実測・実装、issue #70)。
 //
 // 検索対象タブは「投稿」以外に「クリエイター/無料チケット/商品/コミッション/タグ」があるが、
 // いずれも投稿の全文検索とは異なる性質(クリエイター一覧・商品販売・コミッション受付・
 // タグ発見)のため今回は対象外(未着手、見送りではない)
+//
+// R18指定(rating=general/adult)は対象読者(brand_type=、男性向け/女性向け)とは独立した
+// 別軸のフィルタ(「詳細検索」パネルの「R18指定」ドロップダウン、all/general/adultの3値)。
+// 2026-07-13にGUI操作で実測(issue #70)。既存のageRating概念(pixivと共有)をFantiaにも適用
 const ORDER_PARAM: Partial<Record<QueryState['sort'], string>> = {
   new: 'newer',
   top: 'popular',
+  oldest: 'create_old',
+  updated: 'updater',
+  updatedOld: 'update_old',
 }
 
 function buildParts(state: QueryState): UrlPart[] | null {
@@ -48,7 +54,10 @@ function buildParts(state: QueryState): UrlPart[] | null {
     ...(state.fantiaAudience ? (['fantiaAudience'] as const) : []),
   )
   if (state.fantiaCategory) params.set('category', state.fantiaCategory, 'fantiaCategory')
-  // order= も常に送る(既定=newer)。並び順の指定が値を決めたとき(new/top)だけ帰属させる
+  if (state.ageRating)
+    params.set('rating', state.ageRating === 'safe' ? 'general' : 'adult', 'ageRating')
+  // order= も常に送る(既定=newer)。並び順の指定が値を決めたとき(new/top/oldest/updated/
+  // updatedOld)だけ帰属させる
   const order = ORDER_PARAM[state.sort]
   params.set('order', order ?? 'newer', ...(order ? (['sortOrder'] as const) : []))
   // keyword_type= も常に送る(既定=all。Fantia側の既定title_onlyを外す固定値)。
@@ -90,11 +99,18 @@ function parseUrl(url: URL): ParsedSearch | null {
   else if (brandType !== null && brandType !== '3') ignored.push(`brand_type=${brandType}`)
   const order = url.searchParams.get('order')
   if (order === 'popular') patch.sort = 'top'
+  else if (order === 'create_old') patch.sort = 'oldest'
+  else if (order === 'updater') patch.sort = 'updated'
+  else if (order === 'update_old') patch.sort = 'updatedOld'
   else if (order !== null && order !== 'newer') ignored.push(`order=${order}`)
+  const rating = url.searchParams.get('rating')
+  if (rating === 'general') patch.ageRating = 'safe'
+  else if (rating === 'adult') patch.ageRating = 'r18'
+  else if (rating !== null) ignored.push(`rating=${rating}`)
 
   leftoverParams(
     url,
-    new Set(['keyword', 'keyword_type', 'category', 'brand_type', 'order']),
+    new Set(['keyword', 'keyword_type', 'category', 'brand_type', 'order', 'rating']),
     ignored,
   )
   return { patch, ignored }
@@ -113,9 +129,15 @@ export const fantia: PlatformDef = {
     titleOnly: { level: 'full' },
     fantiaCategory: { level: 'full' },
     fantiaAudience: { level: 'full' },
-    sortOrder: { level: 'partial', noteKey: 'note.fantia.sort' },
+    ageRating: { level: 'full' },
+    sortOrder: { level: 'full' },
   },
   buildParts,
   parseUrl,
-  dynamicSupport: (state) => limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite'),
+  dynamicSupport: (state) =>
+    limitSort(
+      state.sort,
+      ['new', 'top', 'oldest', 'updated', 'updatedOld'],
+      'note.sortOrder.otherSite',
+    ),
 }

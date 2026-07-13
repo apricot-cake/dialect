@@ -6,7 +6,7 @@ import type {
   QueryState,
   UrlPart,
 } from '../types.js'
-import { limitSort } from '../types.js'
+import { limitSort, PIXIV_TOOLS } from '../types.js'
 import { andTerms, exactPhrases, stripHash, words } from '../text.js'
 import {
   encodeTokens,
@@ -32,6 +32,10 @@ import { hostMatches, isIsoDate, leftoverParams, pathSegments, tokenize } from '
 // (2026-07-07にGUI操作で実測)。作品の種類のtype値もこのエンドポイント独自:
 // 既定=artwork、manga=manga、novel=novel、illust=illust、ugoira=ugoira
 // (/tagsのillustrationsセクション+type=ugoiraサブ絞り込みと違い、5値がそれぞれ独立)
+//
+// 解像度(wlt/wgt/hlt/hgt)・縦横比(ratio=)・制作ツール(tool=)は、ログイン限定の
+// 「検索オプション」モーダル(「作品の詳細」)から2026-07-13にGUI操作で採取(issue #70)。
+// /tags/{q}/artworks に直接付与しても有効(searchエンドポイントへの切替は不要、実機確認済み)。
 const SEARCH_ENDPOINT_TYPE: Record<'' | 'illust' | 'manga' | 'ugoira' | 'novel', string> = {
   '': 'artwork',
   illust: 'illust',
@@ -85,6 +89,26 @@ function buildParts(state: QueryState): UrlPart[] | null {
   // ai_type=1 でAI生成作品を除外(送らなければアカウント既定に従う)。どちらも非会員でも効く
   if (state.ageRating) params.set('mode', state.ageRating, 'ageRating')
   if (state.excludeAi) params.set('ai_type', '1', 'excludeAi')
+  // 解像度バケット。wlt/hlt=幅/高さの下限(以上)、wgt/hgt=幅/高さの上限(以下)。
+  // 4パラメータの組み合わせで3バケットを表す(2026-07-13にGUI操作で実測、issue #70)
+  if (state.resolution === 'large') {
+    params.set('wlt', '3000', 'resolution')
+    params.set('hlt', '3000', 'resolution')
+  } else if (state.resolution === 'medium') {
+    params.set('wlt', '1000', 'resolution')
+    params.set('wgt', '2999', 'resolution')
+    params.set('hlt', '1000', 'resolution')
+    params.set('hgt', '2999', 'resolution')
+  } else if (state.resolution === 'small') {
+    params.set('wgt', '999', 'resolution')
+    params.set('hgt', '999', 'resolution')
+  }
+  // 縦横比。landscape=横長/portrait=縦長/square=正方形(2026-07-13にGUI操作で実測、issue #70)
+  if (state.aspectRatio === 'landscape') params.set('ratio', '0.5', 'aspectRatio')
+  else if (state.aspectRatio === 'portrait') params.set('ratio', '-0.5', 'aspectRatio')
+  else if (state.aspectRatio === 'square') params.set('ratio', '0', 'aspectRatio')
+  // 制作ツール。値をそのままサイトへ送る(2026-07-13にGUI操作で実測、issue #70)
+  if (state.productionTool) params.set('tool', state.productionTool, 'productionTool')
 
   if (state.tagTitleCaption) {
     // タグ・タイトル・キャプションのときだけ /search?q=…&type=… エンドポイントへ。
@@ -127,7 +151,21 @@ function parseUrl(url: URL): ParsedSearch | null {
   const segs = pathSegments(url)
   const patch: Partial<QueryState> = {}
   const ignored: string[] = []
-  const consumed = new Set(['s_mode', 'order', 'scd', 'ecd', 'mode', 'ai_type', 'type'])
+  const consumed = new Set([
+    's_mode',
+    'order',
+    'scd',
+    'ecd',
+    'mode',
+    'ai_type',
+    'type',
+    'wlt',
+    'wgt',
+    'hlt',
+    'hgt',
+    'ratio',
+    'tool',
+  ])
 
   let q: string
   if (segs[0] === 'tags' && segs[1]) {
@@ -203,6 +241,38 @@ function parseUrl(url: URL): ParsedSearch | null {
   if (aiType === '1') patch.excludeAi = true
   else if (aiType !== null) ignored.push(`ai_type=${aiType}`)
 
+  // 解像度バケット。既知の4パラメータ組み合わせと完全一致するときだけ読む。
+  // どれか1つでも欠けたり値が違えば、認識できない組み合わせとして正直に読み残す
+  const wlt = url.searchParams.get('wlt')
+  const wgt = url.searchParams.get('wgt')
+  const hlt = url.searchParams.get('hlt')
+  const hgt = url.searchParams.get('hgt')
+  if (wlt !== null || wgt !== null || hlt !== null || hgt !== null) {
+    if (wlt === '3000' && hlt === '3000' && wgt === null && hgt === null) {
+      patch.resolution = 'large'
+    } else if (wlt === '1000' && wgt === '2999' && hlt === '1000' && hgt === '2999') {
+      patch.resolution = 'medium'
+    } else if (wgt === '999' && hgt === '999' && wlt === null && hlt === null) {
+      patch.resolution = 'small'
+    } else {
+      if (wlt !== null) ignored.push(`wlt=${wlt}`)
+      if (wgt !== null) ignored.push(`wgt=${wgt}`)
+      if (hlt !== null) ignored.push(`hlt=${hlt}`)
+      if (hgt !== null) ignored.push(`hgt=${hgt}`)
+    }
+  }
+  const ratio = url.searchParams.get('ratio')
+  if (ratio === '0.5') patch.aspectRatio = 'landscape'
+  else if (ratio === '-0.5') patch.aspectRatio = 'portrait'
+  else if (ratio === '0') patch.aspectRatio = 'square'
+  else if (ratio !== null) ignored.push(`ratio=${ratio}`)
+  const tool = url.searchParams.get('tool')
+  if (tool !== null) {
+    if ((PIXIV_TOOLS as readonly string[]).includes(tool)) {
+      patch.productionTool = tool as QueryState['productionTool']
+    } else ignored.push(`tool=${tool}`)
+  }
+
   leftoverParams(url, consumed, ignored)
   return { patch, ignored }
 }
@@ -230,6 +300,9 @@ export const pixiv: PlatformDef = {
     pixivPopular: { level: 'partial', noteKey: 'note.pixiv.popular' },
     ageRating: { level: 'full' },
     excludeAi: { level: 'full' },
+    resolution: { level: 'full' },
+    aspectRatio: { level: 'full' },
+    productionTool: { level: 'full' },
   },
   buildParts,
   parseUrl,
