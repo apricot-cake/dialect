@@ -7,7 +7,6 @@ import {
   FANTIA_CATEGORIES,
   GOOGLE_FILE_TYPES,
   NICO_GENRES,
-  PIXIV_TOOLS,
   POST_LANGUAGE_CODES,
   activeConcepts,
   defaultState,
@@ -136,11 +135,6 @@ function sanitizeQuery(parsed: unknown): QueryState {
     query.fantiaCategory = ''
   }
   if (!['', 'male', 'female'].includes(query.fantiaAudience)) query.fantiaAudience = ''
-  if (!['', 'large', 'medium', 'small'].includes(query.resolution)) query.resolution = ''
-  if (!['', 'landscape', 'portrait', 'square'].includes(query.aspectRatio)) query.aspectRatio = ''
-  if (!(['', ...PIXIV_TOOLS] as string[]).includes(query.productionTool)) {
-    query.productionTool = ''
-  }
   if (!(['', ...GOOGLE_FILE_TYPES] as string[]).includes(query.fileType)) query.fileType = ''
   if (!['', 'f', 'fc', 'fm', 'fmc'].includes(query.license)) query.license = ''
   return query
