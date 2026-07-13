@@ -45,8 +45,7 @@ export function quoteIfPhrase(term: string): string {
 
 /**
  * 引用符構文のあるサイト向けに、AND語(フレーズは引用符つき)と完全一致語句("…")を
- * 連結して返す。x/bluesky/youtube/niconico/hatebu が共通で使う先頭2行の集約。
- * 引用符を使わない misskey/pixiv や、field接頭辞の付く reddit は対象外
+ * 連結して返す。tumblrが使う先頭2行の集約。引用符を使わない misskey/pixiv は対象外
  */
 export function quotedTerms(state: { terms: string[]; exactPhrase: string[] }): string[] {
   return [
@@ -55,7 +54,7 @@ export function quotedTerms(state: { terms: string[]; exactPhrase: string[] }): 
   ]
 }
 
-/** 除外語を -語 の配列にする(マイナス検索構文のサイト共通)。別文法の reddit は対象外 */
+/** 除外語を -語 の配列にする(マイナス検索構文のサイト共通) */
 export function minusExcludes(state: { exclude: string }): string[] {
   return words(state.exclude).map((w) => `-${w}`)
 }

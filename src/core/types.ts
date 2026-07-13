@@ -13,7 +13,6 @@ export type ConceptId =
   | 'excludeUser'
   | 'toUser'
   | 'mentionsUser'
-  | 'subreddit'
   | 'domain'
   | 'xList'
   | 'hashtag'
@@ -46,7 +45,6 @@ export type ConceptId =
   | 'ageRating'
   | 'excludeAi'
   | 'nicoKind'
-  | 'paidOnly'
   | 'fantiaCategory'
   | 'fantiaAudience'
   | 'safeSearchOff'
@@ -209,19 +207,14 @@ export type GoogleLicense = '' | 'f' | 'fc' | 'fm' | 'fmc'
 
 /**
  * 探すものの種類。video=動画、short=ショート動画、channel=投稿者・配信者、
- * playlist=再生リスト(YouTube専用の値。Twitchは動画・チャンネルのみ)。
- * posts=投稿、communities=コミュニティ、comments=コメント、media=メディア、
- * people=プロフィール(Reddit専用の値。2026-07-07にGUI操作で実測した検索結果タブ
- * すべて/投稿/コミュニティ/コメント/メディア/プロフィールの type= に対応)。
- * board=ボード(Pinterest専用。フィルターパネルの「すべてのピン/動画/ボード/
- * プロフィール」の4択のうち「ボード」に対応。2026-07-08にGUI操作で実測、peopleはpinterestの
- * 「プロフィール」とも共用)。bangumi=アニメ番組、pgc=映画・ドラマなどの制作コンテンツ、
+ * playlist=再生リスト(YouTube専用の値)。
+ * people=プロフィール(Bluesky・niconico専用の値。ユーザー検索タブに対応)。
+ * bangumi=アニメ番組、pgc=映画・ドラマなどの制作コンテンツ、
  * live=生放送中のルーム、article=コラム記事(いずれもbilibili専用。トップの「综合/视频/
  * 番剧/影视/直播/专栏/用户」タブに対応。2026-07-08にGUI操作で実測、用户はchannelを共用)。
  * series=シリーズ(niconico専用。検索結果タブ「動画/ショート/シリーズ/マイリスト/
  * ユーザー」の「シリーズ」に対応。short/playlist/peopleはniconicoの「ショート/マイリスト/
- * ユーザー」とも共用。2026-07-09にGUI操作で実測)。circle=メンバーシップ(note専用。検索結果タブ
- * 「記事/マガジン/クリエイター/メンバーシップ」の「メンバーシップ」に対応。2026-07-09にGUI操作で実測)。
+ * ユーザー」とも共用。2026-07-09にGUI操作で実測)。
  * images=画像(Google専用。udm=2)、shopping=ショッピング(Google専用。udm=28)、
  * news=ニュース(Google専用。tbm=nws。他サイトのresultTypeとは別パラメータ形式)、
  * web=ウェブ(Google専用。udm=web。リッチな要素を除いた素の検索結果一覧)、
@@ -235,18 +228,12 @@ export type ResultType =
   | 'short'
   | 'channel'
   | 'playlist'
-  | 'posts'
-  | 'communities'
-  | 'comments'
-  | 'media'
   | 'people'
-  | 'board'
   | 'bangumi'
   | 'pgc'
   | 'live'
   | 'article'
   | 'series'
-  | 'circle'
   | 'images'
   | 'shopping'
   | 'news'
@@ -254,9 +241,9 @@ export type ResultType =
   | 'books'
 
 /**
- * 並び順。new=新しい順、top=人気順、hot=急上昇/注目、comments=コメント数順、
- * auto=指定なし(サイトの標準の並びのまま=既定)。hot に対応するのは note(急上昇)と
- * Reddit(注目順=sort=hot)。comments は Reddit専用(sort=comments、2026-07-07にGUI操作で実測)。
+ * 並び順。new=新しい順、top=人気順、comments=コメント数順、
+ * auto=指定なし(サイトの標準の並びのまま=既定)。comments はniconico・bilibili専用
+ * (niconicoはsort=commentCount、bilibiliはコラム検索でorder=scores。2026-07-09にGUI操作で実測)。
  * danmaku=弾幕数順、favorites=収蔵(お気に入り登録)数順、likes=いいね数順は
  * いずれもbilibili専用(2026-07-08にGUI操作で実測。動画検索はorder=dm/stow、
  * コラム検索はorder=attention)。commentDate=最新コメント順はniconico専用
@@ -271,7 +258,6 @@ export type ResultType =
 export type SortOrder =
   | 'new'
   | 'top'
-  | 'hot'
   | 'comments'
   | 'auto'
   | 'danmaku'
@@ -297,7 +283,7 @@ export interface QueryState {
   exactPhrase: string[]
   /**
    * スコープ限定OR(「このどれかを含む」)。スペース区切りで複数可、どれか1つを含めばよい
-   * (toUser/subreddit と同じ「複数指定=OR」の枠)。対応6サイト(X/Reddit/pixiv/YouTube/
+   * (toUser と同じ「複数指定=OR」の枠)。対応5サイト(X/pixiv/YouTube/
    * niconico動画・静画)のみ有効。「足す=絞る」原則の例外として2026-07-11導入(issue #26)。
    * 1語だけの指定はOR構文を送らず通常のキーワードと同じ扱いになる
    */
@@ -321,8 +307,6 @@ export interface QueryState {
    * (除外対象を空白区切りで複数=excludeUserと同じ意味論)。2026-07-11にGUI操作で実測(issue #27)
    */
   excludeMentions: string
-  /** スペース区切りで複数可(どれか=OR) */
-  subreddit: string
   domain: string
   /**
    * Bluesky専用。リンク先ドメインを除外(excludeDomain=)。スペース区切りで複数可
@@ -413,8 +397,6 @@ export interface QueryState {
   genre: NicoGenre
   /** niconico専用。動画種別(kind=user/channel)。空=指定なし */
   nicoKind: NicoKind
-  /** note専用。有料記事だけに絞る(context=note_for_sale)。false=指定なし(すべての記事) */
-  paidOnly: boolean
   /** Fantia専用。投稿カテゴリ(category=)。空=指定なし */
   fantiaCategory: FantiaCategory
   /** Fantia専用。対象読者区分(brand_type=)。空=指定なし(常に全年齢を明示送信) */
@@ -446,26 +428,19 @@ export interface ConceptSupport {
   noteKey?: MessageKey
 }
 
-export type PlatformGroup = 'sns' | 'video' | 'image' | 'text' | 'web'
+export type PlatformGroup = 'sns' | 'video' | 'image' | 'web'
 
 export type PlatformId =
   | 'x'
   | 'bluesky'
   | 'youtube'
-  | 'note'
   | 'niconico'
   | 'seiga'
   | 'instagram'
-  | 'reddit'
   | 'pixiv'
   | 'misskey'
-  | 'hatebu'
-  | 'twitch'
-  | 'fivech'
-  | 'animanch'
   | 'tumblr'
   | 'mastodon'
-  | 'pinterest'
   | 'fanbox'
   | 'bilibili'
   | 'fantia'

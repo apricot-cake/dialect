@@ -74,7 +74,7 @@ export function minusExcludeTokens(state: { exclude: string }): Token[] {
  * q の値の断片を URLSearchParams と同一の form エンコードで符号化する(スペースは +)。
  * form エンコードも1文字ずつ独立なので、断片ごとに符号化した連結は
  * 値全体を一括エンコードした結果と1文字も違わない。
- * URLSearchParams でクエリ値に複数概念の語が合成されるサイト(reddit/hatebu)が、
+ * URLSearchParams でクエリ値に複数概念の語が合成されるサイト(bluesky)が、
  * ペアを概念別の断片に割るために使う
  */
 export function formEncode(text: string): string {

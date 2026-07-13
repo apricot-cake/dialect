@@ -87,11 +87,8 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   }
   const tab = tabOf(state)
   if (state.sort !== 'auto' && !(state.sort in ORDER_PARAM[tab])) {
-    // 急上昇はbilibiliのどのタブにも無い。それ以外はタブを変えれば使える並び順
-    overrides.sortOrder = {
-      level: 'none',
-      noteKey: state.sort === 'hot' ? 'note.sortOrder.otherSite' : 'note.bilibili.tabSort',
-    }
+    // 選んだタブでは使えないが、タブを変えれば使える並び順
+    overrides.sortOrder = { level: 'none', noteKey: 'note.bilibili.tabSort' }
   }
   if (tab !== 'all' && tab !== 'video') {
     if (state.videoLength) {

@@ -10,29 +10,21 @@ import { DEFAULT_HOST as MISSKEY_DEFAULT_HOST } from './platforms/misskey'
  * site:検索フォールバック(#42)専用のドメイン対応表。各プラットフォームの検索ページの
  * ホストではなく、コンテンツ本体が実際に置かれているホストを持つ(例: bilibiliの検索は
  * search.bilibili.com という専用サブドメインだが、フォールバックはbilibili.com全体を
- * 対象にしたほうが有用。5ちゃんねるは検索プロキシff5ch.syoboi.jpではなく実際の板ホスト
- * 5ch.netを使う)。mastodon/misskeyはインスタンス切替(issue #32)があるため表に持たず、
+ * 対象にしたほうが有用)。mastodon/misskeyはインスタンス切替(issue #32)があるため表に持たず、
  * fallbackDomain() でインスタンスホストを都度解決する
  */
 const SITE_DOMAINS: Partial<Record<PlatformId, string>> = {
   x: 'x.com',
   bluesky: 'bsky.app',
-  reddit: 'reddit.com',
   youtube: 'youtube.com',
   instagram: 'instagram.com',
-  twitch: 'twitch.tv',
   tumblr: 'tumblr.com',
   pixiv: 'pixiv.net',
   niconico: 'nicovideo.jp',
   seiga: 'seiga.nicovideo.jp',
-  note: 'note.com',
   fanbox: 'fanbox.cc',
   fantia: 'fantia.jp',
-  hatebu: 'b.hatena.ne.jp',
   bilibili: 'bilibili.com',
-  pinterest: 'pinterest.com',
-  fivech: '5ch.net',
-  animanch: 'bbs.animanch.com',
 }
 
 function fallbackDomain(platformId: PlatformId, ctx?: PlatformCtx): string | null {

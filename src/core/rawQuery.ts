@@ -13,14 +13,8 @@ function extractText(platformId: PlatformId, url: URL): string | null {
   switch (platformId) {
     case 'x':
     case 'bluesky':
-    case 'hatebu':
-    case 'reddit':
-    case 'fivech':
-    case 'pinterest':
     case 'google':
       return url.searchParams.get('q')
-    case 'twitch':
-      return url.searchParams.get('term')
     case 'fantia':
     case 'bilibili':
       return url.searchParams.get('keyword')
@@ -29,13 +23,10 @@ function extractText(platformId: PlatformId, url: URL): string | null {
       return url.pathname.startsWith('/results')
         ? url.searchParams.get('search_query')
         : url.searchParams.get('query')
-    case 'note':
     case 'misskey':
     case 'mastodon':
-      // /tags/{タグ}(note は /hashtag/{タグ})はパス埋め込み、それ以外は q=
-      return segs[0] === 'tags' || segs[0] === 'hashtag'
-        ? (segs[1] ?? null)
-        : url.searchParams.get('q')
+      // /tags/{タグ}はパス埋め込み、それ以外は q=
+      return segs[0] === 'tags' ? (segs[1] ?? null) : url.searchParams.get('q')
     case 'pixiv':
       // /tags/{q}/{section} はパス埋め込み、/search?q=(タグ・タイトル・キャプション)は q=
       return segs[0] === 'tags' ? (segs[1] ?? null) : url.searchParams.get('q')
@@ -47,7 +38,6 @@ function extractText(platformId: PlatformId, url: URL): string | null {
       return url.hostname === 'manga.nicovideo.jp' ? url.searchParams.get('q') : (segs[1] ?? null)
     case 'niconico':
     case 'tumblr':
-    case 'animanch':
     case 'fanbox':
       // いずれも検索語は常にパスの2番目のセグメント(タブ・タグ切替のパスがあっても位置は揃う)
       return segs[1] ?? null
@@ -79,7 +69,6 @@ const STRUCTURAL_EXCLUDE: Partial<Record<PlatformId, ReadonlySet<ConceptId>>> = 
     'purchased',
     'fromUser',
   ]),
-  note: new Set(['resultType', 'sortOrder', 'paidOnly']),
   pixiv: new Set([
     'sortOrder',
     'period',
@@ -93,13 +82,8 @@ const STRUCTURAL_EXCLUDE: Partial<Record<PlatformId, ReadonlySet<ConceptId>>> = 
   niconico: new Set(['sortOrder', 'period', 'videoLength', 'genre', 'nicoKind', 'resultType']),
   seiga: new Set(['sortOrder', 'workType']),
   tumblr: new Set(['sortOrder', 'mediaOnly', 'linksOnly']),
-  hatebu: new Set(['sortOrder', 'period', 'minLikes', 'safeSearchOff', 'titleOnly']),
-  reddit: new Set(['sortOrder', 'period', 'resultType']),
-  twitch: new Set(['resultType']),
   fantia: new Set(['fantiaAudience', 'fantiaCategory', 'sortOrder', 'titleOnly']),
   bilibili: new Set(['resultType', 'sortOrder', 'videoLength', 'period']),
-  pinterest: new Set(['resultType']),
-  animanch: new Set(['titleOnly']),
   misskey: new Set(['fromUser']),
   google: new Set([
     'language',

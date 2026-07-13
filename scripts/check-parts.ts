@@ -39,12 +39,6 @@ const COVERAGE_EXEMPT: ReadonlyArray<{
   reason: string
 }> = [
   {
-    platform: 'fivech',
-    concept: 'titleOnly',
-    when: () => true,
-    reason: 'ff5chは常にスレタイトルだけを検索する(演算子を持たず、既定挙動が意図を満たす)',
-  },
-  {
     platform: 'pixiv',
     concept: 'sortOrder',
     when: (s) => s.sort === 'new',
@@ -96,20 +90,17 @@ function singleOverrides(): Array<Partial<QueryState>> {
           ? 'nhk.or.jp'
           : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
             ? '500'
-            : f === 'subreddit'
-              ? 'japan'
-              : f === 'xList'
-                ? '1215911364234924032'
-                : f === 'hashtag'
-                  ? 'ゲーム'
-                  : 'nhk'
+            : f === 'xList'
+              ? '1215911364234924032'
+              : f === 'hashtag'
+                ? 'ゲーム'
+                : 'nhk'
       out.push({ [f]: sentinel })
       // 複数値の枠はスペース区切りの2値も(OR括弧・複数タグ等の別経路を踏む)
       if (f === 'hashtag') out.push({ hashtag: 'ゲーム 実況' })
       if (f === 'keywordsOr') out.push({ keywordsOr: 'nhk asahi' })
       if (f === 'toUser') out.push({ toUser: 'nhk asahi' })
       if (f === 'mentionsUser') out.push({ mentionsUser: 'nhk asahi' })
-      if (f === 'subreddit') out.push({ subreddit: 'japan tokyo' })
       if (f === 'excludeUser') out.push({ excludeUser: 'nhk asahi' })
       if (f === 'exclude') out.push({ exclude: '犬 うさぎ' })
       if (f === 'hashtagOr') out.push({ hashtagOr: 'cat dog' })

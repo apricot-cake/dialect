@@ -16,7 +16,7 @@ export const en = {
   'concept.keywordsOr.label': 'Match any of these',
   'concept.keywordsOr.placeholder': 'e.g. dog',
   'concept.keywordsOr.help':
-    'Finds posts containing at least one of the words you enter (X, Reddit, pixiv, YouTube, niconico, and niconico Seiga only).',
+    'Finds posts containing at least one of the words you enter (X, pixiv, YouTube, niconico, and niconico Seiga only).',
   'concept.exclude.label': 'Exclude keywords',
   'concept.exclude.placeholder': 'e.g. ad',
   'concept.exclude.help': 'Removes posts containing the given words from the results.',
@@ -45,10 +45,6 @@ export const en = {
   'concept.excludeMentions.placeholder': 'e.g. user.bsky.social',
   'concept.excludeMentions.help':
     'Removes posts that mention the given user from the results (Bluesky only).',
-  'concept.subreddit.label': 'Within this community only',
-  'concept.subreddit.placeholder': 'e.g. japan',
-  'concept.subreddit.help':
-    'Finds only posts within the given community (a subreddit on Reddit, or a board on 5channel). Do not include r/ in the name.',
   'concept.domain.label': 'Links to this site',
   'concept.domain.placeholder': 'e.g. nhk.or.jp',
   'concept.domain.help': 'Finds only posts that link to the given site.',
@@ -185,8 +181,6 @@ export const en = {
   'concept.nicoKind.channel': 'Official channels',
   'concept.nicoKind.help':
     'Filters by whether the video is a user upload or from an official channel (niconico only).',
-  'concept.paidOnly.label': 'Paid articles only',
-  'concept.paidOnly.help': 'Limits results to paid articles (note only).',
   'concept.fantiaCategory.label': 'Category',
   'concept.fantiaCategory.none': 'Any',
   'concept.fantiaCategory.illust': 'Illustration',
@@ -222,36 +216,29 @@ export const en = {
     'Chooses which audience section to search: all ages, for men (R-18), or for women (R-18) (Fantia only; unset means all ages).',
   'concept.safeSearchOff.label': 'Turn off safe search',
   'concept.safeSearchOff.help':
-    "Turns off Hatena Bookmark's safe search (on by default) for this search (Hatena Bookmark only).",
+    'Turns off safe search (on by default) for this search (Google only).',
   'concept.resultType.label': 'Result type',
   'concept.resultType.none': 'Any',
   'concept.resultType.video': 'Videos',
   'concept.resultType.short': 'Shorts',
   'concept.resultType.channel': 'Channels',
   'concept.resultType.playlist': 'Playlists',
-  'concept.resultType.posts': 'Posts',
-  'concept.resultType.communities': 'Communities',
-  'concept.resultType.comments': 'Comments',
-  'concept.resultType.media': 'Media',
   'concept.resultType.people': 'Profiles',
-  'concept.resultType.board': 'Boards',
   'concept.resultType.bangumi': 'Anime series',
   'concept.resultType.pgc': 'Movies & shows',
   'concept.resultType.live': 'Live streams',
   'concept.resultType.article': 'Articles',
   'concept.resultType.series': 'Series',
-  'concept.resultType.circle': 'Membership',
   'concept.resultType.images': 'Images',
   'concept.resultType.shopping': 'Shopping',
   'concept.resultType.news': 'News',
   'concept.resultType.web': 'Web only',
   'concept.resultType.books': 'Books',
   'concept.resultType.help':
-    'Chooses what kind of result to look for. Video sites (YouTube, Twitch) offer videos, channels, and so on; Reddit offers posts, communities, comments, and so on. Which types are available depends on the site.',
+    'Chooses what kind of result to look for. Video sites (YouTube) offer videos, channels, and so on; bilibili offers series, live streams, and so on. Which types are available depends on the site.',
   'concept.sortOrder.label': 'Sort order',
   'concept.sortOrder.new': 'Newest',
   'concept.sortOrder.top': 'Popular',
-  'concept.sortOrder.hot': 'Trending',
   'concept.sortOrder.comments': 'Comment count',
   'concept.sortOrder.danmaku': 'Danmaku count',
   'concept.sortOrder.favorites': 'Favorite count',
@@ -317,11 +304,7 @@ export const en = {
   'note.loose.and': 'Some results may contain only some of your words.',
   'note.exactPhrase.dropped':
     'Exact-phrase search is not available here. To match the words, add them to Keywords.',
-  'note.exact.substring':
-    'Searches for the text as one continuous string. Phrases with spaces are split into separate words.',
   'note.titleOnly.needsWords': 'Works only when combined with keywords or an exact phrase.',
-  'note.exact.unreliable':
-    'Searches for the exact phrase, but some results may have the words scattered apart.',
   'note.tagPage.combined':
     'When combined with other conditions, it is searched as an ordinary keyword.',
   'note.nosort': 'Sort order cannot be set.',
@@ -355,27 +338,7 @@ export const en = {
     'Popular is approximated by view count. Newest currently no longer works on YouTube.',
   'note.youtube.channelConflict':
     'This filter has no effect when combined with a user filter (in-channel search).',
-  'note.note.keywords': 'Some articles may contain only some of your words.',
-  'note.note.exclude': 'note has no exclusion search.',
-  'note.note.fromUser': 'The username is the part after @.',
-  'note.note.hashtag':
-    'When combined with other conditions, it is searched as an ordinary keyword.',
-  'note.note.period': 'note has no date filter.',
-  'note.note.mediaOnly': 'note has no way to filter by image/video.',
-  'note.note.paidOnly.tagPage':
-    "A single tag's tag page can't be limited to paid articles. After opening it, you can use the in-page toggle.",
-  'note.note.sort.tagPage':
-    "A single tag's tag page can't be sorted. After opening it, you can use the in-page sort tabs.",
-  'note.note.resultTypeConflict':
-    'This filter has no effect on creator, magazine, or membership search.',
-  'note.note.paidOnly.circle': 'Every membership is already paid, so this filter has no meaning.',
-
   // Additional platform-specific notes
-  'note.reddit.hashtag': 'Reddit has no hashtag system.',
-  'note.reddit.period': 'Filtered roughly by “past day / week / month / year”.',
-  'note.reddit.untilOnly': 'Reddit cannot filter by an end date alone (a start date is required).',
-  'note.reddit.mediaOnly':
-    'This filter is not available. Choosing “Media” under Result type gets close.',
   'note.instagram.hashtag': 'Tag pages show only top posts (no latest order).',
   'note.instagram.multiTag':
     'With two or more hashtags this becomes a loose search rather than a tag page, and some results may include only some of the tags.',
@@ -396,25 +359,8 @@ export const en = {
     'Finds posts that contain all your words. On the page that opens, press the “Search” button to see results.',
   'note.misskey.fromUser': 'Requires combining with a keyword.',
   'note.youtube.resultType': 'It cannot be combined with a user filter.',
-  'note.hatebu.minLikes': 'The number you set is used as the minimum bookmark count.',
-  'note.hatebu.titleTagConflict':
-    'When searching by hashtag alone, the title-only filter has no effect.',
-  'note.hatebu.fromUser':
-    "Bookmark search only covers your own bookmarks — there's no way to search a specific other user's bookmarks.",
-  'note.twitch.resultType': 'Twitch can only search videos and channels.',
-  'note.twitch.language':
-    "Can't be set via the URL. After opening the page, narrow down with the language filter.",
   'note.sortOrder.otherSite': 'This sort order is not available on this site.',
   'note.resultType.otherSite': 'This type is not available on this site.',
-  'note.fivech.keywords':
-    'Only thread titles are searched. Opens the thread-title search service (ff5ch.syoboi.jp).',
-  'note.fivech.titleOnly':
-    '5ch search always targets thread titles only (regardless of this setting).',
-  'note.fivech.subreddit':
-    'Filters by board name (e.g. sony). Set several to match any of those boards.',
-  'note.animanch.keywords':
-    'Searches post bodies (an experimental feature, so some may be missed).',
-  'note.animanch.titleOnly': 'Searches only thread titles across the full archive.',
   'note.seiga.workType': 'Niconico Seiga can only search illustrations and manga.',
   'note.seiga.mangaSort': "Sort order can't be set when searching manga.",
   'note.tumblr.tagSort':
@@ -469,7 +415,6 @@ export const en = {
   'sum.to': 'to {v}',
   'sum.excludeUser': 'excluding {v}',
   'sum.mentions': 'mentioning {v}',
-  'sum.community': 'in {v}',
   'sum.domain': 'links to {v}',
   'sum.xList': 'in a List',
   'sum.minLikes': '{v}+ likes',
@@ -483,7 +428,6 @@ export const en = {
   'group.sns': 'SNS',
   'group.video': 'Video',
   'group.image': 'Illustration & Images',
-  'group.text': 'Blogs & Forums',
   'group.web': 'Web Search',
 
   // Two-screen snap layout

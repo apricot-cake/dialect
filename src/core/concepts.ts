@@ -16,7 +16,6 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.toUser.trim()) active.push('toUser')
   if (state.mentionsUser.trim()) active.push('mentionsUser')
   if (state.excludeMentions.trim()) active.push('excludeMentions')
-  if (state.subreddit.trim()) active.push('subreddit')
   if (state.domain.trim()) active.push('domain')
   if (state.excludeDomain.trim()) active.push('excludeDomain')
   if (state.linkUrl.trim()) active.push('linkUrl')
@@ -56,7 +55,6 @@ export function activeConcepts(state: QueryState): ConceptId[] {
   if (state.workType) active.push('workType')
   if (state.genre) active.push('genre')
   if (state.nicoKind) active.push('nicoKind')
-  if (state.paidOnly) active.push('paidOnly')
   if (state.fantiaCategory) active.push('fantiaCategory')
   if (state.fantiaAudience) active.push('fantiaAudience')
   if (state.safeSearchOff) active.push('safeSearchOff')
@@ -85,7 +83,6 @@ export function defaultState(): QueryState {
     toUser: '',
     mentionsUser: '',
     excludeMentions: '',
-    subreddit: '',
     domain: '',
     excludeDomain: '',
     linkUrl: '',
@@ -126,7 +123,6 @@ export function defaultState(): QueryState {
     workType: '',
     genre: '',
     nicoKind: '',
-    paidOnly: false,
     fantiaCategory: '',
     fantiaAudience: '',
     safeSearchOff: false,

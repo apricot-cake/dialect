@@ -485,78 +485,6 @@ const PROBES: Probe[] = [
     emit: '猫|犬',
   },
 
-  // ---- note ----
-  {
-    platform: 'note',
-    concept: 'fromUser',
-    label: '送信者',
-    state: { fromUser: 'info' },
-    token: 'from:@',
-  },
-  {
-    platform: 'note',
-    concept: 'sortOrder',
-    label: '新しい順',
-    state: { sort: 'new' },
-    token: 'sort=new',
-  },
-  {
-    platform: 'note',
-    concept: 'sortOrder',
-    label: '急上昇',
-    state: { sort: 'hot' },
-    token: 'sort=hot',
-  },
-  {
-    platform: 'note',
-    concept: 'paidOnly',
-    label: '有料のみ',
-    state: { paidOnly: true },
-    token: 'context=note_for_sale',
-  },
-  {
-    platform: 'note',
-    concept: 'hashtag',
-    label: 'タグページ',
-    state: TAG_ONLY('読書記録'),
-    token: '/hashtag/',
-  },
-  {
-    platform: 'note',
-    concept: 'resultType',
-    label: '探す=クリエイター',
-    state: { resultType: 'people' },
-    token: 'context=user',
-  },
-  {
-    platform: 'note',
-    concept: 'resultType',
-    label: '探す=マガジン',
-    state: { resultType: 'series' },
-    token: 'context=magazine',
-  },
-  {
-    platform: 'note',
-    concept: 'resultType',
-    label: '探す=メンバーシップ',
-    state: { resultType: 'circle' },
-    token: 'context=circle',
-  },
-  {
-    platform: 'note',
-    concept: 'sortOrder',
-    label: 'メンバーシップの新着順',
-    state: { resultType: 'circle', sort: 'new' },
-    token: 'sort=new',
-  },
-  {
-    platform: 'note',
-    concept: 'sortOrder',
-    label: 'メンバーシップの人気順',
-    state: { resultType: 'circle', sort: 'top' },
-    token: 'sort=popular',
-  },
-
   // ---- niconico ----
   {
     platform: 'niconico',
@@ -771,95 +699,6 @@ const PROBES: Probe[] = [
     token: '猫 OR 犬',
   },
 
-  // ---- Reddit ----
-  {
-    platform: 'reddit',
-    concept: 'fromUser',
-    label: '送信者',
-    state: { fromUser: 'spez' },
-    token: 'author:',
-  },
-  {
-    platform: 'reddit',
-    concept: 'subreddit',
-    label: 'コミュニティ',
-    state: { subreddit: 'japan' },
-    token: 'subreddit:',
-  },
-  {
-    platform: 'reddit',
-    concept: 'period',
-    label: '期間(丸め)',
-    state: { since: '2026-06-25' },
-    token: 't=',
-  },
-  {
-    platform: 'reddit',
-    concept: 'sortOrder',
-    label: '新しい順',
-    state: { sort: 'new' },
-    token: 'sort=new',
-  },
-  {
-    platform: 'reddit',
-    concept: 'sortOrder',
-    label: 'コメント数順',
-    state: { sort: 'comments' },
-    token: 'sort=comments',
-  },
-  {
-    platform: 'reddit',
-    concept: 'titleOnly',
-    label: 'タイトルだけ',
-    state: { titleOnly: true },
-    token: 'title:',
-    tracked: false,
-    note: '公式・安定の検索フィールド(Boolean検索)。確認リスト対象外',
-  },
-  {
-    platform: 'reddit',
-    concept: 'resultType',
-    label: '探す=投稿',
-    state: { resultType: 'posts' },
-    token: 'type=posts',
-  },
-  {
-    platform: 'reddit',
-    concept: 'resultType',
-    label: '探す=コミュニティ',
-    state: { resultType: 'communities' },
-    token: 'type=communities',
-  },
-  {
-    platform: 'reddit',
-    concept: 'resultType',
-    label: '探す=コメント',
-    state: { resultType: 'comments' },
-    token: 'type=comments',
-  },
-  {
-    platform: 'reddit',
-    concept: 'resultType',
-    label: '探す=メディア',
-    state: { resultType: 'media' },
-    token: 'type=media',
-  },
-  {
-    platform: 'reddit',
-    concept: 'resultType',
-    label: '探す=プロフィール',
-    state: { resultType: 'people' },
-    token: 'type=people',
-  },
-  {
-    platform: 'reddit',
-    concept: 'keywordsOr',
-    label: 'このどれかを含む',
-    state: { terms: ['yarn'], keywordsOr: 'cats dogs' },
-    token: '(cats OR dogs)',
-    emit: '(cats+OR+dogs)',
-  },
-
   // ---- pixiv ----
   {
     platform: 'pixiv',
@@ -989,83 +828,6 @@ const PROBES: Probe[] = [
     label: '除外',
     state: { exclude: 'dog' },
     token: '-dog',
-  },
-
-  // ---- はてなブックマーク ----
-  {
-    platform: 'hatebu',
-    concept: 'period',
-    label: '期間(開始)',
-    state: { since: '2024-01-01' },
-    token: 'date_begin=',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'period',
-    label: '期間(終了)',
-    state: { until: '2024-06-30' },
-    token: 'date_end=',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'minLikes',
-    label: '最低ブクマ数',
-    state: { minLikes: '100' },
-    token: 'users=',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'sortOrder',
-    label: '新着順',
-    state: { sort: 'new' },
-    token: 'sort=recent',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'titleOnly',
-    label: 'タイトルだけ',
-    state: { titleOnly: true },
-    token: '/search/title',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'hashtag',
-    label: 'タグ検索',
-    state: TAG_ONLY('python'),
-    token: '/search/tag',
-  },
-  {
-    platform: 'hatebu',
-    concept: 'safeSearchOff',
-    label: 'セーフサーチ解除',
-    state: { safeSearchOff: true },
-    token: 'safe=off',
-  },
-
-  // ---- Twitch ----
-  {
-    platform: 'twitch',
-    concept: 'resultType',
-    label: '探す=動画',
-    state: { resultType: 'video' },
-    token: 'type=videos',
-  },
-  {
-    platform: 'twitch',
-    concept: 'resultType',
-    label: '探す=チャンネル',
-    state: { resultType: 'channel' },
-    token: 'type=channels',
-  },
-
-  // ---- あにまん掲示板 ----
-  { platform: 'animanch', concept: 'keywords', label: 'レス本文', state: {}, token: '/searchRes/' },
-  {
-    platform: 'animanch',
-    concept: 'titleOnly',
-    label: 'タイトルだけ',
-    state: { titleOnly: true },
-    token: '/search2/',
   },
 
   // ---- tumblr ----
@@ -1210,29 +972,6 @@ const PROBES: Probe[] = [
     label: '言語',
     state: { language: 'ja' },
     token: 'language:',
-  },
-
-  // ---- Pinterest ----
-  {
-    platform: 'pinterest',
-    concept: 'resultType',
-    label: '探す=動画',
-    state: { resultType: 'video' },
-    token: '/search/videos/',
-  },
-  {
-    platform: 'pinterest',
-    concept: 'resultType',
-    label: '探す=ボード',
-    state: { resultType: 'board' },
-    token: '/search/boards/',
-  },
-  {
-    platform: 'pinterest',
-    concept: 'resultType',
-    label: '探す=プロフィール',
-    state: { resultType: 'people' },
-    token: '/search/users/',
   },
 
   // ---- FANBOX ----
@@ -1585,12 +1324,8 @@ const DEFAULTS = defaultState()
  * 「なぜ URL 差分が無くても support=partial/full が正当か」を人が説明する責任を負う。
  * 濫用すると静かな嘘の隠れ場所になるので、①support は必ず partial 以下＋注記つき ②理由を明記、
  * を満たすものだけに絞る。免除分も出力に必ず表示して後から監査できるようにする。
- *
- * - fivech::titleOnly: ff5ch(スレタイ検索)は常にタイトルだけが対象。トグルは送る演算子を持たず
- *   URLを変えないが、ユーザーの意図(タイトルのみ検索)は既定挙動で満たされる。support=partial＋
- *   note.fivech.titleOnly「切り替えに関わらず常にタイトルを検索」で正直に伝えている(嘘ではない)。
  */
-const SATISFIED_BY_DEFAULT: ReadonlySet<string> = new Set(['fivech::titleOnly'])
+const SATISFIED_BY_DEFAULT: ReadonlySet<string> = new Set([])
 
 /** 概念 c の入力フィールドを既定値へ戻した state(差分チェックで c だけを消す)。period は since/until の2値 */
 function clearConcept(state: QueryState, concept: ConceptId): QueryState {
@@ -1622,13 +1357,11 @@ function coverageStatesFor(concept: ConceptId): QueryState[] {
       ? 'nhk.or.jp'
       : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
         ? '500'
-        : f === 'subreddit'
-          ? 'japan'
-          : f === 'xList'
-            ? '1215911364234924032'
-            : f === 'hashtag'
-              ? 'ゲーム'
-              : 'nhk'
+        : f === 'xList'
+          ? '1215911364234924032'
+          : f === 'hashtag'
+            ? 'ゲーム'
+            : 'nhk'
   return [mk({ [f]: sentinel })]
 }
 
@@ -1658,11 +1391,9 @@ function sampleStates(): QueryState[] {
           ? 'nhk.or.jp'
           : f === 'minLikes' || f === 'minReposts' || f === 'minReplies'
             ? '500'
-            : f === 'subreddit'
-              ? 'japan'
-              : f === 'xList'
-                ? '1215911364234924032'
-                : 'nhk'
+            : f === 'xList'
+              ? '1215911364234924032'
+              : 'nhk'
       out.push({ ...BASE, [f]: sentinel })
     }
   }

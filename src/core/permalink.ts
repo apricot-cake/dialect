@@ -46,7 +46,6 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.toUser.trim()) params.set('to', state.toUser.trim())
   if (state.mentionsUser.trim()) params.set('men', state.mentionsUser.trim())
   if (state.excludeMentions.trim()) params.set('exmen', state.excludeMentions.trim())
-  if (state.subreddit.trim()) params.set('sub', state.subreddit.trim())
   if (state.domain.trim()) params.set('dom', state.domain.trim())
   if (state.excludeDomain.trim()) params.set('exdom', state.excludeDomain.trim())
   if (state.linkUrl.trim()) params.set('url', state.linkUrl.trim())
@@ -87,7 +86,6 @@ export function stateToParams(state: QueryState): URLSearchParams {
   if (state.workType) params.set('wt', state.workType)
   if (state.genre) params.set('genre', state.genre)
   if (state.nicoKind) params.set('nkind', state.nicoKind)
-  if (state.paidOnly) params.set('paid', '1')
   if (state.fantiaCategory) params.set('fcat', state.fantiaCategory)
   if (state.fantiaAudience) params.set('faud', state.fantiaAudience)
   if (state.safeSearchOff) params.set('nsafe', '1')
@@ -145,7 +143,6 @@ function paramsToState(params: URLSearchParams): QueryState {
   state.toUser = params.get('to') ?? ''
   state.mentionsUser = params.get('men') ?? ''
   state.excludeMentions = params.get('exmen') ?? ''
-  state.subreddit = params.get('sub') ?? ''
   state.domain = params.get('dom') ?? ''
   state.excludeDomain = params.get('exdom') ?? ''
   state.linkUrl = params.get('url') ?? ''
@@ -206,7 +203,6 @@ function paramsToState(params: URLSearchParams): QueryState {
   }
   const nkind = params.get('nkind')
   if (nkind === 'user' || nkind === 'channel') state.nicoKind = nkind
-  state.paidOnly = params.get('paid') === '1'
   const fcat = params.get('fcat')
   if (fcat && (FANTIA_CATEGORIES as readonly string[]).includes(fcat)) {
     state.fantiaCategory = fcat as FantiaCategory
@@ -220,18 +216,12 @@ function paramsToState(params: URLSearchParams): QueryState {
     rt === 'short' ||
     rt === 'channel' ||
     rt === 'playlist' ||
-    rt === 'posts' ||
-    rt === 'communities' ||
-    rt === 'comments' ||
-    rt === 'media' ||
     rt === 'people' ||
-    rt === 'board' ||
     rt === 'bangumi' ||
     rt === 'pgc' ||
     rt === 'live' ||
     rt === 'article' ||
     rt === 'series' ||
-    rt === 'circle' ||
     rt === 'images' ||
     rt === 'shopping' ||
     rt === 'news' ||
@@ -251,7 +241,6 @@ function paramsToState(params: URLSearchParams): QueryState {
   if (
     sort === 'new' ||
     sort === 'top' ||
-    sort === 'hot' ||
     sort === 'comments' ||
     sort === 'danmaku' ||
     sort === 'favorites' ||

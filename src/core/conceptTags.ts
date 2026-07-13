@@ -138,8 +138,8 @@ export const TAG_DEFS: Record<TagId, TagDef> = {
   place: {
     id: 'place',
     synonyms: {
-      ja: ['コミュニティ', '板', 'サブレディット', 'リスト', '場所', 'グループ', '地域', '国'],
-      en: ['community', 'subreddit', 'board', 'list', 'group', 'region', 'country'],
+      ja: ['リスト', '場所', 'グループ', '地域', '国'],
+      en: ['list', 'group', 'region', 'country'],
     },
   },
   link: {
@@ -197,7 +197,6 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   toUser: ['person', 'target'],
   mentionsUser: ['person', 'target'],
   excludeMentions: ['person', 'exclude', 'target'],
-  subreddit: ['place'],
   domain: ['link', 'place'],
   excludeDomain: ['link', 'exclude'],
   linkUrl: ['link'],
@@ -237,7 +236,6 @@ export const CONCEPT_TAGS: Partial<Record<ConceptId, TagId[]>> = {
   workType: ['format', 'media'],
   genre: ['genre', 'format'],
   nicoKind: ['format', 'person'],
-  paidOnly: ['format'],
   fantiaCategory: ['genre', 'format'],
   fantiaAudience: ['age'],
   safeSearchOff: ['age'],
@@ -320,7 +318,6 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   excludeMentions: 'person',
   xList: 'person',
   verifiedOnly: 'person',
-  subreddit: 'person',
   excludeReplies: 'person',
   followingOnly: 'person',
   minLikes: 'popular',
@@ -355,7 +352,6 @@ export const CONCEPT_CATEGORY: Record<ConceptId, CategoryId> = {
   resultType: 'media',
   genre: 'media',
   nicoKind: 'media',
-  paidOnly: 'media',
   fantiaCategory: 'media',
   period: 'time',
   sortOrder: 'time',

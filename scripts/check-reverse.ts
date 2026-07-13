@@ -19,7 +19,6 @@
 import { PLATFORMS } from '@/core/platforms'
 import { parseSearchUrl } from '@/core/reverse'
 import { defaultState } from '@/core/concepts'
-import { daysAgoIso } from '@/core/parse'
 import { buildUrl } from '@/core/urlParts'
 import type { PlatformId, QueryState } from '@/core/types'
 
@@ -126,15 +125,6 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['手芸'], keywordsOr: '猫 犬' },
     { keywordsOr: 'cat' },
   ],
-  note: [
-    { terms: ['猫'], fromUser: '@kensuu', sort: 'hot' },
-    { hashtag: '日記' },
-    { terms: ['猫'], paidOnly: true, sort: 'top' },
-    { terms: ['猫'], resultType: 'people' },
-    { terms: ['猫'], resultType: 'series' },
-    { terms: ['猫'], resultType: 'circle', sort: 'new' },
-    { terms: ['猫'], hashtag: 'art', sort: 'new' },
-  ],
   niconico: [
     {
       terms: ['猫', 'ne ko'],
@@ -169,30 +159,6 @@ const CASES: Record<PlatformId, Patch[]> = {
     { keywordsOr: '猫', workType: 'manga' },
   ],
   instagram: [{ hashtag: 'ねこ' }, { terms: ['cafe', 'tokyo'], hashtag: 'cat art' }],
-  reddit: [
-    {
-      terms: ['rust', 'hello world'],
-      exactPhrase: ['exact phrase'],
-      exclude: 'spam junk',
-      titleOnly: true,
-      fromUser: 'alice',
-      subreddit: 'programming rust',
-      since: daysAgoIso(6),
-      sort: 'top',
-      resultType: 'posts',
-    },
-    { terms: ['cat'], sort: 'hot' },
-    { terms: ['cat'], resultType: 'comments', sort: 'comments' },
-    { terms: ['cat'], resultType: 'communities' },
-    { terms: ['cat'], resultType: 'media' },
-    { terms: ['cat'], resultType: 'people' },
-    { subreddit: 'AskReddit' },
-    { terms: ['cat'], since: daysAgoIso(0) },
-    { terms: ['cat'], since: daysAgoIso(30) },
-    { terms: ['cat'], since: daysAgoIso(365) },
-    { terms: ['yarn'], keywordsOr: 'cats dogs' },
-    { keywordsOr: 'cats' },
-  ],
   pixiv: [
     {
       terms: ['猫'],
@@ -224,31 +190,6 @@ const CASES: Record<PlatformId, Patch[]> = {
     { terms: ['猫'], hashtag: 'cat art' },
     { terms: ['猫'], exactPhrase: ['青い 空'] },
   ],
-  hatebu: [
-    {
-      terms: ['rust'],
-      exactPhrase: ['所有 権'],
-      exclude: '入門',
-      titleOnly: true,
-      since: '2026-01-01',
-      until: '2026-06-30',
-      minLikes: '10',
-      safeSearchOff: true,
-      sort: 'new',
-    },
-    { hashtag: 'プログラミング rust', exclude: 'ai' },
-    { terms: ['rust'], sort: 'top' },
-  ],
-  twitch: [
-    { terms: ['apex'], resultType: 'video' },
-    { terms: ['apex', 'legends'], resultType: 'channel' },
-    { terms: ['apex'] },
-  ],
-  fivech: [
-    { terms: ['猫'], exclude: '犬', subreddit: 'news4vip livejupiter' },
-    { terms: ['セール'] },
-  ],
-  animanch: [{ terms: ['ワンピース', '考察'] }, { terms: ['ネタバレ'], titleOnly: true }],
   tumblr: [
     { hashtag: 'cat' },
     {
@@ -280,12 +221,6 @@ const CASES: Record<PlatformId, Patch[]> = {
       excludeReplies: true,
       language: 'en',
     },
-  ],
-  pinterest: [
-    { terms: ['recipe'] },
-    { terms: ['cat'], resultType: 'video' },
-    { terms: ['cat'], resultType: 'board' },
-    { terms: ['cat'], resultType: 'people' },
   ],
   fanbox: [{ hashtag: 'イラスト' }],
   bilibili: [
@@ -448,12 +383,6 @@ const WILD: Array<{
     truthy: ['since'],
   },
   {
-    // コミュニティ内検索(restrict_sr)は板の絞り込みとして読む
-    url: 'https://www.reddit.com/r/reactjs/search/?q=hooks&restrict_sr=1&sort=new',
-    platform: 'reddit',
-    expect: { terms: ['hooks'], subreddit: 'reactjs', sort: 'new' },
-  },
-  {
     // ページ番号は読み残しとして正直に出す
     url: 'https://www.pixiv.net/tags/%E7%8C%AB/illustrations?mode=safe&p=2',
     platform: 'pixiv',
@@ -493,11 +422,6 @@ const WILD: Array<{
     },
   },
   {
-    url: 'https://b.hatena.ne.jp/search/text?q=rust&users=3&safe=off',
-    platform: 'hatebu',
-    expect: { terms: ['rust'], minLikes: '3', safeSearchOff: true },
-  },
-  {
     url: 'https://www.tumblr.com/tagged/cat%20photos',
     platform: 'tumblr',
     expect: { hashtag: 'cat photos' },
@@ -517,11 +441,6 @@ const WILD: Array<{
     url: 'https://www.instagram.com/explore/tags/%E3%81%AD%E3%81%93/',
     platform: 'instagram',
     expect: { hashtag: 'ねこ' },
-  },
-  {
-    url: 'https://note.com/search?context=note_for_sale&q=%E7%8C%AB&sort=hot',
-    platform: 'note',
-    expect: { terms: ['猫'], paidOnly: true, sort: 'hot' },
   },
   {
     url: 'https://www.youtube.com/@NASA/search?query=moon',

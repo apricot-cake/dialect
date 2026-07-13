@@ -55,8 +55,6 @@ export function conceptSummary(concept: ConceptId, state: QueryState): string {
           .map((u) => `@${u}`)
           .join('・'),
       })
-    case 'subreddit':
-      return tf('sum.community', { v: words(state.subreddit).join('・') })
     case 'domain':
       return tf('sum.domain', { v: state.domain.trim() })
     case 'excludeDomain':

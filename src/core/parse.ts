@@ -111,7 +111,7 @@ export function applyBins(patch: Partial<QueryState>, bins: TokenBins): void {
  * 括弧禁止・並置文法(niconico/セイガ)のOR連鎖を読む。`token (OR token)+` という
  * 最初の1連なりを keywordsOr の候補として抜き出し、残りのトークンをそのまま返す。
  * 2つ目以降のOR連鎖(サイト自身が出せる複数グループ表現)はDialectに対応する枠が
- * 1つしか無いため対象外とし、rest 側にリテラルの語として残す(Reddit の裸のORと同じ簡略化)
+ * 1つしか無いため対象外とし、rest 側にリテラルの語として残す
  */
 export function extractBareOrChain(tokens: string[]): { orTerms: string[]; rest: string[] } {
   const rest: string[] = []

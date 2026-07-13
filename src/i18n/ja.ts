@@ -17,7 +17,7 @@ export const ja = {
   'concept.keywordsOr.label': 'このどれかを含む',
   'concept.keywordsOr.placeholder': '例: 犬',
   'concept.keywordsOr.help':
-    '入力した語のうち、どれか1つでも含む投稿を探します（X・Reddit・pixiv・YouTube・niconico・ニコニコ静画のみ対応）',
+    '入力した語のうち、どれか1つでも含む投稿を探します（X・pixiv・YouTube・niconico・ニコニコ静画のみ対応）',
   'concept.exclude.label': '除外するキーワード',
   'concept.exclude.placeholder': '例: 広告',
   'concept.exclude.help': '指定した語を含む投稿を検索結果から除きます',
@@ -46,10 +46,6 @@ export const ja = {
   'concept.excludeMentions.placeholder': '例: user.bsky.social',
   'concept.excludeMentions.help':
     '指定したユーザーへのメンションを含む投稿を検索結果から除きます（Blueskyのみ対応）',
-  'concept.subreddit.label': 'このコミュニティの中だけ',
-  'concept.subreddit.placeholder': '例: japan',
-  'concept.subreddit.help':
-    '指定したコミュニティ(Redditのsubreddit、5ちゃんねるの板)の中の投稿だけを探します。名前にr/はつけません',
   'concept.domain.label': 'このサイトへのリンクを含む',
   'concept.domain.placeholder': '例: nhk.or.jp',
   'concept.domain.help': '指定したサイトへのリンクを含む投稿だけを探します',
@@ -188,8 +184,6 @@ export const ja = {
   'concept.nicoKind.channel': '公式チャンネル',
   'concept.nicoKind.help':
     'ユーザーが投稿した動画か、公式チャンネルの動画かで絞り込みます（niconicoのみ対応）',
-  'concept.paidOnly.label': '有料の記事だけ',
-  'concept.paidOnly.help': '有料記事だけに絞り込みます（noteのみ対応）',
   'concept.fantiaCategory.label': 'カテゴリー',
   'concept.fantiaCategory.none': '指定なし',
   'concept.fantiaCategory.illust': 'イラスト',
@@ -225,36 +219,29 @@ export const ja = {
     '全年齢・男性向け（R18）・女性向け（R18）のどの区分を検索するか指定します（Fantiaのみ対応。指定なしは全年齢）',
   'concept.safeSearchOff.label': 'セーフサーチを解除',
   'concept.safeSearchOff.help':
-    'はてなブックマークのセーフサーチ（既定でオン）を解除して検索します（はてなブックマークのみ対応）',
+    'セーフサーチ（既定でオン）を解除して検索します（Googleのみ対応）',
   'concept.resultType.label': '探すものの種類',
   'concept.resultType.none': '指定なし',
   'concept.resultType.video': '動画',
   'concept.resultType.short': 'ショート',
   'concept.resultType.channel': 'チャンネル',
   'concept.resultType.playlist': '再生リスト',
-  'concept.resultType.posts': '投稿',
-  'concept.resultType.communities': 'コミュニティ',
-  'concept.resultType.comments': 'コメント',
-  'concept.resultType.media': 'メディア',
   'concept.resultType.people': 'プロフィール',
-  'concept.resultType.board': 'ボード',
   'concept.resultType.bangumi': 'アニメ番組',
   'concept.resultType.pgc': '映画・ドラマ',
   'concept.resultType.live': '生放送',
   'concept.resultType.article': 'コラム記事',
   'concept.resultType.series': 'シリーズ',
-  'concept.resultType.circle': 'メンバーシップ',
   'concept.resultType.images': '画像',
   'concept.resultType.shopping': 'ショッピング',
   'concept.resultType.news': 'ニュース',
   'concept.resultType.web': 'ウェブのみ',
   'concept.resultType.books': '書籍',
   'concept.resultType.help':
-    '探す種類を指定します。動画サイト（YouTube・Twitch）では動画・チャンネルなど、Redditでは投稿・コミュニティ・コメントなどを選べます。選べる種類はサイトによって違います',
+    '探す種類を指定します。動画サイト（YouTube）では動画・チャンネルなど、bilibiliでは番組・生放送などを選べます。選べる種類はサイトによって違います',
   'concept.sortOrder.label': '並び順',
   'concept.sortOrder.new': '新しい順',
   'concept.sortOrder.top': '人気順',
-  'concept.sortOrder.hot': '急上昇',
   'concept.sortOrder.comments': 'コメント数順',
   'concept.sortOrder.danmaku': '弾幕数順',
   'concept.sortOrder.favorites': '収蔵数順',
@@ -321,11 +308,7 @@ export const ja = {
   'note.loose.and': '入力した言葉の一部だけを含む投稿も混ざることがあります',
   'note.exactPhrase.dropped':
     '完全一致では探せません。ことばで探したいときは、キーワードに入れてください',
-  'note.exact.substring':
-    'つながった文字列のまま探します。スペースを含む語句は、語ごとの絞り込みに分かれます',
   'note.titleOnly.needsWords': 'キーワードか完全一致のことばと組み合わせたときだけ使えます',
-  'note.exact.unreliable':
-    '完全一致で探しますが、言葉がバラバラに含まれる投稿も混ざることがあります',
   'note.tagPage.combined': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
   'note.nosort': '並び順は指定できません',
   'note.videoOnly': 'もともと動画だけのサイトなので、この絞り込みは不要です',
@@ -356,26 +339,7 @@ export const ja = {
     '人気順は視聴回数順で代用します。新しい順は現在YouTube側で効かなくなっています',
   'note.youtube.channelConflict':
     'ユーザー指定(チャンネル内検索)と組み合わせると、この絞り込みは効きません',
-  'note.note.keywords': '入力した言葉の一部だけを含む記事も混ざることがあります',
-  'note.note.exclude': 'note には除外検索がありません',
-  'note.note.fromUser': 'ユーザー名は @ のあとの部分です',
-  'note.note.hashtag': '他の条件と組み合わせるときは、ふつうのキーワードとして検索されます',
-  'note.note.period': 'note には期間で絞る機能がありません',
-  'note.note.mediaOnly': 'note には画像・動画で絞る機能がありません',
-  'note.note.paidOnly.tagPage':
-    '単一タグのタグページでは有料の記事に絞れません。開いた後、ページ内の切替でできます',
-  'note.note.sort.tagPage':
-    '単一タグのタグページでは並び順を指定できません。開いた後、ページ内の切替でできます',
-  'note.note.resultTypeConflict':
-    'クリエイター・マガジン・メンバーシップ検索では、この絞り込みは使えません',
-  'note.note.paidOnly.circle': 'メンバーシップはすべて有料のため、この絞り込みは意味を持ちません',
-
   // 追加プラットフォーム固有の注記
-  'note.reddit.hashtag': 'Redditにはハッシュタグの仕組みがありません',
-  'note.reddit.period': 'おおまかに「1日以内/1週間/1か月/1年以内」で絞り込みます',
-  'note.reddit.untilOnly': 'Redditは「いつまで」だけの期間を指定できません(「いつから」が必要です)',
-  'note.reddit.mediaOnly':
-    'この絞り込みはできません。「探すものの種類」で「メディア」を選ぶと近いことができます',
   'note.instagram.hashtag': 'タグページは人気投稿だけが表示されます(最新順はありません)',
   'note.instagram.multiTag':
     'ハッシュタグを2つ以上指定すると、タグページではなくゆるい検索になり、一部のタグだけの投稿も混ざります',
@@ -395,24 +359,8 @@ export const ja = {
     '入力した言葉をすべて含む投稿を探します。開いたページで「検索」ボタンを押すと結果が出ます',
   'note.misskey.fromUser': 'キーワードとの組み合わせが必要です',
   'note.youtube.resultType': 'ユーザー指定との併用はできません',
-  'note.hatebu.minLikes': 'ここで指定した数は、最低ブックマーク数として絞り込みます',
-  'note.hatebu.titleTagConflict':
-    'ハッシュタグだけで検索するときは、タイトルだけの絞り込みは効きません',
-  'note.hatebu.fromUser':
-    'ブックマーク内検索は自分自身のブックマークだけが対象で、他のユーザーの投稿を指定して探すことはできません',
-  'note.twitch.resultType': 'Twitchで探せるのは動画とチャンネルだけです',
-  'note.twitch.language': 'URLでは指定できません。開いた後、言語フィルタで絞り込めます',
   'note.sortOrder.otherSite': 'この並び順は、このサイトでは指定できません',
   'note.resultType.otherSite': 'この種類は、このサイトでは指定できません',
-  'note.fivech.keywords':
-    'スレッドのタイトルだけが検索対象です。スレッドタイトル検索サービス(ff5ch.syoboi.jp)を開きます',
-  'note.fivech.titleOnly':
-    '5ちゃんねる検索はもともとスレッドのタイトルだけが対象です(この切り替えに関わらず、常にタイトルを検索します)',
-  'note.fivech.subreddit':
-    '板の名前(例: sony)で絞り込みます。複数指定すると、そのいずれかの板が対象になります',
-  'note.animanch.keywords':
-    '書き込みの本文を検索します(試験的な機能のため、取りこぼしがあることがあります)',
-  'note.animanch.titleOnly': '全期間の過去ログから、スレッドのタイトルだけを検索します',
   'note.seiga.workType': 'ニコニコ静画で探せるのはイラストとマンガだけです',
   'note.seiga.mangaSort': 'マンガを選ぶと、並び順は指定できません',
   'note.tumblr.tagSort':
@@ -465,7 +413,6 @@ export const ja = {
   'sum.to': '{v}宛て',
   'sum.excludeUser': '{v}を除く',
   'sum.mentions': '{v}へ',
-  'sum.community': '{v}内',
   'sum.domain': '{v}へのリンク',
   'sum.xList': 'リスト内',
   'sum.minLikes': '{v}いいね以上',
@@ -479,7 +426,6 @@ export const ja = {
   'group.sns': 'SNS',
   'group.video': '動画',
   'group.image': 'イラスト・画像',
-  'group.text': 'ブログ・掲示板',
   'group.web': 'Web検索',
 
   // 2画面スナップ構成の操作まわり

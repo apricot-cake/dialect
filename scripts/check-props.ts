@@ -93,8 +93,8 @@ function optionalArb(): fc.Arbitrary<string> {
   return fc.oneof(fc.constant(''), wordArb())
 }
 
-// Fixed date range, not tied to today: keeps Reddit's relative t= boundary
-// (day/week/month/year) from flapping between CI runs on different dates
+// Fixed date range, not tied to today: keeps generated dates deterministic
+// across CI runs on different dates
 const DATE_EPOCH = Date.UTC(2020, 0, 1)
 function isoDateArb(): fc.Arbitrary<string> {
   return fc
@@ -118,7 +118,6 @@ const queryStateArb: fc.Arbitrary<QueryState> = fc.record<QueryState>({
   toUser: optionalArb(),
   mentionsUser: optionalArb(),
   excludeMentions: optionalArb(),
-  subreddit: optionalArb(),
   domain: optionalArb(),
   excludeDomain: optionalArb(),
   linkUrl: optionalArb(),
@@ -159,7 +158,6 @@ const queryStateArb: fc.Arbitrary<QueryState> = fc.record<QueryState>({
   workType: fc.constantFrom('', 'illust', 'manga', 'ugoira', 'novel'),
   genre: fc.constantFrom('', ...NICO_GENRES),
   nicoKind: fc.constantFrom('', 'user', 'channel'),
-  paidOnly: fc.boolean(),
   fantiaCategory: fc.constantFrom('', ...FANTIA_CATEGORIES),
   fantiaAudience: fc.constantFrom('', 'male', 'female'),
   safeSearchOff: fc.boolean(),
@@ -169,18 +167,12 @@ const queryStateArb: fc.Arbitrary<QueryState> = fc.record<QueryState>({
     'short',
     'channel',
     'playlist',
-    'posts',
-    'communities',
-    'comments',
-    'media',
     'people',
-    'board',
     'bangumi',
     'pgc',
     'live',
     'article',
     'series',
-    'circle',
     'images',
     'shopping',
     'news',
@@ -190,7 +182,6 @@ const queryStateArb: fc.Arbitrary<QueryState> = fc.record<QueryState>({
   sort: fc.constantFrom(
     'new',
     'top',
-    'hot',
     'comments',
     'auto',
     'danmaku',
@@ -235,7 +226,7 @@ function checkNoRawLeak(platform: PlatformDef, state: QueryState): boolean {
 // ---- 3. fixed-point stability of parse -> rebuild ----------------------------
 // A handful of adversarial combinations (e.g. a keyword that itself starts
 // with a literal '-', which collides with a site's own "-word" exclude
-// convention on X/Reddit/Misskey) need a couple of parse/rebuild rounds
+// convention on X/Misskey) need a couple of parse/rebuild rounds
 // before they settle into a self-consistent representation, rather than
 // converging on the very first round. That is not a Dialect bug: it mirrors
 // real ambiguity in the destination site's own bare-text query syntax

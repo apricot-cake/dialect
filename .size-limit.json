@@ -71,7 +71,7 @@
     "limit": "160 KB"
   },
   {
-    "name": "sites/*.html initial load (shared entry, all 21 site guides)",
+    "name": "sites/*.html initial load (shared entry, all 14 site guides)",
     "path": [
       "dist/assets/sites-main-*.js",
       "dist/assets/conceptDefs-*.js",

@@ -46,7 +46,7 @@ import {
 const SORT_BYTE: Record<'new' | 'top', number> = { new: 0x02, top: 0x03 }
 // 種別(タイプ)のバイト。video=1/channel=2/playlist=3 は既存調査値、short=9 は
 // 2026-07-04にYouTubeのフィルタUIから実測(sp=EgIQCQ%3D%3D)。ショート/再生リストはYouTube専用。
-// posts/communities/comments/media/people はReddit専用の値でYouTubeには無いため未収録
+// 他サイト専用の値(プロフィール・シリーズ・ボード等)はYouTubeには無いため未収録
 // (dynamicSupportでYouTube側は選択時にresultTypeをnoneへ落とす)
 const TYPE_BYTE: Partial<Record<Exclude<ResultType, ''>, number>> = {
   video: 0x01,
@@ -411,7 +411,7 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
     overrides.locationOnly = CHANNEL_CONFLICT
     overrides.purchased = CHANNEL_CONFLICT
   } else if (state.resultType && !(state.resultType in TYPE_BYTE)) {
-    // Reddit専用の値(投稿・コミュニティ・コメント・メディア・プロフィール)はYouTubeに無い
+    // 他サイト専用の値(プロフィール・シリーズ・ボード等)はYouTubeに無い
     overrides.resultType = { level: 'none', noteKey: 'note.resultType.otherSite' }
   }
   // intitle: はキーワード・完全一致の語にだけ付く。語が無い(タグだけの)検索では
@@ -419,7 +419,7 @@ function dynamicSupport(state: QueryState): Partial<Record<ConceptId, ConceptSup
   if (state.titleOnly && andTerms(state).length === 0 && exactPhrases(state).length === 0) {
     overrides.titleOnly = { level: 'none', noteKey: 'note.titleOnly.needsWords' }
   }
-  // 急上昇・コメント数順はnote/Reddit専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
+  // コメント数順は他サイト専用。YouTubeでは指定できないので落とす(fromUser時の注記より優先)
   return { ...overrides, ...limitSort(state.sort, ['new', 'top'], 'note.sortOrder.otherSite') }
 }
 
